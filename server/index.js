@@ -17,3 +17,5 @@ app.get("/api/health", (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Superhond server draait op http://localhost:${PORT}`);
 });
+import classesRouter from "./routes/classes.js";
+app.use("/api/classes", classesRouter);
