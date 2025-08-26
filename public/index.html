@@ -1,29 +1,20 @@
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Superhond • Coach Portaal</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header>
-    <h1>🐾 Superhond Coach Portaal</h1>
-  </header>
+<main>
+  <section>
+    <h2>Nieuwe klas toevoegen</h2>
+    <form id="classForm">
+      <label>Titel: <input name="title" required></label><br>
+      <label>Locatie: <input name="location"></label><br>
+      <label>Datum: <input type="date" name="date" required></label><br>
+      <label>Tijd: <input type="time" name="time" required></label><br>
+      <label>Max deelnemers: <input type="number" name="max_participants"></label><br>
+      <button type="submit">➕ Klas toevoegen</button>
+    </form>
+  </section>
 
-  <main>
-    <p>Welkom! Dit is de basis van het coach portaal. We breiden dit zo uit met klassen en lessen.</p>
+  <hr>
 
-    <section>
-      <h2>Status</h2>
-      <div id="status">Backend checken…</div>
-    </section>
-  </main>
-
-  <footer>
-    <small>&copy; 2025 Superhond.be</small>
-  </footer>
-
-  <script src="app.js"></script>
-</body>
-</html>
+  <section>
+    <h2>Overzicht klassen</h2>
+    <ul id="classesList"></ul>
+  </section>
+</main>
