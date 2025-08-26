@@ -4,21 +4,29 @@ import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// ⬇️ database initialiseren (maakt tabellen aan via db.js)
+import "./db.js";
+
+import classesRouter from "./routes/classes.js";
+import sessionsRouter from "./routes/sessions.js";
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Zorg dat we de juiste __dirname hebben in ES modules
+// Static files uit /public
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public")));
 
-// 📌 Deze regel laat alle bestanden in de map 'public' zien
-app.use(express.static("public"));
-
-// Health check
+// Health
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-// Root route (als fallback, maar index.html uit /public wordt automatisch getoond)
+// API-routes
+app.use("/api/classes", classesRouter);
+app.use("/api/sessions", sessionsRouter);
+
+// Fallback naar homepage
 app.get("/", (_req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
