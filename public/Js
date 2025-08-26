@@ -1,0 +1,13 @@
+console.log("Superhond frontend geladen");
+
+async function checkHealth(){
+  const el = document.getElementById("status");
+  try{
+    const res = await fetch("/api/health");
+    const data = await res.json();
+    el.textContent = data.ok ? "✅ Backend OK" : "❌ Backend probleem";
+  }catch(e){
+    el.textContent = "❌ Kan backend niet bereiken";
+  }
+}
+document.addEventListener("DOMContentLoaded", checkHealth);
