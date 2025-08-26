@@ -1,0 +1,50 @@
+import express from "express";
+import Database from "better-sqlite3";
+
+const router = express.Router();
+
+// 1) DB openen (maakt lokaal bestand superhond.db aan op Render)
+const db = new Database("superhond.db");
+
+// 2) Tabel aanmaken (als die nog niet bestaat)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS classes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    location TEXT,
+    date TEXT NOT NULL,      -- YYYY-MM-DD
+    time TEXT NOT NULL,      -- HH:MM
+    max_participants INTEGER
+  )
+`);
+
+// 3) Alle klassen ophalen
+router.get("/", (_req, res) => {
+  const rows = db.prepare("SELECT * FROM classes ORDER BY date, time").all();
+  res.json(rows);
+});
+
+// 4) Nieuwe klas toevoegen
+router.post("/", (req, res) => {
+  const { title, location = "", date, time, max_participants = null } = req.body;
+
+  if (!title || !date || !time) {
+    return res.status(400).json({ error: "title, date en time zijn verplicht" });
+  }
+
+  const stmt = db.prepare(`
+    INSERT INTO classes (title, location, date, time, max_participants)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  const result = stmt.run(title, location, date, time, max_participants);
+  res.status(201).json({ success: true, id: result.lastInsertRowid });
+});
+
+// 5) Klas verwijderen
+router.delete("/:id", (req, res) => {
+  const info = db.prepare("DELETE FROM classes WHERE id = ?").run(req.params.id);
+  if (info.changes === 0) return res.status(404).json({ error: "Niet gevonden" });
+  res.json({ success: true });
+});
+
+export default router;
