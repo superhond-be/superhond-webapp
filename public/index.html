@@ -18,3 +18,27 @@
     <ul id="classesList"></ul>
   </section>
 </main>
+<hr>
+
+<section>
+  <h2>Nieuwe les (sessie) toevoegen</h2>
+  <form id="sessionForm">
+    <label>Klas:
+      <select name="class_id" id="classSelect">
+        <option value="">(losse les of kies klas)</option>
+      </select>
+    </label><br>
+    <label>Datum: <input type="date" name="date" required></label><br>
+    <label>Start: <input type="time" name="start_time" required></label><br>
+    <label>Einde: <input type="time" name="end_time"></label><br>
+    <label>Locatie: <input type="text" name="location"></label><br>
+    <button type="submit">➕ Les toevoegen</button>
+  </form>
+</section>
+
+<hr>
+
+<section>
+  <h2>Overzicht lessen</h2>
+  <ul id="sessionsList"></ul>
+</section>
