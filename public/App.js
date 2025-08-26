@@ -1,15 +1,4 @@
-console.log("Superhond frontend geladen");
-
-// API helper
-async function api(path, options = {}) {
-  const res = await fetch("/api" + path, {
-    headers: { "Content-Type": "application/json" },
-    ...options
-  });
-  return res.json();
-}
-
-// Klassen ophalen en tonen
+// Klassen ophalen en tonen (met verwijderknop)
 async function loadClasses() {
   const classes = await api("/classes");
   const ul = document.getElementById("classesList");
@@ -21,23 +10,20 @@ async function loadClasses() {
     classes.forEach(c => {
       const li = document.createElement("li");
       li.textContent = `${c.title} (${c.date} ${c.time}) – ${c.location || "-"}`;
+
+      // ❌ Verwijderknop
+      const btn = document.createElement("button");
+      btn.textContent = "❌";
+      btn.style.marginLeft = "10px";
+      btn.addEventListener("click", async () => {
+        if (confirm(`Klas "${c.title}" verwijderen?`)) {
+          await api(`/classes/${c.id}`, { method: "DELETE" });
+          await loadClasses();
+        }
+      });
+
+      li.appendChild(btn);
       ul.appendChild(li);
     });
   }
 }
-
-// Formulier: nieuwe klas
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("classForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const data = Object.fromEntries(new FormData(form).entries());
-    data.max_participants = parseInt(data.max_participants) || null;
-
-    await api("/classes", { method: "POST", body: JSON.stringify(data) });
-    form.reset();
-    await loadClasses();
-  });
-
-  loadClasses(); // eerste keer laden
-});
