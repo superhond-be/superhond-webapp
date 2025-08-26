@@ -1,3 +1,5 @@
+import sessionsRouter from "./routes/sessions.js";
+app.use("/api/sessions", sessionsRouter);
 import express from "express";
 import Database from "better-sqlite3";
 
