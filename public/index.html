@@ -11,19 +11,47 @@
   <header>
     <h1>🐾 Superhond Coach Portaal</h1>
   </header>
+<main>
+  <!-- KLASSEN -->
+  <section>
+    <h2>Klassen (les-types)</h2>
+    <form id="classForm">
+      <input name="name" placeholder="Naam (bv. Puppy)" required />
+      <input name="description" placeholder="Beschrijving" />
+      <input name="maxLessons" type="number" min="1" placeholder="Credits (bv. 9)" required />
+      <input name="validityMonths" type="number" min="1" placeholder="Geldigheid in maanden (bv. 6)" required />
+      <button type="submit">➕ Klas</button>
+    </form>
+    <ul id="classesList"></ul>
+  </section>
 
-  <main>
-    <!-- Klassen -->
-    <section>
-      <h2>Klassen</h2>
-      <form id="classForm">
-        <input name="name" placeholder="Naam (bv. Puppy Pack)" required />
-        <input name="trainer" placeholder="Trainer" required />
-        <label><input type="checkbox" name="active" checked /> Actief</label>
-        <button type="submit">➕ Klas</button>
-      </form>
-      <ul id="classesList"></ul>
-    </section>
+  <hr>
+
+  <!-- SESSIES -->
+  <section>
+    <h2>Sessies (momenten)</h2>
+    <form id="sessionForm">
+      <select name="classId" id="classSelect" required>
+        <option value="">Kies klas...</option>
+      </select>
+      <input type="date"  name="date"  required />
+      <input type="time"  name="start" required />
+      <input type="time"  name="end" />
+      <input type="text"  name="location" placeholder="Locatie" />
+      <button type="submit">➕ Sessie</button>
+    </form>
+
+    <div style="margin:6px 0">
+      <label>Filter op klas: 
+        <select id="filterClass">
+          <option value="">(alle klassen)</option>
+        </select>
+      </label>
+      <button id="clearFilter" type="button">Toon alles</button>
+    </div>
+    <ul id="sessionsList"></ul>
+  </section>
+</main>
 
     <!-- Sessies -->
     <section>
