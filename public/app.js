@@ -69,3 +69,24 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadSessions();
   });
 });
+// public/app.js
+
+async function loadClasses() {
+  const response = await fetch("/api/classes");
+  const data = await response.json();
+
+  const output = document.getElementById("output");
+  output.innerHTML = "<h3>Beschikbare Klassen</h3><ul>" +
+    data.map(c => `<li>${c.name} (trainer: ${c.trainer})</li>`).join("") +
+    "</ul>";
+}
+
+async function loadSessions() {
+  const response = await fetch("/api/sessions");
+  const data = await response.json();
+
+  const output = document.getElementById("output");
+  output.innerHTML = "<h3>Ingeplande Sessies</h3><ul>" +
+    data.map(s => `<li>${s.date} - ${s.topic}</li>`).join("") +
+    "</ul>";
+}
