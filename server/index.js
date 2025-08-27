@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import classesRoutes from "./routes/classes.js";
+app.use("/api/classes", classesRoutes);
 import sessionsRoutes from "./routes/sessions.js";
 
 const app = express();
