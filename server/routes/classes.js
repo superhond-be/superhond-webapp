@@ -1,33 +1,20 @@
 import express from "express";
+import { classes } from "../data/store.js";
 const router = express.Router();
-
-/**
- * KLASSEN = les-types (vb. Puppy, Pubers)
- * - name: "Puppy"
- * - description: vrije tekst
- * - maxLessons: aantal credits/lessen in het pakket (bv. 9)
- * - validityMonths: hoe lang geldig (bv. 6 maanden)
- */
-let classes = [
-  { id: 1, name: "Puppy",  description: "Basistraining voor pups",            maxLessons: 9, validityMonths: 6 },
-  { id: 2, name: "Pubers", description: "Vervolg voor jonge honden (pubers)", maxLessons: 8, validityMonths: 3 }
-];
 
 const nextId = () => (classes.length ? Math.max(...classes.map(c => c.id)) + 1 : 1);
 
-// Alle klassen
-router.get("/", (_req, res) => {
-  res.json(classes);
-});
+// Lijst
+router.get("/", (_req, res) => res.json(classes));
 
-// Eén klas
+// Detail
 router.get("/:id", (req, res) => {
   const cls = classes.find(c => c.id === Number(req.params.id));
   if (!cls) return res.status(404).json({ error: "Klas niet gevonden" });
   res.json(cls);
 });
 
-// Nieuwe klas
+// Aanmaken
 router.post("/", (req, res) => {
   const { name, description = "", maxLessons, validityMonths } = req.body || {};
   if (!name || maxLessons == null || validityMonths == null) {
@@ -44,7 +31,7 @@ router.post("/", (req, res) => {
   res.status(201).json(created);
 });
 
-// Bijwerken (gedeeltelijk)
+// Bijwerken
 router.put("/:id", (req, res) => {
   const i = classes.findIndex(c => c.id === Number(req.params.id));
   if (i === -1) return res.status(404).json({ error: "Klas niet gevonden" });
