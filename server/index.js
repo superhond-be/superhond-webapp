@@ -7,7 +7,8 @@ import bodyParser from "body-parser";
 
 import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
-
+import bookingsRoutes from "./routes/bookings.js";
+app.use("/api/bookings", bookingsRoutes);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
