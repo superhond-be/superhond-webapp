@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 
+// 🔹 Dummy data
 let sessions = [
   { id: 1, date: "2025-09-01", topic: "Puppy socialisatie" },
   { id: 2, date: "2025-09-05", topic: "Wandelen zonder trekken" }
@@ -21,6 +22,13 @@ router.post("/", (req, res) => {
   const created = { id, date, topic };
   sessions.push(created);
   res.status(201).json(created);
+});
+
+router.delete("/:id", (req, res) => {
+  const idx = sessions.findIndex(s => s.id === Number(req.params.id));
+  if (idx === -1) return res.status(404).json({ error: "Sessie niet gevonden" });
+  const removed = sessions.splice(idx, 1)[0];
+  res.json({ ok: true, removed });
 });
 
 export default router;
