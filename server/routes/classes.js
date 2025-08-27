@@ -1,3 +1,7 @@
+let classes = [
+  { id: 1, name: "Puppy", description: "Basistraining voor pups", maxLessons: 9, validityMonths: 6 },
+  { id: 2, name: "Pubers", description: "Voor jonge honden in de puberteit", maxLessons: 8, validityMonths: 3 }
+];
 import express from "express";
 const router = express.Router();
 
