@@ -60,8 +60,8 @@ async function loadSessions() {
       await api(`/sessions/${s.id}`, { method: "DELETE" });
       loadSessions();
     };
-    ul.appendChild(li);
     li.appendChild(del);
+    ul.appendChild(li);
   });
 }
 
