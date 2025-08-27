@@ -1,50 +1,26 @@
 import express from "express";
 const router = express.Router();
 
-// Voorbeeld-data
 let sessions = [
-  { id: 1, classId: 1, date: "2025-09-01", attendees: 5 },
-  { id: 2, classId: 2, date: "2025-09-03", attendees: 8 }
+  { id: 1, date: "2025-09-01", topic: "Puppy socialisatie" },
+  { id: 2, date: "2025-09-05", topic: "Wandelen zonder trekken" }
 ];
 
-// Alle sessies ophalen
-router.get("/", (req, res) => {
-  res.json(sessions);
-});
+router.get("/", (_req, res) => res.json(sessions));
 
-// Eén sessie ophalen op ID
 router.get("/:id", (req, res) => {
-  const session = sessions.find(s => s.id === parseInt(req.params.id));
-  if (!session) return res.status(404).json({ error: "Sessie niet gevonden" });
-  res.json(session);
+  const s = sessions.find(x => x.id === Number(req.params.id));
+  if (!s) return res.status(404).json({ error: "Sessie niet gevonden" });
+  res.json(s);
 });
 
-// Nieuwe sessie toevoegen
 router.post("/", (req, res) => {
-  const newSession = {
-    id: sessions.length + 1,
-    classId: req.body.classId,
-    date: req.body.date,
-    attendees: req.body.attendees ?? 0
-  };
-  sessions.push(newSession);
-  res.status(201).json(newSession);
+  const { date, topic } = req.body || {};
+  if (!date || !topic) return res.status(400).json({ error: "date en topic zijn verplicht" });
+  const id = sessions.length ? Math.max(...sessions.map(s => s.id)) + 1 : 1;
+  const created = { id, date, topic };
+  sessions.push(created);
+  res.status(201).json(created);
 });
 
 export default router;
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Superhond Coach Portaal</title>
-  <script src="app.js" defer></script>
-</head>
-<body>
-  <h1>🐾 Superhond Coach Portaal</h1>
-
-  <button onclick="loadClasses()">Bekijk Klassen</button>
-  <button onclick="loadSessions()">Bekijk Sessies</button>
-
-  <div id="output"></div>
-</body>
-</html>
