@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-// simpele in-memory data om te testen
+// 🔹 Dummy data
 let classes = [
   { id: 1, name: "Puppy Pack", trainer: "Paul", active: true },
   { id: 2, name: "Puber Coachgroep", trainer: "Nancy", active: true }
@@ -22,6 +22,13 @@ router.post("/", (req, res) => {
   const created = { id, name, trainer, active: !!active };
   classes.push(created);
   res.status(201).json(created);
+});
+
+router.delete("/:id", (req, res) => {
+  const idx = classes.findIndex(c => c.id === Number(req.params.id));
+  if (idx === -1) return res.status(404).json({ error: "Les niet gevonden" });
+  const removed = classes.splice(idx, 1)[0];
+  res.json({ ok: true, removed });
 });
 
 export default router;
