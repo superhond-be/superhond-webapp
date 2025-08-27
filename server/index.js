@@ -1,3 +1,6 @@
+app.use("/api/classes", classesRoutes);
+app.use("/api/sessions", sessionsRoutes);
+
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
