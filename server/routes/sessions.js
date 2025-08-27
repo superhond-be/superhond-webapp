@@ -1,3 +1,9 @@
+let sessions = [
+  { id: 1, classId: 1, date: "2025-08-31", start: "10:00", end: "11:00", location: "Retie" },
+  { id: 2, classId: 1, date: "2025-09-07", start: "10:00", end: "11:00", location: "Retie" },
+  { id: 3, classId: 2, date: "2025-09-03", start: "18:30", end: "19:30", location: "Turnhout" }
+];
+
 import express from "express";
 const router = express.Router();
 
