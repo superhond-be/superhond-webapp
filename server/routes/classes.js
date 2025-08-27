@@ -32,3 +32,19 @@ router.post("/", (req, res) => {
 });
 
 export default router;
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Superhond Coach Portaal</title>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <h1>🐾 Superhond Coach Portaal</h1>
+
+  <button onclick="loadClasses()">Bekijk Klassen</button>
+  <button onclick="loadSessions()">Bekijk Sessies</button>
+
+  <div id="output"></div>
+</body>
+</html>
