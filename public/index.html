@@ -8,26 +8,30 @@
   <script src="app.js" defer></script>
 </head>
 <body>
-  <header><h1>🐾 Superhond Coach Portaal</h1></header>
+  <header>
+    <h1>🐾 Superhond Coach Portaal</h1>
+  </header>
 
   <main>
+    <!-- Klassen -->
     <section>
       <h2>Klassen</h2>
       <form id="classForm">
         <input name="name" placeholder="Naam (bv. Puppy Pack)" required />
         <input name="trainer" placeholder="Trainer" required />
         <label><input type="checkbox" name="active" checked /> Actief</label>
-        <button>+ Klas</button>
+        <button type="submit">➕ Klas</button>
       </form>
       <ul id="classesList"></ul>
     </section>
 
+    <!-- Sessies -->
     <section>
       <h2>Sessies</h2>
       <form id="sessionForm">
         <input type="date" name="date" required />
         <input type="text" name="topic" placeholder="Onderwerp" required />
-        <button>+ Sessie</button>
+        <button type="submit">➕ Sessie</button>
       </form>
       <ul id="sessionsList"></ul>
     </section>
