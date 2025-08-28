@@ -1,22 +1,23 @@
-// server/routes/settings.js
+
 import express from "express";
 const router = express.Router();
 
-// Tijdelijke in-memory instellingen (later mag dit in de DB)
+// tijdelijk in-memory; later kan dit naar SQLite
 let SETTINGS = {
   org: "Superhond",
-  url: "https://superhond-webapp.onrender.com",
-  logoUrl: "",
-  logoutUrl: ""
+  email: "info@superhond.be",
+  tel: "+32 493 877 605",
+  address: { street: "Huisnummerstraat", nr: "33", city: "Mol", country: "BE" },
+  branding: { logoUrl: "", primaryColor: "#0088cc" },
 };
 
-// GET /api/settings  -> huidige instellingen
+// ophalen
 router.get("/", (_req, res) => {
   res.json(SETTINGS);
 });
 
-// (optioneel) POST /api/settings -> instellingen updaten
-router.post("/", (req, res) => {
+// bijwerken
+router.put("/", (req, res) => {
   SETTINGS = { ...SETTINGS, ...req.body };
   res.json(SETTINGS);
 });
