@@ -8,6 +8,50 @@ async function api(path, opts = {}) {
 }
 
 /* ---------- KLASSEN ---------- */
+async function loadSessionsAdmin() {
+  const ul = document.getElementById("sessionsAdmin");
+  const sessions = await api("/sessions");
+  ul.innerHTML = "";
+
+  sessions.forEach(s => {
+    const li = document.createElement("li");
+    li.innerHTML = `${s.date} ${s.start} (Klas ${s.classId}) 
+      <button>Details</button>`;
+    li.querySelector("button").onclick = () => showSessionDetails(s.id);
+    ul.appendChild(li);
+  });
+}
+
+async function showSessionDetails(sessionId) {
+  const div = document.getElementById("sessionDetails");
+  const bookings = await api(`/bookings?sessionId=${sessionId}`);
+  div.innerHTML = "<h3>Deelnemers</h3><ul></ul>";
+  const ul = div.querySelector("ul");
+
+  bookings.forEach(b => {
+    const li = document.createElement("li");
+    li.textContent = `Klant ${b.clientId} → ${b.status}`;
+
+    if (b.status === "RESERVED") {
+      const att = document.createElement("button");
+      att.textContent = "Aanwezig";
+      att.onclick = async () => {
+        await api(`/bookings/${b.id}/attend`, { method: "POST" });
+        showSessionDetails(sessionId);
+      };
+      const canc = document.createElement("button");
+      canc.textContent = "Afmelden";
+      canc.onclick = async () => {
+        await api(`/bookings/${b.id}/cancel`, { method: "POST" });
+        showSessionDetails(sessionId);
+      };
+      li.appendChild(att);
+      li.appendChild(canc);
+    }
+
+    ul.appendChild(li);
+  });
+}
 async function loadClasses() {
   const classes = await api("/classes");
   const ul = document.getElementById("classesList");
