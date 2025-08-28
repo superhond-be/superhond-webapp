@@ -1,25 +1,21 @@
 import express from "express";
 const router = express.Router();
-import settingsRoutes from "./routes/settings.js";
-app.use("/api/settings", settingsRoutes);
-// Tijdelijke in-memory settings
+
+// Tijdelijke in-memory instellingen
 let SETTINGS = {
   org: "Superhond",
-  naam: "Superhond.be",
-  adres: "Voorbeeldstraat 1, 2470 Retie",
-  telefoon: "014/123456",
-  email: "info@superhond.be"
+  url: "https://superhond-webapp.onrender.com"
 };
 
-// Ophalen van settings
+// Endpoint om instellingen op te halen
 router.get("/", (req, res) => {
   res.json(SETTINGS);
 });
 
-// Updaten van settings
+// (optioneel) Endpoint om instellingen te updaten
 router.post("/", (req, res) => {
   SETTINGS = { ...SETTINGS, ...req.body };
-  res.json({ ok: true, settings: SETTINGS });
+  res.json(SETTINGS);
 });
 
 export default router;
