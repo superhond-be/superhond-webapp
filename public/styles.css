@@ -1,3 +1,25 @@
+/* Admin lay-out */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+}
+.admin-left, .admin-right { display: flex; flex-direction: column; gap: 12px; }
+.admin-toolbar { display: flex; gap: 8px; align-items: center; }
+.card { background:#fff; border:1px solid #e5e5e5; border-radius:8px; padding:12px; }
+.muted { color:#666; }
+.list { list-style:none; padding:0; margin:0; }
+.list > li { padding:8px 10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+.list > li:last-child { border-bottom:none; }
+.row { display:flex; justify-content:space-between; gap:12px; align-items:center; }
+.actions button { margin-left:6px; }
+.btn-secondary { background:#eee !important; color:#333; }
+.badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; background:#ddd; }
+.badge.blue{ background:#e3f2fd }
+.badge.green{ background:#e6f4ea }
+.badge.orange{ background:#fff3e0 }
+
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
