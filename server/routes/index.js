@@ -1,4 +1,12 @@
+import express from "express";
+const router = express.Router();
 
+// Test endpoint
+router.get("/", (req, res) => {
+  res.json({ message: "Sessions route werkt!" });
+});
+
+export default router;
 
 import bookingsRoutes from "./routes/bookings.js";
 import express from "express";
