@@ -1,3 +1,13 @@
+await api("/bookings", {
+  method: "POST",
+  body: JSON.stringify({
+    clientId,
+    sessionId: ADMIN_SELECTED_SESSION.id,
+    classId: ADMIN_SELECTED_SESSION.classId,
+    sessionCapacity: ADMIN_SELECTED_SESSION.capacity // als je die in je sessie bewaart
+  })
+});
+
 import bookingsRoutes from "./routes/bookings.js";
 app.use("/api/bookings", bookingsRoutes);
 
