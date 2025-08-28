@@ -1,3 +1,47 @@
+import express from "express";
+const router = express.Router();
+
+let sessions = [];
+
+// Eén sessie toevoegen
+router.post("/", (req, res) => {
+  const s = {
+    id: sessions.length + 1,
+    classId: req.body.classId,
+    date: req.body.date,
+    time: req.body.time,
+    capacity: req.body.capacity
+  };
+  sessions.push(s);
+  res.status(201).json(s);
+});
+
+// Terugkerende sessies (bv. elke zondag)
+router.post("/recurring", (req, res) => {
+  const { classId, startDate, endDate, weekday, time, capacity } = req.body;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  let current = new Date(start);
+  let created = [];
+  while (current <= end) {
+    if (current.getDay() === weekday) {
+      const s = {
+        id: sessions.length + 1,
+        classId,
+        date: current.toISOString().split("T")[0],
+        time,
+        capacity
+      };
+      sessions.push(s);
+      created.push(s);
+    }
+    current.setDate(current.getDate() + 1);
+  }
+  res.status(201).json(created);
+});
+
+export default router;
 // POST /api/sessions/recurring
 // body: { classId, startDate, endDate, weekday, time, capacity, locationId }
 // of:   { patterns: [ { classId, startDate, endDate, weekday, time, capacity, locationId }, ... ] }
