@@ -8,7 +8,6 @@ await api("/bookings", {
   })
 });
 
-import bookingsRoutes from "./routes/bookings.js";
 app.use("/api/bookings", bookingsRoutes);
 
 // server/routes/bookings.js
