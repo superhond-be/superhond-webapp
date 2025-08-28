@@ -311,7 +311,7 @@ async function submitSession(e) {
   await loadSessions();
 }
 
-/* ---------- INIT ---------- */
+/* ---------- INIT ---------- */ 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("classForm").addEventListener("submit", submitClass);
   document.getElementById("sessionForm").addEventListener("submit", submitSession);
@@ -322,4 +322,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   loadClasses().then(loadSessions);
+});
+document.addEventListener("DOMContentLoaded", () => {
+  // hier start je bestaande init-code
+
+  initClasses();   // laad klassenlijst
+  initSessions();  // laad sessies
+  // ...
+
+  // voeg deze regel erbij
+  initAdmin();     // laad ook de admin-sectie
 });
