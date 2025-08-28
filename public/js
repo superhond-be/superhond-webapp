@@ -1,6 +1,7 @@
 console.log("Superhond frontend geladen");
 
 async function checkHealth(){
+  loadSessionsAdmin();
   const el = document.getElementById("status");
   try{
     const res = await fetch("/api/health");
