@@ -1,6 +1,8 @@
 // server/routes/settings.js
 import express from "express";
 const router = express.Router();
+import settingsRoutes from "./routes/settings.js";
+app.use("/api/settings", settingsRoutes);
 
 // Voor nu in-memory; later kun je dit bewaren in SQLite/DB.
 let SETTINGS = {
