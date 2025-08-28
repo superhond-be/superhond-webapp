@@ -1,5 +1,7 @@
 import express from "express";
 const router = express.Router();
+import settingsRoutes from "./routes/settings.js";
+app.use("/api/settings", settingsRoutes);
 
 // Demo data (mag later uit DB komen)
 let classes = [
