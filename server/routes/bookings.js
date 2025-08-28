@@ -5,8 +5,6 @@ await api("/bookings", {
     sessionId: ADMIN_SELECTED_SESSION.id,
     classId: ADMIN_SELECTED_SESSION.classId,
     sessionCapacity: ADMIN_SELECTED_SESSION.capacity // als je die in je sessie bewaart
-  })
-});
 
 
 // server/routes/bookings.js
