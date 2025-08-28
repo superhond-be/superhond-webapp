@@ -1,3 +1,46 @@
+<!-- ADMIN: Sessies & deelnemers -->
+<section id="admin">
+  <h2>📅 Sessies & deelnemers (Admin)</h2>
+
+  <div class="admin-grid">
+    <!-- linker kolom: sessies -->
+    <div class="admin-left">
+      <div class="admin-toolbar">
+        <label>Klas:
+          <select id="adminClassFilter">
+            <option value="">(alle klassen)</option>
+          </select>
+        </label>
+        <button type="button" id="adminReload">Herlaad</button>
+      </div>
+      <ul id="adminSessionsList" class="list"></ul>
+    </div>
+
+    <!-- rechter kolom: details + deelnemers -->
+    <div class="admin-right">
+      <div id="adminSessionHeader" class="card muted">
+        <em>Kies links een sessie om details te zien…</em>
+      </div>
+
+      <div id="adminQuickBook" class="card" style="display:none">
+        <strong>Snel boeken</strong>
+        <div class="row">
+          <label>Klant:
+            <select id="adminClientSelect"></select>
+          </label>
+          <button type="button" id="adminBookBtn">Boek klant</button>
+        </div>
+        <small>Regels: max 2 toekomstige reservaties per klant/klas. Capaciteit wordt gecontroleerd.</small>
+      </div>
+
+      <div class="card">
+        <h3>Deelnemers</h3>
+        <ul id="adminBookingsList" class="list"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div style="margin:6px 0">
   <label>Klant:
     <select id="clientSelect"></select>
