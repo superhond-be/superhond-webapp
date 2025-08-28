@@ -119,3 +119,54 @@
   </main>
 </body>
 </html>
+<section id="admin-settings" style="max-width:680px;margin:2rem auto;padding:1rem;border:1px solid #ddd;border-radius:8px;">
+  <h2>Instellingen</h2>
+
+  <form id="settingsForm">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <label>Organisatienaam
+        <input name="orgName" type="text" required />
+      </label>
+      <label>E-mail
+        <input name="email" type="email" />
+      </label>
+
+      <label>Telefoon
+        <input name="phone" type="text" />
+      </label>
+      <label>BTW-nummer
+        <input name="vat" type="text" />
+      </label>
+
+      <label>Straat + nr
+        <input name="street" type="text" />
+      </label>
+      <label>Postcode
+        <input name="postalCode" type="text" />
+      </label>
+
+      <label>Plaats
+        <input name="city" type="text" />
+      </label>
+      <label>Land
+        <input name="country" type="text" />
+      </label>
+
+      <label>Logo-URL
+        <input name="logoUrl" type="url" placeholder="https://…/logo.png" />
+      </label>
+      <label>Portaal-URL (uitloggen)
+        <input name="logoutUrl" type="url" placeholder="https://…/logout" />
+      </label>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button type="submit">Opslaan</button>
+      <button type="button" id="resetBtn">Herstellen</button>
+      <span id="settingsMsg" style="margin-left:auto;"></span>
+    </div>
+  </form>
+</section>
+
+<script src="/js/settings.js" defer></script>
+
