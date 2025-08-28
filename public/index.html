@@ -1,36 +1,24 @@
 <body>
-
-  <!-- hier plak je het menu -->
-  <nav>
-    <ul>
-      <li>Dashboard</li>
-      <li>Klassen
-        <ul>
-          <li>Klas toevoegen</li>
-          <li>Overzicht klassen</li>
-        </ul>
-      </li>
-      <li>Sessies
-        <ul>
-          <li>Nieuwe sessie</li>
-          <li>Terugkerende sessies</li>
-          <li>Overzicht sessies</li>
-        </ul>
-      </li>
-      <li>Instellingen
-        <ul>
-          <li>Organisatiegegevens</li>
-          <li>Logo & stijl</li>
-        </ul>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- jouw bestaande inhoud blijft gewoon hieronder -->
-  <main style="padding:20px;">
-    <h1>Welkom bij Superhond</h1>
-    <p>Kies een optie uit het menu.</p>
-  </main>
+<style>
+  nav { background:#111; }
+  nav ul { list-style:none; margin:0; padding:0; display:flex; gap:24px; }
+  nav > ul > li { position:relative; color:#fff; padding:14px 10px; cursor:pointer; }
+  nav a { color:inherit; text-decoration:none; }
+  /* submenu */
+  nav li ul {
+    position:absolute; left:0; top:100%;
+    background:#222; padding:8px 0; min-width:220px;
+    display:none; flex-direction:column; box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+  nav li:hover > ul { display:flex; }
+  nav li ul li { padding:10px 14px; color:#fff; white-space:nowrap; }
+  nav li ul li:hover { background:#333; }
+  /* layout */
+  main { padding:20px; }
+  @media (max-width:700px){
+    nav ul { flex-wrap:wrap; gap:12px; }
+  }
+</style>
 
 </body>
 
