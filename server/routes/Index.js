@@ -1,6 +1,6 @@
-import bookingsRoutes from "./routes/bookings.js";
-app.use("/api/bookings", bookingsRoutes);
 
+
+import bookingsRoutes from "./routes/bookings.js";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
