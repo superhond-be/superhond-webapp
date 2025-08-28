@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
-
+import settingsRoutes from "./routes/settings.js";
+app.use("/api/settings", settingsRoutes);
 // Tijdelijke in-memory settings
 let SETTINGS = {
   org: "Superhond",
