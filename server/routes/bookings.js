@@ -8,7 +8,6 @@ await api("/bookings", {
   })
 });
 
-app.use("/api/bookings", bookingsRoutes);
 
 // server/routes/bookings.js
 import express from "express";
