@@ -1,124 +1,107 @@
+// server/routes/sessions.js
 import express from "express";
+import { classes } from "./classes.js"; // om te checken of classId bestaat
+
 const router = express.Router();
 
-let sessions = [];
+/**
+ * In-memory sessies.
+ * sessie = { id, classId, date (YYYY-MM-DD), time (HH:mm), capacity, locationId? }
+ */
+const sessions = [];
+let sessionSeq = 1;
 
-// Eén sessie toevoegen
+/** Hulpfuncties */
+const toISODate = (d) => new Date(d).toISOString().split("T")[0];
+const isValidTime = (t) => /^\d{2}:\d{2}$/.test(t);
+
+/** Alle sessies (optionele filters: classId, from, to) */
+router.get("/", (req, res) => {
+  const { classId, from, to } = req.query;
+  let out = [...sessions];
+  if (classId) out = out.filter(s => s.classId === classId);
+  if (from) out = out.filter(s => s.date >= from);
+  if (to) out = out.filter(s => s.date <= to);
+  res.json(out);
+});
+
+/** Eén losse sessie toevoegen */
 router.post("/", (req, res) => {
-  const s = {
-    id: sessions.length + 1,
-    classId: req.body.classId,
-    date: req.body.date,
-    time: req.body.time,
-    capacity: req.body.capacity
+  const { classId, date, time, capacity = 0, locationId = null } = req.body || {};
+
+  if (!classId) return res.status(400).json({ error: "classId is verplicht." });
+  if (!classes.find(c => c.id === String(classId)))
+    return res.status(400).json({ error: "Onbekende classId." });
+
+  if (!date) return res.status(400).json({ error: "date is verplicht (YYYY-MM-DD)." });
+  if (!time || !isValidTime(time)) return res.status(400).json({ error: "time is verplicht (HH:mm)." });
+
+  const newS = {
+    id: String(sessionSeq++),
+    classId: String(classId),
+    date: toISODate(date),
+    time,
+    capacity: Number(capacity) || 0,
+    locationId
   };
-  sessions.push(s);
-  res.status(201).json(s);
+  sessions.push(newS);
+  res.status(201).json(newS);
 });
 
-// Terugkerende sessies (bv. elke zondag)
+/**
+ * Terugkerende sessies plannen
+ * Body varianten:
+ *  A) { classId, startDate, endDate, weekday, time, capacity, locationId }
+ *  B) { patterns: [{ classId, startDate, endDate, weekday, time, capacity, locationId }, ...] }
+ * weekday: 0=zo ... 6=za
+ */
 router.post("/recurring", (req, res) => {
-  const { classId, startDate, endDate, weekday, time, capacity } = req.body;
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  let current = new Date(start);
-  let created = [];
-  while (current <= end) {
-    if (current.getDay() === weekday) {
-      const s = {
-        id: sessions.length + 1,
-        classId,
-        date: current.toISOString().split("T")[0],
-        time,
-        capacity
-      };
-      sessions.push(s);
-      created.push(s);
-    }
-    current.setDate(current.getDate() + 1);
-  }
-  res.status(201).json(created);
-});
-
-export default router;
-// POST /api/sessions/recurring
-// body: { classId, startDate, endDate, weekday, time, capacity, locationId }
-// of:   { patterns: [ { classId, startDate, endDate, weekday, time, capacity, locationId }, ... ] }
-router.post("/recurring", (req, res) => {
-  const patterns = Array.isArray(req.body?.patterns) ? req.body.patterns : [req.body];
-  if (!patterns.length) return res.status(400).json({ error: "Geen patronen ontvangen" });
+  const body = req.body || {};
+  const patterns = Array.isArray(body.patterns) ? body.patterns : [body];
 
   const created = [];
 
   for (const p of patterns) {
-    const { classId, startDate, endDate, weekday, time, capacity, locationId } = p || {};
-    if (!classId || !startDate || !endDate || typeof weekday !== "number" || !time)
-      return res.status(400).json({ error: "classId, startDate, endDate, weekday en time zijn verplicht" });
+    const { classId, startDate, endDate, weekday, time, capacity = 0, locationId = null } = p;
 
-    // `time` verwacht "HH:MM" (24u)
-    const [hh, mm] = time.split(":").map(n => parseInt(n, 10));
-    const start = new Date(startDate + "T00:00:00");
-    const end = new Date(endDate + "T23:59:59");
+    if (!classId || !classes.find(c => c.id === String(classId))) {
+      return res.status(400).json({ error: "Onbekende of ontbrekende classId in pattern." });
+    }
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: "startDate en endDate zijn verplicht." });
+    }
+    if (typeof weekday !== "number" || weekday < 0 || weekday > 6) {
+      return res.status(400).json({ error: "weekday moet 0..6 zijn (0=Zondag)." });
+    }
+    if (!time || !isValidTime(time)) {
+      return res.status(400).json({ error: "time is verplicht (HH:mm)." });
+    }
 
-    // naar eerstvolgende gewenste weekday
-    while (start.getDay() !== weekday) start.setDate(start.getDate() + 1);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 7)) {
-      const s = new Date(d);
-      s.setHours(hh, mm, 0, 0);
-      const e = new Date(s);
-      e.setHours(hh + 1, mm, 0, 0); // standaard 1u les, pas aan indien nodig
+    // Begin op de eerste dag van de periode
+    let cursor = new Date(start);
 
-      const sess = {
-        id: Date.now().toString() + Math.random().toString(16).slice(2),
-        classId,
-        start: s.toISOString(),
-        end: e.toISOString(),
-        locationId: locationId ?? null,
-        capacity: capacity ?? 15,
-        status: "OPEN",
-        notes: ""
-      };
-
-      // TODO: DB insert; voorlopig in-memory
-      sessions.push(sess);
-      created.push(sess);
+    // Loop tot en met end
+    while (cursor <= end) {
+      if (cursor.getDay() === weekday) {
+        const s = {
+          id: String(sessionSeq++),
+          classId: String(classId),
+          date: toISODate(cursor),
+          time,
+          capacity: Number(capacity) || 0,
+          locationId
+        };
+        sessions.push(s);
+        created.push(s);
+      }
+      cursor.setDate(cursor.getDate() + 1);
     }
   }
 
-  res.status(201).json({ createdCount: created.length, sessions: created });
-});
-import express from "express";
-import { sessions } from "../data/store.js";
-const router = express.Router();
-
-const nextId = () => (sessions.length ? Math.max(...sessions.map(s => s.id)) + 1 : 1);
-
-// Overzicht (optioneel filter ?classId=)
-router.get("/", (req, res) => {
-  const { classId } = req.query;
-  const data = classId ? sessions.filter(s => s.classId === Number(classId)) : sessions;
-  res.json(data.sort((a,b) => (a.date + a.start).localeCompare(b.date + b.start)));
-});
-
-// Aanmaken
-router.post("/", (req, res) => {
-  const { classId, date, start, end = "", location = "", capacity } = req.body || {};
-  if (!classId || !date || !start) {
-    return res.status(400).json({ error: "Vereist: classId, date, start" });
-  }
-  const created = { id: nextId(), classId: Number(classId), date, start, end, location, capacity: capacity ? Number(capacity) : undefined };
-  sessions.push(created);
-  res.status(201).json(created);
-});
-
-// Verwijderen
-router.delete("/:id", (req, res) => {
-  const i = sessions.findIndex(s => s.id === Number(req.params.id));
-  if (i === -1) return res.status(404).json({ error: "Sessie niet gevonden" });
-  const removed = sessions.splice(i, 1)[0];
-  res.json({ ok: true, removedId: removed.id });
+  res.status(201).json({ count: created.length, sessions: created });
 });
 
 export default router;
