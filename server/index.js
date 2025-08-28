@@ -1,3 +1,5 @@
+
+import bookingsRoutes from "./routes/bookings.js";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -28,3 +30,17 @@ app.use("/api/sessions", sessionsRoutes);
 app.listen(PORT, () => {
   console.log(`Superhond server draait op http://localhost:${PORT}`);
 });
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static("public"));
+
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+app.use("/api/classes",  classesRoutes);
+app.use("/api/sessions", sessionsRoutes);
+app.use("/api/bookings", bookingsRoutes);
+app.use("/api/settings", settingsRoutes);
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Superhond server draait op http://localhost:${PORT}`));
