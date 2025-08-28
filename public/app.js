@@ -333,3 +333,249 @@ document.addEventListener("DOMContentLoaded", () => {
   // voeg deze regel erbij
   initAdmin();     // laad ook de admin-sectie
 });
+// Eenvoudige fetch-helper (laat deze staan als je al een api() functie hebt)
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    headers: { "Content-Type": "application/json" },
+    ...opts
+  });
+  if (!res.ok) {
+    // probeer leesbare fout terug te geven
+    let msg = `${res.status} ${res.statusText}`;
+    try {
+      const j = await res.json();
+      if (j && j.error) msg = j.error;
+    } catch (_) {}
+    throw new Error(msg);
+  }
+  // probeer JSON, val terug op text
+  const ct = res.headers.get("content-type") || "";
+  return ct.includes("application/json") ? res.json() : res.text();
+
+  // Admin state
+let ADMIN_SELECTED_SESSION = null;
+
+// Tijdelijke klantenlijst (vervang later door /api/clients)
+const adminDemoClients = [
+  { id: 1, name: "Jan Janssens" },
+  { id: 2, name: "Sofie Peeters" },
+  { id: 3, name: "Kurt Maes" },
+];
+  /* ========= Admin: sessies & deelnemers ========= */
+
+async function adminLoadClassesIntoFilter() {
+  // verwacht endpoint: GET /api/classes  -> [{id, name}, ...]
+  const classes = await api("/api/classes");
+  const sel = document.getElementById("adminClassFilter");
+  sel.innerHTML = '<option value="">(alle klassen)</option>';
+  classes.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c.id;
+    opt.textContent = c.name || `Klas #${c.id}`;
+    sel.appendChild(opt);
+  });
+}
+
+function adminLoadClientChoices() {
+  const sel = document.getElementById("adminClientSelect");
+  sel.innerHTML = adminDemoClients
+    .map(c => `<option value="${c.id}">${c.name}</option>`)
+    .join("");
+}
+
+async function adminLoadSessions() {
+  // verwacht endpoint: GET /api/sessions[?classId=..]
+  const classId = document.getElementById("adminClassFilter").value;
+  const path = classId ? `/api/sessions?classId=${encodeURIComponent(classId)}` : "/api/sessions";
+  const sessions = await api(path);
+
+  const ul = document.getElementById("adminSessionsList");
+  ul.innerHTML = "";
+
+  if (!sessions.length) {
+    ul.innerHTML = "<li class='muted'>(geen sessies)</li>";
+    return;
+  }
+
+  sessions.forEach(s => {
+    // verwacht velden: id, classId, date, start, end?, capacity?, location?
+    const li = document.createElement("li");
+    li.className = "row";
+    const time = s.end ? `${s.start}–${s.end}` : s.start;
+    const capTxt = s.capacity ? ` · max ${s.capacity}` : "";
+    const locTxt = s.location ? ` · ${s.location}` : "";
+    li.innerHTML = `
+      <div>
+        <div><strong>${s.date}</strong> ${time}</div>
+        <small>Klas #${s.classId}${locTxt}${capTxt}</small>
+      </div>
+      <div>
+        <button type="button" class="btn-secondary">Details</button>
+      </div>
+    `;
+    li.querySelector("button").onclick = () => adminShowSessionDetails(s);
+    ul.appendChild(li);
+  });
+}
+
+async function adminShowSessionDetails(session) {
+  ADMIN_SELECTED_SESSION = session;
+
+  // Header vullen
+  const header = document.getElementById("adminSessionHeader");
+  const time = session.end ? `${session.start}–${session.end}` : session.start;
+  const capTxt = session.capacity ? ` · max ${session.capacity}` : "";
+  const locTxt = session.location ? ` · ${session.location}` : "";
+  header.className = "card";
+  header.innerHTML = `
+    <div><strong>Sessie #${session.id}</strong></div>
+    <div>${session.date} · ${time} · Klas #${session.classId}${locTxt}${capTxt}</div>
+  `;
+
+  // Snel boeken tonen
+  document.getElementById("adminQuickBook").style.display = "";
+
+  // Deelnemers renderen
+  await adminRenderBookingsList(session.id);
+}
+
+function adminStatusBadge(status) {
+  const cls =
+    status === "RESERVED" ? "blue" :
+    status === "ATTENDED" ? "green" :
+    status === "CANCELLED" ? "orange" : "";
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+async function adminRenderBookingsList(sessionId) {
+  // verwacht endpoint: GET /api/bookings?sessionId=..
+  const bookings = await api(`/api/bookings?sessionId=${sessionId}`);
+  const ul = document.getElementById("adminBookingsList");
+  ul.innerHTML = "";
+
+  if (!bookings.length) {
+    ul.innerHTML = "<li class='muted'>(nog geen deelnemers)</li>";
+    return;
+  }
+
+  bookings.forEach(b => {
+    const client = adminDemoClients.find(c => c.id === b.clientId);
+    const name = client ? client.name : `Klant #${b.clientId}`;
+
+    const li = document.createElement("li");
+    li.className = "row";
+    li.innerHTML = `
+      <div>
+        <strong>${name}</strong> · ${adminStatusBadge(b.status)}
+        <div class="muted">Boeking #${b.id}${b.classId ? " · Klas #" + b.classId : ""}</div>
+      </div>
+      <div class="actions"></div>
+    `;
+
+    const actions = li.querySelector(".actions");
+    if (b.status === "RESERVED") {
+      // Aanwezig
+      const btnAttend = document.createElement("button");
+      btnAttend.textContent = "Aanwezig";
+      btnAttend.onclick = async () => {
+        try {
+          await api(`/api/bookings/${b.id}/attend`, { method: "POST" });
+          await adminRenderBookingsList(sessionId);
+        } catch (e) {
+          alert("Markeren mislukt: " + e.message);
+        }
+      };
+
+      // Afmelden
+      const btnCancel = document.createElement("button");
+      btnCancel.textContent = "Afmelden";
+      btnCancel.className = "btn-secondary";
+      btnCancel.onclick = async () => {
+        try {
+          await api(`/api/bookings/${b.id}/cancel`, { method: "POST" });
+          await adminRenderBookingsList(sessionId);
+        } catch (e) {
+          alert("Annuleren mislukt: " + e.message);
+        }
+      };
+
+      actions.append(btnAttend, btnCancel);
+    }
+
+    ul.appendChild(li);
+  });
+
+  // (optioneel) stats laden en tonen in header
+  try {
+    const statsQs = ADMIN_SELECTED_SESSION.capacity
+      ? `?capacity=${ADMIN_SELECTED_SESSION.capacity}`
+      : "";
+    const stats = await api(`/api/bookings/stats/session/${sessionId}${statsQs}`);
+    const header = document.getElementById("adminSessionHeader");
+    const info = document.createElement("div");
+    info.style.marginTop = "8px";
+    const capTxt = stats.capacity ? ` / ${stats.capacity}` : "";
+    info.innerHTML = `
+      <small>
+        Reserved: <strong>${stats.reserved}${capTxt}</strong> ·
+        Attended: <strong>${stats.attended}</strong> ·
+        Cancelled: <strong>${stats.cancelled}</strong>
+        ${stats.free !== undefined ? ` · Vrij: <strong>${stats.free}</strong>` : ""}
+      </small>
+    `;
+    header.appendChild(info);
+  } catch (_) {
+    // stats optioneel – negeren als endpoint niet bestaat
+  }
+}
+
+async function adminBookSelectedClient() {
+  if (!ADMIN_SELECTED_SESSION) return alert("Kies eerst links een sessie.");
+  const clientId = Number(document.getElementById("adminClientSelect").value);
+  const s = ADMIN_SELECTED_SESSION;
+
+  try {
+    // POST /api/bookings  (stuurt sessie-capaciteit mee indien beschikbaar)
+    await api("/api/bookings", {
+      method: "POST",
+      body: JSON.stringify({
+        clientId,
+        sessionId: s.id,
+        classId: s.classId,
+        sessionCapacity: s.capacity ?? undefined
+      })
+    });
+    await adminRenderBookingsList(s.id);
+    alert("Geboekt!");
+  } catch (e) {
+    alert("Boeken mislukt: " + e.message);
+  }
+}
+  async function initAdmin() {
+  // dropdowns vullen
+  await adminLoadClassesIntoFilter();
+  adminLoadClientChoices();
+
+  // sessies laden (initieel: alle)
+  await adminLoadSessions();
+
+  // events
+  document.getElementById("adminClassFilter")
+    .addEventListener("change", adminLoadSessions);
+
+  document.getElementById("adminReload")
+    .addEventListener("click", adminLoadSessions);
+
+  document.getElementById("adminBookBtn")
+    .addEventListener("click", adminBookSelectedClient);
+}
+  document.addEventListener("DOMContentLoaded", () => {
+  // jouw bestaande initialisatie (indien aanwezig)
+  // initClasses(); initSessions(); ...
+
+  // Admin-sectie laden
+  initAdmin();
+});
+}
+
+
