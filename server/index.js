@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 
 import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
+import settingsRoutes from "./routes/settings.js";
+app.use("/api/settings", settingsRoutes);
 
 const app = express();
 const PORT = process.env.PORT || 10000;
