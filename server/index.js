@@ -1,8 +1,4 @@
-import classesRoutes from "./routes/classes.js";
-import sessionsRoutes from "./routes/sessions.js";
 
-app.use("/api/classes", classesRoutes);
-app.use("/api/sessions", sessionsRoutes);
 
 import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
