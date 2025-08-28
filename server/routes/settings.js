@@ -1,18 +1,21 @@
+// server/routes/settings.js
 import express from "express";
 const router = express.Router();
 
-// Tijdelijke in-memory instellingen
+// Tijdelijke in-memory instellingen (later mag dit in de DB)
 let SETTINGS = {
   org: "Superhond",
-  url: "https://superhond-webapp.onrender.com"
+  url: "https://superhond-webapp.onrender.com",
+  logoUrl: "",
+  logoutUrl: ""
 };
 
-// Endpoint om instellingen op te halen
-router.get("/", (req, res) => {
+// GET /api/settings  -> huidige instellingen
+router.get("/", (_req, res) => {
   res.json(SETTINGS);
 });
 
-// (optioneel) Endpoint om instellingen te updaten
+// (optioneel) POST /api/settings -> instellingen updaten
 router.post("/", (req, res) => {
   SETTINGS = { ...SETTINGS, ...req.body };
   res.json(SETTINGS);
