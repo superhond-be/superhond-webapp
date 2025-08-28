@@ -1,3 +1,28 @@
+import express from "express";
+const router = express.Router();
+
+let classes = []; // tijdelijk in geheugen
+
+// Nieuwe klas aanmaken
+router.post("/", (req, res) => {
+  const newClass = {
+    id: classes.length + 1,
+    name: req.body.name,
+    level: req.body.level || "BEGINNER",
+    defaultCapacity: req.body.defaultCapacity || 15,
+    active: true
+  };
+  classes.push(newClass);
+  res.status(201).json(newClass);
+});
+
+// Alle klassen ophalen
+router.get("/", (_req, res) => {
+  res.json(classes);
+});
+
+export default router;
+
 // POST /api/classes (maak één klas)
 router.post("/", (req, res) => {
   const { name, level, description, defaultCapacity = 15, locationId = null, active = true } = req.body || {};
