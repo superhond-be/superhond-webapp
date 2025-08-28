@@ -1,72 +1,27 @@
-// server/routes/classes.js
 import express from "express";
 const router = express.Router();
 
-/**
- * Eenvoudige in-memory store.
- * (Later kun je dit vervangen door sqlite/postgres.)
- */
-const classes = []; // { id, name, level, description, defaultCapacity, active, locationId? }
-let classSeq = 1;
-
-/** Klas aanmaken */
-router.post("/", (req, res) => {
-  const {
-    name,
-    level = "BEGINNER",
-    description = "",
-    defaultCapacity = 15,
-    active = true,
-    locationId = null
-  } = req.body || {};
-
-  if (!name || String(name).trim() === "") {
-    return res.status(400).json({ error: "Naam is verplicht." });
-  }
-
-  const newClass = {
-    id: String(classSeq++),
-    name: String(name).trim(),
-    level,
-    description,
-    defaultCapacity: Number(defaultCapacity) || 0,
-    active: Boolean(active),
-    locationId
-  };
-  classes.push(newClass);
-  return res.status(201).json(newClass);
-});
-
-/** Alle klassen */
+// (demo) alle klassen
 router.get("/", (_req, res) => {
+  const classes = [
+    { id: 1, name: "Puppy Pack (starters)", trainer: "Paul" },
+    { id: 2, name: "Puppy Pack (gevorderd)", trainer: "Nancy" },
+    { id: 3, name: "Puber Coachgroep", trainer: "Team" },
+  ];
   res.json(classes);
 });
 
-/** Eén klas ophalen */
+// (demo) één klas op id
 router.get("/:id", (req, res) => {
-  const c = classes.find(k => k.id === req.params.id);
-  if (!c) return res.status(404).json({ error: "Klas niet gevonden." });
-  res.json(c);
-});
+  const id = Number(req.params.id);
+  const cls = [
+    { id: 1, name: "Puppy Pack (starters)" },
+    { id: 2, name: "Puppy Pack (gevorderd)" },
+    { id: 3, name: "Puber Coachgroep" },
+  ].find(c => c.id === id);
 
-/** Klas bijwerken */
-router.patch("/:id", (req, res) => {
-  const idx = classes.findIndex(k => k.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: "Klas niet gevonden." });
-
-  const update = req.body || {};
-  classes[idx] = { ...classes[idx], ...update };
-  res.json(classes[idx]);
-});
-
-/** Klas archiveren (actief=false) */
-router.delete("/:id", (req, res) => {
-  const idx = classes.findIndex(k => k.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: "Klas niet gevonden." });
-
-  classes[idx].active = false;
-  res.json({ ok: true, id: req.params.id });
+  if (!cls) return res.status(404).json({ error: "Klas niet gevonden" });
+  res.json(cls);
 });
 
 export default router;
-export { classes }; // wordt onderaan in sessions gebruikt voor validatie
