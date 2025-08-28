@@ -1,3 +1,50 @@
+// POST /api/sessions/recurring
+// body: { classId, startDate, endDate, weekday, time, capacity, locationId }
+// of:   { patterns: [ { classId, startDate, endDate, weekday, time, capacity, locationId }, ... ] }
+router.post("/recurring", (req, res) => {
+  const patterns = Array.isArray(req.body?.patterns) ? req.body.patterns : [req.body];
+  if (!patterns.length) return res.status(400).json({ error: "Geen patronen ontvangen" });
+
+  const created = [];
+
+  for (const p of patterns) {
+    const { classId, startDate, endDate, weekday, time, capacity, locationId } = p || {};
+    if (!classId || !startDate || !endDate || typeof weekday !== "number" || !time)
+      return res.status(400).json({ error: "classId, startDate, endDate, weekday en time zijn verplicht" });
+
+    // `time` verwacht "HH:MM" (24u)
+    const [hh, mm] = time.split(":").map(n => parseInt(n, 10));
+    const start = new Date(startDate + "T00:00:00");
+    const end = new Date(endDate + "T23:59:59");
+
+    // naar eerstvolgende gewenste weekday
+    while (start.getDay() !== weekday) start.setDate(start.getDate() + 1);
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 7)) {
+      const s = new Date(d);
+      s.setHours(hh, mm, 0, 0);
+      const e = new Date(s);
+      e.setHours(hh + 1, mm, 0, 0); // standaard 1u les, pas aan indien nodig
+
+      const sess = {
+        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        classId,
+        start: s.toISOString(),
+        end: e.toISOString(),
+        locationId: locationId ?? null,
+        capacity: capacity ?? 15,
+        status: "OPEN",
+        notes: ""
+      };
+
+      // TODO: DB insert; voorlopig in-memory
+      sessions.push(sess);
+      created.push(sess);
+    }
+  }
+
+  res.status(201).json({ createdCount: created.length, sessions: created });
+});
 import express from "express";
 import { sessions } from "../data/store.js";
 const router = express.Router();
