@@ -9,15 +9,30 @@
     position:absolute; left:0; top:100%;
     background:#222; padding:8px 0; min-width:220px;
     display:none; flex-direction:column; box-shadow:0 6px 16px rgba(0,0,0,.25);
-  }
-  nav li:hover > ul { display:flex; }
-  nav li ul li { padding:10px 14px; color:#fff; white-space:nowrap; }
-  nav li ul li:hover { background:#333; }
-  /* layout */
-  main { padding:20px; }
-  @media (max-width:700px){
-    nav ul { flex-wrap:wrap; gap:12px; }
-  }
+  <nav>
+  <ul>
+    <li><a href="/admin/dashboard">Dashboard</a></li>
+    <li>Klassen
+      <ul>
+        <li><a href="/admin/classes/new">Klas toevoegen</a></li>
+        <li><a href="/admin/classes">Overzicht klassen</a></li>
+      </ul>
+    </li>
+    <li>Sessies
+      <ul>
+        <li><a href="/admin/sessions/new">Nieuwe sessie</a></li>
+        <li><a href="/admin/sessions/recurring">Terugkerende sessies</a></li>
+        <li><a href="/admin/sessions">Overzicht sessies</a></li>
+      </ul>
+    </li>
+    <li>Instellingen
+      <ul>
+        <li><a href="/admin/settings/org">Organisatiegegevens</a></li>
+        <li><a href="/admin/settings/branding">Logo & stijl</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 </style>
 
 </body>
