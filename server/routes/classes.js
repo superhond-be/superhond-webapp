@@ -1,3 +1,18 @@
+// POST /api/classes (maak één klas)
+router.post("/", (req, res) => {
+  const { name, level, description, defaultCapacity = 15, locationId = null, active = true } = req.body || {};
+  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+
+  const klass = {
+    id: Date.now().toString(),
+    name, level, description, defaultCapacity, locationId, active
+  };
+
+  // TODO: bewaar in DB; voorlopig in-memory
+  classes.push(klass);
+  res.status(201).json(klass);
+});
+
 import express from "express";
 import { classes } from "../data/store.js";
 const router = express.Router();
