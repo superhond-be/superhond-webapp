@@ -29,7 +29,11 @@ router.post("/:customerId", (req, res) => {
     breed: breed || ""
   };
 
+  if (!customer.dogs) {
+    customer.dogs = [];
+  }
   customer.dogs.push(newDog);
+
   res.status(201).json(newDog);
 });
 
