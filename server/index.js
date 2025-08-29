@@ -11,6 +11,10 @@ import lestypesRoutes from "./routes/lestypes.js";
 import themasRoutes from "./routes/themas.js";
 import locatiesRoutes from "./routes/locaties.js";
 
+import lessonTypesRoutes from "./routes/lessonTypes.js";
+import themesRoutes from "./routes/themes.js";
+import locationsRoutes from "./routes/locations.js";
+
 app.use("/api/lestypes", lestypesRoutes);
 app.use("/api/themas", themasRoutes);
 app.use("/api/locaties", locatiesRoutes);
