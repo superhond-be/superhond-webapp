@@ -43,3 +43,11 @@ export function getClientById(id)   { return clients.find(c => c.id === Number(i
 export function getPackage(clientId, classId) {
   return packages.find(p => p.clientId === Number(clientId) && p.classId === Number(classId));
 }
+
+// server/data/store.js
+export const store = {
+  customers: [],   // { id, name, email, phone, dogs: [dogId,...] }
+  dogs: [],        // { id, customerId, name, breed }
+  nextCustomerId: 1,
+  nextDogId: 1,
+};
