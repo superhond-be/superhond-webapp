@@ -830,6 +830,88 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 </script>
 
+const $ = s => document.querySelector(s);
+const api = p => fetch(p).then(r => r.json());
+
+async function loadCustomers() {
+  const data = await api("/api/customers");
+  const list = $("#customersList");
+  list.innerHTML = "";
+  const sel = $("#d_customer");
+  sel.innerHTML = "";
+
+  data.forEach(c => {
+    // lijst
+    const li = document.createElement("li");
+    const dogs = (c.dogs ?? []).map(d => d.name).join(", ");
+    li.textContent = `${c.name} – ${c.phone ?? ""} ${c.email ?? ""}  | Honden: ${dogs || "-"}`;
+    li.style.cursor = "pointer";
+    li.onclick = () => loadDogs(c.id);
+    list.appendChild(li);
+
+    // dropdown voor hond-koppeling
+    const opt = document.createElement("option");
+    opt.value = c.id;
+    opt.textContent = c.name;
+    sel.appendChild(opt);
+  });
+}
+
+async function loadDogs(customerId) {
+  const data = await api(`/api/dogs?customerId=${customerId}`);
+  const list = $("#dogsList");
+  list.innerHTML = "";
+  data.forEach(d => {
+    const li = document.createElement("li");
+    li.textContent = `${d.name} (${d.breed || "ras onbekend"}) – eigenaar: ${d.customerName}`;
+    list.appendChild(li);
+  });
+}
+
+async function addCustomer() {
+  const body = {
+    name: $("#c_name").value.trim(),
+    phone: $("#c_phone").value.trim(),
+    email: $("#c_email").value.trim()
+  };
+  if (!body.name) { alert("Naam is verplicht"); return; }
+
+  const r = await fetch("/api/customers", {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) { alert("Mislukt klant toevoegen"); return; }
+  $("#c_name").value = $("#c_phone").value = $("#c_email").value = "";
+  await loadCustomers();
+}
+
+async function addDog() {
+  const body = {
+    customerId: Number($("#d_customer").value),
+    name: $("#d_name").value.trim(),
+    breed: $("#d_breed").value.trim(),
+    birthdate: $("#d_birth").value
+  };
+  if (!body.customerId || !body.name) { alert("Kies klant en vul hondnaam in"); return; }
+
+  const r = await fetch("/api/dogs", {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) { alert("Mislukt hond toevoegen"); return; }
+  $("#d_name").value = $("#d_breed").value = $("#d_birth").value = "";
+  await loadDogs(body.customerId);
+  await loadCustomers();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  $("#btnAddCustomer").addEventListener("click", addCustomer);
+  $("#btnAddDog").addEventListener("click", addDog);
+  loadCustomers();
+});
+
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
