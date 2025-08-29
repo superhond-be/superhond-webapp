@@ -1,10 +1,12 @@
 import express from "express";
 const router = express.Router();
 
+// Eén enkele declaratie, niet meermaals!
 let CUSTOMERS = [
   { id: 1, name: "Marie", email: "marie@example.com", phone: "012/34.56.78", dogs: [] },
 ];
 
+// Ref om te delen met andere routes
 export const CUSTOMERS_REF = {
   get: () => CUSTOMERS,
   set: (v) => (CUSTOMERS = v),
@@ -21,13 +23,15 @@ router.get("/:id", (req, res) => {
   res.json(c);
 });
 
-// klant aanmaken
+// klant toevoegen
 router.post("/", (req, res) => {
   const { name, email, phone } = req.body ?? {};
   if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+
   const id = (CUSTOMERS.at(-1)?.id ?? 0) + 1;
   const customer = { id, name, email, phone, dogs: [] };
   CUSTOMERS.push(customer);
+
   res.status(201).json(customer);
 });
 
