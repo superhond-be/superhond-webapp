@@ -4,6 +4,13 @@ import cors from "cors";
 import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 
+import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+
+
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 
@@ -17,3 +24,5 @@ app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Superhond server draait op http://localhost:${PORT}`));
+// heel belangrijk: dit onderaan zetten
+setCustomersRef(CUSTOMERS);
