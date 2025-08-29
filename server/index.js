@@ -1,6 +1,13 @@
 // server/index.js
 import express from "express";
 
+import packsRoutes from "./routes/packs.js";
+import bookingsRoutes from "./routes/bookings.js";
+
+app.use("/api/packs", packsRoutes);
+app.use("/api/bookings", bookingsRoutes);
+
+
 // ---- Routes importeren ----
 import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
