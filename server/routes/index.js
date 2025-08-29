@@ -1,54 +1,21 @@
 import express from "express";
-import cors from "cors";
 import bodyParser from "body-parser";
-
-import customersRoutes, { CUSTOMERS_REF } from "./routes/customers.js";
-import dogsRoutes, { setCustomersRef as setDogsCustomersRef } from "./routes/dogs.js";
-
-const app = express();
-app.use(express.json());
-
-// geef dogsRoutes toegang tot de klantenarray
-setDogsCustomersRef(CUSTOMERS_REF);
-
-// mount routes
-app.use("/api/customers", customersRoutes);
-app.use("/api/customers/:id/dogs", dogsRoutes);
-
-// healthcheck (optioneel)
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
-
-import classesRoutes from "./routes/classes.js";
-import sessionsRoutes from "./routes/sessions.js";
-import settingsRoutes from "./routes/settings.js";
+import cors from "cors";
 
 import customersRoutes from "./routes/customers.js";
-import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+import dogsRoutes from "./routes/dogs.js";
+// (andere routes…)
 
-const router = express.Router();
-import settingsRoutes from "./routes/settings.js";
-app.use("/api/settings", settingsRoutes);
-import taxonomiesRoutes from "./routes/taxonomies.js";
-app.use("/api/taxonomies", taxonomiesRoutes);
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static("public"));
 
-// Demo data (mag later uit DB komen)
-let classes = [
-  { id: 1, name: "Puppy Pack (beginners)", trainer: "Paul" },
-  { id: 2, name: "Puppy Pack (gevorderden)", trainer: "Nancy" },
-  { id: 3, name: "Puber Coachgroep", trainer: "Team" }
-];
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+// (andere app.use's…)
 
-// Alle klassen
-router.get("/", (_req, res) => {
-  res.json(classes);
-});
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-// Eén klas op id
-router.get("/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const cls = classes.find(c => c.id === id);
-  if (!cls) return res.status(404).json({ error: "Klas niet gevonden" });
-  res.json(cls);
-});
-
-export default router;
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Superhond server draait op http://localhost:${PORT}`));
