@@ -1,4 +1,27 @@
 <!DOCTYPE html>
+
+<section style="padding:16px; border:1px solid #ddd; margin-top:16px;">
+  <h2>Credits & Boeken (demo)</h2>
+
+  <h3>Pakket toevoegen</h3>
+  <form id="packForm">
+    <input name="customerId" type="number" placeholder="customerId" required>
+    <input name="size" type="number" placeholder="aantal credits" required>
+    <input name="expiresAt" type="date" placeholder="einddatum (optioneel)">
+    <button>Bewaar pakket</button>
+  </form>
+
+  <h3>Boeking maken</h3>
+  <form id="bookForm">
+    <input name="sessionId" type="number" placeholder="sessionId" required>
+    <input name="customerId" type="number" placeholder="customerId" required>
+    <input name="dogId" type="number" placeholder="dogId" required>
+    <button>Reserveer</button>
+  </form>
+
+  <div id="bookMsg" style="margin-top:8px;color:#2a7;"></div>
+</section>
+
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
