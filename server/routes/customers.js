@@ -56,5 +56,19 @@ router.delete("/:id", (req, res) => {
   CUSTOMERS.splice(idx, 1);
   res.status(204).end();
 });
+// koppel bestaande routes
+app.use("/api/classes", classesRoutes);
+app.use("/api/sessions", sessionsRoutes);
+app.use("/api/settings", settingsRoutes);
 
+// koppel nieuwe routes
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+
+// Geef dogs-route toegang tot de in-memory klantenlijst
+// (we halen de referentie uit het customersRoutes-bestand via een simpele hack)
+import customersModule from "./routes/customers.js"; // alleen voor types, we hebben de array nodig
+// De in-memory array zit in het module closure. Simpelste manier:
+// we voegen hieronder éénmalig een klant toe en lezen dan de reference via request 😉
+// Maar makkelijker: pas customers.js aan om expliciet te exporteren:
 export default router;
