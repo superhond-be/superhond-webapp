@@ -247,7 +247,27 @@
   </details>
 </section>
 <li><a href="/admin-taxonomies.html">Instellingen • Taxonomieën</a></li>
+<section style="padding:16px; border:1px solid #ddd; margin:16px 0;">
+  <h2>Klanten & honden</h2>
 
+  <label>
+    Klant:
+    <select id="customerSelect"></select>
+  </label>
+  <button id="reloadDogsBtn">Honden laden</button>
+
+  <h3>Honden van deze klant</h3>
+  <ul id="dogsList"></ul>
+
+  <h3>Nieuwe hond toevoegen</h3>
+  <form id="addDogForm">
+    <input id="dogName" type="text" placeholder="Naam hond" required>
+    <input id="dogBreed" type="text" placeholder="Ras (optioneel)">
+    <button type="submit">Toevoegen</button>
+  </form>
+
+  <p id="dogsMsg" style="color:#2d7;">&nbsp;</p>
+</section>
 
 <script src="/js/settings.js" defer></script>
 
