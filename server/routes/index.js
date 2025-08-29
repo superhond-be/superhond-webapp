@@ -1,4 +1,14 @@
 import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+
+import classesRoutes from "./routes/classes.js";
+import sessionsRoutes from "./routes/sessions.js";
+import settingsRoutes from "./routes/settings.js";
+
+import customersRoutes from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+
 const router = express.Router();
 import settingsRoutes from "./routes/settings.js";
 app.use("/api/settings", settingsRoutes);
