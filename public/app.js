@@ -954,6 +954,14 @@ document.getElementById("bookForm")?.addEventListener("submit", async (e) => {
   }
 });
 
+
+async function showBalance(customerId) {
+  const r = await fetch(`/api/packs/balance/${customerId}`);
+  const b = await r.json();
+  alert(`Credits klant #${customerId}: 
+Totaal: ${b.total}, Gebruikt: ${b.used}, Gereserveerd: ${b.reserved}, Over: ${b.remaining}`);
+}
+
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
