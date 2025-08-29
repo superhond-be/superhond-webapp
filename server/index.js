@@ -6,9 +6,7 @@ import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
 import settingsRoutes from "./routes/settings.js";
 
-import lestypesRoutes from "./routes/lestypes.js";
-import themasRoutes from "./routes/themas.js";
-import locatiesRoutes from "./routes/locaties.js";
+
 import lestypesRoutes from "./routes/lestypes.js";
 import themasRoutes from "./routes/themas.js";
 import locatiesRoutes from "./routes/locaties.js";
@@ -16,9 +14,7 @@ import locatiesRoutes from "./routes/locaties.js";
 app.use("/api/lestypes", lestypesRoutes);
 app.use("/api/themas", themasRoutes);
 app.use("/api/locaties", locatiesRoutes);
-app.use("/api/lestypes", lestypesRoutes);
-app.use("/api/themas", themasRoutes);
-app.use("/api/locaties", locatiesRoutes);
+
 const app = express();
 const PORT = process.env.PORT || 10000;
 
