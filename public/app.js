@@ -819,6 +819,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (f2) f2.addEventListener("submit", addTheme);
   if (f3) f3.addEventListener("submit", addLocation);
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("last-updated");
+  if (el) {
+    const now = new Date();
+    const formatted = now.toLocaleString("nl-BE", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    el.textContent = "Laatst geüpdatet op " + formatted;
+  }
+});
 
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
