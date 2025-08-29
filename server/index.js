@@ -1,4 +1,37 @@
 // server/index.js
+
+// helemaal bovenaan je bestand
+import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const app = express();
+app.use(express.json());
+
+// === static files ===
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+// /public beschikbaar maken
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// expliciete root route -> index.html
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+// (dán je API-routes)
+// app.use("/api/classes", classesRoutes);
+// app.use("/api/sessions", sessionsRoutes);
+// app.use("/api/settings", settingsRoutes);
+// app.use("/api/customers", customersRoutes);
+// app.use("/api/dogs", dogsRoutes);
+
+// healthcheck (mag blijven)
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+
+
 import express from "express";
 
 // --- Routes ---
