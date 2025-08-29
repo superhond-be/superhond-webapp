@@ -912,6 +912,8 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCustomers();
 });
 
+<script src="/js/app.js" defer></script>
+
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
