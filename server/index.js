@@ -33,10 +33,7 @@ app.use("/api/settings", settingsRoutes);
 app.listen(PORT, () => {
   console.log(`Superhond server draait op http://localhost:${PORT}`);
 });
-// server/index.js
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
+
 
 // ==== jouw API-routes ====
 import classesRoutes from "./routes/classes.js";
