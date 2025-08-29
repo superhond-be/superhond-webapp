@@ -15,6 +15,8 @@ import locationsRoutes from "./routes/locations.js";
 import customersRoutes, { _CUSTOMERS_REF } from "./routes/customers.js";
 import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
 
+app.use("/api/customers", customersRoutes);
+
 setCustomersRef(_CUSTOMERS_REF());
 // --- app setup ---
 const app = express();
