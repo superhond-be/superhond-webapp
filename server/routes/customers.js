@@ -35,6 +35,14 @@ router.post("/", (req, res) => {
   CUSTOMERS.push(newCustomer);
   res.status(201).json(newCustomer);
 });
+// voorbeeld sessie-object
+{
+  id: 1,
+  classId: 1,
+  date: "2025-09-10T09:00:00",
+  location: "Retie",
+  capacity: 10   // max aantal deelnemers
+}
 
 export { CUSTOMERS };
 export default router;
