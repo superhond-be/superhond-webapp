@@ -11,7 +11,7 @@ router.get("/", (_req, res) => {
   res.json(dogs);
 });
 
-// Hond toevoegen aan klant
+// Nieuwe hond koppelen aan klant
 router.post("/:customerId", (req, res) => {
   const customerId = Number(req.params.customerId);
   const customer = CUSTOMERS.find(c => c.id === customerId);
