@@ -1,6 +1,5 @@
-import express from "express";
-import { CUSTOMERS } from "./customers.js"; // we gebruiken de klanten-lijst om honden te koppelen
-const router = express.Router();
+
+
 
 
 import express from "express";
