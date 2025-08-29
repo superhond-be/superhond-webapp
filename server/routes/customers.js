@@ -5,7 +5,7 @@ const router = express.Router();
 let CUSTOMERS = [];
 let CUSTOMER_SEQ = 1;
 
-// Alle klanten ophalen (optioneel met honden)
+// Alle klanten ophalen
 router.get("/", (_req, res) => {
   res.json(CUSTOMERS);
 });
@@ -14,9 +14,7 @@ router.get("/", (_req, res) => {
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
   const customer = CUSTOMERS.find(c => c.id === id);
-  if (!customer) {
-    return res.status(404).json({ error: "Klant niet gevonden" });
-  }
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
   res.json(customer);
 });
 
@@ -30,8 +28,9 @@ router.post("/", (req, res) => {
     name,
     email: email || "",
     phone: phone || "",
-    dogs: [] // gekoppelde honden
+    dogs: [] // hier komen gekoppelde honden
   };
+
   CUSTOMERS.push(newCustomer);
   res.status(201).json(newCustomer);
 });
