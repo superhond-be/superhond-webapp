@@ -48,4 +48,23 @@ export function unreserve(packId) {
   p.reserved -= 1; return true;
 }
 
-export default router;
+export
+  
+  // resterende credits per klant
+router.get("/balance/:customerId", (req, res) => {
+  const customerId = Number(req.params.customerId);
+  const packs = PACKS.filter(p => p.customerId === customerId);
+
+  const total = packs.reduce((sum, p) => sum + p.size, 0);
+  const used = packs.reduce((sum, p) => sum + p.used, 0);
+  const reserved = packs.reduce((sum, p) => sum + p.reserved, 0);
+
+  res.json({
+    customerId,
+    total,
+    used,
+    reserved,
+    remaining: total - (used + reserved)
+  });
+});
+  default router;
