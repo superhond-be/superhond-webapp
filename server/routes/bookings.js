@@ -161,4 +161,39 @@ router.get("/stats/session/:sessionId", (req, res) => {
   res.json(stats);
 });
 
+import { findUsablePack, reserveCredit } from "./packs.js";
+import { SESSIONS } from "./sessions.js";   // exporteer je sessie-array
+
+// reserveren
+router.post("/", (req, res) => {
+  const { sessionId, customerId, dogId } = req.body || {};
+  if (!sessionId || !customerId || !dogId)
+    return res.status(400).json({ error: "sessionId, customerId en dogId verplicht" });
+
+  const session = SESSIONS.find(s => s.id === Number(sessionId));
+  if (!session) return res.status(404).json({ error: "Sessie niet gevonden" });
+
+  // capaciteit check
+  const count = BOOKINGS.filter(b => b.sessionId === session.id && b.status !== "cancelled").length;
+  if (session.capacity && count >= session.capacity) {
+    return res.status(409).json({ error: "Deze les zit vol" });
+  }
+
+  const pack = findUsablePack(customerId);
+  if (!pack) return res.status(409).json({ error: "Geen bruikbaar pakket gevonden" });
+
+  if (!reserveCredit(pack.id)) return res.status(409).json({ error: "Credit kon niet gereserveerd worden" });
+
+  const booking = {
+    id: NEXT_ID++,
+    sessionId: session.id,
+    customerId: Number(customerId),
+    dogId: Number(dogId),
+    packId: pack.id,
+    status: "reserved"
+  };
+  BOOKINGS.push(booking);
+  res.status(201).json(booking);
+});
+
 export default router;
