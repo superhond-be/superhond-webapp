@@ -1,19 +1,19 @@
 import express from "express";
-
 const router = express.Router();
 
-// ---- In-memory klanten (voorbeelddata) ----
-export const CUSTOMERS = [
-  { id: 1, name: "Marie", email: "marie@example.com", phone: "0470 00 00 01", dogs: [] },
-  { id: 2, name: "Jan",   email: "jan@example.com",   phone: "0470 00 00 02", dogs: [] },
+// In-memory klantenlijst
+let CUSTOMERS = [
+  { id: 1, name: "Voorbeeld Klant", email: "test@example.com", phone: "", dogs: [] },
 ];
 
-// ---- Alle klanten ----
+let NEXT_ID = CUSTOMERS.length ? Math.max(...CUSTOMERS.map(c => c.id)) + 1 : 1;
+
+// Alle klanten
 router.get("/", (_req, res) => {
   res.json(CUSTOMERS);
 });
 
-// ---- Eén klant op id ----
+// Eén klant
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
   const customer = CUSTOMERS.find(c => c.id === id);
@@ -21,15 +21,21 @@ router.get("/:id", (req, res) => {
   res.json(customer);
 });
 
-// ---- Klant aanmaken ----
+// Klant aanmaken
 router.post("/", (req, res) => {
   const { name, email, phone } = req.body || {};
   if (!name) return res.status(400).json({ error: "Naam is verplicht" });
 
-  const id = (CUSTOMERS.at(-1)?.id ?? 0) + 1;
-  const newCustomer = { id, name, email: email || "", phone: phone || "", dogs: [] };
-  CUSTOMERS.push(newCustomer);
-  res.status(201).json(newCustomer);
+  const customer = {
+    id: NEXT_ID++,
+    name,
+    email: email || "",
+    phone: phone || "",
+    dogs: [],
+  };
+  CUSTOMERS.push(customer);
+  res.status(201).json(customer);
 });
 
+export { CUSTOMERS };
 export default router;
