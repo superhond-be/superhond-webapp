@@ -215,6 +215,41 @@
     </div>
   </form>
 </section>
+<section id="admin" style="margin-top:24px;">
+  <h2>Instellingen</h2>
+
+  <details open>
+    <summary><strong>Les­types</strong></summary>
+    <form id="form-lesson-type" style="margin:10px 0;">
+      <input id="lt-name" placeholder="Naam" required />
+      <input id="lt-desc" placeholder="Beschrijving" />
+      <button type="submit">Toevoegen</button>
+    </form>
+    <ul id="list-lesson-types"></ul>
+  </details>
+
+  <details>
+    <summary><strong>Thema’s</strong></summary>
+    <form id="form-theme" style="margin:10px 0;">
+      <input id="th-name" placeholder="Naam" required />
+      <input id="th-desc" placeholder="Beschrijving" />
+      <button type="submit">Toevoegen</button>
+    </form>
+    <ul id="list-themes"></ul>
+  </details>
+
+  <details>
+    <summary><strong>Locaties</strong></summary>
+    <form id="form-location" style="margin:10px 0;">
+      <input id="loc-name" placeholder="Naam" required />
+      <input id="loc-address" placeholder="Adres" />
+      <input id="loc-city" placeholder="Plaats" />
+      <input id="loc-postcode" placeholder="Postcode" />
+      <button type="submit">Toevoegen</button>
+    </form>
+    <ul id="list-locations"></ul>
+  </details>
+</section>
 <li><a href="/admin-taxonomies.html">Instellingen • Taxonomieën</a></li>
 <script src="/js/settings.js" defer></script>
 
