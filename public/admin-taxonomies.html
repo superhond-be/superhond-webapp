@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superhond • Admin • Taxonomieën</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    h1 { margin: 0 0 16px; }
+    nav a { margin-right: 12px; }
+    .tabs { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
+    .tabs button { padding: 8px 12px; border: 1px solid #ccc; background: #f7f7f7; cursor: pointer; border-radius: 6px; }
+    .tabs button.active { background: #e8f4ff; border-color: #76b7ff; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    form { display: grid; gap: 8px; margin: 12px 0 20px; grid-template-columns: 1fr 1fr; }
+    form label { display: grid; gap: 4px; font-size: 14px; }
+    form input, form textarea { padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    form button { grid-column: 1 / -1; padding: 10px 14px; border: none; border-radius: 6px; background: #0b8f2a; color: white; font-weight: 600; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+    .danger { color: #b00020; background: #ffe9ec; border: 1px solid #ffc2cb; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+    .muted { color: #666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">🏠 Home</a>
+    <a href="/admin-taxonomies.html" aria-current="page">⚙️ Taxonomieën</a>
+  </nav>
+
+  <h1>Admin • Taxonomieën</h1>
+  <p class="muted">Beheer lijstjes die je elders gebruikt (lestypes, thema’s, locaties, trainingen).</p>
+
+  <div class="tabs" id="tabs"></div>
+
+  <!-- Panels worden door JS gevuld -->
+  <div id="panels"></div>
+
+  <script src="/js/admin-taxonomies.js" type="module"></script>
+</body>
+</html>
