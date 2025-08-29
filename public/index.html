@@ -251,5 +251,21 @@
   </details>
 </section>
 <li><a href="/admin-taxonomies.html">Instellingen • Taxonomieën</a></li>
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("updated");
+  if (el) {
+    const now = new Date();
+    const formatted = now.toLocaleString("nl-BE", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    el.textContent = "Laatst geüpdatet op " + formatted;
+  }
+});
+
 <script src="/js/settings.js" defer></script>
 
