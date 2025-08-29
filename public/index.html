@@ -53,45 +53,39 @@
 </li>
 </body>
 
-<!-- ADMIN: lessen & klanten -->
-<section id="admin">
-  <h2>Lessen & klanten (Admin)</h2>
+<!-- ADMIN: klanten & honden -->
+<section id="admin" style="margin-top:20px;">
+  <h2>Klanten & honden (Admin)</h2>
 
-  <div class="admin-grid">
-    <!-- linker kolom: sessies --> 
-    <div class="admin-left">
-      <div class="admin-toolbar">
-        <label>Klas:
-          <select id="adminClassFilter">
-            <option value="">(alle klassen)</option>
-          </select>
-        </label>
-        <button type="button" id="adminReload">Herlaad</button>
-      </div>
-      <ul id="adminSessionsList" class="list"></ul>
+  <!-- Nieuw klantformulier -->
+  <fieldset style="margin:12px 0;">
+    <legend>Nieuwe klant</legend>
+    <label>Naam: <input id="c_name" required></label>
+    <label style="margin-left:8px;">Telefoon: <input id="c_phone"></label>
+    <label style="margin-left:8px;">E-mail: <input id="c_email" type="email"></label>
+    <button id="btnAddCustomer">Klant toevoegen</button>
+  </fieldset>
+
+  <!-- Nieuwe hond koppelen aan klant -->
+  <fieldset style="margin:12px 0;">
+    <legend>Nieuwe hond koppelen</legend>
+    <label>Klant:
+      <select id="d_customer"></select>
+    </label>
+    <label style="margin-left:8px;">Naam: <input id="d_name" required></label>
+    <label style="margin-left:8px;">Ras: <input id="d_breed"></label>
+    <label style="margin-left:8px;">Geboortedatum: <input id="d_birth" type="date"></label>
+    <button id="btnAddDog">Hond toevoegen</button>
+  </fieldset>
+
+  <div style="display:flex; gap:24px;">
+    <div style="flex:1;">
+      <h3>Klanten</h3>
+      <ul id="customersList"></ul>
     </div>
-
-    <!-- rechter kolom: details + klanten -->
-    <div class="admin-right">
-      <div id="adminSessionHeader" class="card muted">
-        <em>Kies links een sessie om details te zien…</em>
-      </div>
-
-      <div id="adminQuickBook" class="card" style="display:none">
-        <strong>Snel boeken</strong>
-        <div class="row">
-          <label>Klant:
-            <select id="adminClientSelect"></select>
-          </label>
-          <button type="button" id="adminBookBtn">Boek klant</button>
-        </div>
-        <small>Regels: max 2 toekomstige reservaties per klant/klas. Capaciteit wordt gecontroleerd.</small>
-      </div>
-
-      <div class="card">
-        <h3>klanten</h3>
-        <ul id="adminBookingsList" class="list"></ul>
-      </div>
+    <div style="flex:1;">
+      <h3>Honden (gefilterd op klant)</h3>
+      <ul id="dogsList"></ul>
     </div>
   </div>
 </section>
