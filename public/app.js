@@ -914,6 +914,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script src="/js/app.js" defer></script>
 
+async function postJSON(url, data) {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type":"application/json" }, body: JSON.stringify(data) });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+document.getElementById("packForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    const pack = await postJSON("/api/packs", {
+      customerId: Number(f.customerId.value),
+      size: Number(f.size.value),
+      expiresAt: f.expiresAt.value || null
+    });
+    alert("Pakket aangemaakt: #" + pack.id);
+    f.reset();
+  } catch (err) {
+    alert("Fout: " + err.message);
+  }
+});
+
+document.getElementById("bookForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target, msg = document.getElementById("bookMsg");
+  msg.textContent = "";
+  try {
+    const booking = await postJSON("/api/bookings", {
+      sessionId: Number(f.sessionId.value),
+      customerId: Number(f.customerId.value),
+      dogId: Number(f.dogId.value)
+    });
+    msg.textContent = `Gereserveerd (#${booking.id})`;
+    f.reset();
+  } catch (err) {
+    msg.style.color = "#c00";
+    msg.textContent = "Fout: " + err.message;
+  }
+});
+
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
