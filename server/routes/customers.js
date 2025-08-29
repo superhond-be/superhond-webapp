@@ -1,12 +1,8 @@
 import express from "express";
 const router = express.Router();
 
-// In-memory klantenlijst
-let CUSTOMERS = [
-  { id: 1, name: "Voorbeeld Klant", email: "test@example.com", phone: "", dogs: [] },
-];
-
-let NEXT_ID = CUSTOMERS.length ? Math.max(...CUSTOMERS.map(c => c.id)) + 1 : 1;
+let CUSTOMERS = [];
+let NEXT_CUSTOMER_ID = 1;
 
 // Alle klanten
 router.get("/", (_req, res) => {
@@ -16,25 +12,28 @@ router.get("/", (_req, res) => {
 // Eén klant
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
+  const includeDogs = req.query.withDogs === "1";
   const customer = CUSTOMERS.find(c => c.id === id);
   if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(customer);
+
+  if (!includeDogs) return res.json(customer);
+  res.json({ ...customer, dogs: customer.dogs || [] });
 });
 
-// Klant aanmaken
+// Nieuwe klant
 router.post("/", (req, res) => {
   const { name, email, phone } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+  if (!name?.trim()) return res.status(400).json({ error: "Naam is verplicht" });
 
-  const customer = {
-    id: NEXT_ID++,
-    name,
+  const newCustomer = {
+    id: NEXT_CUSTOMER_ID++,
+    name: name.trim(),
     email: email || "",
     phone: phone || "",
-    dogs: [],
+    dogs: []
   };
-  CUSTOMERS.push(customer);
-  res.status(201).json(customer);
+  CUSTOMERS.push(newCustomer);
+  res.status(201).json(newCustomer);
 });
 
 export { CUSTOMERS };
