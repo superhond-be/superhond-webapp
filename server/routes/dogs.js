@@ -1,93 +1,44 @@
-
-
-
-
 import express from "express";
-import { store } from "../data/store.js";
 
 const router = express.Router();
 
-// Alle honden
+// ---- In-memory honden (optioneel) ----
+const DOGS = [];
+
+// We laten index.js een referentie doorgeven naar de CUSTOMERS array
+let CUSTOMERS_REF = null;
+export function setCustomersRef(ref) {
+  CUSTOMERS_REF = ref;
+}
+
+// ---- Alle honden ----
 router.get("/", (_req, res) => {
-  res.json(store.dogs);
+  res.json(DOGS);
 });
 
-// Hond toevoegen aan een klant
+// ---- Hond toevoegen aan een klant ----
+// POST /api/dogs/:customerId
+// body: { name, breed }
 router.post("/:customerId", (req, res) => {
   const customerId = Number(req.params.customerId);
-  const customer = store.customers.find(c => c.id === customerId);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-
   const { name, breed } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam hond is verplicht" });
 
-  const dog = {
-    id: store.nextDogId++,
-    customerId,
-    name,
-    breed: breed || "",
-  };
-
-  store.dogs.push(dog);
-  if (!customer.dogs) customer.dogs = [];
-  customer.dogs.push(dog.id);
-
-  res.status(201).json(dog);
-});
-
-
-
-
-
-
-// Honden-ID teller per klant houden we simpel in memory:
-let DOG_SEQ = 1;
-
-// == Alle honden (vlak) ==
-router.get("/", (_req, res) => {
-  const allDogs = CUSTOMERS.flatMap(c =>
-    (c.dogs || []).map(d => ({ ...d, customerId: c.id, owner: c.name }))
-  );
-  res.json(allDogs);
-});
-
-// == Honden van één klant ==
-router.get("/by-customer/:customerId", (req, res) => {
-  const customerId = Number(req.params.customerId);
-  const customer = CUSTOMERS.find(c => c.id === customerId);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(customer.dogs || []);
-});
-
-// == Hond toevoegen aan klant ==
-router.post("/:customerId", (req, res) => {
-  const customerId = Number(req.params.customerId);
-  const customer = CUSTOMERS.find(c => c.id === customerId);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  const { name, breed } = req.body || {};
   if (!name) return res.status(400).json({ error: "Naam van de hond is verplicht" });
 
-  if (!customer.dogs) customer.dogs = [];
-  const newDog = { id: DOG_SEQ++, name, breed: breed || "" };
-  customer.dogs.push(newDog);
+  // 1) altijd toevoegen aan centrale DOGS-lijst (handig voor overzicht)
+  const dogId = (DOGS.at(-1)?.id ?? 0) + 1;
+  const newDog = { id: dogId, name, breed: breed || "" , ownerId: customerId };
+  DOGS.push(newDog);
+
+  // 2) indien klantenreferentie bekend is, ook koppelen aan die klant
+  if (CUSTOMERS_REF) {
+    const customer = CUSTOMERS_REF.find(c => c.id === customerId);
+    if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+    if (!Array.isArray(customer.dogs)) customer.dogs = [];
+    customer.dogs.push({ id: dogId, name, breed: breed || "" });
+  }
 
   res.status(201).json(newDog);
-});
-
-// == Hond verwijderen bij klant ==
-router.delete("/:customerId/:dogId", (req, res) => {
-  const customerId = Number(req.params.customerId);
-  const dogId = Number(req.params.dogId);
-  const customer = CUSTOMERS.find(c => c.id === customerId);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  const before = (customer.dogs || []).length;
-  customer.dogs = (customer.dogs || []).filter(d => d.id !== dogId);
-  if (customer.dogs.length === before) {
-    return res.status(404).json({ error: "Hond niet gevonden" });
-  }
-  res.status(204).end();
 });
 
 export default router;
