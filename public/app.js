@@ -577,5 +577,149 @@ async function adminBookSelectedClient() {
   initAdmin();
 });
 }
+// ====== kleine helper ======
+const api = (path, opts={}) =>
+  fetch(path, { headers: { "Content-Type": "application/json" }, ...opts })
+    .then(r => r.ok ? r.json().catch(()=>null) : r.json().then(e=>Promise.reject(e)));
+
+// ====== panel switch ======
+function showPanel(key) {
+  for (const el of document.querySelectorAll(".admin-panel")) el.style.display = "none";
+  document.getElementById(`panel-${key}`).style.display = "block";
+
+  if (key === "lestypes") loadLestypes();
+  if (key === "themas")   loadThemas();
+  if (key === "locaties") loadLocaties();
+}
+
+// ====== LESTYPES ======
+async function loadLestypes() {
+  const ul = document.getElementById("list-lestypes");
+  ul.innerHTML = "<li>Laden…</li>";
+  try {
+    const data = await api("/api/lestypes");
+    ul.innerHTML = "";
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <b>${escapeHtml(item.name)}</b>
+        <small>${escapeHtml(item.description || "")}</small>
+        <button onclick="deleteLestype(${item.id})">Verwijderen</button>`;
+      ul.appendChild(li);
+    });
+  } catch (e) {
+    ul.innerHTML = `<li style="color:red;">Fout: ${escapeHtml(e.error || "onbekend")}</li>`;
+  }
+}
+
+async function createLestype(ev) {
+  ev.preventDefault();
+  const fd = new FormData(ev.target);
+  await api("/api/lestypes", {
+    method: "POST",
+    body: JSON.stringify({ name: fd.get("name"), description: fd.get("description") })
+  });
+  ev.target.reset();
+  loadLestypes();
+  return false;
+}
+
+async function deleteLestype(id) {
+  await fetch(`/api/lestypes/${id}`, { method: "DELETE" });
+  loadLestypes();
+}
+
+// ====== THEMA'S ======
+async function loadThemas() {
+  const ul = document.getElementById("list-themas");
+  ul.innerHTML = "<li>Laden…</li>";
+  try {
+    const data = await api("/api/themas");
+    ul.innerHTML = "";
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <b>${escapeHtml(item.name)}</b>
+        <small>${escapeHtml(item.description || "")}</small>
+        <button onclick="deleteThema(${item.id})">Verwijderen</button>`;
+      ul.appendChild(li);
+    });
+  } catch (e) {
+    ul.innerHTML = `<li style="color:red;">Fout: ${escapeHtml(e.error || "onbekend")}</li>`;
+  }
+}
+
+async function createThema(ev) {
+  ev.preventDefault();
+  const fd = new FormData(ev.target);
+  await api("/api/themas", {
+    method: "POST",
+    body: JSON.stringify({ name: fd.get("name"), description: fd.get("description") })
+  });
+  ev.target.reset();
+  loadThemas();
+  return false;
+}
+
+async function deleteThema(id) {
+  await fetch(`/api/themas/${id}`, { method: "DELETE" });
+  loadThemas();
+}
+
+// ====== LOCATIES ======
+async function loadLocaties() {
+  const ul = document.getElementById("list-locaties");
+  ul.innerHTML = "<li>Laden…</li>";
+  try {
+    const data = await api("/api/locaties");
+    ul.innerHTML = "";
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <b>${escapeHtml(item.name)}</b>
+        <small>${escapeHtml([item.address,item.postcode,item.city].filter(Boolean).join(", "))}</small>
+        <button onclick="deleteLocatie(${item.id})">Verwijderen</button>`;
+      ul.appendChild(li);
+    });
+  } catch (e) {
+    ul.innerHTML = `<li style="color:red;">Fout: ${escapeHtml(e.error || "onbekend")}</li>`;
+  }
+}
+
+async function createLocatie(ev) {
+  ev.preventDefault();
+  const fd = new FormData(ev.target);
+  await api("/api/locaties", {
+    method: "POST",
+    body: JSON.stringify({
+      name: fd.get("name"),
+      address: fd.get("address"),
+      postcode: fd.get("postcode"),
+      city: fd.get("city"),
+      description: fd.get("description")
+    })
+  });
+  ev.target.reset();
+  loadLocaties();
+  return false;
+}
+
+async function deleteLocatie(id) {
+  await fetch(`/api/locaties/${id}`, { method: "DELETE" });
+  loadLocaties();
+}
+
+// ====== kleine XSS-helper ======
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+// Optioneel: toon bij opstart meteen "Lestypes"
+document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
 
