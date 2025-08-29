@@ -731,6 +731,94 @@ function escapeHtml(s) {
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#39;");
 }
+async function fetchJSON(url, opts) {
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+    ...opts
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+/* ---------- LESSTYPES ---------- */
+async function loadLessonTypes() {
+  const items = await fetchJSON("/api/lesson-types");
+  const ul = document.getElementById("list-lesson-types");
+  ul.innerHTML = items.map(i => `<li><strong>${i.name}</strong> — ${i.description ?? ""}</li>`).join("");
+}
+
+async function addLessonType(e) {
+  e.preventDefault();
+  const name = document.getElementById("lt-name").value.trim();
+  const description = document.getElementById("lt-desc").value.trim();
+  if (!name) return;
+  await fetchJSON("/api/lesson-types", {
+    method: "POST",
+    body: JSON.stringify({ name, description })
+  });
+  e.target.reset();
+  loadLessonTypes();
+}
+
+/* ---------- THEMES ---------- */
+async function loadThemes() {
+  const items = await fetchJSON("/api/themes");
+  const ul = document.getElementById("list-themes");
+  ul.innerHTML = items.map(i => `<li><strong>${i.name}</strong> — ${i.description ?? ""}</li>`).join("");
+}
+
+async function addTheme(e) {
+  e.preventDefault();
+  const name = document.getElementById("th-name").value.trim();
+  const description = document.getElementById("th-desc").value.trim();
+  if (!name) return;
+  await fetchJSON("/api/themes", {
+    method: "POST",
+    body: JSON.stringify({ name, description })
+  });
+  e.target.reset();
+  loadThemes();
+}
+
+/* ---------- LOCATIONS ---------- */
+async function loadLocations() {
+  const items = await fetchJSON("/api/locations");
+  const ul = document.getElementById("list-locations");
+  ul.innerHTML = items.map(i =>
+    `<li><strong>${i.name}</strong> — ${i.address ?? ""}, ${i.postcode ?? ""} ${i.city ?? ""}</li>`
+  ).join("");
+}
+
+async function addLocation(e) {
+  e.preventDefault();
+  const name = document.getElementById("loc-name").value.trim();
+  const address = document.getElementById("loc-address").value.trim();
+  const city = document.getElementById("loc-city").value.trim();
+  const postcode = document.getElementById("loc-postcode").value.trim();
+  if (!name) return;
+  await fetchJSON("/api/locations", {
+    method: "POST",
+    body: JSON.stringify({ name, address, city, postcode })
+  });
+  e.target.reset();
+  loadLocations();
+}
+
+/* ---------- INIT ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  // lijstjes laden
+  loadLessonTypes().catch(console.error);
+  loadThemes().catch(console.error);
+  loadLocations().catch(console.error);
+
+  // submit handlers
+  const f1 = document.getElementById("form-lesson-type");
+  const f2 = document.getElementById("form-theme");
+  const f3 = document.getElementById("form-location");
+  if (f1) f1.addEventListener("submit", addLessonType);
+  if (f2) f2.addEventListener("submit", addTheme);
+  if (f3) f3.addEventListener("submit", addLocation);
+});
 
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
