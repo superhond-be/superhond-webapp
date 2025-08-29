@@ -5,10 +5,8 @@ const router = express.Router();
 let CUSTOMERS = [];
 let CUSTOMER_SEQ = 1;
 
-// Alle klanten ophalen
-router.get("/", (_req, res) => {
-  res.json(CUSTOMERS);
-});
+router.get("/", (req, res) => {
+  res.json({ message: "Alle klanten 
 
 // Eén klant ophalen
 router.get("/:id", (req, res) => {
