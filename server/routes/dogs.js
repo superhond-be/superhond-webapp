@@ -1,108 +1,37 @@
 import express from "express";
+import { CUSTOMERS_REF } from "./customers.js";
+
 const router = express.Router();
-const router = express.Router({ mergeParams: true });
 
-// we halen de gedeelde klanten-array via een setter binnen
-let getCustomers = null;
-export const setCustomersRef = (REF) => {
-  // REF is bv. { get: () => CUSTOMERS }
-  getCustomers = REF.get;
-};
-
-/** Lijst honden van 1 klant */
-router.get("/", (req, res) => {
-  const id = Number(req.params.id);
-  const customers = getCustomers?.() ?? [];
-  const c = customers.find(x => x.id === id);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(c.dogs ?? []);
+/** Alle honden ophalen (van alle klanten) */
+router.get("/", (_req, res) => {
+  const CUSTOMERS = CUSTOMERS_REF.get();
+  const dogs = CUSTOMERS.flatMap(c => (c.dogs ?? []).map(d => ({ ...d, ownerId: c.id })));
+  res.json(dogs);
 });
 
-/** Hond toevoegen aan klant */
-router.post("/", (req, res) => {
-  const id = Number(req.params.id);
-  const customers = getCustomers?.() ?? [];
-  const c = customers.find(x => x.id === id);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+/** Hond toevoegen aan een klant */
+router.post("/:customerId", (req, res) => {
+  const CUSTOMERS = CUSTOMERS_REF.get();
+  const customerId = Number(req.params.customerId);
+  const customer = CUSTOMERS.find(c => c.id === customerId);
 
-  const { name, breed } = req.body ?? {};
-  if (!name) return res.status(400).json({ error: "Hond-naam is verplicht" });
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
 
-  c.dogs = c.dogs ?? [];
-  const newDog = { id: (c.dogs.at(-1)?.id ?? 0) + 1, name, breed };
-  c.dogs.push(newDog);
-  res.status(201).json(newDog);
-});
-
-export default router;
-// We gebruiken dezelfde in-memory klantenlijst.
-// TIP: in een echte app stop je dit in een module/db laag.
-import customersRouter from "./customers.js";
-let _refToCustomers;
-// hackje: we vangen de array op via een setter
-export const setCustomersRef = arr => (_refToCustomers = arr);
-
-// Alle honden (optioneel filter op customerId)
-router.get("/", (req, res) => {
-  const customerId = req.query.customerId ? Number(req.query.customerId) : null;
-  const allDogs = (_refToCustomers ?? []).flatMap(c =>
-    c.dogs.map(d => ({ ...d, customerId: c.id, customerName: c.name }))
-  );
-  const out = customerId ? allDogs.filter(d => d.customerId === customerId) : allDogs;
-  res.json(out);
-});
-
-// Hond toevoegen aan klant
-router.post("/", (req, res) => {
-  const { customerId, name, breed, birthdate } = req.body ?? {};
-  if (!customerId) return res.status(400).json({ error: "customerId is verplicht" });
-  if (!name) return res.status(400).json({ error: "Hondnaam is verplicht" });
-
-  const c = (_refToCustomers ?? []).find(x => x.id === Number(customerId));
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+  const { name, breed, age } = req.body ?? {};
+  if (!name) return res.status(400).json({ error: "Hondenaam is verplicht" });
 
   const newDog = {
-    id: c.dogs.length ? Math.max(...c.dogs.map(d => d.id)) + 1 : 1,
+    id: (customer.dogs?.at(-1)?.id ?? 0) + 1,
     name,
-    breed: breed ?? "",
-    birthdate: birthdate ?? ""
+    breed,
+    age,
   };
-  c.dogs.push(newDog);
-  res.status(201).json({ ...newDog, customerId: c.id });
-});
 
-// Hond bewerken
-router.patch("/:customerId/:dogId", (req, res) => {
-  const customerId = Number(req.params.customerId);
-  const dogId = Number(req.params.dogId);
+  customer.dogs = customer.dogs ?? [];
+  customer.dogs.push(newDog);
 
-  const c = (_refToCustomers ?? []).find(x => x.id === customerId);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  const d = c.dogs.find(x => x.id === dogId);
-  if (!d) return res.status(404).json({ error: "Hond niet gevonden" });
-
-  const { name, breed, birthdate } = req.body ?? {};
-  if (name !== undefined) d.name = name;
-  if (breed !== undefined) d.breed = breed;
-  if (birthdate !== undefined) d.birthdate = birthdate;
-
-  res.json({ ...d, customerId: c.id });
-});
-
-// Hond verwijderen
-router.delete("/:customerId/:dogId", (req, res) => {
-  const customerId = Number(req.params.customerId);
-  const dogId = Number(req.params.dogId);
-
-  const c = (_refToCustomers ?? []).find(x => x.id === customerId);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  const idx = c.dogs.findIndex(x => x.id === dogId);
-  if (idx === -1) return res.status(404).json({ error: "Hond niet gevonden" });
-
-  c.dogs.splice(idx, 1);
-  res.status(204).end();
+  res.status(201).json(newDog);
 });
 
 export default router;
