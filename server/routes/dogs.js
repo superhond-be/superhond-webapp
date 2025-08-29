@@ -1,9 +1,9 @@
 import express from "express";
-import { CUSTOMERS_REF } from "./customers.js";
+import { CUSTOMERS_REF } from "./customers.js";  // 👉 dit werkt nu wél
 
 const router = express.Router();
 
-/** Alle honden ophalen (van alle klanten) */
+/** Alle honden ophalen */
 router.get("/", (_req, res) => {
   const CUSTOMERS = CUSTOMERS_REF.get();
   const dogs = CUSTOMERS.flatMap(c => (c.dogs ?? []).map(d => ({ ...d, ownerId: c.id })));
