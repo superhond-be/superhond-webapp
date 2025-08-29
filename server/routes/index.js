@@ -2,6 +2,22 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 
+import customersRoutes, { CUSTOMERS_REF } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef as setDogsCustomersRef } from "./routes/dogs.js";
+
+const app = express();
+app.use(express.json());
+
+// geef dogsRoutes toegang tot de klantenarray
+setDogsCustomersRef(CUSTOMERS_REF);
+
+// mount routes
+app.use("/api/customers", customersRoutes);
+app.use("/api/customers/:id/dogs", dogsRoutes);
+
+// healthcheck (optioneel)
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
 import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
 import settingsRoutes from "./routes/settings.js";
