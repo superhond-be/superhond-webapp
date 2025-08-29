@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import classesRoutes from "./routes/classes.js";
 import sessionsRoutes from "./routes/sessions.js";
 import settingsRoutes from "./routes/settings.js";
+
 import lessonTypesRoutes from "./routes/lessonTypes.js";
 import themesRoutes from "./routes/themes.js";
 import locationsRoutes from "./routes/locations.js";
@@ -26,6 +27,7 @@ app.get("/api/health", (_req, res) => res.json({ ok: true }));
 app.use("/api/classes", classesRoutes);
 app.use("/api/sessions", sessionsRoutes);
 app.use("/api/settings", settingsRoutes);
+
 app.use("/api/lesson-types", lessonTypesRoutes);
 app.use("/api/themes", themesRoutes);
 app.use("/api/locations", locationsRoutes);
