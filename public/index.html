@@ -20,9 +20,9 @@
     </li>
     <li>Sessies
       <ul>
-        <li><a href="/admin/sessions/new">Nieuwe sessie</a></li>
-        <li><a href="/admin/sessions/recurring">Terugkerende sessies</a></li>
-        <li><a href="/admin/sessions">Overzicht sessies</a></li>
+        <li><a href="/admin/sessions/new">Nieuwe les</a></li>
+        <li><a href="/admin/sessions/recurring">Terugkerende lessen</a></li>
+        <li><a href="/admin/sessions">Overzicht lessen</a></li>
       </ul>
     </li>
     <li>Instellingen
@@ -39,7 +39,7 @@
 
 <!-- ADMIN: Sessies & deelnemers -->
 <section id="admin">
-  <h2>📅 Sessies & deelnemers (Admin)</h2>
+  <h2>Lessen & klanten (Admin)</h2>
 
   <div class="admin-grid">
     <!-- linker kolom: sessies -->
@@ -55,7 +55,7 @@
       <ul id="adminSessionsList" class="list"></ul>
     </div>
 
-    <!-- rechter kolom: details + deelnemers -->
+    <!-- rechter kolom: details + klanten -->
     <div class="admin-right">
       <div id="adminSessionHeader" class="card muted">
         <em>Kies links een sessie om details te zien…</em>
@@ -119,11 +119,11 @@
 
   <!-- SESSIES -->
   <section>
-    <h2>📅 Sessies & deelnemers</h2>
+    <h2>Lessen & klanten (Admin)</h2>
 <ul id="sessionsAdmin"></ul>
 <div id="sessionDetails"></div>
     
-    <h2>Sessies (momenten)</h2>
+    <h2>lessen (momenten)</h2>
     <form id="sessionForm">
       <select name="classId" id="classSelect" required>
         <option value="">Kies klas...</option>
@@ -132,7 +132,7 @@
       <input type="time"  name="start" required />
       <input type="time"  name="end" />
       <input type="text"  name="location" placeholder="Locatie" />
-      <button type="submit">➕ Sessie</button>
+      <button type="submit">➕ lessen</button>
     </form>
 
     <div style="margin:6px 0">
