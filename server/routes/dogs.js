@@ -67,6 +67,7 @@ router.delete("/:customerId/:dogId", (req, res) => {
     return res.status(404).json({ error: "Hond niet gevonden" });
   }
 
+
   // Hond verwijderen
   customer.dogs.splice(index, 1);
 
@@ -74,3 +75,4 @@ router.delete("/:customerId/:dogId", (req, res) => {
 });
 
 export { router as dogsRoutes };
+export default router;
