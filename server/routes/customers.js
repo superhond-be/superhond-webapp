@@ -36,3 +36,4 @@ router.post("/", (req, res) => {
 });
 
 export { router as customersRoutes, CUSTOMERS };
+export default router;
