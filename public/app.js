@@ -25,6 +25,19 @@ function adminLoadClientChoices() {
   sel.innerHTML = adminDemoClients.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 }
 
+async function adminList(kind) {
+  const map = {
+    "lesson-types": "/api/lesson-types",
+    "themes": "/api/themes",
+    "locations": "/api/locations",
+  };
+  const url = map[kind];
+  const res = await fetch(url);
+  const data = await res.json();
+  const el = document.getElementById("admin-list") || document.body.appendChild(Object.assign(document.createElement('pre'), { id: 'admin-list' }));
+  el.textContent = JSON.stringify(data, null, 2);
+}
+
 async function adminLoadSessions() {
   const ul = document.getElementById("adminSessionsList");
   const classId = document.getElementById("adminClassFilter").value;
