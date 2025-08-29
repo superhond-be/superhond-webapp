@@ -1,4 +1,61 @@
 // server/routes/bookings.js
+
+
+import express from "express";
+import { findUsablePack, reserveCredit, consumeReserved, unreserve } from "./packs.js";
+
+const router = express.Router();
+// in-memory
+let BOOKINGS = [];    // {id, sessionId, customerId, dogId, packId, status:'reserved'|'attended'|'cancelled'}
+let NEXT_ID = 1;
+
+// lijst (optioneel filters)
+router.get("/", (req, res) => {
+  const { sessionId, customerId } = req.query || {};
+  let list = BOOKINGS;
+  if (sessionId)  list = list.filter(b => b.sessionId === Number(sessionId));
+  if (customerId) list = list.filter(b => b.customerId === Number(customerId));
+  res.json(list);
+});
+
+// reserveren
+router.post("/", (req, res) => {
+  const { sessionId, customerId, dogId } = req.body || {};
+  if (!sessionId || !customerId || !dogId) return res.status(400).json({ error: "sessionId, customerId en dogId verplicht" });
+
+  const pack = findUsablePack(customerId);
+  if (!pack) return res.status(409).json({ error: "Geen bruikbaar pakket (credits) gevonden" });
+
+  if (!reserveCredit(pack.id)) return res.status(409).json({ error: "Credit kon niet gereserveerd worden" });
+
+  const booking = { id: NEXT_ID++, sessionId: Number(sessionId), customerId: Number(customerId), dogId: Number(dogId), packId: pack.id, status: "reserved" };
+  BOOKINGS.push(booking);
+  res.status(201).json(booking);
+});
+
+// deelneming bevestigen (credit echt verbruiken)
+router.post("/:id/attend", (req, res) => {
+  const b = BOOKINGS.find(x => x.id === Number(req.params.id));
+  if (!b) return res.status(404).json({ error: "Boeking niet gevonden" });
+  if (b.status !== "reserved") return res.status(409).json({ error: "Boeking is geen 'reserved'" });
+
+  if (!consumeReserved(b.packId)) return res.status(409).json({ error: "Kon credit niet verbruiken" });
+  b.status = "attended";
+  res.json(b);
+});
+
+// annuleren (credit vrijgeven)
+router.post("/:id/cancel", (req, res) => {
+  const b = BOOKINGS.find(x => x.id === Number(req.params.id));
+  if (!b) return res.status(404).json({ error: "Boeking niet gevonden" });
+  if (b.status !== "reserved") return res.status(409).json({ error: "Alleen 'reserved' kan geannuleerd worden" });
+
+  if (!unreserve(b.packId)) return res.status(409).json({ error: "Kon reservering niet vrijgeven" });
+  b.status = "cancelled";
+  res.json(b);
+});
+
+
 import express from "express";
 const router = express.Router();
 
