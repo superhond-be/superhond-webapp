@@ -2,6 +2,8 @@ import express from "express";
 const router = express.Router();
 import settingsRoutes from "./routes/settings.js";
 app.use("/api/settings", settingsRoutes);
+import taxonomiesRoutes from "./routes/taxonomies.js";
+app.use("/api/taxonomies", taxonomiesRoutes);
 
 // Demo data (mag later uit DB komen)
 let classes = [
