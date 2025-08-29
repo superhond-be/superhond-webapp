@@ -12,6 +12,10 @@ import lessonTypesRoutes from "./routes/lessonTypes.js";
 import themesRoutes from "./routes/themes.js";
 import locationsRoutes from "./routes/locations.js";
 
+import customersRoutes, { _CUSTOMERS_REF } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+
+setCustomersRef(_CUSTOMERS_REF());
 // --- app setup ---
 const app = express();
 const PORT = process.env.PORT || 10000;
