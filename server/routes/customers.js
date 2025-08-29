@@ -1,4 +1,6 @@
 import express from "express";
+import { store } from "../data/store.js";
+
 const router = express.Router();
 
 // ---- eenvoudige in-memory opslag (vervang later door DB) ----
@@ -8,34 +10,8 @@ let CUSTOMERS = [
   // { id: 1, name: "Anna", phone: "0470/12.34.56", email: "anna@mail.be", dogs: [ { id: 1, name: "Rex", breed: "Labrador" } ] }
 ];
 
-// == Alle klanten ==
-router.get("/", (_req, res) => {
-  res.json(CUSTOMERS);
-});
 
-// == Eén klant op ID ==
-router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const customer = CUSTOMERS.find(c => c.id === id);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(customer);
-});
 
-// == Nieuwe klant ==
-router.post("/", (req, res) => {
-  const { name, phone, email } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
-
-  const newCustomer = {
-    id: CUSTOMERS_SEQ++,
-    name,
-    phone: phone || "",
-    email: email || "",
-    dogs: [] // honden worden hieraan gekoppeld
-  };
-  CUSTOMERS.push(newCustomer);
-  res.status(201).json(newCustomer);
-});
 
 // == Klant aanpassen ==
 router.patch("/:id", (req, res) => {
