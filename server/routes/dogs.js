@@ -2,6 +2,45 @@ import express from "express";
 import { CUSTOMERS } from "./customers.js"; // we gebruiken de klanten-lijst om honden te koppelen
 const router = express.Router();
 
+
+import express from "express";
+import { store } from "../data/store.js";
+
+const router = express.Router();
+
+// Alle honden
+router.get("/", (_req, res) => {
+  res.json(store.dogs);
+});
+
+// Hond toevoegen aan een klant
+router.post("/:customerId", (req, res) => {
+  const customerId = Number(req.params.customerId);
+  const customer = store.customers.find(c => c.id === customerId);
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+
+  const { name, breed } = req.body || {};
+  if (!name) return res.status(400).json({ error: "Naam hond is verplicht" });
+
+  const dog = {
+    id: store.nextDogId++,
+    customerId,
+    name,
+    breed: breed || "",
+  };
+
+  store.dogs.push(dog);
+  if (!customer.dogs) customer.dogs = [];
+  customer.dogs.push(dog.id);
+
+  res.status(201).json(dog);
+});
+
+
+
+
+
+
 // Honden-ID teller per klant houden we simpel in memory:
 let DOG_SEQ = 1;
 
