@@ -1,6 +1,40 @@
 import express from "express";
 const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
+// we halen de gedeelde klanten-array via een setter binnen
+let getCustomers = null;
+export const setCustomersRef = (REF) => {
+  // REF is bv. { get: () => CUSTOMERS }
+  getCustomers = REF.get;
+};
+
+/** Lijst honden van 1 klant */
+router.get("/", (req, res) => {
+  const id = Number(req.params.id);
+  const customers = getCustomers?.() ?? [];
+  const c = customers.find(x => x.id === id);
+  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+  res.json(c.dogs ?? []);
+});
+
+/** Hond toevoegen aan klant */
+router.post("/", (req, res) => {
+  const id = Number(req.params.id);
+  const customers = getCustomers?.() ?? [];
+  const c = customers.find(x => x.id === id);
+  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+
+  const { name, breed } = req.body ?? {};
+  if (!name) return res.status(400).json({ error: "Hond-naam is verplicht" });
+
+  c.dogs = c.dogs ?? [];
+  const newDog = { id: (c.dogs.at(-1)?.id ?? 0) + 1, name, breed };
+  c.dogs.push(newDog);
+  res.status(201).json(newDog);
+});
+
+export default router;
 // We gebruiken dezelfde in-memory klantenlijst.
 // TIP: in een echte app stop je dit in een module/db laag.
 import customersRouter from "./customers.js";
