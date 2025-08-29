@@ -818,21 +818,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (f1) f1.addEventListener("submit", addLessonType);
   if (f2) f2.addEventListener("submit", addTheme);
   if (f3) f3.addEventListener("submit", addLocation);
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const el = document.getElementById("last-updated");
-  if (el) {
-    const now = new Date();
-    const formatted = now.toLocaleString("nl-BE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
+<footer style="margin-top:20px; font-size:0.9em; color:gray;">
+  Laatst geüpdatet op: <span id="lastUpdated"></span>
+</footer>
+
+<script>
+  document.getElementById("lastUpdated").textContent =
+    new Date().toLocaleString("nl-BE", {
+      dateStyle: "full",
+      timeStyle: "short"
     });
-    el.textContent = "Laatst geüpdatet op " + formatted;
-  }
-});
+</script>
 
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
