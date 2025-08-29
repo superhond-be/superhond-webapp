@@ -1,38 +1,39 @@
 import express from "express";
 const router = express.Router();
 
-// Eén enkele declaratie, niet meermaals!
-let CUSTOMERS = [
-  { id: 1, name: "Marie", email: "marie@example.com", phone: "012/34.56.78", dogs: [] },
-];
+// In-memory opslag klanten
+let CUSTOMERS = [];
+let CUSTOMER_SEQ = 1;
 
-// Ref om te delen met andere routes
-export const CUSTOMERS_REF = {
-  get: () => CUSTOMERS,
-  set: (v) => (CUSTOMERS = v),
-};
+// Alle klanten ophalen (optioneel met honden)
+router.get("/", (_req, res) => {
+  res.json(CUSTOMERS);
+});
 
-// alle klanten
-router.get("/", (_req, res) => res.json(CUSTOMERS));
-
-// één klant
+// Eén klant ophalen
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
-  const c = CUSTOMERS.find(x => x.id === id);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(c);
+  const customer = CUSTOMERS.find(c => c.id === id);
+  if (!customer) {
+    return res.status(404).json({ error: "Klant niet gevonden" });
+  }
+  res.json(customer);
 });
 
-// klant toevoegen
+// Nieuwe klant aanmaken
 router.post("/", (req, res) => {
-  const { name, email, phone } = req.body ?? {};
+  const { name, email, phone } = req.body;
   if (!name) return res.status(400).json({ error: "Naam is verplicht" });
 
-  const id = (CUSTOMERS.at(-1)?.id ?? 0) + 1;
-  const customer = { id, name, email, phone, dogs: [] };
-  CUSTOMERS.push(customer);
-
-  res.status(201).json(customer);
+  const newCustomer = {
+    id: CUSTOMER_SEQ++,
+    name,
+    email: email || "",
+    phone: phone || "",
+    dogs: [] // gekoppelde honden
+  };
+  CUSTOMERS.push(newCustomer);
+  res.status(201).json(newCustomer);
 });
 
-export default router;
+export { router as customersRoutes, CUSTOMERS };
