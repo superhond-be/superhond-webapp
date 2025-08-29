@@ -71,4 +71,6 @@ import customersModule from "./routes/customers.js"; // alleen voor types, we he
 // De in-memory array zit in het module closure. Simpelste manier:
 // we voegen hieronder éénmalig een klant toe en lezen dan de reference via request 😉
 // Maar makkelijker: pas customers.js aan om expliciet te exporteren:
+
+export const _CUSTOMERS_REF = () => CUSTOMERS;
 export default router;
