@@ -1,32 +1,53 @@
 import express from "express";
 const router = express.Router();
 
-// in-memory store
-let CUSTOMERS = [
-  { id: 1, name: "Demo Klant", email: "demo@example.com", phone: "000/00.00.00" }
-];
-let NEXT_CUSTOMER_ID = 2;
+/** In-memory klanten */
+export const CUSTOMERS = [];
+let NEXT_CUSTOMER_ID = 1;
 
-export const getCustomersRef = () => CUSTOMERS;
+/** Alle klanten */
+router.get("/", (_req, res) => {
+  res.json(CUSTOMERS);
+});
 
-// lijst klanten
-router.get("/", (_req, res) => res.json(CUSTOMERS));
-
-// detail klant (+honden optioneel via query ?withDogs=1)
+/** Eén klant */
 router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const customer = CUSTOMERS.find(c => c.id === id);
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+  res.json(customer);
+});
+
+/** Klant aanmaken */
+router.post("/", (req, res) => {
+  const { name, email = "", phone = "", address = "" } = req.body ?? {};
+  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+
+  const customer = {
+    id: NEXT_CUSTOMER_ID++,
+    name,
+    email,
+    phone,
+    address,
+    dogs: [],           // bevat dog-id’s
+  };
+  CUSTOMERS.push(customer);
+  res.status(201).json(customer);
+});
+
+/** Klant bijwerken */
+router.patch("/:id", (req, res) => {
   const id = Number(req.params.id);
   const c = CUSTOMERS.find(x => x.id === id);
   if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(c);
-});
 
-// nieuwe klant
-router.post("/", (req, res) => {
-  const { name, email, phone } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
-  const created = { id: NEXT_CUSTOMER_ID++, name, email: email || "", phone: phone || "" };
-  CUSTOMERS.push(created);
-  res.status(201).json(created);
+  const { name, email, phone, address } = req.body ?? {};
+  if (name !== undefined) c.name = name;
+  if (email !== undefined) c.email = email;
+  if (phone !== undefined) c.phone = phone;
+  if (address !== undefined) c.address = address;
+
+  res.json(c);
 });
 
 export default router;
