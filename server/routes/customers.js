@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 
+
 // In-memory data (tijdelijk)
 let NEXT_CUSTOMER_ID = 1;
 export const CUSTOMERS = [
