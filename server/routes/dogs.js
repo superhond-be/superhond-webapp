@@ -2,54 +2,59 @@
 import express from "express";
 const router = express.Router();
 
-/** In-memory opslag (eenvoudig voor nu) */
-export const DOGS = [];
+// In-memory honden
+let DOGS = [];
 let NEXT_DOG_ID = 1;
 
-/** Helper: hond toevoegen voor klant */
-export function addDogForCustomer(customerId, dogInput = {}) {
+/**
+ * GET /api/dogs
+ * Optionele filter: ?customerId=123
+ */
+router.get("/", (req, res) => {
+  const { customerId } = req.query || {};
+  const list = customerId
+    ? DOGS.filter(d => String(d.customerId) === String(customerId))
+    : DOGS;
+  res.json(list);
+});
+
+/**
+ * POST /api/dogs/:customerId
+ * Body: { name, breed, birthDate, sex, vaxStatus, bookletRef, vetPhone, vetName, emergencyPhone }
+ */
+router.post("/:customerId", (req, res) => {
+  const customerId = Number(req.params.customerId);
+  if (!customerId) return res.status(400).json({ error: "customerId ontbreekt" });
+
   const {
-    name = "",
+    name,
     breed = "",
     birthDate = "",
-    gender = "",
-    vaccStatus = "",
+    sex = "",
+    vaxStatus = "",
+    bookletRef = "",
     vetPhone = "",
     vetName = "",
     emergencyPhone = "",
-    vaccineBookRef = ""
-  } = dogInput;
+  } = req.body || {};
+
+  if (!name) return res.status(400).json({ error: "Naam hond is verplicht" });
 
   const dog = {
     id: NEXT_DOG_ID++,
-    customerId: Number(customerId),
+    customerId,
     name,
     breed,
     birthDate,
-    gender,
-    vaccStatus,
+    sex,
+    vaxStatus,
+    bookletRef,
     vetPhone,
     vetName,
     emergencyPhone,
-    vaccineBookRef
   };
+
   DOGS.push(dog);
-  return dog;
-}
-
-/** GET /api/dogs  (optioneel ?customerId=…) */
-router.get("/", (req, res) => {
-  const { customerId } = req.query;
-  if (customerId) {
-    return res.json(DOGS.filter(d => d.customerId === Number(customerId)));
-  }
-  res.json(DOGS);
-});
-
-/** POST /api/dogs/:customerId  (alleen hond toevoegen voor bestaande klant) */
-router.post("/:customerId", (req, res) => {
-  const { customerId } = req.params;
-  const dog = addDogForCustomer(customerId, req.body || {});
   res.status(201).json(dog);
 });
 
