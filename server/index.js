@@ -4,6 +4,8 @@ import express from "express";
 import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
+import lessonsRoutes from "./routes/lessons.js";
+
 
 const app = express();
 app.use(express.json());
@@ -12,7 +14,7 @@ app.use(express.json());
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/passes", passesRoutes);
-
+app.use("/api/lessons", lessonsRoutes);
 // Health & simple root
 app.get("/", (_req, res) => {
   res.type("html").send(`<p style="font:16px/1.4 -apple-system,Segoe UI,Roboto,sans-serif">
