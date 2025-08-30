@@ -12,7 +12,6 @@ import dogsRoutes from "./routes/dogs.js";
 import packsRoutes from "./routes/packs.js";
 import bookingsRoutes from "./routes/bookings.js";
 import sessionsRoutes from "./routes/sessions.js";
-import settingsRoutes from "./routes/settings.js";
 
 import settingsRoutes from "./routes/settings.js";
 app.use("/api/settings", settingsRoutes);
