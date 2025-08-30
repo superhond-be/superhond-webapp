@@ -1,49 +1,43 @@
-// public/app.js
-const $ = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-const setUpdated = () =>
-  ($("#last-updated").textContent = `Laatste update: ${new Date()
-    .toLocaleString()
-    .replace(",", "")}`);
+/* ------------------ Helpers ------------------ */
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
+// Simpele API-helper
+async function api(url, options = {}) {
+  const res = await fetch(url, {
     headers: { "Content-Type": "application/json" },
-    ...opts,
+    ...options,
   });
   if (!res.ok) {
-    const msg = await res.text().catch(() => res.statusText);
-    throw new Error(msg || res.statusText);
+    const text = await res.text().catch(() => "");
+    throw new Error(text || res.statusText);
   }
-  return res.json().catch(() => ({}));
+  return res.json();
 }
 
-/* ---------------- Tabs ---------------- */
-function initTabs() {
-  const map = {
-    klanten: "#tab-klanten",
-    honden: "#tab-honden",
-    overzicht: "#tab-overzicht",
-    instellingen: "#tab-instellingen",
-  };
-  $$(".tabs .tab").forEach((btn) => {
-    btn.addEventListener("click", () => {
-
-
-      
-      $$(".tabs .tab").forEach((b) => b.classList.remove("is-active"));
-      btn.classList.add("is-active");
-      $$(".tabpane").forEach((p) => p.classList.remove("is-visible"));
-      $(map[btn.dataset.tab]).classList.add("is-visible");
-      setUpdated();
-    });
-  });
+// HTML-escaper
+function escapeHTML(str) {
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
-/* ---------------- Klanten ---------------- */
+// Update label “Laatst bijgewerkt”
+function setUpdated() {
+  const el = document.getElementById("last-updated");
+  if (el) {
+    const now = new Date();
+    el.textContent =
+      "Laatst bijgewerkt op " + now.toLocaleDateString() + " " + now.toLocaleTimeString();
+  }
+}
+
+/* ------------------ Customers + Honden + Strippenkaarten ------------------ */
+
 async function loadCustomers() {
-  const list = $("#customers-list");
+  const list = document.getElementById("customers-list");
   list.innerHTML = `<div class="muted">Laden…</div>`;
+
   const customers = await api("/api/customers");
   if (!customers.length) {
     list.innerHTML = `<div class="muted">Geen klanten gevonden.</div>`;
@@ -62,12 +56,11 @@ async function loadCustomers() {
       <div class="card-head">
         <div>
           <strong>${escapeHTML(c.name)}</strong>
-          <div class="sub">${escapeHTML(c.email || "—")} · ${escapeHTML(
-      c.phone || "—"
-    )}</div>
+          <div class="sub">${escapeHTML(c.email || "—")} · ${escapeHTML(c.phone || "—")}</div>
         </div>
         <div class="actions">
           <button class="btn" data-act="newpass">+ Strippenkaart</button>
+          <button class="btn" data-act="claimpkg">Pakket koppelen</button>
           <button class="btn" data-act="refresh">↻</button>
         </div>
       </div>
@@ -81,7 +74,7 @@ async function loadCustomers() {
                 ? `<ul class="bullets">${dogs
                     .map(
                       (d) =>
-                        `<li>${escapeHTML(d.name)} <span class="muted">(${escapeHTML(
+                        `<li>#${d.id} ${escapeHTML(d.name)} <span class="muted">(${escapeHTML(
                           d.breed || "-"
                         )})</span></li>`
                     )
@@ -96,15 +89,15 @@ async function loadCustomers() {
                 ? `<ul class="passes">${passes
                     .map(
                       (p) => `
-                <li>
-                  <div>
-                    <strong>${escapeHTML(p.type)}</strong>
-                    <div class="sub">${p.remaining}/${p.totalStrips} over</div>
-                  </div>
-                  <div>
-                    <button class="btn small" data-act="use" data-pass="${p.id}">Gebruik strip</button>
-                  </div>
-                </li>`
+                  <li>
+                    <div>
+                      <strong>${escapeHTML(p.type)}</strong>
+                      <div class="sub">${p.remaining}/${p.totalStrips} over</div>
+                    </div>
+                    <div>
+                      <button class="btn small" data-act="use" data-pass="${p.id}">Gebruik strip</button>
+                    </div>
+                  </li>`
                     )
                     .join("")}</ul>`
                 : `<div class="muted">Geen strippenkaarten</div>`
@@ -114,14 +107,18 @@ async function loadCustomers() {
       </div>
     `;
 
+    // Event-handlers voor de knoppen
     el.addEventListener("click", async (e) => {
       const btn = e.target.closest("button");
       if (!btn) return;
 
+      // ↻ herladen
       if (btn.dataset.act === "refresh") {
         await loadCustomers();
+        return;
       }
 
+      // + Strippenkaart (handmatig)
       if (btn.dataset.act === "newpass") {
         const total = Number(prompt("Aantal strippen (bv. 10):", "10"));
         if (!total || total < 1) return;
@@ -135,8 +132,10 @@ async function loadCustomers() {
         } catch (err) {
           alert("Mislukt: " + err.message);
         }
+        return;
       }
 
+      // Gebruik strip
       if (btn.dataset.act === "use") {
         const passId = btn.dataset.pass;
         try {
@@ -144,6 +143,64 @@ async function loadCustomers() {
           await loadCustomers();
         } catch (err) {
           alert("Mislukt: " + err.message);
+        }
+        return;
+      }
+
+      // Pakket koppelen (Google → strippenkaart)
+      if (btn.dataset.act === "claimpkg") {
+        const email = c.email;
+        if (!email) {
+          alert("Deze klant heeft geen e-mail. Vul eerst een e-mail in bij de klant.");
+          return;
+        }
+
+        const pending = await loadPendingForEmail(email);
+        if (!pending.length) {
+          alert(`Geen pending aankopen gevonden voor ${email}.`);
+          return;
+        }
+
+        // keuze aankoop
+        let pick = pending[0];
+        if (pending.length > 1) {
+          const idTxt = prompt(
+            `Er zijn ${pending.length} aankopen. Geef purchaseId om te koppelen:\n` +
+              pending.map((p) => `#${p.id} ${p.packageKey || "pakket"} (${p.lessons} lessen)`).join("\n"),
+            String(pending[0].id)
+          );
+          if (!idTxt) return;
+          const idNum = Number(idTxt);
+          pick = pending.find((p) => p.id === idNum);
+          if (!pick) {
+            alert("Ongeldig purchaseId.");
+            return;
+          }
+        }
+
+        // hond kiezen
+        const ds = c.dogs || [];
+        let dogId = null;
+        if (ds.length) {
+          const sel = prompt(
+            "Koppel aan hond-id (leeg laten = geen hond koppelen):\n" +
+              ds.map((d) => `#${d.id} ${d.name}`).join("\n"),
+            String(ds[0].id)
+          );
+          if (sel) dogId = Number(sel);
+        }
+
+        try {
+          await claimPurchase({
+            email,
+            purchaseId: pick.id,
+            customerId: c.id,
+            dogId,
+          });
+          await loadCustomers();
+          alert(`Pakket gekoppeld: ${pick.packageKey || pick.lessons + "-beurten"}`);
+        } catch (e) {
+          alert("Koppelen mislukt: " + e.message);
         }
       }
     });
@@ -155,223 +212,16 @@ async function loadCustomers() {
   setUpdated();
 }
 
+/* ------------------ Dogs ------------------ */
 function fillCustomerSelect(customers) {
-  const sel = $("#dog-customer-select");
-  sel.innerHTML = customers
-    .map((c) => `<option value="${c.id}">${escapeHTML(c.name)}</option>`)
-    .join("");
+  const sel = document.getElementById("dog-customer");
+  if (!sel) return;
+  sel.innerHTML =
+    `<option value="">– Kies klant –</option>` +
+    customers.map((c) => `<option value="${c.id}">${escapeHTML(c.name)}</option>`).join("");
 }
 
-/* ---- klant toevoegen ---- */
-$("#form-add-customer")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.currentTarget);
-  const payload = Object.fromEntries(fd.entries());
-  try {
-    await api("/api/customers", { method: "POST", body: JSON.stringify(payload) });
-    e.currentTarget.reset();
-    await loadCustomers();
-  } catch (err) {
-    alert("Mislukt: " + err.message);
-  }
-});
-$("#btn-reload-customers")?.addEventListener("click", loadCustomers);
-
-/* ---------------- Honden ---------------- */
-async function loadDogs() {
-  const list = $("#dogs-list");
-  list.innerHTML = `<div class="muted">Laden…</div>`;
-  // Toon alle honden
-  const all = await api("/api/dogs");
-  if (!all.length) {
-    list.innerHTML = `<div class="muted">Nog geen honden geregistreerd.</div>`;
-    return;
-  }
-  list.innerHTML = "";
-  all.forEach((d) => {
-    const row = document.createElement("div");
-    row.className = "rowline";
-    row.innerHTML = `
-      <div><strong>${escapeHTML(d.name)}</strong> <span class="muted">(${escapeHTML(
-      d.breed || "-"
-    )})</span></div>
-      <div class="muted">Eigenaar: ${escapeHTML(d.ownerName)} (#${d.ownerId})</div>
-      <div class="muted">${escapeHTML(d.sex || "-")} · ${escapeHTML(d.birthDate || "")}</div>
-    `;
-    list.appendChild(row);
-  });
-  setUpdated();
-}
-
-$("#form-add-dog")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.currentTarget);
-  const data = Object.fromEntries(fd.entries());
-  const customerId = data.customerId;
-  delete data.customerId;
-
-  try {
-    await api(`/api/dogs/${customerId}`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    e.currentTarget.reset();
-    await Promise.all([loadDogs(), loadCustomers()]);
-  } catch (err) {
-    alert("Mislukt: " + err.message);
-  }
-});
-$("#btn-reload-dogs")?.addEventListener("click", loadDogs);
-/* ---------------- Lessen ---------------- */
-async function loadLessons() {
-  const list = $("#lessons-list");
-  list.innerHTML = `<div class="muted">Laden…</div>`;
-  const lessons = await api("/api/lessons");
-  if (!lessons.length) {
-    list.innerHTML = `<div class="muted">Nog geen lessen</div>`;
-    return;
-  }
-  list.innerHTML = "";
-  lessons.forEach((l) => {
-    const el = document.createElement("div");
-    el.className = "card";
-    el.innerHTML = `
-      <div class="card-head">
-        <strong>${escapeHTML(l.title)}</strong>
-        <div class="sub">${l.date} ${l.time} · ${escapeHTML(l.location)}</div>
-        <div class="sub">Deelnemers: ${l.participants.length}/${l.capacity || "∞"}</div>
-      </div>
-      <div class="card-body">
-        <ul class="bullets">
-          ${l.participants
-            .map((p) => `<li>Klant #${p.customerId} · Hond #${p.dogId || "?"}</li>`)
-            .join("")}
-        </ul>
-        <button class="btn small" data-act="join" data-id="${l.id}">Klant inschrijven</button>
-      </div>
-    `;
-    el.addEventListener("click", async (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-      if (btn.dataset.act === "join") {
-        const customerId = prompt("Klant-ID?");
-        const dogId = prompt("Hond-ID (optioneel)?");
-        try {
-          await api(`/api/lessons/${btn.dataset.id}/join`, {
-            method: "POST",
-            body: JSON.stringify({ customerId, dogId }),
-          });
-          await loadLessons();
-          await loadCustomers(); // zodat strips ook updaten
-        } catch (err) {
-          alert("Mislukt: " + err.message);
-        }
-      }
-    });
-    list.appendChild(el);
-  });
-}
-
-$("#form-add-lesson")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.currentTarget);
-  const data = Object.fromEntries(fd.entries());
-  try {
-    await api("/api/lessons", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    e.currentTarget.reset();
-    await loadLessons();
-  } catch (err) {
-    alert("Mislukt: " + err.message);
-  }
-});
-
-// init extra tab
-/* ---------------- Lessen ---------------- */
-async function loadLessons() {
-  const list = $("#lessons-list");
-  list.innerHTML = `<div class="muted">Laden…</div>`;
-  const lessons = await api("/api/lessons");
-  if (!lessons.length) {
-    list.innerHTML = `<div class="muted">Nog geen lessen</div>`;
-    return;
-  }
-  list.innerHTML = "";
-  lessons.forEach((l) => {
-    const el = document.createElement("div");
-    el.className = "card";
-    el.innerHTML = `
-      <div class="card-head">
-        <strong>${escapeHTML(l.title)}</strong>
-        <div class="sub">${l.date} ${l.time} · ${escapeHTML(l.location)}</div>
-        <div class="sub">Deelnemers: ${l.participants.length}/${l.capacity || "∞"}</div>
-      </div>
-      <div class="card-body">
-        <ul class="bullets">
-          ${l.participants
-            .map((p) => `<li>Klant #${p.customerId} · Hond #${p.dogId || "?"}</li>`)
-            .join("")}
-        </ul>
-        <button class="btn small" data-act="join" data-id="${l.id}">Klant inschrijven</button>
-      </div>
-    `;
-    el.addEventListener("click", async (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-      if (btn.dataset.act === "join") {
-        const customerId = prompt("Klant-ID?");
-        const dogId = prompt("Hond-ID (optioneel)?");
-        try {
-          await api(`/api/lessons/${btn.dataset.id}/join`, {
-            method: "POST",
-            body: JSON.stringify({ customerId, dogId }),
-          });
-          await loadLessons();
-          await loadCustomers(); // zodat strips ook updaten
-        } catch (err) {
-          alert("Mislukt: " + err.message);
-        }
-      }
-    });
-    list.appendChild(el);
-  });
-}
-
-$("#form-add-lesson")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.currentTarget);
-  const data = Object.fromEntries(fd.entries());
-  try {
-    await api("/api/lessons", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    e.currentTarget.reset();
-    await loadLessons();
-  } catch (err) {
-    alert("Mislukt: " + err.message);
-  }
-});
-
-// init extra tab
-
-
-/* ---------------- Utils ---------------- */
-function escapeHTML(s) {
-  return String(s ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-}
-
-/* ---------------- Init ---------------- */
-initTabs();
-loadCustomers().then(loadDogs);
-setUpdated();
-
-// --- Pending aankopen tonen + claimen ---
+/* ------------------ Purchases (Google) ------------------ */
 async function loadPendingForEmail(email) {
   if (!email) return [];
   const res = await fetch(`/api/purchases/pending?email=${encodeURIComponent(email)}`);
@@ -386,9 +236,13 @@ async function claimPurchase({ email, purchaseId, customerId, dogId }) {
     body: JSON.stringify({ email, purchaseId, customerId, dogId }),
   });
   if (!r.ok) {
-    const t = await r.text().catch(()=>"");
+    const t = await r.text().catch(() => "");
     throw new Error(t || r.statusText);
   }
   return r.json();
 }
 
+/* ------------------ Init ------------------ */
+document.addEventListener("DOMContentLoaded", () => {
+  loadCustomers();
+});
