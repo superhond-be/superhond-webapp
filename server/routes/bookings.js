@@ -2,6 +2,18 @@ import express from "express";
 import { PASSES, findValidPassForCustomer, getAvailableStrips } from "./passes.js";
 import { CLASSES } from "./classes.js";     // bestaat al bij jou
 import sessionsRoutes from "./sessions.js"; // alleen om zeker te zijn dat sessions geladen is (niet gebruikt)
+export const router = express.Router();
+
+globalThis.BOOKINGS ??= []; // later vullen bij echte inschrijvingen
+
+router.get("/", (_req, res) => {
+  res.json(globalThis.BOOKINGS);
+});
+
+export default router;
+
+
+
 const router = express.Router();
 
 /**
