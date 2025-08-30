@@ -1,4 +1,6 @@
 // server/index.js (alleen relevante delen)
+import customersRoutes from "./routes/customers.js";
+app.use("/api/customers", customersRoutes);
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
