@@ -1,58 +1,45 @@
+// server/index.js
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
+// --- Routes (elk precies één keer importeren) ---
 import settingsRoutes from "./routes/settings.js";
-import lessonTypesRoutes from "./routes/lessonTypes.js";
-import themesRoutes from "./routes/themes.js";
-import locationsRoutes from "./routes/locations.js";
+import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
-import bookingsRoutes from "./routes/bookings.js";
 
-import registerRoutes from "./routes/register.js";
-import passesRoutes from "./routes/passes.js";
-import bookingsRoutes from "./routes/bookings.js";
-
-// ...
-
-
-
-export const router = express.Router();
-
-globalThis.BOOKINGS ??= []; // later vullen bij echte inschrijvingen
-
-router.get("/", (_req, res) => {
-  res.json(globalThis.BOOKINGS);
-});
-
-export default router;
-
+// ------------------------------------------------
 
 const app = express();
-
-
-// API
 app.use(express.json());
-app.use("/api/lesson-types", lessonTypesRoutes);
-app.use("/api/themes", themesRoutes);
-app.use("/api/locations", locationsRoutes);
+
+// Static files (public/)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public")));
+
+// Root -> index.html uit public serveren
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
+// Healthcheck
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true });
+});
+
+// Zorg dat dogs.js de klanten kan zien voor koppelen hond->klant
+setCustomersRef(CUSTOMERS);
+
+// API routes (elk precies één keer koppelen)
+app.use("/api/settings", settingsRoutes);
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
-app.use("/api/settings", settingsRoutes);
 app.use("/api/passes", passesRoutes);
-app.use("/api/bookings", bookingsRoutes);
-app.use("/api/register", registerRoutes);
-app.use("/api/passes", passesRoutes);
-app.use("/api/bookings", bookingsRoutes);
-    
-// statics
-app.use(express.static("public"));
 
-// health + frontend entry
-app.get("/", (_req, res) => res.send("✅ Superhond backend draait!"));
-app.get("/app", (_req, res) => res.sendFile(process.cwd() + "/public/index.html"));
-
+// Server starten (let op: slechts één app.listen in het hele project)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-
-export default app;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
