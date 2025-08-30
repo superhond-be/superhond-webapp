@@ -1,6 +1,17 @@
 import express from "express";
 const router = express.Router();
+export const router = express.Router();
 
+globalThis.PASSES ??= [
+  { id: 1, name: "10-strippenkaart", credits: 10 },
+  { id: 2, name: "5-strippenkaart", credits: 5 },
+];
+
+router.get("/", (_req, res) => {
+  res.json(globalThis.PASSES);
+});
+
+export default router;
 /**
  * Strippenkaarten in-memory
  * pass = { id, customerId, type, totalStrips, usedStrips, reservedStrips, expiresAt, note, active }
