@@ -1,5 +1,30 @@
 import express from "express";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+app.use(express.json());
+
+// >>> heel belangrijk: statische files uit /public
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// (je API-routes hier, bv. app.use("/api/customers", customersRoutes); )
+
+// healthcheck mag blijven, maar NIET op "/"
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+// >>> root route moet index.html geven
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+// start
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 // --- Routes (alleen één keer importeren) ---
 import customersRoutes from "./routes/customers.js";
 import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
