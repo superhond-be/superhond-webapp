@@ -3,48 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond Coach Portaal</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-    }
-    header {
-      background: #0088cc;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      background: #006699;
-    }
-    nav button {
-      flex: 1;
-      padding: 15px;
-      border: none;
-      background: #006699;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    nav button:hover {
-      background: #004466;
-    }
-    .screen {
-      display: none;
-      padding: 20px;
-    }
-    .active {
-      display: block;
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <header>
     <h1>🐾 Superhond Coach Portaal</h1>
   </header>
-  
+
   <nav>
     <button onclick="showScreen('klanten')">Klanten</button>
     <button onclick="showScreen('honden')">Honden</button>
@@ -53,28 +18,66 @@
   </nav>
 
   <main>
+    <!-- Klanten + hond registratie -->
     <div id="klanten" class="screen active">
-      <h2>Klantenbeheer</h2>
-      <p>Hier komen alle klanten te staan.</p>
-      <button onclick="loadCustomers()">Laad klanten</button>
+      <h2>Registratie: Klant + Hond</h2>
+
+      <form id="registerForm">
+        <fieldset>
+          <legend><strong>Klantgegevens</strong></legend>
+          <label>Naam <input type="text" name="customer.name" required></label>
+          <label>E-mail <input type="email" name="customer.email"></label>
+          <label>Telefoon <input type="text" name="customer.phone"></label>
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>Hond</strong></legend>
+          <label>Naam hond <input type="text" name="dog.name" required></label>
+          <label>Ras <input type="text" name="dog.breed"></label>
+          <label>Geboortedatum <input type="date" name="dog.birthDate"></label>
+          <label>Geslacht
+            <select name="dog.sex">
+              <option value="">—</option>
+              <option value="reu">Reu</option>
+              <option value="teef">Teef</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>Inentingen & Dierenarts</strong></legend>
+          <label>Vaccinatiestatus <input type="text" name="dog.vaccinationStatus"></label>
+          <label>Inentingsboekje ref. <input type="text" name="dog.vaccinationBookRef"></label>
+          <label>Dierenarts – naam <input type="text" name="dog.vetName"></label>
+          <label>Dierenarts – telefoon <input type="text" name="dog.vetPhone"></label>
+          <label>Noodnummer <input type="text" name="dog.emergencyContact"></label>
+        </fieldset>
+
+        <button type="submit">➕ Registreren</button>
+      </form>
+
+      <h3>Bestaande klanten</h3>
+      <button onclick="loadCustomers()">↻ Herladen</button>
       <ul id="customersList"></ul>
     </div>
 
+    <!-- Honden -->
     <div id="honden" class="screen">
-      <h2>Hondenbeheer</h2>
-      <p>Hier komen alle honden te staan.</p>
-      <button onclick="loadDogs()">Laad honden</button>
+      <h2>Honden-overzicht</h2>
+      <button onclick="loadDogs()">↻ Herladen</button>
       <ul id="dogsList"></ul>
     </div>
 
+    <!-- Instellingen -->
     <div id="instellingen" class="screen">
       <h2>Instellingen</h2>
-      <p>Organisatiegegevens en voorkeuren.</p>
+      <p>Hier komen organisatiegegevens & voorkeuren.</p>
     </div>
 
+    <!-- Overzicht -->
     <div id="overzicht" class="screen">
       <h2>Overzicht</h2>
-      <p>Hier komt een dashboard of samenvatting.</p>
+      <p>Dashboard of samenvatting van de lessen en registraties.</p>
     </div>
   </main>
 
@@ -88,15 +91,58 @@
       const res = await fetch('/api/customers');
       const data = await res.json();
       const list = document.getElementById('customersList');
-      list.innerHTML = data.map(c => `<li>${c.name} (${c.email})</li>`).join('');
+      list.innerHTML = data.map(c => {
+        const dogs = (c.dogs || []).map(d => `${d.name} (${d.breed || "-"})`).join(', ');
+        return `<li><strong>${c.name}</strong> (${c.email || "-"}) – ${c.phone || "-"}${dogs ? `<br><small>Honden: ${dogs}</small>` : ""}</li>`;
+      }).join('');
     }
 
     async function loadDogs() {
       const res = await fetch('/api/dogs');
       const data = await res.json();
       const list = document.getElementById('dogsList');
-      list.innerHTML = data.map(d => `<li>${d.name} (${d.breed})</li>`).join('');
+      list.innerHTML = data.map(d => 
+        `<li><strong>${d.name}</strong> (${d.breed || "-"}) · klant ${d.customerId}</li>`
+      ).join('');
     }
+
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+
+      const body = {
+        customer: {
+          name: fd.get("customer.name"),
+          email: fd.get("customer.email"),
+          phone: fd.get("customer.phone")
+        },
+        dog: {
+          name: fd.get("dog.name"),
+          breed: fd.get("dog.breed"),
+          birthDate: fd.get("dog.birthDate"),
+          sex: fd.get("dog.sex"),
+          vaccinationStatus: fd.get("dog.vaccinationStatus"),
+          vaccinationBookRef: fd.get("dog.vaccinationBookRef"),
+          vetName: fd.get("dog.vetName"),
+          vetPhone: fd.get("dog.vetPhone"),
+          emergencyContact: fd.get("dog.emergencyContact")
+        }
+      };
+
+      const r = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      if (!r.ok) {
+        alert("Registratie mislukt!");
+        return;
+      }
+      e.target.reset();
+      loadCustomers();
+      alert("Registratie gelukt!");
+    });
   </script>
 </body>
 </html>
