@@ -5,6 +5,10 @@ import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
+import purchasesRoutes from "./routes/purchases.js";
+
+// ...
+app.use("/api", purchasesRoutes);
 
 
 const app = express();
