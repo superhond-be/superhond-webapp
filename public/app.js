@@ -1216,6 +1216,135 @@ async function ViewSessions() {
   return wrap;
 }
 
+list.innerHTML = customers.map(c => `
+  <div class="row" style="align-items:center; justify-content:space-between; border-bottom:1px dashed #eee; padding:8px 0;">
+    <div>
+      <strong>#${c.id}</strong> ${c.name || "-"}<br/>
+      <span class="muted">${c.email || ""} ${c.phone ? " · "+c.phone : ""}</span>
+    </div>
+    <div>
+      <a href="#/customer/${c.id}">Open klantkaart</a>
+    </div>
+  </div>
+`).join("");
+// ---------- Klantkaart (detail) ----------
+async function ViewCustomerDetail(id) {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Klantkaart</h2>
+    <div id="cardCustomer" class="card">Laden…</div>
+    <div class="card">
+      <h3>Honden</h3>
+      <div id="cardDogs" class="muted">Laden…</div>
+    </div>
+    <div class="card">
+      <h3>Pakketten / Credits</h3>
+      <div id="cardPacks" class="muted">Laden…</div>
+    </div>
+    <div class="card">
+      <h3>Boekingen</h3>
+      <div id="cardBookings" class="muted">Laden…</div>
+    </div>
+  `;
+
+  // helpers
+  const $c = sel => wrap.querySelector(sel);
+
+  // 1) klant
+  try {
+    const customer = await getJSON(`/api/customers/${id}?withDogs=1`);
+    $c("#cardCustomer").innerHTML = `
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <strong>#${customer.id}</strong> ${customer.name || "-"}<br/>
+          <span class="muted">${customer.email || ""} ${customer.phone ? " · "+customer.phone : ""}</span>
+        </div>
+        <div><a href="#/customers">← Terug naar klanten</a></div>
+      </div>
+    `;
+  } catch (e) {
+    $c("#cardCustomer").innerHTML = `<span style="color:#c00">Klant niet gevonden.</span>`;
+  }
+
+  // 2) honden
+  try {
+    const dogs = await getJSON(`/api/dogs?customerId=${encodeURIComponent(id)}`);
+    if (!dogs.length) {
+      $c("#cardDogs").textContent = "Geen honden.";
+    } else {
+      $c("#cardDogs").innerHTML = dogs.map(d =>
+        `<div style="border-bottom:1px dashed #eee; padding:8px 0;">
+           <strong>#${d.id}</strong> ${d.name} ${d.breed ? "("+d.breed+")" : ""}
+         </div>`
+      ).join("");
+    }
+  } catch {
+    $c("#cardDogs").innerHTML = `<span style="color:#c00">Kon honden niet laden.</span>`;
+  }
+
+  // 3) pakketten
+  try {
+    const packs = await getJSON(`/api/packs?customerId=${encodeURIComponent(id)}`);
+    if (!packs.length) {
+      $c("#cardPacks").textContent = "Geen pakketten.";
+    } else {
+      $c("#cardPacks").innerHTML = packs.map(p => {
+        const remaining = p.size - (p.used + p.reserved);
+        return `<div style="border-bottom:1px dashed #eee; padding:8px 0;">
+          <strong>#${p.id}</strong> ${p.size} credits
+          <span class="muted"> · gebruikt: ${p.used}, gereserveerd: ${p.reserved}, resterend: ${remaining}</span>
+          ${p.expiresAt ? `<br/><span class="muted">geldig tot: ${p.expiresAt}</span>` : ""}
+        </div>`;
+      }).join("");
+    }
+  } catch {
+    $c("#cardPacks").innerHTML = `<span style="color:#c00">Kon pakketten niet laden.</span>`;
+  }
+
+  // 4) boekingen + acties
+  try {
+    const bookings = await getJSON(`/api/bookings?customerId=${encodeURIComponent(id)}`);
+    if (!bookings.length) {
+      $c("#cardBookings").textContent = "Geen boekingen.";
+    } else {
+      $c("#cardBookings").innerHTML = bookings.map(b => `
+        <div class="row" style="align-items:center; justify-content:space-between; border-bottom:1px dashed #eee; padding:8px 0;">
+          <div>
+            <strong>#${b.id}</strong> sessie #${b.sessionId}, hond #${b.dogId}
+            <span class="muted"> · status: ${b.status}</span>
+          </div>
+          <div>
+            ${b.status === "reserved" ? `
+              <button data-act="attend" data-id="${b.id}">Deelname bevestigen</button>
+              <button data-act="cancel" data-id="${b.id}">Annuleer</button>
+            ` : ""}
+          </div>
+        </div>
+      `).join("");
+
+      // actieknoppen
+      $c("#cardBookings").addEventListener("click", async (e) => {
+        const btn = e.target.closest("button[data-act]");
+        if (!btn) return;
+        const id = btn.getAttribute("data-id");
+        const act = btn.getAttribute("data-act");
+        try {
+          const url = act === "attend" ? `/api/bookings/${id}/attend` : `/api/bookings/${id}/cancel`;
+          await postJSON(url, {});
+          // reload lijst
+          const refreshed = await getJSON(`/api/bookings?customerId=${encodeURIComponent(${id})}`);
+          location.hash = `#/customer/${id}`; // simpele refresh
+        } catch (err) {
+          alert("Fout: " + err.message);
+        }
+      });
+    }
+  } catch {
+    $c("#cardBookings").innerHTML = `<span style="color:#c00">Kon boekingen niet laden.</span>`;
+  }
+
+  return wrap;
+}
 
   const routes = {
   "#/dashboard": ViewDashboard,
@@ -1226,7 +1355,44 @@ async function ViewSessions() {
   "#/sessions": ViewSessions,   // <— deze erbij
 };
 };
+const routes = {
+  "#/dashboard": ViewDashboard,
+  "#/customers": ViewCustomers,
+  "#/dogs": ViewDogs,
+  "#/packs": ViewPacks,
+  "#/bookings": ViewBookings,
+  "#/sessions": ViewSessions,
+  // dynamisch: "#/customer/:id" behandelen we apart
+};
 
+function parseHash() {
+  const h = location.hash || "#/dashboard";
+  const parts = h.split("/").filter(Boolean); // ["#", "customer", "12"] -> ["#", "customer", "12"]
+  return parts; // bv ["#/customer", "12"] als we het zo opbouwen
+}
+
+async function renderRoute() {
+  const mount = document.getElementById("view");
+  mount.innerHTML = "";
+  const hash = location.hash || "#/dashboard";
+
+  // match dynamische klant-route
+  if (hash.startsWith("#/customer/")) {
+    const id = hash.replace("#/customer/", "");
+    const el = await ViewCustomerDetail(Number(id));
+    mount.appendChild(el);
+  } else {
+    const View = routes[hash] || ViewDashboard;
+    const el = await View();
+    mount.appendChild(el);
+  }
+
+  // active tab highlight
+  document.querySelectorAll("nav a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === (hash.startsWith("#/customer/") ? "#/customers" : hash)));
+}
+
+window.addEventListener("hashchange", renderRoute);
+window.addEventListener("DOMContentLoaded", renderRoute);
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
