@@ -1,40 +1,53 @@
-// server/routes/customers.js
 import express from "express";
-const router = express.Router();
+export const router = express.Router();
 
-// In-memory
+// In-memory opslag (demo)
+export let CUSTOMERS = [];
 let NEXT_CUSTOMER_ID = 1;
-export const CUSTOMERS = [];
 
-// helper om klant toe te voegen (ook door register-route gebruikt)
-export function addCustomer({ name, email = "", phone = "" }) {
-  const c = { id: NEXT_CUSTOMER_ID++, name, email, phone, dogs: [] };
-  CUSTOMERS.push(c);
-  return c;
-}
+// Zorg dat we honden kunnen inlezen om mee te sturen:
+import { DOGS } from "./dogs.js";
 
-// Voorbeeld startdata (optioneel)
-if (CUSTOMERS.length === 0) {
-  addCustomer({ name: "Demo Klant", email: "demo@example.com", phone: "000/00.00.00" });
-}
+/**
+ * GET /api/customers
+ * Retourneert alle klanten met hun gekoppelde honden
+ */
+router.get("/", (_req, res) => {
+  const withDogs = CUSTOMERS.map(c => ({
+    ...c,
+    dogs: DOGS.filter(d => d.customerId === c.id)
+  }));
+  res.json(withDogs);
+});
 
-// Alle klanten
-router.get("/", (_req, res) => res.json(CUSTOMERS));
-
-// Eén klant
+/**
+ * GET /api/customers/:id
+ */
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
   const c = CUSTOMERS.find(x => x.id === id);
   if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(c);
+  const dogs = DOGS.filter(d => d.customerId === id);
+  res.json({ ...c, dogs });
 });
 
-// Nieuwe klant (enkel klant, zonder hond)
+/**
+ * POST /api/customers
+ * body: { name, email?, phone? }
+ */
 router.post("/", (req, res) => {
   const { name, email, phone } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
-  const c = addCustomer({ name, email, phone });
-  res.status(201).json(c);
+  if (!name || !String(name).trim()) {
+    return res.status(400).json({ error: "Naam is verplicht" });
+  }
+  const customer = {
+    id: NEXT_CUSTOMER_ID++,
+    name: String(name).trim(),
+    email: email ? String(email).trim() : null,
+    phone: phone ? String(phone).trim() : null
+  };
+  CUSTOMERS.push(customer);
+  res.status(201).json(customer);
 });
 
 export default router;
