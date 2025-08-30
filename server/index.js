@@ -1,48 +1,36 @@
-// ==========================
-// Superhond Backend - index.js
-// ==========================
 import express from "express";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
 
-// imports van routes
+// --- Routes (alleen één keer importeren) ---
 import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
-import packsRoutes from "./routes/packs.js";
-import bookingsRoutes from "./routes/bookings.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
 import settingsRoutes from "./routes/settings.js";
-app.use("/api/settings", settingsRoutes);
+// (optioneel) als je deze al hebt en werkend zijn, laat staan
+// import classesRoutes from "./routes/classes.js";
+// import sessionsRoutes from "./routes/sessions.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// middleware
-app.use(cors());
 app.use(express.json());
 
-// static files (frontend)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "../public")));
+// --- Health/landing ---
+app.get("/", (_req, res) => {
+  res.send("✅ Superhond backend draait!");
+});
 
-// API routes
+// --- In deze volgorde mounten ---
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
-app.use("/api/packs", packsRoutes);
-app.use("/api/bookings", bookingsRoutes);
-app.use("/api/sessions", sessionsRoutes);
 app.use("/api/settings", settingsRoutes);
+// app.use("/api/classes", classesRoutes);
+// app.use("/api/sessions", sessionsRoutes);
 
-// healthcheck
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
+// --- Koppel customers-array naar dogs.js (setter wordt hieronder gezet) ---
+import { CUSTOMERS } from "./routes/customers.js";
+setCustomersRef(CUSTOMERS);
 
-// fallback: serve index.html voor SPA routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
-
-// start server
+// --- Start server ---
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Superhond backend draait op poort ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;
