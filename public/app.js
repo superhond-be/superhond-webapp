@@ -6,6 +6,270 @@
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+// ===== Instellingen (organisatie, branding, locaties, meta) =====
+async function ViewSettings() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Instellingen</h2>
+
+    <div class="card">
+      <h3>Organisatie</h3>
+      <form id="orgForm" class="row">
+        <label>Naam<input name="name" /></label>
+        <label>E-mail<input name="email" type="email" /></label>
+        <label>Telefoon<input name="phone" /></label>
+        <label>Website<input name="website" /></label>
+        <button type="submit">Opslaan</button>
+      </form>
+      <div id="orgMsg" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h3>Branding</h3>
+      <form id="brandingForm" class="row">
+        <label>Logo URL<input name="logoUrl" placeholder="/logo.png of https://..." /></label>
+        <label>Primaire kleur<input name="primaryColor" type="text" placeholder="#0a7a3a" /></label>
+        <label>Accentkleur<input name="accentColor" type="text" placeholder="#e6f5ec" /></label>
+        <button type="submit">Opslaan</button>
+      </form>
+      <div id="brandingMsg" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h3>Locaties</h3>
+      <form id="locForm" class="row">
+        <label>Naam<input name="name" required /></label>
+        <label>Adres<input name="address" /></label>
+        <label>Notitie<input name="notes" /></label>
+        <button type="submit">Toevoegen</button>
+      </form>
+      <div id="locMsg" class="muted"></div>
+      <div id="locList" style="margin-top:8px;">Laden…</div>
+    </div>
+
+    <div class="card">
+      <h3>Lestypes & Thema’s</h3>
+      <div class="row" style="gap:24px;">
+        <div style="flex:1; min-width:260px;">
+          <h4>Lestypes</h4>
+          <textarea id="lessonTypes" rows="6" style="width:100%;"></textarea>
+          <div class="muted">Één item per regel.</div>
+          <button id="saveLessonTypes" style="margin-top:8px;">Opslaan</button>
+          <div id="ltMsg" class="muted" style="margin-top:6px;"></div>
+        </div>
+        <div style="flex:1; min-width:260px;">
+          <h4>Thema’s</h4>
+          <textarea id="themes" rows="6" style="width:100%;"></textarea>
+          <div class="muted">Één item per regel.</div>
+          <button id="saveThemes" style="margin-top:8px;">Opslaan</button>
+          <div id="thMsg" class="muted" style="margin-top:6px;"></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const orgForm = wrap.querySelector("#orgForm");
+  const orgMsg  = wrap.querySelector("#orgMsg");
+  const brandingForm = wrap.querySelector("#brandingForm");
+  const brandingMsg  = wrap.querySelector("#brandingMsg");
+  const locForm = wrap.querySelector("#locForm");
+  const locMsg  = wrap.querySelector("#locMsg");
+  const locList = wrap.querySelector("#locList");
+
+  const taLessonTypes = wrap.querySelector("#lessonTypes");
+  const taThemes      = wrap.querySelector("#themes");
+  const ltMsg = wrap.querySelector("#ltMsg");
+  const thMsg = wrap.querySelector("#thMsg");
+
+  // helpers
+  const get = (u) => fetch(u).then(r => r.json());
+  const put = (u, b) => fetch(u, { method:"PUT", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(b) }).then(r => r.json());
+  const post = (u, b) => fetch(u, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(b) }).then(r => r.json());
+  const del = (u) => fetch(u, { method:"DELETE" });
+
+  async function loadAll() {
+    try {
+      const data = await get("/api/settings");
+      // organisatie
+      orgForm.name.value = data.org?.name || "";
+      orgForm.email.value = data.org?.email || "";
+      orgForm.phone.value = data.org?.phone || "";
+      orgForm.website.value = data.org?.website || "";
+      // branding
+      brandingForm.logoUrl.value = data.branding?.logoUrl || "";
+      brandingForm.primaryColor.value = data.branding?.primaryColor || "";
+      brandingForm.accentColor.value = data.branding?.accentColor || "";
+    } catch (e) {
+      orgMsg.textContent = "Kon instellingen niet laden.";
+      brandingMsg.textContent = "Kon instellingen niet laden.";
+      console.error(e);
+    }
+    await loadLocations();
+    await loadMeta();
+  }
+
+  async function loadLocations() {
+    try {
+      const arr = await get("/api/settings/locations");
+      if (!arr.length) {
+        locList.innerHTML = `<p class="muted">Nog geen locaties.</p>`;
+        return;
+      }
+      locList.innerHTML = arr.map(l => `
+        <div class="row" style="align-items:center; justify-content:space-between; border-bottom:1px dashed #eee; padding:8px 0;">
+          <div>
+            <strong>#${l.id}</strong> ${l.name} ${l.address ? `— ${l.address}` : ""} 
+            ${l.notes ? `<div class="muted">${l.notes}</div>` : ""}
+          </div>
+          <div class="row" style="gap:8px;">
+            <button data-edit="${l.id}">Bewerk</button>
+            <button data-del="${l.id}">Verwijder</button>
+          </div>
+        </div>
+      `).join("");
+    } catch (e) {
+      locList.textContent = "Kon locaties niet laden.";
+      console.error(e);
+    }
+  }
+
+  async function loadMeta() {
+    try {
+      const lessonTypes = await get("/api/settings/lesson-types");
+      const themes = await get("/api/settings/themes");
+      taLessonTypes.value = (lessonTypes || []).join("\n");
+      taThemes.value = (themes || []).join("\n");
+    } catch (e) {
+      ltMsg.textContent = "Kon lestypes niet laden.";
+      thMsg.textContent = "Kon thema’s niet laden.";
+      console.error(e);
+    }
+  }
+
+  // events
+  orgForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    orgMsg.textContent = "";
+    try {
+      const body = {
+        name: orgForm.name.value.trim(),
+        email: orgForm.email.value.trim(),
+        phone: orgForm.phone.value.trim(),
+        website: orgForm.website.value.trim()
+      };
+      const saved = await put("/api/settings/org", body);
+      orgMsg.style.color = "#2a7";
+      orgMsg.textContent = "Organisatie opgeslagen.";
+    } catch (err) {
+      orgMsg.style.color = "#c00";
+      orgMsg.textContent = "Fout bij opslaan.";
+    }
+  });
+
+  brandingForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    brandingMsg.textContent = "";
+    try {
+      const body = {
+        logoUrl: brandingForm.logoUrl.value.trim(),
+        primaryColor: brandingForm.primaryColor.value.trim(),
+        accentColor: brandingForm.accentColor.value.trim()
+      };
+      await put("/api/settings/branding", body);
+      brandingMsg.style.color = "#2a7";
+      brandingMsg.textContent = "Branding opgeslagen.";
+      // optioneel: kleuren live toepassen
+      if (body.primaryColor) document.documentElement.style.setProperty("--primary", body.primaryColor);
+      if (body.accentColor) document.documentElement.style.setProperty("--accent", body.accentColor);
+    } catch (err) {
+      brandingMsg.style.color = "#c00";
+      brandingMsg.textContent = "Fout bij opslaan.";
+    }
+  });
+
+  locForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    locMsg.textContent = "";
+    const f = e.currentTarget;
+    try {
+      await post("/api/settings/locations", {
+        name: f.name.value.trim(),
+        address: f.address.value.trim(),
+        notes: f.notes.value.trim()
+      });
+      f.reset();
+      locMsg.style.color = "#2a7";
+      locMsg.textContent = "Locatie toegevoegd.";
+      await loadLocations();
+    } catch (err) {
+      locMsg.style.color = "#c00";
+      locMsg.textContent = "Fout bij toevoegen.";
+    }
+  });
+
+  locList.addEventListener("click", async (e) => {
+    const btnEdit = e.target.closest("button[data-edit]");
+    const btnDel  = e.target.closest("button[data-del]");
+    if (btnEdit) {
+      const id = Number(btnEdit.getAttribute("data-edit"));
+      const row = btnEdit.closest(".row").parentElement; // container
+      // simpele inline-edit
+      const name = prompt("Nieuwe naam:");
+      const address = prompt("Nieuw adres (leeg laten om te behouden):");
+      const notes = prompt("Nieuwe notitie (leeg laten om te behouden):");
+      const body = {};
+      if (name !== null && name !== "") body.name = name;
+      if (address !== null) body.address = address;
+      if (notes !== null) body.notes = notes;
+      try {
+        await put(`/api/settings/locations/${id}`, body);
+        await loadLocations();
+      } catch {
+        alert("Kon locatie niet bijwerken.");
+      }
+    }
+    if (btnDel) {
+      const id = Number(btnDel.getAttribute("data-del"));
+      if (!confirm(`Locatie #${id} verwijderen?`)) return;
+      try {
+        await del(`/api/settings/locations/${id}`);
+        await loadLocations();
+      } catch {
+        alert("Kon locatie niet verwijderen.");
+      }
+    }
+  });
+
+  wrap.querySelector("#saveLessonTypes").addEventListener("click", async () => {
+    ltMsg.textContent = "";
+    const arr = taLessonTypes.value.split("\n").map(s => s.trim()).filter(Boolean);
+    try {
+      await put("/api/settings/lesson-types", { lessonTypes: arr });
+      ltMsg.style.color = "#2a7";
+      ltMsg.textContent = "Lestypes opgeslagen.";
+    } catch {
+      ltMsg.style.color = "#c00";
+      ltMsg.textContent = "Fout bij opslaan.";
+    }
+  });
+
+  wrap.querySelector("#saveThemes").addEventListener("click", async () => {
+    thMsg.textContent = "";
+    const arr = taThemes.value.split("\n").map(s => s.trim()).filter(Boolean);
+    try {
+      await put("/api/settings/themes", { themes: arr });
+      thMsg.style.color = "#2a7";
+      thMsg.textContent = "Thema’s opgeslagen.";
+    } catch {
+      thMsg.style.color = "#c00";
+      thMsg.textContent = "Fout bij opslaan.";
+    }
+  });
+
+  await loadAll();
+  return wrap;
+}
+
 async function getJSON(url) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(await r.text());
