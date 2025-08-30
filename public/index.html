@@ -17,6 +17,9 @@
        <button class="tab" data-tab="lesson-types">Lestypes</button>
 <button class="tab" data-tab="themes">Thema's</button>
 <button class="tab" data-tab="locations">Locaties</button>
+<button class="tab" data-tab="tab-classes">Klassen</button>
+<button class="tab" data-tab="tab-sessions">Lessen</button>
+      
     </nav>
   </header>
 
@@ -136,6 +139,87 @@
     <button type="submit">Toevoegen</button>
   </form>
   <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Adres</th><th>PC</th><th>Plaats</th></tr></thead><tbody id="loc-body"></tbody></table>
+</section>
+
+  <!-- KLASSEN -->
+<section id="tab-classes" class="tab">
+  <h2>Klassen</h2>
+
+  <form id="classForm" class="card">
+    <div class="grid">
+      <label>Naam klas
+        <input name="name" required />
+      </label>
+
+      <label>Lestype
+        <select name="lessonTypeId" id="ltSelect" required></select>
+      </label>
+
+      <label>Thema
+        <select name="themeId" id="thSelect">
+          <option value="">(optioneel)</option>
+        </select>
+      </label>
+
+      <label>Locatie
+        <select name="locationId" id="locSelect" required></select>
+      </label>
+
+      <label class="grid span-2">Notitie
+        <input name="note" placeholder="Interne notitie (optioneel)" />
+      </label>
+    </div>
+    <button class="primary" type="submit">+ Klas toevoegen</button>
+  </form>
+
+  <div class="toolbar">
+    <button id="reloadClasses">🔄 Herlaad</button>
+  </div>
+  <table class="list">
+    <thead><tr><th>#</th><th>Naam</th><th>Lestype</th><th>Thema</th><th>Locatie</th></tr></thead>
+    <tbody id="classesBody"></tbody>
+  </table>
+</section>
+
+<!-- LESSEN -->
+<section id="tab-sessions" class="tab">
+  <h2>Lessen (momenten)</h2>
+
+  <form id="sessionForm" class="card">
+    <div class="grid">
+      <label>Klas
+        <select name="classId" id="classSelect" required></select>
+      </label>
+      <label>Datum
+        <input type="date" name="date" required />
+      </label>
+      <label>Tijd
+        <input type="time" name="time" required />
+      </label>
+      <label>Capaciteit
+        <input type="number" name="capacity" min="1" placeholder="bv. 10" />
+      </label>
+      <label class="grid span-2">Notitie
+        <input name="note" placeholder="Optioneel" />
+      </label>
+    </div>
+    <button class="primary" type="submit">+ Lesmoment toevoegen</button>
+  </form>
+
+  <div class="toolbar">
+    <label>Filter klas
+      <select id="sessionFilterClass"></select>
+    </label>
+    <label>Filter datum
+      <input type="date" id="sessionFilterDate" />
+    </label>
+    <button id="reloadSessions">🔄 Herlaad</button>
+  </div>
+
+  <table class="list">
+    <thead><tr><th>#</th><th>Klas</th><th>Datum</th><th>Tijd</th><th>Capaciteit</th></tr></thead>
+    <tbody id="sessionsBody"></tbody>
+  </table>
 </section>
   
   <footer class="footer">
