@@ -1,81 +1,46 @@
+// server/routes/passes.js
 import express from "express";
 const router = express.Router();
-export const router = express.Router();
 
-globalThis.PASSES ??= [
-  { id: 1, name: "10-strippenkaart", credits: 10 },
-  { id: 2, name: "5-strippenkaart", credits: 5 },
+// Tijdelijke in-memory opslag voor strippenkaarten
+let PASSES = [
+  // voorbeeld
+  { id: 1, customerId: 1, total: 10, used: 2 }
 ];
 
+// Alle strippenkaarten ophalen
 router.get("/", (_req, res) => {
-  res.json(globalThis.PASSES);
+  res.json(PASSES);
 });
 
-export default router;
-/**
- * Strippenkaarten in-memory
- * pass = { id, customerId, type, totalStrips, usedStrips, reservedStrips, expiresAt, note, active }
- */
-let PASSES = [];
-let NEXT_ID = 1;
-
-function todayISO() { return new Date().toISOString().slice(0,10); }
-
-router.get("/", (_req, res) => res.json(PASSES));
-
-router.get("/by-customer/:customerId", (req, res) => {
-  const cid = Number(req.params.customerId);
-  const list = PASSES.filter(p => p.customerId === cid);
-  res.json(list);
-});
-
+// Nieuwe strippenkaart toevoegen
 router.post("/", (req, res) => {
-  const { customerId, type, totalStrips, expiresAt, note = "", active = true } = req.body || {};
-  if (!customerId) return res.status(400).json({ error: "customerId is verplicht" });
-  if (!type) return res.status(400).json({ error: "type is verplicht (bv. 'puppy-9')" });
-  const item = {
-    id: NEXT_ID++,
-    customerId: Number(customerId),
-    type: String(type),
-    totalStrips: Number(totalStrips ?? 0),
-    usedStrips: 0,
-    reservedStrips: 0,
-    expiresAt: expiresAt ? String(expiresAt) : null,
-    note: String(note),
-    active: !!active
+  const { customerId, total } = req.body;
+  if (!customerId || !total) {
+    return res.status(400).json({ error: "customerId en total zijn verplicht" });
+  }
+  const newPass = {
+    id: PASSES.length + 1,
+    customerId,
+    total,
+    used: 0
   };
-  PASSES.push(item);
-  res.status(201).json(item);
+  PASSES.push(newPass);
+  res.status(201).json(newPass);
 });
 
-// Admin: aanpassen totaal/einddatum/active/note
-router.patch("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const p = PASSES.find(x => x.id === id);
-  if (!p) return res.status(404).json({ error: "Strippenkaart niet gevonden" });
+// Een strip gebruiken (één strip aftrekken)
+router.post("/:id/use", (req, res) => {
+  const passId = parseInt(req.params.id);
+  const pass = PASSES.find(p => p.id === passId);
+  if (!pass) return res.status(404).json({ error: "Strippenkaart niet gevonden" });
 
-  const { totalStrips, expiresAt, active, note } = req.body || {};
-  if (totalStrips != null) p.totalStrips = Number(totalStrips);
-  if (expiresAt !== undefined) p.expiresAt = expiresAt ? String(expiresAt) : null;
-  if (active != null) p.active = !!active;
-  if (note !== undefined) p.note = String(note ?? "");
-  res.json(p);
+  if (pass.used >= pass.total) {
+    return res.status(400).json({ error: "Geen strips meer over" });
+  }
+
+  pass.used++;
+  res.json(pass);
 });
-
-// helper: controleren op beschikbaarheid
-export function getAvailableStrips(pass) {
-  return pass.totalStrips - pass.usedStrips - pass.reservedStrips;
-}
-export function findValidPassForCustomer(customerId) {
-  const today = todayISO();
-  // eenvoudig: neem de eerste actieve, niet-verlopen kaart met beschikbaarheid
-  return PASSES.find(p =>
-    p.customerId === Number(customerId) &&
-    p.active &&
-    (p.expiresAt ? p.expiresAt >= today : true) &&
-    getAvailableStrips(p) > 0
-  ) || null;
-}
 
 export default router;
-export { PASSES };
