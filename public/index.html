@@ -105,7 +105,39 @@
       <p>Kies hierboven een tab voor beheer.</p>
     </section>
   </main>
+<section class="view" id="lesson-types" hidden>
+  <h2>Lestypes</h2>
+  <form id="lt-form">
+    <input name="name" placeholder="Naam" required>
+    <input name="description" placeholder="Beschrijving">
+    <label><input type="checkbox" name="active" checked> Actief</label>
+    <button type="submit">Toevoegen</button>
+  </form>
+  <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Beschrijving</th><th>Actief</th></tr></thead><tbody id="lt-body"></tbody></table>
+</section>
 
+<section class="view" id="themes" hidden>
+  <h2>Thema's</h2>
+  <form id="th-form">
+    <input name="name" placeholder="Naam" required>
+    <input name="description" placeholder="Beschrijving">
+    <button type="submit">Toevoegen</button>
+  </form>
+  <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Beschrijving</th></tr></thead><tbody id="th-body"></tbody></table>
+</section>
+
+<section class="view" id="locations" hidden>
+  <h2>Locaties</h2>
+  <form id="loc-form">
+    <input name="name" placeholder="Naam locatie" required>
+    <input name="address" placeholder="Adres">
+    <input name="postal" placeholder="Postcode" style="width:120px">
+    <input name="city" placeholder="Plaats" style="width:160px">
+    <button type="submit">Toevoegen</button>
+  </form>
+  <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Adres</th><th>PC</th><th>Plaats</th></tr></thead><tbody id="loc-body"></tbody></table>
+</section>
+  
   <footer class="footer">
     <span id="lastUpdated"></span>
   </footer>
