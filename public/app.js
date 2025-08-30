@@ -50,7 +50,39 @@ async function testStrippenkaart() {
   let all = await res.json();
   console.log("Alle strippenkaarten:", all);
 }
+// === STRIPPENKAART FUNCTIES ===
+async function laadPasses() {
+  const res = await fetch("/api/passes");
+  const passes = await res.json();
 
+  const overzichtDiv = document.getElementById("overzichtContent");
+  overzichtDiv.innerHTML = "<h2>Strippenkaart overzicht</h2>";
+
+  passes.forEach(pass => {
+    const klantDiv = document.createElement("div");
+    klantDiv.className = "klant-card";
+
+    klantDiv.innerHTML = `
+      <p><strong>${pass.customerName}</strong> (${pass.customerEmail})</p>
+      <p>Strips over: <span id="strips-${pass.id}">${pass.remaining}</span></p>
+      <button onclick="gebruikStrip(${pass.id})">Gebruik strip</button>
+      <button onclick="voegStripToe(${pass.id})">+1 strip</button>
+      <hr>
+    `;
+
+    overzichtDiv.appendChild(klantDiv);
+  });
+}
+
+async function gebruikStrip(passId) {
+  await fetch(`/api/passes/${passId}/use`, { method: "POST" });
+  laadPasses(); // opnieuw laden
+}
+
+async function voegStripToe(passId) {
+  await fetch(`/api/passes/${passId}/add`, { method: "POST" });
+  laadPasses(); // opnieuw laden
+}
 testStrippenkaart();
   
   await refreshCustomersList(); // je bestaande lijst-herlaad functie
