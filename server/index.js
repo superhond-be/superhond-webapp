@@ -14,6 +14,9 @@ import bookingsRoutes from "./routes/bookings.js";
 import sessionsRoutes from "./routes/sessions.js";
 import settingsRoutes from "./routes/settings.js";
 
+import settingsRoutes from "./routes/settings.js";
+app.use("/api/settings", settingsRoutes);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
