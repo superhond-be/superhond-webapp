@@ -1,6 +1,7 @@
 {
   "name": "superhond-webapp",
   "version": "1.0.0",
+  "description": "Superhond coach portaal",
   "type": "module",
   "private": true,
   "scripts": {
