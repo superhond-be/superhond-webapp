@@ -6,11 +6,9 @@ import dogsRoutes from "./routes/dogs.js";
 const app = express();
 app.use(express.json());
 
-// routes koppelen
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 
-// healthcheck
 app.get("/", (_req, res) => res.send("✅ Superhond backend draait!"));
 
 const PORT = process.env.PORT || 3000;
