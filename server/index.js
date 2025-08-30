@@ -6,6 +6,9 @@ import { fileURLToPath } from "url";
 import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 
+import passesRoutes from "./routes/passes.js";
+app.use("/api/passes", passesRoutes);
+
 const app = express();
 app.use(express.json());
 
