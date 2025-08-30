@@ -1,48 +1,101 @@
+// server/routes/customers.js
 import express from "express";
 const router = express.Router();
 
-let CUSTOMERS = [];
-let NEXT_CUSTOMER_ID = 1;
+/**
+ * Eenvoudige in-memory opslag
+ * (later kun je dit vervangen door een DB)
+ */
+let CUSTOMERS = [
+  {
+    id: 1,
+    name: "Voorbeeld klant",
+    email: "klant@example.com",
+    phone: "+32 000 00 00 00",
+    // honden die aan de klant gekoppeld zijn (optioneel)
+    dogs: [],
+  },
+];
 
-// Alle klanten
+let NEXT_ID = 2;
+
+/**
+ * Alle klanten
+ * GET /api/customers
+ */
 router.get("/", (_req, res) => {
   res.json(CUSTOMERS);
 });
 
-// Eén klant
+/**
+ * Eén klant opvragen
+ * GET /api/customers/:id
+ */
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
-  const includeDogs = req.query.withDogs === "1";
-  const customer = CUSTOMERS.find(c => c.id === id);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  if (!includeDogs) return res.json(customer);
-  res.json({ ...customer, dogs: customer.dogs || [] });
+  const customer = CUSTOMERS.find((c) => c.id === id);
+  if (!customer) {
+    return res.status(404).json({ error: "Klant niet gevonden" });
+  }
+  res.json(customer);
 });
 
-// Nieuwe klant
+/**
+ * Klant aanmaken
+ * POST /api/customers
+ * body: { name, email?, phone? }
+ */
 router.post("/", (req, res) => {
   const { name, email, phone } = req.body || {};
-  if (!name?.trim()) return res.status(400).json({ error: "Naam is verplicht" });
+  if (!name) {
+    return res.status(400).json({ error: "Naam is verplicht" });
+  }
 
   const newCustomer = {
-    id: NEXT_CUSTOMER_ID++,
-    name: name.trim(),
+    id: NEXT_ID++,
+    name,
     email: email || "",
     phone: phone || "",
-    dogs: []
+    dogs: [],
   };
+
   CUSTOMERS.push(newCustomer);
   res.status(201).json(newCustomer);
 });
-// voorbeeld sessie-object
-{
-  id: 1,
-  classId: 1,
-  date: "2025-09-10T09:00:00",
-  location: "Retie",
-  capacity: 10   // max aantal deelnemers
-}
+
+/**
+ * Klant bijwerken (deels)
+ * PATCH /api/customers/:id
+ * body: { name?, email?, phone? }
+ */
+router.patch("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const customer = CUSTOMERS.find((c) => c.id === id);
+  if (!customer) {
+    return res.status(404).json({ error: "Klant niet gevonden" });
+  }
+
+  const { name, email, phone } = req.body || {};
+  if (typeof name === "string") customer.name = name;
+  if (typeof email === "string") customer.email = email;
+  if (typeof phone === "string") customer.phone = phone;
+
+  res.json(customer);
+});
+
+/**
+ * Klant verwijderen
+ * DELETE /api/customers/:id
+ */
+router.delete("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const idx = CUSTOMERS.findIndex((c) => c.id === id);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Klant niet gevonden" });
+  }
+  const [removed] = CUSTOMERS.splice(idx, 1);
+  res.json(removed);
+});
 
 export { CUSTOMERS };
 export default router;
