@@ -6,11 +6,11 @@ import dogsRoutes from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
 import purchasesRoutes from "./routes/purchases.js";
+import debugRoutes from "./routes/debug.js";
 
 // ...
 app.use("/api", purchasesRoutes);
-
-
+app.use("/api", debugRoutes);
 const app = express();
 app.use(express.json());
 
