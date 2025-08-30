@@ -1,83 +1,136 @@
-// === helpers ===
-async function api(url, options) {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+// ------- helpers -------
+async function apiJson(url, options) {
+  const res = await fetch(url, { headers: { "Content-Type": "application/json" }, ...options });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
-function byId(id){ return document.getElementById(id); }
-function setRows(tbodyId, rowsHtml){ byId(tbodyId).innerHTML = rowsHtml; }
+const byId = (id) => document.getElementById(id);
 
-// === tabs (zorg dat je tab-buttons data-tab attribuut hebben) ===
-document.querySelectorAll("button.tab").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const tab = btn.dataset.tab;
-    document.querySelectorAll(".view").forEach(v=>v.hidden = v.id !== tab);
-    // lazy load per tab
-    if (tab === "lesson-types") loadLessonTypes();
-    if (tab === "themes") loadThemes();
-    if (tab === "locations") loadLocations();
-  });
-});
+// ------- referentiedata laden voor selects -------
+async function fillLessonRefs() {
+  const [lts, ths, locs] = await Promise.all([
+    apiJson("/api/lesson-types"),
+    apiJson("/api/themes"),
+    apiJson("/api/locations"),
+  ]);
 
-// === Lestypes ===
-async function loadLessonTypes(){
-  const data = await api("/api/lesson-types");
-  const rows = data.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.description||""}</td><td>${x.active?"Ja":"Nee"}</td></tr>`).join("");
-  setRows("lt-body", rows);
+  // Lestypes
+  byId("ltSelect").innerHTML = lts.map(x => `<option value="${x.id}">${x.name}</option>`).join("");
+
+  // Thema's (met lege optie al in HTML)
+  const thSel = byId("thSelect");
+  thSel.innerHTML = `<option value="">(geen)</option>` + ths.map(x => `<option value="${x.id}">${x.name}</option>`).join("");
+
+  // Locaties
+  byId("locSelect").innerHTML = locs.map(x => `<option value="${x.id}">${x.name}</option>`).join("");
 }
-byId("lt-form")?.addEventListener("submit", async e=>{
+
+// ------- KLASSEN -------
+async function loadClasses() {
+  const classes = await apiJson("/api/classes");
+  // Voor leesbare namen ook referenties ophalen:
+  const [lts, ths, locs] = await Promise.all([
+    apiJson("/api/lesson-types"),
+    apiJson("/api/themes"),
+    apiJson("/api/locations"),
+  ]);
+  const ltById = Object.fromEntries(lts.map(x => [x.id, x.name]));
+  const thById = Object.fromEntries(ths.map(x => [x.id, x.name]));
+  const locById = Object.fromEntries(locs.map(x => [x.id, x.name]));
+
+  byId("classesBody").innerHTML = classes.map(c => `
+    <tr>
+      <td>${c.id}</td>
+      <td>${escapeHtml(c.name)}</td>
+      <td>${ltById[c.lessonTypeId] || "-"}</td>
+      <td>${c.themeId ? (thById[c.themeId] || "-") : "-"}</td>
+      <td>${locById[c.locationId] || "-"}</td>
+    </tr>
+  `).join("");
+}
+byId("classForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const f = new FormData(e.target);
-  await api("/api/lesson-types", {
-    method:"POST",
+  const f = new FormData(e.currentTarget);
+  await apiJson("/api/classes", {
+    method: "POST",
     body: JSON.stringify({
       name: f.get("name"),
-      description: f.get("description"),
-      active: f.get("active") === "on",
-    })
+      lessonTypeId: Number(f.get("lessonTypeId")),
+      themeId: f.get("themeId") ? Number(f.get("themeId")) : null,
+      locationId: Number(f.get("locationId")),
+      note: f.get("note")
+    }),
   });
-  e.target.reset(); 
-  await loadLessonTypes();
+  e.currentTarget.reset();
+  await loadClasses();
 });
+byId("reloadClasses")?.addEventListener("click", loadClasses);
 
-// === Thema's ===
-async function loadThemes(){
-  const data = await api("/api/themes");
-  const rows = data.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.description||""}</td></tr>`).join("");
-  setRows("th-body", rows);
+// ------- LESSEN (SESSIONS) -------
+async function fillClassSelects() {
+  const classes = await apiJson("/api/classes");
+  byId("classSelect").innerHTML = classes.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+  byId("sessionFilterClass").innerHTML = `<option value="">(alle)</option>` + classes.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
 }
-byId("th-form")?.addEventListener("submit", async e=>{
-  e.preventDefault();
-  const f = new FormData(e.target);
-  await api("/api/themes", {
-    method:"POST",
-    body: JSON.stringify({ name: f.get("name"), description: f.get("description") })
-  });
-  e.target.reset(); 
-  await loadThemes();
-});
 
-// === Locaties ===
-async function loadLocations(){
-  const data = await api("/api/locations");
-  const rows = data.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.address||""}</td><td>${x.postal||""}</td><td>${x.city||""}</td></tr>`).join("");
-  setRows("loc-body", rows);
+async function loadSessions() {
+  const cls = byId("sessionFilterClass").value;
+  const dt  = byId("sessionFilterDate").value;
+  const qs = new URLSearchParams();
+  if (cls) qs.set("classId", cls);
+  if (dt)  qs.set("date", dt);
+
+  const sessions = await apiJson(`/api/sessions${qs.toString() ? "?" + qs.toString() : ""}`);
+
+  // toon klassennaam
+  const classes = await apiJson("/api/classes");
+  const byIdC = Object.fromEntries(classes.map(c => [c.id, c.name]));
+
+  byId("sessionsBody").innerHTML = sessions.map(s => `
+    <tr>
+      <td>${s.id}</td>
+      <td>${escapeHtml(byIdC[s.classId] || "-")}</td>
+      <td>${s.date}</td>
+      <td>${s.time}</td>
+      <td>${s.capacity ?? "-"}</td>
+    </tr>
+  `).join("");
 }
-byId("loc-form")?.addEventListener("submit", async e=>{
+
+byId("sessionForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const f = new FormData(e.target);
-  await api("/api/locations", {
-    method:"POST",
+  const f = new FormData(e.currentTarget);
+  await apiJson("/api/sessions", {
+    method: "POST",
     body: JSON.stringify({
-      name: f.get("name"),
-      address: f.get("address"),
-      postal: f.get("postal"),
-      city: f.get("city"),
-    })
+      classId: Number(f.get("classId")),
+      date: f.get("date"),
+      time: f.get("time"),
+      capacity: f.get("capacity") ? Number(f.get("capacity")) : null,
+      note: f.get("note")
+    }),
   });
-  e.target.reset(); 
-  await loadLocations();
+  e.currentTarget.reset();
+  await loadSessions();
+});
+
+byId("sessionFilterClass")?.addEventListener("change", loadSessions);
+byId("sessionFilterDate")?.addEventListener("change", loadSessions);
+byId("reloadSessions")?.addEventListener("click", loadSessions);
+
+// ------- util -------
+function escapeHtml(v){ return String(v ?? "").replace(/[<>&"]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s])); }
+
+// ------- init (roep dit aan wanneer je tab opent, of direct bij load) -------
+document.addEventListener("DOMContentLoaded", async () => {
+  // selects klaarzetten
+  try {
+    await fillLessonRefs();
+  } catch(e) { /* ignore als tab nog niet zichtbaar is */ }
+
+  try {
+    await loadClasses();
+    await fillClassSelects();
+    await loadSessions();
+  } catch(e) { /* ignore on first load */ }
 });
