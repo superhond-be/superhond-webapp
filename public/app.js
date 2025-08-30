@@ -199,4 +199,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     <thead><tr><th>#</th><th>Les</th><th>Klant</th><th>Hond</th><th>Status</th><th>Acties</th></tr></thead>
     <tbody id="bookingsBody"></tbody>
   </table>
+
+// --- Tabs wisselen ---
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".tab-btn");
+  if (!btn) return;
+
+  // active knop
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b === btn));
+
+  // panels
+  const target = btn.dataset.tab;
+  document.querySelectorAll(".tab-panel").forEach(p => {
+    p.hidden = p.id !== target;
+  });
+});
+  
 </section>
