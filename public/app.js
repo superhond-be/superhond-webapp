@@ -370,3 +370,25 @@ function escapeHTML(s) {
 initTabs();
 loadCustomers().then(loadDogs);
 setUpdated();
+
+// --- Pending aankopen tonen + claimen ---
+async function loadPendingForEmail(email) {
+  if (!email) return [];
+  const res = await fetch(`/api/purchases/pending?email=${encodeURIComponent(email)}`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+async function claimPurchase({ email, purchaseId, customerId, dogId }) {
+  const r = await fetch("/api/purchases/claim", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, purchaseId, customerId, dogId }),
+  });
+  if (!r.ok) {
+    const t = await r.text().catch(()=>"");
+    throw new Error(t || r.statusText);
+  }
+  return r.json();
+}
+
