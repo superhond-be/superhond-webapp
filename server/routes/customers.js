@@ -2,64 +2,37 @@
 import express from "express";
 const router = express.Router();
 
-// ---- In-memory opslag (simpel & consistent) ----
-let NEXT_CUSTOMER_ID = 2;
+// In-memory klanten
+let CUSTOMERS = [];
+let NEXT_ID = 1;
 
-/** Demo-klant zodat de UI iets heeft om te tonen */
-const CUSTOMERS = [
-  {
-    id: 1,
-    name: "Demo Klant",
-    email: "demo@example.com",
-    phone: "",
-    dogs: [],
-    passes: [], // strippenkaarten
-  },
-];
-
-// ---- Helpers (ook exporteren voor andere routers) ----
-export const getCustomers = () => CUSTOMERS;
-
-export const findCustomer = (id) =>
-  CUSTOMERS.find((c) => c.id === Number(id));
-
-export function addCustomer({ name, email, phone }) {
-  if (!name) throw new Error("Naam is verplicht");
-  const customer = {
-    id: NEXT_CUSTOMER_ID++,
-    name,
-    email: email || "",
-    phone: phone || "",
-    dogs: [],
-    passes: [],
-  };
-  CUSTOMERS.push(customer);
-  return customer;
-}
-
-// ---- Routes ----
-
-// Lijst klanten
-router.get("/", (_req, res) => {
+// Alle klanten
+router.get("/", (req, res) => {
   res.json(CUSTOMERS);
 });
 
-// Eén klant
+// Één klant
 router.get("/:id", (req, res) => {
-  const c = findCustomer(req.params.id);
+  const id = Number(req.params.id);
+  const c = CUSTOMERS.find(x => x.id === id);
   if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
   res.json(c);
 });
 
 // Nieuwe klant
 router.post("/", (req, res) => {
-  try {
-    const { name, email, phone } = req.body || {};
-    const created = addCustomer({ name, email, phone });
-    res.status(201).json(created);
-  } catch (e) {
-    res.status(400).json({ error: String(e.message || e) });
-  }
+  const { name, email, phone } = req.body || {};
+  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+
+  const newCustomer = {
+    id: NEXT_ID++,
+    name,
+    email: email || "",
+    phone: phone || "",
+    createdAt: new Date().toISOString()
+  };
+  CUSTOMERS.push(newCustomer);
+  res.status(201).json(newCustomer);
 });
 
 export default router;
