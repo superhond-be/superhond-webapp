@@ -1,30 +1,30 @@
 import express from "express";
-import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
-import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
-import settingsRoutes from "./routes/settings.js";
-import passesRoutes from "./routes/passes.js";
+const router = express.Router();
 
-const app = express();
-app.use(express.json());
+// Demo klanten
+let CUSTOMERS = [
+  {
+    id: 1,
+    name: "Paul Thijs",
+    email: "paul@example.com",
+    phone: "0476 11 22 33",
+    dogs: []
+  }
+];
 
-// Koppel routes
-app.use("/api/customers", customersRoutes);
-app.use("/api/dogs", dogsRoutes);
-app.use("/api/settings", settingsRoutes);
-app.use("/api/passes", passesRoutes);
-
-// Geef referentie door zodat dogs toegang heeft tot CUSTOMERS
-setCustomersRef(CUSTOMERS);
-
-// Healthcheck
-app.get("/", (req, res) => {
-  res.send("✅ Superhond backend draait!");
+// API endpoints
+router.get("/", (req, res) => {
+  res.json(CUSTOMERS);
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+router.post("/", (req, res) => {
+  const newCustomer = req.body;
+  newCustomer.id = CUSTOMERS.length + 1;
+  newCustomer.dogs = newCustomer.dogs || [];
+  CUSTOMERS.push(newCustomer);
+  res.status(201).json(newCustomer);
 });
 
-export default app;
+// 👉 hier exporteren we zowel default als named
+export default router;
+export { CUSTOMERS };
