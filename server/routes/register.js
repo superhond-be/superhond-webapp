@@ -1,7 +1,7 @@
 // server/routes/register.js
 import express from "express";
 import { CUSTOMERS } from "./customers.js";
-
+import registerRoutes from "./routes/register.js";
 const router = express.Router();
 
 // POST /api/register
