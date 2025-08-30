@@ -1,54 +1,65 @@
-// server/routes/dogs.js
 import express from "express";
-import { CUSTOMERS } from "./customers.js";
+import { getCustomersRef } from "./customers.js";
+
 const router = express.Router();
 
-// In-memory
+// in-memory
+let DOGS = [];
 let NEXT_DOG_ID = 1;
-export const DOGS = []; // { id, customerId, name, breed, birthDate, sex, vaccinationStatus, vaccinationBookRef, vetName, vetPhone, emergencyContact }
 
-// Helper: hond voor klant aanmaken
-export function createDogForCustomer(customerId, dogData) {
-  const customer = CUSTOMERS.find(c => c.id === Number(customerId));
-  if (!customer) throw new Error("Klant niet gevonden");
-
-  const d = {
-    id: NEXT_DOG_ID++,
-    customerId: customer.id,
-    name: dogData.name,
-    breed: dogData.breed || "",
-    birthDate: dogData.birthDate || "",
-    sex: dogData.sex || "",
-    vaccinationStatus: dogData.vaccinationStatus || "",
-    vaccinationBookRef: dogData.vaccinationBookRef || "",
-    vetName: dogData.vetName || "",
-    vetPhone: dogData.vetPhone || "",
-    emergencyContact: dogData.emergencyContact || ""
-  };
-  DOGS.push(d);
-  customer.dogs = customer.dogs || [];
-  customer.dogs.push({ id: d.id, name: d.name, breed: d.breed }); // korte weergave bij klant
-  return d;
-}
-
-// Lijst (optioneel filter customerId)
+// alle honden (optioneel filter ?customerId=)
 router.get("/", (req, res) => {
-  const cid = req.query.customerId ? Number(req.query.customerId) : null;
-  const list = cid ? DOGS.filter(d => d.customerId === cid) : DOGS;
+  const { customerId } = req.query;
+  let list = DOGS;
+  if (customerId) list = list.filter(d => d.ownerId === Number(customerId));
   res.json(list);
 });
 
-// (optioneel) hond toevoegen via /api/dogs/:customerId
+// hond detail
+router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const dog = DOGS.find(d => d.id === id);
+  if (!dog) return res.status(404).json({ error: "Hond niet gevonden" });
+  res.json(dog);
+});
+
+// nieuwe hond gekoppeld aan klant
 router.post("/:customerId", (req, res) => {
+  const customers = getCustomersRef();
   const customerId = Number(req.params.customerId);
-  const { name, ...rest } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Hond naam is verplicht" });
-  try {
-    const d = createDogForCustomer(customerId, { name, ...rest });
-    res.status(201).json(d);
-  } catch (e) {
-    res.status(404).json({ error: e.message });
-  }
+  const owner = customers.find(c => c.id === customerId);
+  if (!owner) return res.status(404).json({ error: "Klant niet gevonden" });
+
+  const {
+    name,
+    breed,
+    birthDate,
+    sex,
+    vaccineStatus,
+    vetPhone,
+    vetName,
+    bookletRef,
+    emergencyNumber
+  } = req.body || {};
+
+  if (!name) return res.status(400).json({ error: "Naam hond is verplicht" });
+
+  const created = {
+    id: NEXT_DOG_ID++,
+    ownerId: owner.id,
+    name,
+    breed: breed || "",
+    birthDate: birthDate || "",
+    sex: sex || "",
+    vaccineStatus: vaccineStatus || "",
+    vetPhone: vetPhone || "",
+    vetName: vetName || "",
+    bookletRef: bookletRef || "",
+    emergencyNumber: emergencyNumber || ""
+  };
+
+  DOGS.push(created);
+  res.status(201).json(created);
 });
 
 export default router;
