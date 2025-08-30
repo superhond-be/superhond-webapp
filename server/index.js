@@ -3,42 +3,53 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ===== Routes =====
+// ---- Routes (let op: exacte paden, geen dubbele 'routes') ----
 import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
 import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
-import passesRoutes from "./routes/passes.js";     // ok als dit nog niet bestaat, anders weghalen
-import settingsRoutes from "./routes/settings.js"; // idem: alleen laten staan als het bestaat
+import settingsRoutes from "./routes/settings.js";
+// Heb je later extra routes (bijv. classes/sessions/passes)? Voeg ze hier toe:
+// import classesRoutes from "./routes/classes.js";
+// import sessionsRoutes from "./routes/sessions.js";
+// import passesRoutes from "./routes/passes.js";
 
-// ===== App setup =====
+// ---- App & middleware ----
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// (optioneel) statische bestanden uit /public serveren
+// Static files uit /public
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "../public")));
 
-// ===== Koppelingen =====
-app.use("/api/customers", customersRoutes);
-app.use("/api/dogs", dogsRoutes);
-app.use("/api/passes", passesRoutes);       // haal weg als /routes/passes.js niet bestaat
-app.use("/api/settings", settingsRoutes);   // haal weg als /routes/settings.js niet bestaat
-
-// Heel belangrijk: geef dogs.js de referentie naar de klanten-array
-setCustomersRef(CUSTOMERS);
-
-// ===== Healthcheck & fallback =====
+// Healthcheck
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-// (optioneel) HTML fallback voor SPA: index.html serveren
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
+// ---- Routes koppelen (elk maar 1x) ----
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+app.use("/api/settings", settingsRoutes);
+// app.use("/api/classes", classesRoutes);
+// app.use("/api/sessions", sessionsRoutes);
+// app.use("/api/passes", passesRoutes);
 
-// ===== Start server =====
+// Geef de klanten-referentie door aan dogs.js (voor koppeling hond->klant)
+if (typeof setCustomersRef === "function") {
+  setCustomersRef(CUSTOMERS);
+}
+
+// 404 voor onbekende API-routes
+app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
+
+// Fallback: overige routes naar frontend (single page)
+app.get("*", (_req, res) =>
+  res.sendFile(path.join(__dirname, "../public/index.html"))
+);
+
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 export default app;
