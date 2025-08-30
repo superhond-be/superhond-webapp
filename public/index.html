@@ -1,206 +1,102 @@
 <!DOCTYPE html>
-
-<section style="padding:16px; border:1px solid #ddd; margin-top:16px;">
-  <h2>Credits & Boeken (demo)</h2>
-
-  <h3>Pakket toevoegen</h3>
-  <form id="packForm">
-    <input name="customerId" type="number" placeholder="customerId" required>
-    <input name="size" type="number" placeholder="aantal credits" required>
-    <input name="expiresAt" type="date" placeholder="einddatum (optioneel)">
-    <button>Bewaar pakket</button>
-  </form>
-
-  <h3>Boeking maken</h3>
-  <form id="bookForm">
-    <input name="sessionId" type="number" placeholder="sessionId" required>
-    <input name="customerId" type="number" placeholder="customerId" required>
-    <input name="dogId" type="number" placeholder="dogId" required>
-    <button>Reserveer</button>
-  </form>
-
-  <div id="bookMsg" style="margin-top:8px;color:#2a7;"></div>
-</section>
-
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Superhond Coach Portaal</title>
-  
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+    }
+    header {
+      background: #0088cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      background: #006699;
+    }
+    nav button {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      background: #006699;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    nav button:hover {
+      background: #004466;
+    }
+    .screen {
+      display: none;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welkom bij het Superhond Coach Portaal</h1>
-  <p>Kies in het menu een onderdeel om verder te gaan.</p>
-
-  <!-- Jouw script -->
-  <script src="/app.js"></script>
-
-<button onclick="showBalance(1)">Toon saldo klant #1</button>
-
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Superhond • Coach Portaal</title>
-  <link rel="stylesheet" href="/styles.css" />
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo">🐾</span>
-      <strong>Superhond</strong> Coach Portaal
-    </div>
-    <div id="lastUpdated" class="muted"></div>
+  <header>
+    <h1>🐾 Superhond Coach Portaal</h1>
   </header>
-
-  <nav class="sidebar">
-    <ul>
-      <li class="nav-title">Dashboard</li>
-      <li data-view="dashboard" class="active">Overzicht</li>
-
-      <li class="nav-title">Klanten & Honden</li>
-      <li data-view="customers">Klanten</li>
-      <li data-view="dogs">Honden</li>
-
-      <li class="nav-title">Lessen</li>
-      <li data-view="classes">Klassen (les-types)</li>
-      <li data-view="sessions">Lessen (momenten)</li>
-
-      <li class="nav-title">Instellingen</li>
-      <li data-view="settings">Organisatie & Branding</li>
-    </ul>
+  
+  <nav>
+    <button onclick="showScreen('klanten')">Klanten</button>
+    <button onclick="showScreen('honden')">Honden</button>
+    <button onclick="showScreen('instellingen')">Instellingen</button>
+    <button onclick="showScreen('overzicht')">Overzicht</button>
   </nav>
 
-  <main id="viewRoot">
-    <!-- DASHBOARD -->
-    <section data-view="dashboard" class="view visible">
-      <h1>Welkom 👋</h1>
-      <p>Kies een onderdeel in het menu links.</p>
+  <main>
+    <div id="klanten" class="screen active">
+      <h2>Klantenbeheer</h2>
+      <p>Hier komen alle klanten te staan.</p>
+      <button onclick="loadCustomers()">Laad klanten</button>
+      <ul id="customersList"></ul>
+    </div>
 
-      <div class="cards">
-        <a class="card" data-view-jump="customers">
-          <h3>Klanten</h3>
-          <p>Beheer je klantenbestand.</p>
-        </a>
-        <a class="card" data-view-jump="dogs">
-          <h3>Honden</h3>
-          <p>Koppel honden aan klanten.</p>
-        </a>
-        <a class="card" data-view-jump="classes">
-          <h3>Klassen</h3>
-          <p>Definieer les-types (bv. Puppy, Pubers).</p>
-        </a>
-        <a class="card" data-view-jump="sessions">
-          <h3>Lessen</h3>
-          <p>Plan losse of terugkerende lessen.</p>
-        </a>
-        <a class="card" data-view-jump="settings">
-          <h3>Instellingen</h3>
-          <p>Organisatiegegevens & huisstijl.</p>
-        </a>
-      </div>
-    </section>
+    <div id="honden" class="screen">
+      <h2>Hondenbeheer</h2>
+      <p>Hier komen alle honden te staan.</p>
+      <button onclick="loadDogs()">Laad honden</button>
+      <ul id="dogsList"></ul>
+    </div>
 
-    <!-- KLANTEN -->
-    <section data-view="customers" class="view">
-      <header class="view-header">
-        <h1>Klanten</h1>
-        <button id="btnNewCustomer" class="btn">+ Nieuwe klant</button>
-      </header>
-      <div id="customersList" class="table"></div>
-    </section>
+    <div id="instellingen" class="screen">
+      <h2>Instellingen</h2>
+      <p>Organisatiegegevens en voorkeuren.</p>
+    </div>
 
-    <!-- HONDEN -->
-    <section data-view="dogs" class="view">
-      <header class="view-header">
-        <h1>Honden</h1>
-        <button id="btnNewDog" class="btn">+ Nieuwe hond</button>
-      </header>
-      <div class="filters">
-        <label>Klant:
-          <select id="dogCustomerFilter"></select>
-        </label>
-      </div>
-      <div id="dogsList" class="table"></div>
-    </section>
-
-    <!-- KLASSEN -->
-    <section data-view="classes" class="view">
-      <header class="view-header">
-        <h1>Klassen (les-types)</h1>
-        <button id="btnNewClass" class="btn">+ Nieuwe klas</button>
-      </header>
-      <div id="classesList" class="table"></div>
-    </section>
-
-    <!-- LESSEN -->
-    <section data-view="sessions" class="view">
-      <header class="view-header">
-        <h1>Lessen (momenten)</h1>
-        <div class="inline">
-          <button id="btnNewSession" class="btn">+ Nieuwe les</button>
-          <button id="btnRecurring" class="btn ghost">↻ Terugkerend plannen</button>
-        </div>
-      </header>
-      <div class="filters">
-        <label>Klas:
-          <select id="sessionClassFilter"></select>
-        </label>
-        <label>Datum:
-          <input type="date" id="sessionDateFilter" />
-        </label>
-      </div>
-      <div id="sessionsList" class="table"></div>
-    </section>
-
-    <!-- INSTELLINGEN -->
-    <section data-view="settings" class="view">
-      <h1>Instellingen</h1>
-      <form id="settingsForm" class="grid">
-        <div>
-          <label>Organisatie</label>
-          <input name="org" placeholder="Superhond" />
-        </div>
-        <div>
-          <label>E-mail</label>
-          <input name="email" type="email" placeholder="info@superhond.be" />
-        </div>
-        <div>
-          <label>Telefoon</label>
-          <input name="phone" placeholder="+32 ..." />
-        </div>
-        <div>
-          <label>Website</label>
-          <input name="website" placeholder="https://..." />
-        </div>
-        <div class="span-2">
-          <label>Adres</label>
-          <input name="address.street" placeholder="Straat en nr." />
-          <div class="inline">
-            <input name="address.zip" placeholder="Postcode" />
-            <input name="address.city" placeholder="Gemeente" />
-            <input name="address.country" placeholder="Land" />
-          </div>
-        </div>
-        <div>
-          <label>Primair merk-kleur</label>
-          <input name="branding.primaryColor" type="color" value="#0088cc" />
-        </div>
-        <div class="span-2">
-          <button class="btn" type="submit">Opslaan</button>
-        </div>
-      </form>
-      <small class="muted">Deze mock leest/schrijft via /api/settings (in-memory in de server).</small>
-    </section>
+    <div id="overzicht" class="screen">
+      <h2>Overzicht</h2>
+      <p>Hier komt een dashboard of samenvatting.</p>
+    </div>
   </main>
 
-  <script src="/app.js"></script>
-</body>
-</html>
+  <script>
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
+    async function loadCustomers() {
+      const res = await fetch('/api/customers');
+      const data = await res.json();
+      const list = document.getElementById('customersList');
+      list.innerHTML = data.map(c => `<li>${c.name} (${c.email})</li>`).join('');
+    }
+
+    async function loadDogs() {
+      const res = await fetch('/api/dogs');
+      const data = await res.json();
+      const list = document.getElementById('dogsList');
+      list.innerHTML = data.map(d => `<li>${d.name} (${d.breed})</li>`).join('');
+    }
+  </script>
 </body>
 </html>
