@@ -2,7 +2,7 @@
 import express from "express";
 const router = express.Router();
 
-// Tijdelijke in-memory opslag voor strippenkaarten
+// Tijdelijke opslag voor strippenkaarten
 let PASSES = [
   // voorbeeld
   { id: 1, customerId: 1, total: 10, used: 2 }
@@ -29,7 +29,7 @@ router.post("/", (req, res) => {
   res.status(201).json(newPass);
 });
 
-// Een strip gebruiken (één strip aftrekken)
+// Een strip gebruiken (1 aftrekken)
 router.post("/:id/use", (req, res) => {
   const passId = parseInt(req.params.id);
   const pass = PASSES.find(p => p.id === passId);
