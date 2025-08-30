@@ -246,3 +246,29 @@ async function claimPurchase({ email, purchaseId, customerId, dogId }) {
 document.addEventListener("DOMContentLoaded", () => {
   loadCustomers();
 });
+
+/* ------------------ Tab-switching ------------------ */
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll("header .tab");
+  const panes = document.querySelectorAll(".tabpane");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      // alle tabs resetten
+      tabs.forEach((t) => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+
+      // juiste pane tonen
+      const target = tab.dataset.tab;
+      panes.forEach((p) => {
+        if (p.id === "tab-" + target) {
+          p.classList.add("is-visible");
+        } else {
+          p.classList.remove("is-visible");
+        }
+      });
+    });
+  });
+});
+
+
