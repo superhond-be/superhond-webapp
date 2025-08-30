@@ -1,27 +1,34 @@
 import express from "express";
 const router = express.Router();
 
-// (demo) alle klassen
-router.get("/", (_req, res) => {
-  const classes = [
-    { id: 1, name: "Puppy Pack (starters)", trainer: "Paul" },
-    { id: 2, name: "Puppy Pack (gevorderd)", trainer: "Nancy" },
-    { id: 3, name: "Puber Coachgroep", trainer: "Team" },
-  ];
-  res.json(classes);
-});
+/** In-memory opslag (later DB) */
+let CLASSES = [
+  // voorbeeld:
+  // { id: 1, name: "Puppytraining A", lessonTypeId: 1, themeId: 1, locationId: 1, note: "" }
+];
+let NEXT_ID = 1;
 
-// (demo) één klas op id
-router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const cls = [
-    { id: 1, name: "Puppy Pack (starters)" },
-    { id: 2, name: "Puppy Pack (gevorderd)" },
-    { id: 3, name: "Puber Coachgroep" },
-  ].find(c => c.id === id);
+// lijst
+router.get("/", (_req, res) => res.json(CLASSES));
 
-  if (!cls) return res.status(404).json({ error: "Klas niet gevonden" });
-  res.json(cls);
+// toevoegen
+router.post("/", (req, res) => {
+  const { name, lessonTypeId, themeId, locationId, note = "" } = req.body || {};
+  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+  if (!lessonTypeId) return res.status(400).json({ error: "Lestype is verplicht" });
+  if (!locationId) return res.status(400).json({ error: "Locatie is verplicht" });
+
+  const item = {
+    id: NEXT_ID++,
+    name: String(name).trim(),
+    lessonTypeId: Number(lessonTypeId),
+    themeId: themeId ? Number(themeId) : null,
+    locationId: Number(locationId),
+    note: String(note || "")
+  };
+  CLASSES.push(item);
+  res.status(201).json(item);
 });
 
 export default router;
+export { CLASSES };
