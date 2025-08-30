@@ -196,4 +196,16 @@ router.post("/", (req, res) => {
   res.status(201).json(booking);
 });
 
+import { SESSIONS } from "./sessions.js";
+// ...
+const session = SESSIONS.find(s => s.id === Number(sessionId));
+if (!session) return res.status(404).json({ error: "Sessie niet gevonden" });
+
+// huidig aantal (excl. geannuleerd)
+const count = BOOKINGS.filter(b => b.sessionId === session.id && b.status !== "cancelled").length;
+if (session.capacity && count >= session.capacity) {
+  return res.status(409).json({ error: "Deze les zit vol" });
+}
+
+
 export default router;
