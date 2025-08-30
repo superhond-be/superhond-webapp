@@ -2,97 +2,64 @@
 import express from "express";
 const router = express.Router();
 
-/**
- * In-memory opslag voor klanten.
- * Wordt gedeeld met andere routes (dogs, passes) via de named export.
- */
-export let CUSTOMERS = [
-  // voorbeelddata (mag je weghalen)
-  // {
-  //   id: 1,
-  //   name: "Demo Klant",
-  //   email: "demo@example.com",
-  //   phone: "000/00.00.00",
-  //   emergencyPhone: "",
-  //   vetName: "",
-  //   vetPhone: "",
-  //   vaccineStatus: "",
-  //   vaccineBookRef: "",
-  //   dogs: [],         // honden gekoppeld aan klant
-  //   passes: []        // strippenkaarten gekoppeld aan klant
-  // }
+// ---- In-memory opslag (simpel & consistent) ----
+let NEXT_CUSTOMER_ID = 2;
+
+/** Demo-klant zodat de UI iets heeft om te tonen */
+const CUSTOMERS = [
+  {
+    id: 1,
+    name: "Demo Klant",
+    email: "demo@example.com",
+    phone: "",
+    dogs: [],
+    passes: [], // strippenkaarten
+  },
 ];
 
-let NEXT_ID = 1;
+// ---- Helpers (ook exporteren voor andere routers) ----
+export const getCustomers = () => CUSTOMERS;
 
-/** Hulpfunctie om een klant toe te voegen (handig voor seed of andere routes) */
-export function addCustomer(data) {
+export const findCustomer = (id) =>
+  CUSTOMERS.find((c) => c.id === Number(id));
+
+export function addCustomer({ name, email, phone }) {
+  if (!name) throw new Error("Naam is verplicht");
   const customer = {
-    id: NEXT_ID++,
-    name: data?.name?.trim() || "",
-    email: data?.email?.trim() || "",
-    phone: data?.phone?.trim() || "",
-    emergencyPhone: data?.emergencyPhone?.trim?.() || "",
-    vetName: data?.vetName?.trim?.() || "",
-    vetPhone: data?.vetPhone?.trim?.() || "",
-    vaccineStatus: data?.vaccineStatus?.trim?.() || "",
-    vaccineBookRef: data?.vaccineBookRef?.trim?.() || "",
-    dogs: Array.isArray(data?.dogs) ? data.dogs : [],
-    passes: Array.isArray(data?.passes) ? data.passes : [],
-    createdAt: new Date().toISOString()
+    id: NEXT_CUSTOMER_ID++,
+    name,
+    email: email || "",
+    phone: phone || "",
+    dogs: [],
+    passes: [],
   };
   CUSTOMERS.push(customer);
   return customer;
 }
 
-/** Alle klanten */
-router.get("/", (req, res) => {
+// ---- Routes ----
+
+// Lijst klanten
+router.get("/", (_req, res) => {
   res.json(CUSTOMERS);
 });
 
-/** Eén klant ophalen */
+// Eén klant
 router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const customer = CUSTOMERS.find(c => c.id === id);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(customer);
+  const c = findCustomer(req.params.id);
+  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+  res.json(c);
 });
 
-/** Nieuwe klant aanmaken */
+// Nieuwe klant
 router.post("/", (req, res) => {
-  const { name, email, phone } = req.body || {};
-  if (!name || !email) {
-    return res.status(400).json({ error: "Naam en e-mail zijn verplicht" });
+  try {
+    const { name, email, phone } = req.body || {};
+    const created = addCustomer({ name, email, phone });
+    res.status(201).json(created);
+  } catch (e) {
+    res.status(400).json({ error: String(e.message || e) });
   }
-  const created = addCustomer(req.body);
-  res.status(201).json(created);
-});
-
-/** Klant updaten */
-router.put("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const idx = CUSTOMERS.findIndex(c => c.id === id);
-  if (idx === -1) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  const prev = CUSTOMERS[idx];
-  const updated = {
-    ...prev,
-    ...req.body,
-    id: prev.id, // id blijft vast
-  };
-  CUSTOMERS[idx] = updated;
-  res.json(updated);
-});
-
-/** Klant verwijderen */
-router.delete("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const before = CUSTOMERS.length;
-  CUSTOMERS = CUSTOMERS.filter(c => c.id !== id);
-  if (CUSTOMERS.length === before) {
-    return res.status(404).json({ error: "Klant niet gevonden" });
-  }
-  res.status(204).send();
 });
 
 export default router;
