@@ -3,11 +3,17 @@ import express from "express";
 import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 import settingsRoutes from "./routes/settings.js";
-
+import lessonTypesRoutes from "./routes/lessonTypes.js";
+import themesRoutes from "./routes/themes.js";
+import locationsRoutes from "./routes/locations.js";
 const app = express();
-app.use(express.json());
+
 
 // API
+app.use(express.json());
+app.use("/api/lesson-types", lessonTypesRoutes);
+app.use("/api/themes", themesRoutes);
+app.use("/api/locations", locationsRoutes);
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/settings", settingsRoutes);
