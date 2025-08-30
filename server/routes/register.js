@@ -1,48 +1,37 @@
 // server/routes/register.js
 import express from "express";
-import { CUSTOMERS, addCustomer } from "./customers.js";
-import { DOGS, createDogForCustomer } from "./dogs.js";
+import { CUSTOMERS } from "./customers.js";
 
 const router = express.Router();
 
-/**
- * POST /api/register
- * Body: {
- *   customer: { name, email?, phone? },
- *   dog: {
- *     name, breed?, birthDate?, sex?,
- *     vaccinationStatus?, vaccinationBookRef?,
- *     vetName?, vetPhone?, emergencyContact?
- *   }
- * }
- * Resultaat: { customer, dog }
- */
+// POST /api/register
+// Registreer een klant én (optioneel) een hond tegelijk
 router.post("/", (req, res) => {
-  const { customer, dog } = req.body || {};
-  if (!customer?.name) return res.status(400).json({ error: "Klantnaam is verplicht" });
-  if (!dog?.name) return res.status(400).json({ error: "Hondnaam is verplicht" });
+  const { klant, hond } = req.body;
 
-  // 1) klant aanmaken
-  const newCustomer = addCustomer({
-    name: String(customer.name),
-    email: customer.email ? String(customer.email) : "",
-    phone: customer.phone ? String(customer.phone) : ""
-  });
+  if (!klant || !klant.naam) {
+    return res.status(400).json({ error: "Klantgegevens ongeldig" });
+  }
 
-  // 2) hond koppelen aan klant
-  const newDog = createDogForCustomer(newCustomer.id, {
-    name: String(dog.name),
-    breed: dog.breed ? String(dog.breed) : "",
-    birthDate: dog.birthDate ? String(dog.birthDate) : "",
-    sex: dog.sex ? String(dog.sex) : "",
-    vaccinationStatus: dog.vaccinationStatus ? String(dog.vaccinationStatus) : "",
-    vaccinationBookRef: dog.vaccinationBookRef ? String(dog.vaccinationBookRef) : "",
-    vetName: dog.vetName ? String(dog.vetName) : "",
-    vetPhone: dog.vetPhone ? String(dog.vetPhone) : "",
-    emergencyContact: dog.emergencyContact ? String(dog.emergencyContact) : ""
-  });
+  // Nieuwe klant-ID
+  const klantId = CUSTOMERS.length > 0 ? CUSTOMERS[CUSTOMERS.length - 1].id + 1 : 1;
 
-  return res.status(201).json({ customer: newCustomer, dog: newDog });
+  const newCustomer = {
+    id: klantId,
+    ...klant,
+    honden: []
+  };
+
+  // Hond toevoegen als meegegeven
+  if (hond) {
+    const hondId = Date.now(); // simpel unieke ID
+    const newDog = { id: hondId, ...hond, klantId };
+    newCustomer.honden.push(newDog);
+  }
+
+  CUSTOMERS.push(newCustomer);
+
+  res.status(201).json(newCustomer);
 });
 
 export default router;
