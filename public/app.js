@@ -1085,6 +1085,13 @@ async function ViewBookings() {
   return wrap;
 }
 
+const routes = {
+  "#/dashboard": ViewDashboard,
+  "#/customers": ViewCustomers,
+  "#/dogs": ViewDogs,
+  "#/packs": ViewPacks,
+  "#/bookings": ViewBookings,
+};
 
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
