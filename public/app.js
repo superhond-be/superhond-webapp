@@ -28,6 +28,9 @@ function initTabs() {
   };
   $$(".tabs .tab").forEach((btn) => {
     btn.addEventListener("click", () => {
+
+
+      
       $$(".tabs .tab").forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
       $$(".tabpane").forEach((p) => p.classList.remove("is-visible"));
@@ -219,6 +222,141 @@ $("#form-add-dog")?.addEventListener("submit", async (e) => {
   }
 });
 $("#btn-reload-dogs")?.addEventListener("click", loadDogs);
+/* ---------------- Lessen ---------------- */
+async function loadLessons() {
+  const list = $("#lessons-list");
+  list.innerHTML = `<div class="muted">Laden…</div>`;
+  const lessons = await api("/api/lessons");
+  if (!lessons.length) {
+    list.innerHTML = `<div class="muted">Nog geen lessen</div>`;
+    return;
+  }
+  list.innerHTML = "";
+  lessons.forEach((l) => {
+    const el = document.createElement("div");
+    el.className = "card";
+    el.innerHTML = `
+      <div class="card-head">
+        <strong>${escapeHTML(l.title)}</strong>
+        <div class="sub">${l.date} ${l.time} · ${escapeHTML(l.location)}</div>
+        <div class="sub">Deelnemers: ${l.participants.length}/${l.capacity || "∞"}</div>
+      </div>
+      <div class="card-body">
+        <ul class="bullets">
+          ${l.participants
+            .map((p) => `<li>Klant #${p.customerId} · Hond #${p.dogId || "?"}</li>`)
+            .join("")}
+        </ul>
+        <button class="btn small" data-act="join" data-id="${l.id}">Klant inschrijven</button>
+      </div>
+    `;
+    el.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      if (btn.dataset.act === "join") {
+        const customerId = prompt("Klant-ID?");
+        const dogId = prompt("Hond-ID (optioneel)?");
+        try {
+          await api(`/api/lessons/${btn.dataset.id}/join`, {
+            method: "POST",
+            body: JSON.stringify({ customerId, dogId }),
+          });
+          await loadLessons();
+          await loadCustomers(); // zodat strips ook updaten
+        } catch (err) {
+          alert("Mislukt: " + err.message);
+        }
+      }
+    });
+    list.appendChild(el);
+  });
+}
+
+$("#form-add-lesson")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.currentTarget);
+  const data = Object.fromEntries(fd.entries());
+  try {
+    await api("/api/lessons", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    e.currentTarget.reset();
+    await loadLessons();
+  } catch (err) {
+    alert("Mislukt: " + err.message);
+  }
+});
+
+// init extra tab
+/* ---------------- Lessen ---------------- */
+async function loadLessons() {
+  const list = $("#lessons-list");
+  list.innerHTML = `<div class="muted">Laden…</div>`;
+  const lessons = await api("/api/lessons");
+  if (!lessons.length) {
+    list.innerHTML = `<div class="muted">Nog geen lessen</div>`;
+    return;
+  }
+  list.innerHTML = "";
+  lessons.forEach((l) => {
+    const el = document.createElement("div");
+    el.className = "card";
+    el.innerHTML = `
+      <div class="card-head">
+        <strong>${escapeHTML(l.title)}</strong>
+        <div class="sub">${l.date} ${l.time} · ${escapeHTML(l.location)}</div>
+        <div class="sub">Deelnemers: ${l.participants.length}/${l.capacity || "∞"}</div>
+      </div>
+      <div class="card-body">
+        <ul class="bullets">
+          ${l.participants
+            .map((p) => `<li>Klant #${p.customerId} · Hond #${p.dogId || "?"}</li>`)
+            .join("")}
+        </ul>
+        <button class="btn small" data-act="join" data-id="${l.id}">Klant inschrijven</button>
+      </div>
+    `;
+    el.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      if (btn.dataset.act === "join") {
+        const customerId = prompt("Klant-ID?");
+        const dogId = prompt("Hond-ID (optioneel)?");
+        try {
+          await api(`/api/lessons/${btn.dataset.id}/join`, {
+            method: "POST",
+            body: JSON.stringify({ customerId, dogId }),
+          });
+          await loadLessons();
+          await loadCustomers(); // zodat strips ook updaten
+        } catch (err) {
+          alert("Mislukt: " + err.message);
+        }
+      }
+    });
+    list.appendChild(el);
+  });
+}
+
+$("#form-add-lesson")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.currentTarget);
+  const data = Object.fromEntries(fd.entries());
+  try {
+    await api("/api/lessons", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    e.currentTarget.reset();
+    await loadLessons();
+  } catch (err) {
+    alert("Mislukt: " + err.message);
+  }
+});
+
+// init extra tab
+
 
 /* ---------------- Utils ---------------- */
 function escapeHTML(s) {
