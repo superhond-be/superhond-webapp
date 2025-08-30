@@ -2,10 +2,9 @@
 import express from "express";
 const router = express.Router();
 
-// Tijdelijke opslag voor strippenkaarten
+// Tijdelijke opslag voor strippenkaarten (demo/in-memory)
 let PASSES = [
-  // voorbeeld
-  { id: 1, customerId: 1, total: 10, used: 2 }
+  // voorbeeld: { id: 1, customerId: 1, total: 10, used: 2 }
 ];
 
 // Alle strippenkaarten ophalen
@@ -29,16 +28,14 @@ router.post("/", (req, res) => {
   res.status(201).json(newPass);
 });
 
-// Een strip gebruiken (1 aftrekken)
+// Eén strip gebruiken
 router.post("/:id/use", (req, res) => {
-  const passId = parseInt(req.params.id);
+  const passId = Number(req.params.id);
   const pass = PASSES.find(p => p.id === passId);
   if (!pass) return res.status(404).json({ error: "Strippenkaart niet gevonden" });
-
   if (pass.used >= pass.total) {
     return res.status(400).json({ error: "Geen strips meer over" });
   }
-
   pass.used++;
   res.json(pass);
 });
