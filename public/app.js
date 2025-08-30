@@ -1024,6 +1024,66 @@ async function ViewPacks() {
   return wrap;
 }
 
+// Boekingen
+async function ViewBookings() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Boekingen</h2>
+    <div class="card">
+      <form id="newBookingForm">
+        <label>Sessie ID<input name="sessionId" type="number" required/></label>
+        <label>Klant ID<input name="customerId" type="number" required/></label>
+        <label>Hond ID<input name="dogId" type="number" required/></label>
+        <button type="submit">Boek les</button>
+      </form>
+      <div id="bMsg" class="muted"></div>
+    </div>
+    <div class="card">
+      <h3>Overzicht</h3>
+      <div id="bookingsList">Laden…</div>
+    </div>
+  `;
+
+  const list = $("#bookingsList", wrap);
+  const msg = $("#bMsg", wrap);
+
+  async function loadBookings() {
+    try {
+      const bookings = await getJSON("/api/bookings");
+      if (!bookings.length) { list.innerHTML = `<p class="muted">Nog geen boekingen.</p>`; return; }
+      list.innerHTML = bookings.map(b => `
+        <div style="border-bottom:1px dashed #eee; padding:8px 0;">
+          <strong>#${b.id}</strong> sessie #${b.sessionId}, klant #${b.customerId}, hond #${b.dogId}
+          <br><span class="muted">status: ${b.status}</span>
+        </div>
+      `).join("");
+    } catch (e) {
+      list.textContent = "Kon boekingen niet laden.";
+      console.error(e);
+    }
+  }
+
+  $("#newBookingForm", wrap).addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+    const f = e.target;
+    try {
+      await postJSON("/api/bookings", {
+        sessionId: Number(f.sessionId.value),
+        customerId: Number(f.customerId.value),
+        dogId: Number(f.dogId.value)
+      });
+      msg.textContent = "✅ Boeking gemaakt.";
+      f.reset();
+      await loadBookings();
+    } catch (err) {
+      msg.textContent = "❌ Fout: " + err.message;
+    }
+  });
+
+  await loadBookings();
+  return wrap;
+}
 
 
 // Optioneel: toon bij opstart meteen "Lestypes"
