@@ -1,31 +1,30 @@
 // server/index.js
 import express from "express";
-import bodyParser from "body-parser";
-import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
-import passesRoutes from "./routes/passes.js";
-import lessonsRoutes from "./routes/lessons.js";
+
+// ROUTES importeren (maar niets dubbel!)
+import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef as setDogsCustomersRef } from "./routes/dogs.js";
+import passesRoutes, { setCustomersRef as setPassesCustomersRef } from "./routes/passes.js";
+// (optioneel) settingsRoutes als je die hebt:
+// import settingsRoutes from "./routes/settings.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-// Middleware
-app.use(bodyParser.json());
+// simple health
+app.get("/", (_req, res) => res.send("Superhond backend draait!"));
 
-// Routes
+// routes koppelen
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/passes", passesRoutes);
-app.use("/api/lessons", lessonsRoutes);
+// app.use("/api/settings", settingsRoutes);
 
-// Health check
-app.get("/", (req, res) => {
-  res.send("✅ Superhond backend draait!");
-});
+// **gedeelde referentie** naar klanten doorgeven aan modules die dat nodig hebben
+setDogsCustomersRef(CUSTOMERS);
+setPassesCustomersRef(CUSTOMERS);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 export default app;
