@@ -1,43 +1,32 @@
-// server/routes/customers.js
 import express from "express";
-
-export const CUSTOMERS = [
-  // demo klant ter illustratie
-  {
-    id: 1,
-    naam: "Demo Klant",
-    email: "demo@example.com",
-    phone: "000/00.00.00",
-    adres: "",
-    honden: [
-      {
-        id: 1001,
-        naam: "Demo Hond",
-        ras: "Mix",
-        geboortedatum: "2020-01-01",
-        geslacht: "reutje",
-        vaccinaties: "",
-        inentingsboekjeRef: "",
-        dierenartsNaam: "",
-        dierenartsTel: "",
-      },
-    ],
-  },
-];
-
 const router = express.Router();
 
-// alle klanten (met honden)
-router.get("/", (_req, res) => {
-  res.json(CUSTOMERS);
-});
+// in-memory store
+let CUSTOMERS = [
+  { id: 1, name: "Demo Klant", email: "demo@example.com", phone: "000/00.00.00" }
+];
+let NEXT_CUSTOMER_ID = 2;
 
-// klant per id
+export const getCustomersRef = () => CUSTOMERS;
+
+// lijst klanten
+router.get("/", (_req, res) => res.json(CUSTOMERS));
+
+// detail klant (+honden optioneel via query ?withDogs=1)
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
-  const klant = CUSTOMERS.find((c) => c.id === id);
-  if (!klant) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(klant);
+  const c = CUSTOMERS.find(x => x.id === id);
+  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+  res.json(c);
+});
+
+// nieuwe klant
+router.post("/", (req, res) => {
+  const { name, email, phone } = req.body || {};
+  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
+  const created = { id: NEXT_CUSTOMER_ID++, name, email: email || "", phone: phone || "" };
+  CUSTOMERS.push(created);
+  res.status(201).json(created);
 });
 
 export default router;
