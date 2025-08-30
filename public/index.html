@@ -2,305 +2,113 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond Coach Portaal</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <header class="appbar">
-    <h1>🐾 Superhond Coach Portaal</h1>
+  <header class="topbar">
+    <div class="brand">
+      <span class="emoji">🐾</span>
+      <span>Superhond Coach Portaal</span>
+    </div>
     <nav class="tabs">
-      <button data-tab="tab-customers" class="active">Klanten</button>
-      <button data-tab="tab-dogs">Honden</button>
-      <button data-tab="tab-settings">Instellingen</button>
-      <button data-tab="tab-overview">Overzicht</button>
-       <button class="tab" data-tab="lesson-types">Lestypes</button>
-<button class="tab" data-tab="themes">Thema's</button>
-<button class="tab" data-tab="locations">Locaties</button>
-<button class="tab" data-tab="tab-classes">Klassen</button>
-<button class="tab" data-tab="tab-sessions">Lessen</button>
-      <button class="tab" data-tab="tab-passes">Strippenkaarten</button>
-<button class="tab" data-tab="tab-bookings">Inschrijvingen</button>
-      <section id="customers" class="tab-panel"></section>
-<section id="dogs" class="tab-panel" hidden></section>
-<section id="passes" class="tab-panel" hidden></section>
-<section id="bookings" class="tab-panel" hidden></section>
-<section id="settings" class="tab-panel" hidden></section>
-<section id="overview" class="tab-panel" hidden></section>
-      
+      <button class="tab is-active" data-tab="klanten">Klanten</button>
+      <button class="tab" data-tab="honden">Honden</button>
+      <button class="tab" data-tab="overzicht">Overzicht</button>
+      <button class="tab" data-tab="instellingen">Instellingen</button>
     </nav>
   </header>
 
   <main class="container">
-    <!-- Registratie klant + hond -->
-    <section id="tab-customers" class="tab active">
-      <h2>Registratie: Klant + Hond</h2>
 
-      <form id="registerForm" class="card">
-        <fieldset>
-          <legend>Klantgegevens</legend>
-          <div class="grid">
-            <label>Naam <input name="customerName" required /></label>
-            <label>E-mail <input name="customerEmail" type="email" /></label>
-            <label>Telefoon <input name="customerPhone" /></label>
+    <!-- KLANTEN -->
+    <section id="tab-klanten" class="tabpane is-visible">
+      <div class="panel">
+        <h2>Nieuwe klant</h2>
+        <form id="form-add-customer" class="grid">
+          <label>Naam<input name="name" required placeholder="Naam klant" /></label>
+          <label>E-mail<input name="email" type="email" placeholder="klant@voorbeeld.be" /></label>
+          <label>Telefoon<input name="phone" placeholder="+32 …" /></label>
+          <div class="row">
+            <button type="submit" class="btn primary">Klant aanmaken</button>
+            <button type="button" id="btn-reload-customers" class="btn">Herladen</button>
           </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Hond</legend>
-          <div class="grid">
-            <label>Naam hond <input name="dogName" required /></label>
-            <label>Ras <input name="dogBreed" /></label>
-            <label>Geboortedatum <input name="dogBirthDate" type="date" /></label>
-            <label>Geslacht
-              <select name="dogSex">
-                <option value="">—</option>
-                <option value="reu">Reu</option>
-                <option value="teef">Teef</option>
-              </select>
-            </label>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Inentingen & Dierenarts</legend>
-          <div class="grid">
-            <label>Vaccinatiestatus <input name="vaccineStatus" /></label>
-            <label>Inentingsboekje ref. <input name="bookletRef" /></label>
-            <label>Dierenarts – telefoon <input name="vetPhone" /></label>
-            <label>Dierenarts – naam <input name="vetName" /></label>
-            <label>Noodnummer <input name="emergencyNumber" /></label>
-          </div>
-        </fieldset>
-
-        <button type="submit" class="primary">Registreren</button>
-      </form>
-
-      <div class="toolbar">
-        <button id="reloadCustomers">🔄 Herlaad</button>
+        </form>
       </div>
 
-      <ul id="customersList" class="list"></ul>
-    </section>
-
-    <!-- Honden-tab -->
-    <section id="tab-dogs" class="tab">
-      <h2>Honden</h2>
-      <div class="toolbar">
-        <label>Klantfilter
-          <select id="filterCustomer"></select>
-        </label>
-        <button id="reloadDogs">🔄 Herlaad</button>
+      <div class="panel">
+        <h2>Klanten & strippenkaarten</h2>
+        <div id="customers-list" class="list"></div>
       </div>
-      <ul id="dogsList" class="list"></ul>
     </section>
 
-    <!-- Instellingen -->
-    <section id="tab-settings" class="tab">
-      <h2>Instellingen</h2>
-      <form id="settingsForm" class="card">
-        <div class="grid">
-          <label>Organisatie <input name="org" /></label>
-          <label>E-mail <input name="email" type="email" /></label>
-          <label>Telefoon <input name="phone" /></label>
-          <label>Website <input name="website" /></label>
-          <label>Primaire kleur <input name="primaryColor" type="color" /></label>
-        </div>
-        <button class="primary">Bewaren</button>
-      </form>
+    <!-- HONDEN -->
+    <section id="tab-honden" class="tabpane">
+      <div class="panel">
+        <h2>Hond koppelen aan klant</h2>
+        <form id="form-add-dog" class="grid">
+          <label>Klant
+            <select name="customerId" id="dog-customer-select" required></select>
+          </label>
+          <label>Naam hond<input name="name" required /></label>
+          <label>Ras<input name="breed" /></label>
+          <label>Geboortedatum<input name="birthDate" type="date" /></label>
+          <label>Geslacht
+            <select name="sex">
+              <option value="-">-</option>
+              <option value="m">Reu (m)</option>
+              <option value="v">Teef (v)</option>
+            </select>
+          </label>
+          <label>Dierenarts – naam<input name="vetName" /></label>
+          <label>Dierenarts – telefoon<input name="vetPhone" /></label>
+          <label>Vaccinatiestatus<input name="vaccStatus" /></label>
+          <label>Inentingsboekje ref.<input name="bookletRef" /></label>
+          <label>Noodnummer<input name="emergencyPhone" /></label>
+          <div class="row">
+            <button type="submit" class="btn primary">Hond registreren</button>
+            <button type="button" id="btn-reload-dogs" class="btn">Herladen</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Honden</h2>
+        <div id="dogs-list" class="list"></div>
+      </div>
     </section>
 
-    <!-- Overzicht -->
-    <section id="tab-overview" class="tab">
-      <h2>Overzicht</h2>
-      <p>Kies hierboven een tab voor beheer.</p>
+    <!-- OVERZICHT -->
+    <section id="tab-overzicht" class="tabpane">
+      <div class="panel">
+        <h2>API status</h2>
+        <p>Gebruik dit portaal om klanten, honden en strippenkaarten te beheren.</p>
+        <ul>
+          <li><code>GET /api/customers</code></li>
+          <li><code>POST /api/customers</code></li>
+          <li><code>GET /api/dogs?customerId=…</code></li>
+          <li><code>POST /api/dogs/:customerId</code></li>
+          <li><code>GET /api/passes?customerId=…</code></li>
+          <li><code>POST /api/passes/:customerId</code></li>
+          <li><code>POST /api/passes/:customerId/:passId/use</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- INSTELLINGEN (placeholder) -->
+    <section id="tab-instellingen" class="tabpane">
+      <div class="panel">
+        <h2>Instellingen</h2>
+        <p>Instellingen volgen later.</p>
+      </div>
     </section>
   </main>
-<section class="view" id="lesson-types" hidden>
-  <h2>Lestypes</h2>
-  <form id="lt-form">
-    <input name="name" placeholder="Naam" required>
-    <input name="description" placeholder="Beschrijving">
-    <label><input type="checkbox" name="active" checked> Actief</label>
-    <button type="submit">Toevoegen</button>
-  </form>
-  <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Beschrijving</th><th>Actief</th></tr></thead><tbody id="lt-body"></tbody></table>
-</section>
 
-<section class="view" id="themes" hidden>
-  <h2>Thema's</h2>
-  <form id="th-form">
-    <input name="name" placeholder="Naam" required>
-    <input name="description" placeholder="Beschrijving">
-    <button type="submit">Toevoegen</button>
-  </form>
-  <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Beschrijving</th></tr></thead><tbody id="th-body"></tbody></table>
-</section>
-
-<section class="view" id="locations" hidden>
-  <h2>Locaties</h2>
-  <form id="loc-form">
-    <input name="name" placeholder="Naam locatie" required>
-    <input name="address" placeholder="Adres">
-    <input name="postal" placeholder="Postcode" style="width:120px">
-    <input name="city" placeholder="Plaats" style="width:160px">
-    <button type="submit">Toevoegen</button>
-  </form>
-  <table class="list"><thead><tr><th>#</th><th>Naam</th><th>Adres</th><th>PC</th><th>Plaats</th></tr></thead><tbody id="loc-body"></tbody></table>
-</section>
-
-  <!-- KLASSEN -->
-<section id="tab-classes" class="tab">
-  <h2>Klassen</h2>
-
-  <form id="classForm" class="card">
-    <div class="grid">
-      <label>Naam klas
-        <input name="name" required />
-      </label>
-
-      <label>Lestype
-        <select name="lessonTypeId" id="ltSelect" required></select>
-      </label>
-
-      <label>Thema
-        <select name="themeId" id="thSelect">
-          <option value="">(optioneel)</option>
-        </select>
-      </label>
-
-      <label>Locatie
-        <select name="locationId" id="locSelect" required></select>
-      </label>
-
-      <label class="grid span-2">Notitie
-        <input name="note" placeholder="Interne notitie (optioneel)" />
-      </label>
-    </div>
-    <button class="primary" type="submit">+ Klas toevoegen</button>
-  </form>
-
-  <div class="toolbar">
-    <button id="reloadClasses">🔄 Herlaad</button>
-  </div>
-  <table class="list">
-    <thead><tr><th>#</th><th>Naam</th><th>Lestype</th><th>Thema</th><th>Locatie</th></tr></thead>
-    <tbody id="classesBody"></tbody>
-  </table>
-</section>
-
-<!-- LESSEN -->
-<section id="tab-sessions" class="tab">
-  <h2>Lessen (momenten)</h2>
-
-  <form id="sessionForm" class="card">
-    <div class="grid">
-      <label>Klas
-        <select name="classId" id="classSelect" required></select>
-      </label>
-      <label>Datum
-        <input type="date" name="date" required />
-      </label>
-      <label>Tijd
-        <input type="time" name="time" required />
-      </label>
-      <label>Capaciteit
-        <input type="number" name="capacity" min="1" placeholder="bv. 10" />
-      </label>
-      <label class="grid span-2">Notitie
-        <input name="note" placeholder="Optioneel" />
-      </label>
-    </div>
-    <button class="primary" type="submit">+ Lesmoment toevoegen</button>
-  </form>
-
-  <div class="toolbar">
-    <label>Filter klas
-      <select id="sessionFilterClass"></select>
-    </label>
-    <label>Filter datum
-      <input type="date" id="sessionFilterDate" />
-    </label>
-    <button id="reloadSessions">🔄 Herlaad</button>
-  </div>
-
-  <table class="list">
-    <thead><tr><th>#</th><th>Klas</th><th>Datum</th><th>Tijd</th><th>Capaciteit</th></tr></thead>
-    <tbody id="sessionsBody"></tbody>
-  </table>
-</section>
-
-  <!-- STRIPPENKAARTEN -->
-<section id="tab-passes" class="tab">
-  <h2>Strippenkaarten</h2>
-  <form id="passForm" class="card">
-    <div class="grid">
-      <label>Klant (ID)
-        <input name="customerId" type="number" required />
-      </label>
-      <label>Type (bv. puppy-9)
-        <input name="type" placeholder="puppy-9" required />
-      </label>
-      <label>Totaal strips
-        <input name="totalStrips" type="number" min="1" value="9" required />
-      </label>
-      <label>Geldig t/m
-        <input name="expiresAt" type="date" />
-      </label>
-      <label class="grid span-2">Opmerking
-        <input name="note" />
-      </label>
-    </div>
-    <button class="primary">+ Kaart toevoegen</button>
-  </form>
-
-  <div class="toolbar">
-    <label>Klant filter (ID)
-      <input id="passCustomerFilter" type="number" />
-    </label>
-    <button id="reloadPasses">🔄 Herlaad</button>
-  </div>
-
-  <table class="list">
-    <thead><tr>
-      <th>#</th><th>Klant</th><th>Type</th><th>Totaal</th><th>Gebruikt</th><th>Gereserveerd</th><th>Beschikbaar</th><th>Geldig t/m</th><th>Actief</th>
-    </tr></thead>
-    <tbody id="passesBody"></tbody>
-  </table>
-</section>
-
-<!-- INSCHRIJVINGEN -->
-<section id="tab-bookings" class="tab">
-  <h2>Inschrijvingen</h2>
-  <form id="bookingForm" class="card">
-    <div class="grid">
-      <label>Les (sessionId)
-        <input name="sessionId" type="number" required />
-      </label>
-      <label>Klant (customerId)
-        <input name="customerId" type="number" required />
-      </label>
-      <label>Hond (dogId)
-        <input name="dogId" type="number" />
-      </label>
-    </div>
-    <button class="primary">+ Inschrijven (reserveer 1 strip)</button>
-  </form>
-
-  <div class="toolbar">
-    <button id="reloadBookings">🔄 Herlaad</button>
-  </div>
-
-  <table class="list">
-    <thead><tr><th>#</th><th>Les</th><th>Klant</th><th>Hond</th><th>Status</th><th>Acties</th></tr></thead>
-    <tbody id="bookingsBody"></tbody>
-  </table>
-</section>
-  
-  <footer class="footer">
-    <span id="lastUpdated"></span>
+  <footer class="foot">
+    <span id="last-updated">—</span>
   </footer>
 
-  <script src="/app.js"></script>
+  <script src="/app.js" defer></script>
 </body>
 </html>
