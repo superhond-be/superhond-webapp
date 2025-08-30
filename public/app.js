@@ -1,124 +1,83 @@
-// UI tabs
-document.querySelectorAll(".tabs button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab").forEach(s => s.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.tab).classList.add("active");
+// === helpers ===
+async function api(url, options) {
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+function byId(id){ return document.getElementById(id); }
+function setRows(tbodyId, rowsHtml){ byId(tbodyId).innerHTML = rowsHtml; }
+
+// === tabs (zorg dat je tab-buttons data-tab attribuut hebben) ===
+document.querySelectorAll("button.tab").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const tab = btn.dataset.tab;
+    document.querySelectorAll(".view").forEach(v=>v.hidden = v.id !== tab);
+    // lazy load per tab
+    if (tab === "lesson-types") loadLessonTypes();
+    if (tab === "themes") loadThemes();
+    if (tab === "locations") loadLocations();
   });
 });
 
-// last updated
-const ts = new Date();
-document.getElementById("lastUpdated").textContent =
-  `Laatst geüpdatet: ${ts.toLocaleDateString()} ${ts.toLocaleTimeString()}`;
-
-// Helpers
-const $ = sel => document.querySelector(sel);
-const api = {
-  get: (url) => fetch(url).then(r => r.json()),
-  post: (url, data) => fetch(url, {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
-  }).then(r => r.json()),
-  put: (url, data) => fetch(url, {
-    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
-  }).then(r => r.json())
-};
-
-// Registratie: klant + hond
-$("#registerForm").addEventListener("submit", async (e) => {
+// === Lestypes ===
+async function loadLessonTypes(){
+  const data = await api("/api/lesson-types");
+  const rows = data.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.description||""}</td><td>${x.active?"Ja":"Nee"}</td></tr>`).join("");
+  setRows("lt-body", rows);
+}
+byId("lt-form")?.addEventListener("submit", async e=>{
   e.preventDefault();
-  const fd = new FormData(e.currentTarget);
-
-  // 1) klant
-  const customer = await api.post("/api/customers", {
-    name: fd.get("customerName"),
-    email: fd.get("customerEmail"),
-    phone: fd.get("customerPhone")
+  const f = new FormData(e.target);
+  await api("/api/lesson-types", {
+    method:"POST",
+    body: JSON.stringify({
+      name: f.get("name"),
+      description: f.get("description"),
+      active: f.get("active") === "on",
+    })
   });
-  if (!customer?.id) return alert("Klant aanmaken mislukt.");
-
-  // 2) hond aan klant
-  const dog = await api.post(`/api/dogs/${customer.id}`, {
-    name: fd.get("dogName"),
-    breed: fd.get("dogBreed"),
-    birthDate: fd.get("dogBirthDate"),
-    sex: fd.get("dogSex"),
-    vaccineStatus: fd.get("vaccineStatus"),
-    vetPhone: fd.get("vetPhone"),
-    vetName: fd.get("vetName"),
-    bookletRef: fd.get("bookletRef"),
-    emergencyNumber: fd.get("emergencyNumber")
-  });
-  if (!dog?.id) return alert("Hond koppelen mislukt.");
-
-  e.currentTarget.reset();
-  await loadCustomers();
-  await loadDogs();
-  alert("Klant + hond geregistreerd!");
+  e.target.reset(); 
+  await loadLessonTypes();
 });
 
-// Lijsten
-async function loadCustomers() {
-  const list = await api.get("/api/customers");
-  const ul = $("#customersList");
-  ul.innerHTML = "";
-  list.forEach(c => {
-    const li = document.createElement("li");
-    li.innerHTML = `<strong>${c.name}</strong> — ${c.email || "-"} — ${c.phone || "-"}`;
-    ul.appendChild(li);
-  });
-
-  // voor honden-filter
-  const sel = $("#filterCustomer");
-  sel.innerHTML = `<option value="">(alle klanten)</option>` + list.map(c =>
-    `<option value="${c.id}">${c.name}</option>`).join("");
+// === Thema's ===
+async function loadThemes(){
+  const data = await api("/api/themes");
+  const rows = data.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.description||""}</td></tr>`).join("");
+  setRows("th-body", rows);
 }
-
-async function loadDogs() {
-  const cid = $("#filterCustomer").value;
-  const url = cid ? `/api/dogs?customerId=${cid}` : "/api/dogs";
-  const list = await api.get(url);
-  const ul = $("#dogsList");
-  ul.innerHTML = "";
-  list.forEach(d => {
-    const li = document.createElement("li");
-    li.innerHTML = `<strong>${d.name}</strong> (${d.breed || "onbekend"}) — eigenaar #${d.ownerId}`;
-    ul.appendChild(li);
-  });
-}
-
-// Instellingen
-async function loadSettings() {
-  const s = await api.get("/api/settings");
-  const form = $("#settingsForm");
-  form.org.value = s.org || "";
-  form.email.value = s.email || "";
-  form.phone.value = s.phone || "";
-  form.website.value = s.website || "";
-  form.primaryColor.value = (s.branding?.primaryColor || "#0088cc");
-}
-
-$("#settingsForm").addEventListener("submit", async (e) => {
+byId("th-form")?.addEventListener("submit", async e=>{
   e.preventDefault();
-  const f = e.currentTarget;
-  const patch = {
-    org: f.org.value,
-    email: f.email.value,
-    phone: f.phone.value,
-    website: f.website.value,
-    branding: { primaryColor: f.primaryColor.value }
-  };
-  await api.put("/api/settings", patch);
-  alert("Instellingen bewaard");
+  const f = new FormData(e.target);
+  await api("/api/themes", {
+    method:"POST",
+    body: JSON.stringify({ name: f.get("name"), description: f.get("description") })
+  });
+  e.target.reset(); 
+  await loadThemes();
 });
 
-// Buttons / filters
-$("#reloadCustomers").addEventListener("click", loadCustomers);
-$("#reloadDogs").addEventListener("click", loadDogs);
-$("#filterCustomer").addEventListener("change", loadDogs);
-
-// init
-loadCustomers();
-loadDogs();
-loadSettings();
+// === Locaties ===
+async function loadLocations(){
+  const data = await api("/api/locations");
+  const rows = data.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.address||""}</td><td>${x.postal||""}</td><td>${x.city||""}</td></tr>`).join("");
+  setRows("loc-body", rows);
+}
+byId("loc-form")?.addEventListener("submit", async e=>{
+  e.preventDefault();
+  const f = new FormData(e.target);
+  await api("/api/locations", {
+    method:"POST",
+    body: JSON.stringify({
+      name: f.get("name"),
+      address: f.get("address"),
+      postal: f.get("postal"),
+      city: f.get("city"),
+    })
+  });
+  e.target.reset(); 
+  await loadLocations();
+});
