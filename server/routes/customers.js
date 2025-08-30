@@ -1,61 +1,30 @@
 import express from "express";
-const router = express.Router();
+import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+import settingsRoutes from "./routes/settings.js";
+import passesRoutes from "./routes/passes.js";
 
-// Demo klanten + gekoppelde honden
-let CUSTOMERS = [
-  {
-    id: 1,
-    name: "Paul Thijs",
-    email: "paul@example.com",
-    phone: "0476 11 22 33",
-    dogs: [
-      {
-        id: 1,
-        name: "Rex",
-        breed: "Mechelse herder",
-        birthdate: "2020-03-15",
-        gender: "Reu",
-        vaccinationStatus: "In orde",
-        vetName: "Dierenarts Janssens",
-        vetPhone: "014 22 33 44",
-        emergency: "0476 99 88 77",
-        vaccinationBookRef: "R-12345"
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: "Nancy Peeters",
-    email: "nancy@example.com",
-    phone: "0497 55 66 77",
-    dogs: [
-      {
-        id: 2,
-        name: "Bella",
-        breed: "Labrador",
-        birthdate: "2021-07-01",
-        gender: "Teef",
-        vaccinationStatus: "Nog te controleren",
-        vetName: "Dierenarts Willems",
-        vetPhone: "014 44 55 66",
-        emergency: "0499 12 34 56",
-        vaccinationBookRef: "B-98765"
-      }
-    ]
-  }
-];
+const app = express();
+app.use(express.json());
 
-// API endpoints
-router.get("/", (req, res) => {
-  res.json(CUSTOMERS);
+// Koppel routes
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/passes", passesRoutes);
+
+// Geef referentie door zodat dogs toegang heeft tot CUSTOMERS
+setCustomersRef(CUSTOMERS);
+
+// Healthcheck
+app.get("/", (req, res) => {
+  res.send("✅ Superhond backend draait!");
 });
 
-router.post("/", (req, res) => {
-  const newCustomer = req.body;
-  newCustomer.id = CUSTOMERS.length + 1;
-  newCustomer.dogs = newCustomer.dogs || [];
-  CUSTOMERS.push(newCustomer);
-  res.status(201).json(newCustomer);
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
-export { router as customersRoutes, CUSTOMERS };
+export default app;
