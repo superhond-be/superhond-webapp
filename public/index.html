@@ -22,6 +22,53 @@
   </header>
 
   <main>
+
+<!-- Strippenkaarten (testen) -->
+<div class="card" id="passes-panel">
+  <h2>Strippenkaarten</h2>
+
+  <div class="row">
+    <div class="col">
+      <label for="passesCustomer">Klant</label>
+      <select id="passesCustomer"></select>
+    </div>
+    <div class="col">
+      <label for="passesType">Type</label>
+      <select id="passesType"></select>
+    </div>
+    <div class="col">
+      <label>&nbsp;</label>
+      <button id="btnBuyPass" class="btn">Kopen (aan klant)</button>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Types beheren</h3>
+  <div class="row">
+    <div class="col">
+      <label for="newPassName">Naam type</label>
+      <input id="newPassName" type="text" placeholder="bv. Puppy 8-strip">
+    </div>
+    <div class="col">
+      <label for="newPassStrips">Aantal strips</label>
+      <input id="newPassStrips" type="number" min="1" value="8">
+    </div>
+    <div class="col">
+      <label>&nbsp;</label>
+      <button id="btnAddType" class="btn">Type toevoegen</button>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Aankopen van geselecteerde klant</h3>
+  <div id="purchasesList" class="list"></div>
+</div>
+
+<!-- laad passes.js NA je bestaande app.js -->
+<script src="/passes.js"></script>
+    
     <!-- KLANTEN -->
     <section id="tab-klanten" class="tabpane is-visible">
       <div class="panel">
