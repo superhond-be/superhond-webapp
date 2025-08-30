@@ -1,38 +1,27 @@
-// server/index.js
+// server/index.js (alleen relevante delen)
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Nodig om __dirname te gebruiken in ES-modules
+import customersRoutes from "./routes/customers.js";
+import dogsRoutes from "./routes/dogs.js";
+import registerRoutes from "./routes/register.js"; // <— NIEUW
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
-
-// ---- Static files (frontend) ----
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// ---- API routes ----
-// Voorbeeld: voeg hier je eigen routes toe als ze bestaan
-// import customersRoutes from "./routes/customers.js";
-// import dogsRoutes from "./routes/dogs.js";
+// API
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+app.use("/api/register", registerRoutes); // <— NIEUW
 
-// app.use("/api/customers", customersRoutes);
-// app.use("/api/dogs", dogsRoutes);
+// health & root
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "..", "public", "index.html")));
 
-// ---- Healthcheck ----
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, message: "Superhond backend draait!" });
-});
-
-// ---- Root: index.html ----
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-});
-
-// ---- Start server ----
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`✅ Server running on ${PORT}`));
