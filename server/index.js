@@ -1,37 +1,44 @@
 // server/index.js
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// --- Routes importeren (elk precies één keer!) ---
-import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
-import passesRoutes from "./routes/passes.js";
-import settingsRoutes from "./routes/settings.js";
+// ===== Routes =====
+import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+import passesRoutes from "./routes/passes.js";     // ok als dit nog niet bestaat, anders weghalen
+import settingsRoutes from "./routes/settings.js"; // idem: alleen laten staan als het bestaat
 
-// --- App & middleware ---
+// ===== App setup =====
 const app = express();
 app.use(express.json());
 
-// Public map serven (frontend)
-app.use(express.static("public"));
+// (optioneel) statische bestanden uit /public serveren
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public")));
 
-// --- API route-koppelingen (elk precies één keer!) ---
+// ===== Koppelingen =====
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
-app.use("/api/passes", passesRoutes);
-app.use("/api/settings", settingsRoutes);
+app.use("/api/passes", passesRoutes);       // haal weg als /routes/passes.js niet bestaat
+app.use("/api/settings", settingsRoutes);   // haal weg als /routes/settings.js niet bestaat
 
-// Healthcheck (handig voor Render)
+// Heel belangrijk: geef dogs.js de referentie naar de klanten-array
+setCustomersRef(CUSTOMERS);
+
+// ===== Healthcheck & fallback =====
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-// Root laat de frontend zien (als index.html bestaat in /public)
+// (optioneel) HTML fallback voor SPA: index.html serveren
 app.get("/", (_req, res) => {
-  res.sendFile("index.html", { root: "public" });
+  res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// Start server
+// ===== Start server =====
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server draait op poort ${PORT}`);
+  console.log(`✅ Server is running on port ${PORT}`);
 });
 
 export default app;
