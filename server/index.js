@@ -6,6 +6,9 @@ import settingsRoutes from "./routes/settings.js";
 import lessonTypesRoutes from "./routes/lessonTypes.js";
 import themesRoutes from "./routes/themes.js";
 import locationsRoutes from "./routes/locations.js";
+
+
+
 const app = express();
 
 
@@ -18,6 +21,7 @@ app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/settings", settingsRoutes);
 
+    
 // statics
 app.use(express.static("public"));
 
