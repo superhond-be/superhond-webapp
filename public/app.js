@@ -962,6 +962,70 @@ async function showBalance(customerId) {
 Totaal: ${b.total}, Gebruikt: ${b.used}, Gereserveerd: ${b.reserved}, Over: ${b.remaining}`);
 }
 
+// Pakketten (credits)
+async function ViewPacks() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Pakketten (credits)</h2>
+    <div class="card">
+      <form id="newPackForm">
+        <label>Klant ID<input name="customerId" type="number" required/></label>
+        <label>Aantal lessen<input name="size" type="number" required/></label>
+        <label>Geldig tot<input name="expiresAt" type="date"/></label>
+        <button type="submit">Pakket toevoegen</button>
+      </form>
+      <div id="pMsg" class="muted"></div>
+    </div>
+    <div class="card">
+      <h3>Overzicht</h3>
+      <div id="packsList">Laden…</div>
+    </div>
+  `;
+
+  const list = $("#packsList", wrap);
+  const msg = $("#pMsg", wrap);
+
+  async function loadPacks() {
+    try {
+      const packs = await getJSON("/api/packs");
+      if (!packs.length) { list.innerHTML = `<p class="muted">Nog geen pakketten.</p>`; return; }
+      list.innerHTML = packs.map(p => `
+        <div style="border-bottom:1px dashed #eee; padding:8px 0;">
+          <strong>#${p.id}</strong> klant #${p.customerId} – ${p.size} credits
+          <br><span class="muted">gebruikt: ${p.used}, gereserveerd: ${p.reserved}, resterend: ${p.size - (p.used + p.reserved)}</span>
+          ${p.expiresAt ? `<br><span class="muted">geldig tot: ${p.expiresAt}</span>` : ""}
+        </div>
+      `).join("");
+    } catch (e) {
+      list.textContent = "Kon pakketten niet laden.";
+      console.error(e);
+    }
+  }
+
+  $("#newPackForm", wrap).addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+    const f = e.target;
+    try {
+      await postJSON("/api/packs", {
+        customerId: Number(f.customerId.value),
+        size: Number(f.size.value),
+        expiresAt: f.expiresAt.value || null
+      });
+      msg.textContent = "✅ Pakket toegevoegd.";
+      f.reset();
+      await loadPacks();
+    } catch (err) {
+      msg.textContent = "❌ Fout: " + err.message;
+    }
+  });
+
+  await loadPacks();
+  return wrap;
+}
+
+
+
 // Optioneel: toon bij opstart meteen "Lestypes"
 document.addEventListener("DOMContentLoaded", () => showPanel("lestypes"));
 
