@@ -6,6 +6,8 @@ import settingsRoutes from "./routes/settings.js";
 import lessonTypesRoutes from "./routes/lessonTypes.js";
 import themesRoutes from "./routes/themes.js";
 import locationsRoutes from "./routes/locations.js";
+import passesRoutes from "./routes/passes.js";
+import bookingsRoutes from "./routes/bookings.js";
 
 
 
@@ -20,6 +22,8 @@ app.use("/api/locations", locationsRoutes);
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/passes", passesRoutes);
+app.use("/api/bookings", bookingsRoutes);
 
     
 // statics
