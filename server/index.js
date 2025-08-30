@@ -1,32 +1,29 @@
 // server/index.js
 import express from "express";
-
+import bodyParser from "body-parser";
 import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
-import purchasesRoutes from "./routes/purchases.js";
-import debugRoutes from "./routes/debug.js";
 
-// ...
-app.use("/api", purchasesRoutes);
-app.use("/api", debugRoutes);
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-// API routes
+// Middleware
+app.use(bodyParser.json());
+
+// Routes
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/passes", passesRoutes);
 app.use("/api/lessons", lessonsRoutes);
-// Health & simple root
-app.get("/", (_req, res) => {
-  res.type("html").send(`<p style="font:16px/1.4 -apple-system,Segoe UI,Roboto,sans-serif">
-    ✅ Superhond backend draait!
-  </p>`);
+
+// Health check
+app.get("/", (req, res) => {
+  res.send("✅ Superhond backend draait!");
 });
 
-const PORT = process.env.PORT || 3000;
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
