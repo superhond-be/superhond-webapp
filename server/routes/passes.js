@@ -2,70 +2,61 @@
 import express from "express";
 const router = express.Router();
 
-/**
- * Pass types (strippenkaarten) en aankopen.
- * Voorbeeld type: { id: 1, name: "Puppy 8-strip", strips: 8 }
- * Voorbeeld aankoop: { id: 1, customerId: 3, typeId: 1, remaining: 8, createdAt: ... }
- */
+let CUSTOMERS_REF = null;
+export function setCustomersRef(ref) { CUSTOMERS_REF = ref; }
 
-// In-memory data
-let PASS_TYPES = [];
-let PURCHASES = [];
+// TYPES
+const PASS_TYPES = [];   // {id, name, strips}
 let NEXT_TYPE_ID = 1;
+
+// PURCHASES
+const PURCHASES = [];    // {id, customerId, typeId, remaining, createdAt}
 let NEXT_PURCHASE_ID = 1;
 
-// --- Types ---
-// Lijst types
-router.get("/types", (req, res) => {
-  res.json(PASS_TYPES);
-});
+// --- TYPES ---
+router.get("/types", (_req, res) => res.json(PASS_TYPES));
 
-// Nieuw type
 router.post("/types", (req, res) => {
   const { name, strips } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
-  const n = Number(strips);
-  if (!Number.isFinite(n) || n <= 0) return res.status(400).json({ error: "Strips moet > 0 zijn" });
-
-  const newType = { id: NEXT_TYPE_ID++, name, strips: n, createdAt: new Date().toISOString() };
-  PASS_TYPES.push(newType);
-  res.status(201).json(newType);
+  if (!name || !Number.isFinite(Number(strips)) || Number(strips) <= 0) {
+    return res.status(400).json({ error: "invalid type" });
+  }
+  const t = { id: NEXT_TYPE_ID++, name: String(name), strips: Number(strips) };
+  PASS_TYPES.push(t);
+  res.status(201).json(t);
 });
 
-// --- Aankopen (klant koopt strippenkaart) ---
-// Lijst aankopen (optioneel filter op customerId)
+// --- AANKOPEN ---
 router.get("/purchases", (req, res) => {
-  const { customerId } = req.query || {};
-  let list = PURCHASES;
-  if (customerId) list = list.filter(p => String(p.customerId) === String(customerId));
+  const cid = req.query.customerId ? Number(req.query.customerId) : null;
+  const list = cid ? PURCHASES.filter(p => p.customerId === cid) : PURCHASES;
   res.json(list);
 });
 
-// Kopen
 router.post("/buy", (req, res) => {
+  if (!CUSTOMERS_REF) return res.status(500).json({ error: "customers not wired" });
   const { customerId, typeId } = req.body || {};
-  if (!customerId) return res.status(400).json({ error: "customerId is verplicht" });
+  const customer = CUSTOMERS_REF.find(c => c.id === Number(customerId));
   const type = PASS_TYPES.find(t => t.id === Number(typeId));
-  if (!type) return res.status(400).json({ error: "Ongeldig typeId" });
+  if (!customer) return res.status(404).json({ error: "customer not found" });
+  if (!type) return res.status(404).json({ error: "type not found" });
 
-  const newPurchase = {
+  const p = {
     id: NEXT_PURCHASE_ID++,
-    customerId: Number(customerId),
+    customerId: customer.id,
     typeId: type.id,
     remaining: type.strips,
-    createdAt: new Date().toISOString()
+    createdAt: Date.now()
   };
-  PURCHASES.push(newPurchase);
-  res.status(201).json(newPurchase);
+  PURCHASES.push(p);
+  res.status(201).json(p);
 });
 
-// Strip gebruiken (1 aftrekken)
 router.post("/use", (req, res) => {
   const { purchaseId } = req.body || {};
   const p = PURCHASES.find(x => x.id === Number(purchaseId));
-  if (!p) return res.status(404).json({ error: "Aankoop niet gevonden" });
-  if (p.remaining <= 0) return res.status(409).json({ error: "Geen strips meer over" });
-
+  if (!p) return res.status(404).json({ error: "purchase not found" });
+  if (p.remaining <= 0) return res.status(400).json({ error: "no strips left" });
   p.remaining -= 1;
   res.json(p);
 });
