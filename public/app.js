@@ -5,6 +5,162 @@
 /* ---- helpers ---- */
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+// ===== Instellingen (werkt met GET/PUT /api/settings) =====
+async function ViewSettings() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Instellingen</h2>
+
+    <div class="card">
+      <h3>Organisatie & Contact</h3>
+      <form id="settingsForm" class="row">
+        <label>Organisatienaam
+          <input name="org" placeholder="Superhond" required />
+        </label>
+        <label>Website
+          <input name="website" placeholder="https://www.superhond.be" />
+        </label>
+        <label>E-mail
+          <input name="email" type="email" placeholder="info@superhond.be" />
+        </label>
+        <label>Telefoon
+          <input name="phone" placeholder="+32 ..." />
+        </label>
+        <label>Adres (vrij veld)
+          <input name="address" placeholder="Straat nr, postcode gemeente" />
+        </label>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Branding</h3>
+      <form id="brandingForm" class="row">
+        <label>Logo-URL
+          <input name="logoUrl" placeholder="/images/logo.png of https://..." />
+        </label>
+        <label>Primaire kleur
+          <input name="primaryColor" placeholder="#0088cc" />
+        </label>
+      </form>
+      <div class="row" style="gap:16px; align-items:center; margin-top:8px;">
+        <div id="brandPreview" style="border:1px solid #ddd; padding:10px; border-radius:6px;">
+          <div id="brandSwatch" style="width:160px; height:36px; background:#0088cc; border-radius:4px;"></div>
+          <div class="muted" style="margin-top:6px;">Voorbeeld primair</div>
+        </div>
+        <div id="logoPreview" style="display:none;">
+          <img id="logoImg" alt="Logo preview" style="max-height:48px; max-width:180px; object-fit:contain; border:1px solid #eee; padding:6px; border-radius:6px;" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <button id="saveBtn">Opslaan</button>
+      <span id="saveMsg" class="muted" style="margin-left:8px;"></span>
+    </div>
+  `;
+
+  const $ = (s) => wrap.querySelector(s);
+
+  // helpers
+  async function getSettings() {
+    const r = await fetch("/api/settings");
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+  async function putSettings(body) {
+    const r = await fetch("/api/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  // UI events: live preview
+  const brandForm = $("#brandingForm");
+  const swatch = $("#brandSwatch");
+  brandForm.primaryColor.addEventListener("input", () => {
+    const val = brandForm.primaryColor.value.trim() || "#0088cc";
+    swatch.style.background = val;
+    // optioneel ook CSS var live zetten
+    document.documentElement.style.setProperty("--primary", val);
+  });
+  brandForm.logoUrl.addEventListener("input", () => {
+    const url = brandForm.logoUrl.value.trim();
+    const box = $("#logoPreview");
+    const img = $("#logoImg");
+    if (url) {
+      img.src = url;
+      box.style.display = "block";
+    } else {
+      box.style.display = "none";
+    }
+  });
+
+  // Laden
+  try {
+    const s = await getSettings();
+    // vul velden
+    const f = $("#settingsForm");
+    f.org.value = s.org ?? s.name ?? "Superhond";
+    f.website.value = s.branding?.website ?? "";
+    f.email.value = s.email ?? "";
+    f.phone.value = s.phone ?? "";
+    f.address.value = s.address ?? "";
+
+    brandForm.logoUrl.value = s.branding?.logoUrl ?? "";
+    brandForm.primaryColor.value = s.branding?.primaryColor ?? "#0088cc";
+    swatch.style.background = brandForm.primaryColor.value || "#0088cc";
+    if (brandForm.logoUrl.value) {
+      $("#logoImg").src = brandForm.logoUrl.value;
+      $("#logoPreview").style.display = "block";
+    }
+  } catch (e) {
+    $("#saveMsg").style.color = "#c00";
+    $("#saveMsg").textContent = "Kon instellingen niet laden.";
+    console.error(e);
+  }
+
+  // Opslaan
+  $("#saveBtn").addEventListener("click", async () => {
+    const msg = $("#saveMsg");
+    msg.textContent = "";
+    msg.style.color = "inherit";
+
+    const f = $("#settingsForm");
+    const b = $("#brandingForm");
+    const body = {
+      org: f.org.value.trim(),
+      name: f.org.value.trim(),        // compat
+      email: f.email.value.trim(),
+      phone: f.phone.value.trim(),
+      address: f.address.value.trim(),
+      branding: {
+        website: f.website.value.trim(),
+        primaryColor: b.primaryColor.value.trim() || "#0088cc",
+        logoUrl: b.logoUrl.value.trim()
+      }
+    };
+
+    try {
+      await putSettings(body);
+      msg.style.color = "#2a7";
+      msg.textContent = "Instellingen opgeslagen.";
+      // css var doorzetten
+      if (body.branding.primaryColor) {
+        document.documentElement.style.setProperty("--primary", body.branding.primaryColor);
+      }
+    } catch (err) {
+      msg.style.color = "#c00";
+      msg.textContent = "Fout bij opslaan.";
+      console.error(err);
+    }
+  });
+
+  return wrap;
+}
+
 
 // ===== Instellingen (organisatie, branding, locaties, meta) =====
 async function ViewSettings() {
