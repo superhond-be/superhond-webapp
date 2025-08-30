@@ -1,41 +1,43 @@
-// server/routes/settings.js
 import express from "express";
+import { CLASSES } from "./classes.js";
 const router = express.Router();
 
-/**
- * Tijdelijke in-memory settings
- * Later kan dit naar een database worden verplaatst
- */
-let SETTINGS = {
-  org: "Superhond",
-  name: "Superhond",
-  email: "info@superhond.be",
-  phone: "+32 498 877 065",
-  address: "Steenweg Hulsel 33a, 2470 Retie",
-  branding: {
-    logoUrl: "/images/logo.png",   // voeg later je logo toe in /public/images
-    primaryColor: "#0088cc",
-    website: "https://www.superhond.be"
-  }
-};
+/** In-memory sessions (lessen-momenten) */
+let SESSIONS = [
+  // voorbeeld:
+  // { id: 1, classId: 1, date: "2025-09-07", time: "09:00", capacity: 12, note: "" }
+];
+let NEXT_ID = 1;
 
-// ✅ Alle settings ophalen
-router.get("/", (_req, res) => {
-  res.json(SETTINGS);
+// lijst (filters: ?classId= & ?date=YYYY-MM-DD)
+router.get("/", (req, res) => {
+  let list = SESSIONS.slice();
+  const { classId, date } = req.query || {};
+  if (classId) list = list.filter(s => s.classId === Number(classId));
+  if (date)    list = list.filter(s => s.date === String(date));
+  res.json(list);
 });
 
-// ✅ Instellingen updaten
-router.put("/", (req, res) => {
-  const updates = req.body;
+// toevoegen
+router.post("/", (req, res) => {
+  const { classId, date, time, capacity = null, note = "" } = req.body || {};
+  if (!classId) return res.status(400).json({ error: "classId is verplicht" });
+  if (!date) return res.status(400).json({ error: "Datum is verplicht (YYYY-MM-DD)" });
+  if (!time) return res.status(400).json({ error: "Tijd is verplicht (HH:MM)" });
 
-  // overschrijf bestaande velden met updates
-  SETTINGS = { ...SETTINGS, ...updates };
+  const klas = CLASSES.find(c => c.id === Number(classId));
+  if (!klas) return res.status(404).json({ error: "Klas niet gevonden" });
 
-  res.json({
-    message: "Instellingen succesvol bijgewerkt",
-    settings: SETTINGS
-  });
+  const item = {
+    id: NEXT_ID++,
+    classId: Number(classId),
+    date: String(date),
+    time: String(time),
+    capacity: capacity != null ? Number(capacity) : null,
+    note: String(note || "")
+  };
+  SESSIONS.push(item);
+  res.status(201).json(item);
 });
 
-// ✅ Exporteren naar index.js
 export default router;
