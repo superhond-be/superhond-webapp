@@ -28,7 +28,10 @@ function setUpdated() {
   if (el) {
     const now = new Date();
     el.textContent =
-      "Laatst bijgewerkt op " + now.toLocaleDateString() + " " + now.toLocaleTimeString();
+      "Laatst bijgewerkt op " +
+      now.toLocaleDateString() +
+      " " +
+      now.toLocaleTimeString();
   }
 }
 
@@ -56,7 +59,9 @@ async function loadCustomers() {
       <div class="card-head">
         <div>
           <strong>${escapeHTML(c.name)}</strong>
-          <div class="sub">${escapeHTML(c.email || "—")} · ${escapeHTML(c.phone || "—")}</div>
+          <div class="sub">${escapeHTML(c.email || "—")} · ${escapeHTML(
+      c.phone || "—"
+    )}</div>
         </div>
         <div class="actions">
           <button class="btn" data-act="newpass">+ Strippenkaart</button>
@@ -122,7 +127,9 @@ async function loadCustomers() {
       if (btn.dataset.act === "newpass") {
         const total = Number(prompt("Aantal strippen (bv. 10):", "10"));
         if (!total || total < 1) return;
-        const type = prompt("Type (vrije tekst):", `${total}-beurten`) || `${total}-beurten`;
+        const type =
+          prompt("Type (vrije tekst):", `${total}-beurten`) ||
+          `${total}-beurten`;
         try {
           await api(`/api/passes/${c.id}`, {
             method: "POST",
@@ -151,7 +158,7 @@ async function loadCustomers() {
       if (btn.dataset.act === "claimpkg") {
         const email = c.email;
         if (!email) {
-          alert("Deze klant heeft geen e-mail. Vul eerst een e-mail in bij de klant.");
+          alert("Deze klant heeft geen e-mail. Vul eerst een e-mail in.");
           return;
         }
 
@@ -161,12 +168,16 @@ async function loadCustomers() {
           return;
         }
 
-        // keuze aankoop
         let pick = pending[0];
         if (pending.length > 1) {
           const idTxt = prompt(
-            `Er zijn ${pending.length} aankopen. Geef purchaseId om te koppelen:\n` +
-              pending.map((p) => `#${p.id} ${p.packageKey || "pakket"} (${p.lessons} lessen)`).join("\n"),
+            `Er zijn ${pending.length} aankopen. Geef purchaseId:\n` +
+              pending
+                .map(
+                  (p) =>
+                    `#${p.id} ${p.packageKey || "pakket"} (${p.lessons} lessen)`
+                )
+                .join("\n"),
             String(pending[0].id)
           );
           if (!idTxt) return;
@@ -178,7 +189,6 @@ async function loadCustomers() {
           }
         }
 
-        // hond kiezen
         const ds = c.dogs || [];
         let dogId = null;
         if (ds.length) {
@@ -198,7 +208,9 @@ async function loadCustomers() {
             dogId,
           });
           await loadCustomers();
-          alert(`Pakket gekoppeld: ${pick.packageKey || pick.lessons + "-beurten"}`);
+          alert(
+            `Pakket gekoppeld: ${pick.packageKey || pick.lessons + "-beurten"}`
+          );
         } catch (e) {
           alert("Koppelen mislukt: " + e.message);
         }
@@ -218,13 +230,17 @@ function fillCustomerSelect(customers) {
   if (!sel) return;
   sel.innerHTML =
     `<option value="">– Kies klant –</option>` +
-    customers.map((c) => `<option value="${c.id}">${escapeHTML(c.name)}</option>`).join("");
+    customers
+      .map((c) => `<option value="${c.id}">${escapeHTML(c.name)}</option>`)
+      .join("");
 }
 
 /* ------------------ Purchases (Google) ------------------ */
 async function loadPendingForEmail(email) {
   if (!email) return [];
-  const res = await fetch(`/api/purchases/pending?email=${encodeURIComponent(email)}`);
+  const res = await fetch(
+    `/api/purchases/pending?email=${encodeURIComponent(email)}`
+  );
   if (!res.ok) return [];
   return res.json();
 }
@@ -242,23 +258,19 @@ async function claimPurchase({ email, purchaseId, customerId, dogId }) {
   return r.json();
 }
 
-/* ------------------ Init ------------------ */
+/* ------------------ Init & Tab-switching ------------------ */
 document.addEventListener("DOMContentLoaded", () => {
   loadCustomers();
-});
 
-/* ------------------ Tab-switching ------------------ */
-document.addEventListener("DOMContentLoaded", () => {
+  // Tab-switching
   const tabs = document.querySelectorAll("header .tab");
   const panes = document.querySelectorAll(".tabpane");
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      // alle tabs resetten
       tabs.forEach((t) => t.classList.remove("is-active"));
       tab.classList.add("is-active");
 
-      // juiste pane tonen
       const target = tab.dataset.tab;
       panes.forEach((p) => {
         if (p.id === "tab-" + target) {
@@ -270,5 +282,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-
-
