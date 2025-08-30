@@ -1216,12 +1216,15 @@ async function ViewSessions() {
   return wrap;
 }
 
-const routes = {
+
+  const routes = {
   "#/dashboard": ViewDashboard,
   "#/customers": ViewCustomers,
   "#/dogs": ViewDogs,
   "#/packs": ViewPacks,
   "#/bookings": ViewBookings,
+  "#/sessions": ViewSessions,   // <— deze erbij
+};
 };
 
 // Optioneel: toon bij opstart meteen "Lestypes"
