@@ -1,7 +1,10 @@
 // server/routes/register.js
 import express from "express";
 import { CUSTOMERS } from "./customers.js";
+import registerRoutes from "./routes/register.js";   // ← BOVENIN bij de andere imports
 
+// ...
+app.use("/api/register", registerRoutes);            // ← BIJ DE ROUTE-KOPPELINGEN
 const router = express.Router();
 
 // POST /api/register  — registreer klant + optioneel 1 hond
