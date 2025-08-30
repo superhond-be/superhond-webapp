@@ -1,24 +1,19 @@
 import express from "express";
 const router = express.Router();
 
-// simpele in-memory instellingen
 let SETTINGS = {
-  org: {
-    name: "Superhond",
-    email: "info@superhond.be",
-    phone: "+32 498 000 000",
-    website: "https://www.superhond.be",
-    address: { street: "Teststraat", nr: "123", city: "Mol", country: "BE" }
-  },
-  branding: { primaryColor: "#0088cc", logoUrl: "" }
+  org: "Superhond",
+  email: "info@superhond.be",
+  phone: "+32 498 000 000",
+  address: { street: "Huisnummerstraat", nr: "33a", city: "Mol", country: "BE" },
+  branding: { primaryColor: "#0088cc" },
+  website: "https://www.superhond.be"
 };
 
-// Ophalen
-router.get("/", (_req, res) => {
-  res.json(SETTINGS);
-});
+// ophalen
+router.get("/", (_req, res) => res.json(SETTINGS));
 
-// Updaten (merge)
+// bijwerken (merge lichtgewicht)
 router.put("/", (req, res) => {
   const patch = req.body || {};
   SETTINGS = { ...SETTINGS, ...patch };
