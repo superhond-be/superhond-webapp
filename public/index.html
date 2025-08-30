@@ -33,10 +33,30 @@
           <div class="row">
             <button type="submit" class="btn primary">Klant aanmaken</button>
             <button type="button" id="btn-reload-customers" class="btn">Herladen</button>
+         <button class="tab" data-tab="lessen">Lessen</button>
+          
           </div>
         </form>
       </div>
+<!-- LESSEN -->
+<section id="tab-lessen" class="tabpane">
+  <div class="panel">
+    <h2>Nieuwe les plannen</h2>
+    <form id="form-add-lesson" class="grid">
+      <label>Titel<input name="title" required /></label>
+      <label>Datum<input name="date" type="date" required /></label>
+      <label>Tijd<input name="time" type="time" required /></label>
+      <label>Locatie<input name="location" /></label>
+      <label>Capaciteit<input name="capacity" type="number" /></label>
+      <button type="submit" class="btn primary">Les toevoegen</button>
+    </form>
+  </div>
 
+  <div class="panel">
+    <h2>Geplande lessen</h2>
+    <div id="lessons-list" class="list"></div>
+  </div>
+</section>
       <div class="panel">
         <h2>Klanten & strippenkaarten</h2>
         <div id="customers-list" class="list"></div>
