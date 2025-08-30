@@ -8,263 +8,105 @@
 </head>
 <body>
   <header class="appbar">
-    <div class="brand">
-      <span class="logo">🐾</span>
-      <h1>Superhond Coach Portaal</h1>
-    </div>
+    <h1>🐾 Superhond Coach Portaal</h1>
     <nav class="tabs">
-      <button class="tab active" data-target="klanten">Klanten</button>
-      <button class="tab" data-target="honden">Honden</button>
-      <button class="tab" data-target="instellingen">Instellingen</button>
-      <button class="tab" data-target="overzicht">Overzicht</button>
+      <button data-tab="tab-customers" class="active">Klanten</button>
+      <button data-tab="tab-dogs">Honden</button>
+      <button data-tab="tab-settings">Instellingen</button>
+      <button data-tab="tab-overview">Overzicht</button>
     </nav>
   </header>
 
   <main class="container">
-
-    <!-- KLANTEN -->
-    <section id="klanten" class="view active">
-      <h2>Klanten</h2>
-
-      <div class="card">
-        <div class="card-header">Zoeken</div>
-        <div class="card-body">
-          <div class="row">
-            <label>Zoek klant
-              <input type="search" id="customerSearch" placeholder="Naam, e-mail of telefoon…" oninput="filterCustomers()">
-            </label>
-            <button class="btn" onclick="reloadCustomers()">Herlaad</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">Resultaten</div>
-        <div class="card-body">
-          <div id="customersResult"><p class="muted">Nog geen data geladen…</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- HONDEN -->
-    <section id="honden" class="view">
+    <!-- Registratie klant + hond -->
+    <section id="tab-customers" class="tab active">
       <h2>Registratie: Klant + Hond</h2>
 
-      <form id="registerForm" class="card" onsubmit="return submitRegistration(event)">
-        <div class="card-header">Klantgegevens</div>
-        <div class="card-body grid">
-          <label>Naam <input name="customer_name" required></label>
-          <label>E-mail <input name="customer_email" type="email"></label>
-          <label>Telefoon <input name="customer_phone"></label>
-        </div>
+      <form id="registerForm" class="card">
+        <fieldset>
+          <legend>Klantgegevens</legend>
+          <div class="grid">
+            <label>Naam <input name="customerName" required /></label>
+            <label>E-mail <input name="customerEmail" type="email" /></label>
+            <label>Telefoon <input name="customerPhone" /></label>
+          </div>
+        </fieldset>
 
-        <div class="card-header">Hond</div>
-        <div class="card-body grid">
-          <label>Naam hond <input name="dog_name" required></label>
-          <label>Ras <input name="dog_breed"></label>
-          <label>Geboortedatum <input name="dog_birth" type="date"></label>
-          <label>Geslacht
-            <select name="dog_gender">
-              <option value="">—</option>
-              <option>Reu</option>
-              <option>Teef</option>
-            </select>
-          </label>
-        </div>
+        <fieldset>
+          <legend>Hond</legend>
+          <div class="grid">
+            <label>Naam hond <input name="dogName" required /></label>
+            <label>Ras <input name="dogBreed" /></label>
+            <label>Geboortedatum <input name="dogBirthDate" type="date" /></label>
+            <label>Geslacht
+              <select name="dogSex">
+                <option value="">—</option>
+                <option value="reu">Reu</option>
+                <option value="teef">Teef</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
 
-        <div class="card-header">Inentingen & Dierenarts</div>
-        <div class="card-body grid">
-          <label>Vaccinatiestatus <input name="dog_vaccination"></label>
-          <label>Inentingsboekje ref. <input name="dog_passport"></label>
-          <label>Dierenarts – naam <input name="vet_name"></label>
-          <label>Dierenarts – telefoon <input name="vet_phone"></label>
-          <label>Noodnummer <input name="emergency_phone"></label>
-        </div>
+        <fieldset>
+          <legend>Inentingen & Dierenarts</legend>
+          <div class="grid">
+            <label>Vaccinatiestatus <input name="vaccineStatus" /></label>
+            <label>Inentingsboekje ref. <input name="bookletRef" /></label>
+            <label>Dierenarts – telefoon <input name="vetPhone" /></label>
+            <label>Dierenarts – naam <input name="vetName" /></label>
+            <label>Noodnummer <input name="emergencyNumber" /></label>
+          </div>
+        </fieldset>
 
-        <div class="card-footer">
-          <button class="btn primary" type="submit">Registreren</button>
-        </div>
+        <button type="submit" class="primary">Registreren</button>
       </form>
 
-      <div class="card">
-        <div class="card-header">Bestaande klanten (demo)</div>
-        <div class="card-body">
-          <ul id="customersList" class="list"></ul>
-        </div>
+      <div class="toolbar">
+        <button id="reloadCustomers">🔄 Herlaad</button>
       </div>
+
+      <ul id="customersList" class="list"></ul>
     </section>
 
-    <!-- INSTELLINGEN -->
-    <section id="instellingen" class="view">
+    <!-- Honden-tab -->
+    <section id="tab-dogs" class="tab">
+      <h2>Honden</h2>
+      <div class="toolbar">
+        <label>Klantfilter
+          <select id="filterCustomer"></select>
+        </label>
+        <button id="reloadDogs">🔄 Herlaad</button>
+      </div>
+      <ul id="dogsList" class="list"></ul>
+    </section>
+
+    <!-- Instellingen -->
+    <section id="tab-settings" class="tab">
       <h2>Instellingen</h2>
-      <p class="muted">(placeholder)</p>
+      <form id="settingsForm" class="card">
+        <div class="grid">
+          <label>Organisatie <input name="org" /></label>
+          <label>E-mail <input name="email" type="email" /></label>
+          <label>Telefoon <input name="phone" /></label>
+          <label>Website <input name="website" /></label>
+          <label>Primaire kleur <input name="primaryColor" type="color" /></label>
+        </div>
+        <button class="primary">Bewaren</button>
+      </form>
     </section>
 
-    <!-- OVERZICHT -->
-    <section id="overzicht" class="view">
+    <!-- Overzicht -->
+    <section id="tab-overview" class="tab">
       <h2>Overzicht</h2>
-      <p class="muted">(placeholder)</p>
+      <p>Kies hierboven een tab voor beheer.</p>
     </section>
   </main>
 
   <footer class="footer">
-    <small id="lastUpdated"></small>
+    <span id="lastUpdated"></span>
   </footer>
 
-  <script>
-    // ---------- kleine UI helper ----------
-    const $$ = s => document.querySelector(s);
-    const $$$ = s => Array.from(document.querySelectorAll(s));
-    const esc = (v) => String(v ?? '').replace(/[<>&"]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[s]));
-
-    // tabs
-    $$$('.tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$$('.tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const target = btn.dataset.target;
-        $$$('.view').forEach(v => v.classList.toggle('active', v.id === target));
-      });
-    });
-
-    // last updated
-    (function showTime(){
-      const fmt = new Date().toLocaleString('nl-BE', { hour12:false });
-      $('#lastUpdated')?.(fmt);
-      function $(id){ return document.getElementById(id); }
-      HTMLElement.prototype['call']|| (HTMLElement.prototype['call']=function(v){ this.textContent=v; });
-    })();
-
-    // ---------- KLANTEN + HONDEN ----------
-    let __ALL_CUSTOMERS = [];
-    let __DOGS_BY_CUSTOMER = new Map();
-
-    async function reloadCustomers(){ await loadCustomers(true); }
-
-    async function loadCustomers(force = false) {
-      // haal klanten
-      const cRes = await fetch('/api/customers', { cache: force ? 'no-store' : 'default' });
-      const customers = await cRes.json();
-
-      // probeer honden mee te krijgen
-      let dogsByCustomer = new Map();
-
-      if (customers.length && Array.isArray(customers[0]?.dogs)) {
-        customers.forEach(c => dogsByCustomer.set(c.id, c.dogs || []));
-      } else {
-        const dRes = await fetch('/api/dogs', { cache: force ? 'no-store' : 'default' });
-        const dogs = dRes.ok ? await dRes.json() : [];
-        dogsByCustomer = dogs.reduce((m, d) => {
-          const arr = m.get(d.customerId) || [];
-          arr.push(d);
-          m.set(d.customerId, arr);
-          return m;
-        }, new Map());
-      }
-
-      __ALL_CUSTOMERS = customers;
-      __DOGS_BY_CUSTOMER = dogsByCustomer;
-
-      renderCustomers(customers);
-      renderSimpleCustomerList(customers); // voor demo lijstje in Honden-tab
-    }
-
-    function renderCustomers(list) {
-      const root = document.getElementById('customersResult');
-      if (!list?.length) {
-        root.innerHTML = `<p>Geen klanten gevonden.</p>`;
-        return;
-      }
-      root.innerHTML = `
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Klant</th>
-              <th>Contact</th>
-              <th>Honden</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${list.map(c => {
-              const dogs = __DOGS_BY_CUSTOMER.get(c.id) || c.dogs || [];
-              const dogsTxt = dogs.length
-                ? dogs.map(d => `${esc(d.name)}${d.breed ? ' ('+esc(d.breed)+')' : ''}`).join(', ')
-                : '<span class="muted">—</span>';
-              const contact = [c.email, c.phone].filter(Boolean).map(esc).join(' · ') || '—';
-              return `
-                <tr>
-                  <td><strong>${esc(c.name)}</strong></td>
-                  <td>${contact}</td>
-                  <td>${dogsTxt}</td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function filterCustomers() {
-      const q = ($$('#customerSearch').value || '').toLowerCase().trim();
-      if (!q) return renderCustomers(__ALL_CUSTOMERS);
-      const filtered = __ALL_CUSTOMERS.filter(c =>
-        [c.name, c.email, c.phone].filter(Boolean).some(v => String(v).toLowerCase().includes(q))
-      );
-      renderCustomers(filtered);
-    }
-
-    function renderSimpleCustomerList(list){
-      const ul = document.getElementById('customersList');
-      if (!ul) return;
-      ul.innerHTML = list.map(c => `<li>${esc(c.name)} ${c.email? '('+esc(c.email)+')':''}</li>`).join('');
-    }
-
-    // registratie klant + hond
-    async function submitRegistration(ev){
-      ev.preventDefault();
-      const f = new FormData(ev.target);
-
-      // 1) klant
-      const newCustomer = {
-        name: f.get('customer_name')?.trim(),
-        email: f.get('customer_email')?.trim(),
-        phone: f.get('customer_phone')?.trim()
-      };
-      const cRes = await fetch('/api/customers', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(newCustomer)
-      });
-      if (!cRes.ok){ alert('Klant aanmaken mislukt'); return false; }
-      const customer = await cRes.json();
-
-      // 2) hond aan klant koppelen
-      const newDog = {
-        name: f.get('dog_name')?.trim(),
-        breed: f.get('dog_breed')?.trim(),
-        birth: f.get('dog_birth') || null,
-        gender: f.get('dog_gender') || null,
-        vaccination: f.get('dog_vaccination')?.trim(),
-        passportRef: f.get('dog_passport')?.trim(),
-        vetName: f.get('vet_name')?.trim(),
-        vetPhone: f.get('vet_phone')?.trim(),
-        emergencyPhone: f.get('emergency_phone')?.trim()
-      };
-      const dRes = await fetch(`/api/dogs/${customer.id}`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(newDog)
-      });
-      if (!dRes.ok){ alert('Hond koppelen mislukt'); return false; }
-
-      ev.target.reset();
-      await loadCustomers(true);
-      alert('Registratie gelukt!');
-      return false;
-    }
-
-    // init
-    document.addEventListener('DOMContentLoaded', () => loadCustomers());
-  </script>
+  <script src="/app.js"></script>
 </body>
 </html>
