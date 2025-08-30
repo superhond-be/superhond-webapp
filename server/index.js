@@ -9,6 +9,23 @@ import locationsRoutes from "./routes/locations.js";
 import passesRoutes from "./routes/passes.js";
 import bookingsRoutes from "./routes/bookings.js";
 
+import registerRoutes from "./routes/register.js";
+import passesRoutes from "./routes/passes.js";
+import bookingsRoutes from "./routes/bookings.js";
+
+// ...
+
+
+
+export const router = express.Router();
+
+globalThis.BOOKINGS ??= []; // later vullen bij echte inschrijvingen
+
+router.get("/", (_req, res) => {
+  res.json(globalThis.BOOKINGS);
+});
+
+export default router;
 
 
 const app = express();
@@ -24,7 +41,9 @@ app.use("/api/dogs", dogsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/passes", passesRoutes);
 app.use("/api/bookings", bookingsRoutes);
-
+app.use("/api/register", registerRoutes);
+app.use("/api/passes", passesRoutes);
+app.use("/api/bookings", bookingsRoutes);
     
 // statics
 app.use(express.static("public"));
