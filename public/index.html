@@ -19,6 +19,8 @@
 <button class="tab" data-tab="locations">Locaties</button>
 <button class="tab" data-tab="tab-classes">Klassen</button>
 <button class="tab" data-tab="tab-sessions">Lessen</button>
+      <button class="tab" data-tab="tab-passes">Strippenkaarten</button>
+<button class="tab" data-tab="tab-bookings">Inschrijvingen</button>
       
     </nav>
   </header>
@@ -219,6 +221,73 @@
   <table class="list">
     <thead><tr><th>#</th><th>Klas</th><th>Datum</th><th>Tijd</th><th>Capaciteit</th></tr></thead>
     <tbody id="sessionsBody"></tbody>
+  </table>
+</section>
+
+  <!-- STRIPPENKAARTEN -->
+<section id="tab-passes" class="tab">
+  <h2>Strippenkaarten</h2>
+  <form id="passForm" class="card">
+    <div class="grid">
+      <label>Klant (ID)
+        <input name="customerId" type="number" required />
+      </label>
+      <label>Type (bv. puppy-9)
+        <input name="type" placeholder="puppy-9" required />
+      </label>
+      <label>Totaal strips
+        <input name="totalStrips" type="number" min="1" value="9" required />
+      </label>
+      <label>Geldig t/m
+        <input name="expiresAt" type="date" />
+      </label>
+      <label class="grid span-2">Opmerking
+        <input name="note" />
+      </label>
+    </div>
+    <button class="primary">+ Kaart toevoegen</button>
+  </form>
+
+  <div class="toolbar">
+    <label>Klant filter (ID)
+      <input id="passCustomerFilter" type="number" />
+    </label>
+    <button id="reloadPasses">🔄 Herlaad</button>
+  </div>
+
+  <table class="list">
+    <thead><tr>
+      <th>#</th><th>Klant</th><th>Type</th><th>Totaal</th><th>Gebruikt</th><th>Gereserveerd</th><th>Beschikbaar</th><th>Geldig t/m</th><th>Actief</th>
+    </tr></thead>
+    <tbody id="passesBody"></tbody>
+  </table>
+</section>
+
+<!-- INSCHRIJVINGEN -->
+<section id="tab-bookings" class="tab">
+  <h2>Inschrijvingen</h2>
+  <form id="bookingForm" class="card">
+    <div class="grid">
+      <label>Les (sessionId)
+        <input name="sessionId" type="number" required />
+      </label>
+      <label>Klant (customerId)
+        <input name="customerId" type="number" required />
+      </label>
+      <label>Hond (dogId)
+        <input name="dogId" type="number" />
+      </label>
+    </div>
+    <button class="primary">+ Inschrijven (reserveer 1 strip)</button>
+  </form>
+
+  <div class="toolbar">
+    <button id="reloadBookings">🔄 Herlaad</button>
+  </div>
+
+  <table class="list">
+    <thead><tr><th>#</th><th>Les</th><th>Klant</th><th>Hond</th><th>Status</th><th>Acties</th></tr></thead>
+    <tbody id="bookingsBody"></tbody>
   </table>
 </section>
   
