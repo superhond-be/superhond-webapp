@@ -1,72 +1,80 @@
 // server/routes/lessons.js
 import express from "express";
-import { findCustomer } from "./customers.js";
+import { getCustomers, findCustomer } from "./customers.js";
 
 const router = express.Router();
 
-let NEXT_LESSON_ID = 1;
-const LESSONS = [];
+// In-memory lijst van lessen
+let lessons = []; // { id, title, date, time, capacity, participants: [ {customerId, dogId} ] }
 
-/**
- * Model:
- * {
- *   id,
- *   title, date, time, location,
- *   capacity,
- *   participants: [ { customerId, dogId, stripUsed, joinedAt } ]
- * }
- */
-
-// Alle lessen
+// Alle lessen ophalen
 router.get("/", (_req, res) => {
-  res.json(LESSONS);
+  res.json(lessons);
 });
 
-// Nieuwe les (coach)
+// Nieuwe les toevoegen
 router.post("/", (req, res) => {
-  const { title, date, time, location, capacity } = req.body || {};
-  if (!title || !date || !time) {
-    return res.status(400).json({ error: "Titel, datum en tijd verplicht" });
-  }
-  const lesson = {
-    id: NEXT_LESSON_ID++,
+  const { title, date, time, capacity } = req.body;
+  const newLesson = {
+    id: lessons.length + 1,
     title,
     date,
     time,
-    location: location || "",
-    capacity: Number(capacity) || 0,
-    participants: [],
+    capacity: capacity || 10,
+    participants: []
   };
-  LESSONS.push(lesson);
-  res.status(201).json(lesson);
+  lessons.push(newLesson);
+  res.json(newLesson);
 });
 
-// Klant inschrijven
-router.post("/:lessonId/join", (req, res) => {
-  const lesson = LESSONS.find((l) => l.id === Number(req.params.lessonId));
+// Inschrijven voor een les
+router.post("/:lessonId/enroll", (req, res) => {
+  const lessonId = Number(req.params.lessonId);
+  const { customerId, dogId } = req.body;
+  const lesson = lessons.find(l => l.id === lessonId);
   if (!lesson) return res.status(404).json({ error: "Les niet gevonden" });
 
-  const { customerId, dogId } = req.body || {};
-  const c = findCustomer(customerId);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+  const customer = findCustomer(customerId);
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
 
   if (lesson.capacity && lesson.participants.length >= lesson.capacity) {
-    return res.status(400).json({ error: "Les is vol" });
+    return res.status(400).json({ error: "Les vol" });
   }
 
-  // zoek actieve strippenkaart
-  const pass = (c.passes || []).find((p) => p.remaining > 0);
-  if (!pass) return res.status(400).json({ error: "Geen strippen meer beschikbaar" });
+  // check of klant nog een pass heeft
+  const pass = customer.passes?.find(p => p.remaining > 0);
+  if (!pass) {
+    return res.status(400).json({ error: "Geen strippen meer beschikbaar" });
+  }
 
-  // verbruik 1 strip
+  // gebruik 1 strip pas NA deelname (dus we markeren 'gepland')
+  lesson.participants.push({ customerId, dogId, status: "gepland" });
+
+  res.json({ ok: true, lesson });
+});
+
+// Deelname bevestigen (strip verbruiken)
+router.post("/:lessonId/confirm", (req, res) => {
+  const lessonId = Number(req.params.lessonId);
+  const { customerId } = req.body;
+  const lesson = lessons.find(l => l.id === lessonId);
+  if (!lesson) return res.status(404).json({ error: "Les niet gevonden" });
+
+  const part = lesson.participants.find(p => p.customerId === customerId);
+  if (!part) return res.status(404).json({ error: "Inschrijving niet gevonden" });
+
+  if (part.status === "bevestigd") {
+    return res.status(400).json({ error: "Al bevestigd" });
+  }
+
+  const customer = findCustomer(customerId);
+  const pass = customer.passes?.find(p => p.remaining > 0);
+  if (!pass) {
+    return res.status(400).json({ error: "Geen strippen meer beschikbaar" });
+  }
+
   pass.remaining -= 1;
-
-  lesson.participants.push({
-    customerId: c.id,
-    dogId: Number(dogId) || null,
-    stripUsed: pass.id,
-    joinedAt: new Date().toISOString(),
-  });
+  part.status = "bevestigd";
 
   res.json({ ok: true, lesson });
 });
