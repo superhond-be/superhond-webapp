@@ -26,4 +26,18 @@ router.post("/", (req, res) => {
   res.status(201).json(customer);
 });
 
+// BOVENAAN bij de imports
+import passesRoutes, { setCustomersRef as setPassesCustomersRef } from "./routes/passes.js";
+import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
+
+// ... je bestaande code, app = express(), etc.
+
+app.use("/api/customers", customersRoutes);
+
+// Geef de referentie naar de klanten door aan passes.js
+setPassesCustomersRef(CUSTOMERS);
+
+// Mount de passes routes
+app.use("/api/passes", passesRoutes);
+
 export default router;
