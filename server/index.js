@@ -2,7 +2,7 @@
 import express from "express";
 import { CUSTOMERS } from "./customers.js";
 import registerRoutes from "./routes/register.js";   // ← BOVENIN bij de andere imports
-
+import customersRoutes from "./routes/customers.js";
 // ...
 app.use("/api/register", registerRoutes);            // ← BIJ DE ROUTE-KOPPELINGEN
 const router = express.Router();
