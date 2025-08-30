@@ -1085,6 +1085,137 @@ async function ViewBookings() {
   return wrap;
 }
 
+// Lessen (Sessies) beheren
+async function ViewSessions() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Lessen (Sessies)</h2>
+
+    <div class="card">
+      <h3>Nieuwe les</h3>
+      <form id="newSessionForm">
+        <label>Klas-ID (classId)<input name="classId" type="number" required /></label>
+        <label>Datum & tijd<input name="date" type="datetime-local" required /></label>
+        <label>Locatie<input name="location" required /></label>
+        <label>Capaciteit (optioneel)<input name="capacity" type="number" min="1" /></label>
+        <button type="submit">Opslaan</button>
+      </form>
+      <div id="sMsg" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h3>Terugkerende lessen</h3>
+      <form id="recurringForm">
+        <label>Klas-ID<input name="classId" type="number" required /></label>
+        <label>Locatie<input name="location" required /></label>
+        <label>Capaciteit<input name="capacity" type="number" min="1" /></label>
+        <label>Startdatum<input name="startDate" type="date" required /></label>
+        <label>Einddatum<input name="endDate" type="date" required /></label>
+        <label>Weekdag
+          <select name="weekday" required>
+            <option value="0">Zondag</option>
+            <option value="1">Maandag</option>
+            <option value="2">Dinsdag</option>
+            <option value="3">Woensdag</option>
+            <option value="4">Donderdag</option>
+            <option value="5">Vrijdag</option>
+            <option value="6">Zaterdag</option>
+          </select>
+        </label>
+        <label>Uur<input name="hour" type="number" min="0" max="23" value="9" /></label>
+        <label>Minuut<input name="minute" type="number" min="0" max="59" value="0" /></label>
+        <button type="submit">Reeks aanmaken</button>
+      </form>
+      <div id="rMsg" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h3>Overzicht lessen</h3>
+      <div id="sessionsList">Laden…</div>
+    </div>
+  `;
+
+  const sMsg = $("#sMsg", wrap);
+  const rMsg = $("#rMsg", wrap);
+  const list = $("#sessionsList", wrap);
+
+  async function loadSessions() {
+    try {
+      const data = await getJSON("/api/sessions");
+      if (!data.length) { list.innerHTML = `<p class="muted">Nog geen lessen.</p>`; return; }
+      list.innerHTML = data.map(s => `
+        <div style="border-bottom:1px dashed #eee; padding:8px 0;">
+          <strong>#${s.id}</strong> klas #${s.classId} – ${fmtDate(s.date)} – ${s.location}
+          ${s.capacity ? `<span class="muted"> · capaciteit: ${s.capacity}</span>` : ""}
+        </div>
+      `).join("");
+    } catch (e) {
+      console.error(e);
+      list.textContent = "Kon lessen niet laden.";
+    }
+  }
+
+  function fmtDate(iso) {
+    // toont "dd/MM/yyyy HH:mm"
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleString("nl-BE", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" });
+  }
+
+  $("#newSessionForm", wrap).addEventListener("submit", async (e) => {
+    e.preventDefault();
+    sMsg.textContent = "";
+    const f = e.currentTarget;
+    const body = {
+      classId: Number(f.classId.value),
+      date: f.date.value,             // "YYYY-MM-DDTHH:mm"
+      location: f.location.value.trim(),
+      capacity: f.capacity.value ? Number(f.capacity.value) : null
+    };
+    if (!body.classId || !body.date || !body.location) {
+      sMsg.style.color="#c00"; sMsg.textContent="Vul alle verplichte velden in."; return;
+    }
+    try {
+      await postJSON("/api/sessions", body);
+      sMsg.style.color="#2a7"; sMsg.textContent="Les aangemaakt.";
+      f.reset();
+      await loadSessions();
+    } catch (err) {
+      sMsg.style.color="#c00"; sMsg.textContent = "Fout: " + err.message;
+    }
+  });
+
+  $("#recurringForm", wrap).addEventListener("submit", async (e) => {
+    e.preventDefault();
+    rMsg.textContent = "";
+    const f = e.currentTarget;
+    const body = {
+      classId: Number(f.classId.value),
+      location: f.location.value.trim(),
+      capacity: f.capacity.value ? Number(f.capacity.value) : null,
+      startDate: f.startDate.value,  // "YYYY-MM-DD"
+      endDate: f.endDate.value,      // "YYYY-MM-DD"
+      weekday: Number(f.weekday.value),
+      hour: Number(f.hour.value || 9),
+      minute: Number(f.minute.value || 0)
+    };
+    if (!body.classId || !body.location || !body.startDate || !body.endDate) {
+      rMsg.style.color="#c00"; rMsg.textContent="Vul alle verplichte velden in."; return;
+    }
+    try {
+      const res = await postJSON("/api/sessions/recurring", body);
+      rMsg.style.color="#2a7"; rMsg.textContent = `Aangemaakt: ${res.count} lessen.`;
+      f.reset();
+      await loadSessions();
+    } catch (err) {
+      rMsg.style.color="#c00"; rMsg.textContent = "Fout: " + err.message;
+    }
+  });
+
+  await loadSessions();
+  return wrap;
+}
+
 const routes = {
   "#/dashboard": ViewDashboard,
   "#/customers": ViewCustomers,
