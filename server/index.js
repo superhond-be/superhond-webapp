@@ -1,52 +1,29 @@
-// server/routes/register.js
+// server/index.js
 import express from "express";
-import { CUSTOMERS } from "./customers.js";
-import registerRoutes from "./routes/register.js";   // ← BOVENIN bij de andere imports
+
+// Routes importeren (altijd vanuit ./routes/)
 import customersRoutes from "./routes/customers.js";
-// ...
-app.use("/api/register", registerRoutes);            // ← BIJ DE ROUTE-KOPPELINGEN
-const router = express.Router();
+import dogsRoutes from "./routes/dogs.js";
+import settingsRoutes from "./routes/settings.js";
 
-// POST /api/register  — registreer klant + optioneel 1 hond
-router.post("/", (req, res) => {
-  const { klant, hond } = req.body;
+// Express app aanmaken
+const app = express();
+app.use(express.json());
 
-  if (!klant || !klant.naam) {
-    return res.status(400).json({ error: "Klantgegevens ongeldig" });
-  }
+// Routes koppelen
+app.use("/api/customers", customersRoutes);
+app.use("/api/dogs", dogsRoutes);
+app.use("/api/settings", settingsRoutes);
 
-  // nieuwe klant-id
-  const klantId =
-    CUSTOMERS.length > 0 ? CUSTOMERS[CUSTOMERS.length - 1].id + 1 : 1;
-
-  const newCustomer = {
-    id: klantId,
-    naam: klant.naam || "",
-    email: klant.email || "",
-    phone: klant.phone || "",
-    adres: klant.adres || "",
-    honden: []
-  };
-
-  // hond toevoegen indien meegegeven
-  if (hond) {
-    const hondId = Date.now();
-    const newDog = {
-      id: hondId,
-      naam: hond.naam || "",
-      ras: hond.ras || "",
-      geboortedatum: hond.geboortedatum || "",
-      geslacht: hond.geslacht || "",
-      vaccinaties: hond.vaccinaties || "",
-      inentingsboekjeRef: hond.inentingsboekjeRef || "",
-      dierenartsNaam: hond.dierenartsNaam || "",
-      dierenartsTel: hond.dierenartsTel || "",
-    };
-    newCustomer.honden.push(newDog);
-  }
-
-  CUSTOMERS.push(newCustomer);
-  return res.status(201).json(newCustomer);
+// Healthcheck
+app.get("/", (req, res) => {
+  res.send("✅ Superhond backend draait!");
 });
 
-export default router;
+// Poort instellen
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+export default app;
