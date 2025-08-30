@@ -2,59 +2,51 @@
 import express from "express";
 const router = express.Router();
 
-// In-memory honden
-let DOGS = [];
+let CUSTOMERS_REF = null;
+export function setCustomersRef(ref) { CUSTOMERS_REF = ref; }
+
+const DOGS = []; // in-memory
 let NEXT_DOG_ID = 1;
 
-// Alle honden (optioneel filteren op customerId: /api/dogs?customerId=1)
+// alle honden (optioneel filter op customerId)
 router.get("/", (req, res) => {
-  const { customerId } = req.query || {};
-  let list = DOGS;
-  if (customerId) list = list.filter(d => String(d.customerId) === String(customerId));
+  const q = req.query.customerId ? Number(req.query.customerId) : null;
+  const list = q ? DOGS.filter(d => d.ownerId === q) : DOGS;
   res.json(list);
 });
 
-// Één hond
-router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const d = DOGS.find(x => x.id === id);
-  if (!d) return res.status(404).json({ error: "Hond niet gevonden" });
-  res.json(d);
-});
+// hond toevoegen aan klant
+router.post("/:customerId", (req, res) => {
+  if (!CUSTOMERS_REF) return res.status(500).json({ error: "customers not wired" });
+  const customerId = Number(req.params.customerId);
+  const customer = CUSTOMERS_REF.find(c => c.id === customerId);
+  if (!customer) return res.status(404).json({ error: "customer not found" });
 
-// Hond toevoegen (optioneel koppelen aan klant met customerId)
-router.post("/", (req, res) => {
   const {
-    name,
-    breed,
-    birthDate,
-    sex,
-    vaccinationStatus,
-    vetPhone,
-    vetName,
-    emergencyPhone,
-    passportRef,
-    customerId // optioneel
+    name, breed, birthDate, sex,
+    vetName, vetPhone, vaccineStatus, vaccineRef, emergencyPhone
   } = req.body || {};
 
-  if (!name) return res.status(400).json({ error: "Naam hond is verplicht" });
+  if (!name) return res.status(400).json({ error: "dog name required" });
 
-  const newDog = {
+  const dog = {
     id: NEXT_DOG_ID++,
-    name,
+    ownerId: customerId,
+    name: name || "",
     breed: breed || "",
     birthDate: birthDate || "",
     sex: sex || "",
-    vaccinationStatus: vaccinationStatus || "",
-    vetPhone: vetPhone || "",
     vetName: vetName || "",
-    emergencyPhone: emergencyPhone || "",
-    passportRef: passportRef || "",
-    customerId: customerId ?? null,
-    createdAt: new Date().toISOString()
+    vetPhone: vetPhone || "",
+    vaccineStatus: vaccineStatus || "",
+    vaccineRef: vaccineRef || "",
+    emergencyPhone: emergencyPhone || ""
   };
-  DOGS.push(newDog);
-  res.status(201).json(newDog);
+
+  DOGS.push(dog);
+  customer.dogs.push(dog.id);
+
+  res.status(201).json(dog);
 });
 
 export default router;
