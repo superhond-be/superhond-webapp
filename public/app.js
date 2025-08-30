@@ -1,218 +1,173 @@
-// ------- helpers -------
-async function apiJson(url, options) {
-  const res = await fetch(url, { headers: { "Content-Type": "application/json" }, ...options });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-}
-const byId = (id) => document.getElementById(id);
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Superhond Coach Portaal</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo">🐾</span>
+        <h1>Superhond Coach Portaal</h1>
+      </div>
 
-// ------- referentiedata laden voor selects -------
-async function fillLessonRefs() {
-  const [lts, ths, locs] = await Promise.all([
-    apiJson("/api/lesson-types"),
-    apiJson("/api/themes"),
-    apiJson("/api/locations"),
-  ]);
+      <!-- Tab-menu -->
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="customers">Klanten</button>
+        <button class="tab-btn" data-tab="dogs">Honden</button>
+        <button class="tab-btn" data-tab="passes">Strippenkaarten</button>
+        <button class="tab-btn" data-tab="bookings">Inschrijvingen</button>
+        <button class="tab-btn" data-tab="settings">Instellingen</button>
+        <button class="tab-btn" data-tab="overview">Overzicht</button>
+      </nav>
+    </header>
 
-  // Lestypes
-  byId("ltSelect").innerHTML = lts.map(x => `<option value="${x.id}">${x.name}</option>`).join("");
+    <main class="container">
+      <!-- PANEL: Klanten (registratie klant + hond) -->
+      <section id="customers" class="tab-panel">
+        <form id="registerForm" class="card">
+          <h2>Registratie: Klant + Hond</h2>
 
-  // Thema's (met lege optie al in HTML)
-  const thSel = byId("thSelect");
-  thSel.innerHTML = `<option value="">(geen)</option>` + ths.map(x => `<option value="${x.id}">${x.name}</option>`).join("");
+          <fieldset>
+            <legend>Klantgegevens</legend>
+            <div class="grid-2">
+              <label>Naam
+                <input name="customer_name" required />
+              </label>
+              <label>E-mail
+                <input name="customer_email" type="email" required />
+              </label>
+              <label>Telefoon
+                <input name="customer_phone" />
+              </label>
+              <label>Adres (optioneel)
+                <input name="customer_address" />
+              </label>
+            </div>
+          </fieldset>
 
-  // Locaties
-  byId("locSelect").innerHTML = locs.map(x => `<option value="${x.id}">${x.name}</option>`).join("");
-}
+          <fieldset>
+            <legend>Hond</legend>
+            <div class="grid-2">
+              <label>Naam hond
+                <input name="dog_name" required />
+              </label>
+              <label>Ras
+                <input name="dog_breed" />
+              </label>
+              <label>Geboortedatum
+                <input name="dog_birthdate" type="date" />
+              </label>
+              <label>Geslacht
+                <select name="dog_gender">
+                  <option value="">—</option>
+                  <option value="teef">Teef</option>
+                  <option value="reu">Reu</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
 
-// ------- KLASSEN -------
-async function loadClasses() {
-  const classes = await apiJson("/api/classes");
-  // Voor leesbare namen ook referenties ophalen:
-  const [lts, ths, locs] = await Promise.all([
-    apiJson("/api/lesson-types"),
-    apiJson("/api/themes"),
-    apiJson("/api/locations"),
-  ]);
-  const ltById = Object.fromEntries(lts.map(x => [x.id, x.name]));
-  const thById = Object.fromEntries(ths.map(x => [x.id, x.name]));
-  const locById = Object.fromEntries(locs.map(x => [x.id, x.name]));
+          <fieldset>
+            <legend>Inentingen & Dierenarts</legend>
+            <div class="grid-2">
+              <label>Vaccinatiestatus
+                <input name="vaccination_status" />
+              </label>
+              <label>Inentingsboekje ref.
+                <input name="vaccination_book_ref" />
+              </label>
+              <label>Dierenarts — telefoon
+                <input name="vet_phone" />
+              </label>
+              <label>Noodnummer
+                <input name="emergency_phone" />
+              </label>
+              <label class="full">Dierenarts — naam
+                <input name="vet_name" />
+              </label>
+            </div>
+          </fieldset>
 
-  byId("classesBody").innerHTML = classes.map(c => `
-    <tr>
-      <td>${c.id}</td>
-      <td>${escapeHtml(c.name)}</td>
-      <td>${ltById[c.lessonTypeId] || "-"}</td>
-      <td>${c.themeId ? (thById[c.themeId] || "-") : "-"}</td>
-      <td>${locById[c.locationId] || "-"}</td>
-    </tr>
-  `).join("");
-}
-byId("classForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const f = new FormData(e.currentTarget);
-  await apiJson("/api/classes", {
-    method: "POST",
-    body: JSON.stringify({
-      name: f.get("name"),
-      lessonTypeId: Number(f.get("lessonTypeId")),
-      themeId: f.get("themeId") ? Number(f.get("themeId")) : null,
-      locationId: Number(f.get("locationId")),
-      note: f.get("note")
-    }),
-  });
-  e.currentTarget.reset();
-  await loadClasses();
-});
-byId("reloadClasses")?.addEventListener("click", loadClasses);
+          <div class="actions">
+            <button type="submit" class="btn-primary">Registreren</button>
+            <button type="button" id="reloadCustomers" class="btn-secondary">Herlaad</button>
+          </div>
 
-// ------- LESSEN (SESSIONS) -------
-async function fillClassSelects() {
-  const classes = await apiJson("/api/classes");
-  byId("classSelect").innerHTML = classes.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
-  byId("sessionFilterClass").innerHTML = `<option value="">(alle)</option>` + classes.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
-}
+          <p id="registerMsg" class="muted"></p>
+        </form>
 
-async function loadSessions() {
-  const cls = byId("sessionFilterClass").value;
-  const dt  = byId("sessionFilterDate").value;
-  const qs = new URLSearchParams();
-  if (cls) qs.set("classId", cls);
-  if (dt)  qs.set("date", dt);
+        <div class="card" id="customersListCard">
+          <h3>Bestaande klanten</h3>
+          <ul id="customersList" class="list"></ul>
+        </div>
+      </section>
 
-  const sessions = await apiJson(`/api/sessions${qs.toString() ? "?" + qs.toString() : ""}`);
+      <!-- PANEL: Honden -->
+      <section id="dogs" class="tab-panel" hidden>
+        <div class="card">
+          <h2>Honden</h2>
+          <p class="muted">Overzicht honden (gekoppeld aan klanten).</p>
+          <ul id="dogsList" class="list"></ul>
+          <div class="actions">
+            <button id="reloadDogs" class="btn-secondary">Herlaad</button>
+          </div>
+        </div>
+      </section>
 
-  // toon klassennaam
-  const classes = await apiJson("/api/classes");
-  const byIdC = Object.fromEntries(classes.map(c => [c.id, c.name]));
+      <!-- PANEL: Strippenkaarten -->
+      <section id="passes" class="tab-panel" hidden>
+        <div class="card">
+          <h2>Strippenkaarten</h2>
+          <p class="muted">Basisstructuur klaar. Koppeling klant ↔ strippenkaart volgt.</p>
+          <ul id="passesList" class="list"></ul>
+          <div class="actions">
+            <button id="reloadPasses" class="btn-secondary">Herlaad</button>
+          </div>
+        </div>
+      </section>
 
-  byId("sessionsBody").innerHTML = sessions.map(s => `
-    <tr>
-      <td>${s.id}</td>
-      <td>${escapeHtml(byIdC[s.classId] || "-")}</td>
-      <td>${s.date}</td>
-      <td>${s.time}</td>
-      <td>${s.capacity ?? "-"}</td>
-    </tr>
-  `).join("");
-}
+      <!-- PANEL: Inschrijvingen -->
+      <section id="bookings" class="tab-panel" hidden>
+        <div class="card">
+          <h2>Inschrijvingen</h2>
+          <p class="muted">Placeholder; later koppelen we lessen en strippenkaart-verbruik.</p>
+          <ul id="bookingsList" class="list"></ul>
+          <div class="actions">
+            <button id="reloadBookings" class="btn-secondary">Herlaad</button>
+          </div>
+        </div>
+      </section>
 
-byId("sessionForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const f = new FormData(e.currentTarget);
-  await apiJson("/api/sessions", {
-    method: "POST",
-    body: JSON.stringify({
-      classId: Number(f.get("classId")),
-      date: f.get("date"),
-      time: f.get("time"),
-      capacity: f.get("capacity") ? Number(f.get("capacity")) : null,
-      note: f.get("note")
-    }),
-  });
-  e.currentTarget.reset();
-  await loadSessions();
-});
+      <!-- PANEL: Instellingen -->
+      <section id="settings" class="tab-panel" hidden>
+        <div class="card">
+          <h2>Instellingen (alleen lezen)</h2>
+          <dl id="settingsDl" class="deflist"></dl>
+          <div class="actions">
+            <button id="reloadSettings" class="btn-secondary">Herlaad</button>
+          </div>
+        </div>
+      </section>
 
-byId("sessionFilterClass")?.addEventListener("change", loadSessions);
-byId("sessionFilterDate")?.addEventListener("change", loadSessions);
-byId("reloadSessions")?.addEventListener("click", loadSessions);
+      <!-- PANEL: Overzicht -->
+      <section id="overview" class="tab-panel" hidden>
+        <div class="card">
+          <h2>Overzicht</h2>
+          <div id="overviewStats" class="grid-3 small-cards"></div>
+          <div class="actions">
+            <button id="reloadOverview" class="btn-secondary">Herlaad</button>
+          </div>
+        </div>
+      </section>
+    </main>
 
-// ------- util -------
-function escapeHtml(v){ return String(v ?? "").replace(/[<>&"]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s])); }
+    <footer class="app-footer">
+      <span id="lastUpdated"></span>
+    </footer>
 
-// ------- init (roep dit aan wanneer je tab opent, of direct bij load) -------
-document.addEventListener("DOMContentLoaded", async () => {
-  // selects klaarzetten
-  try {
-    await fillLessonRefs();
-  } catch(e) { /* ignore als tab nog niet zichtbaar is */ }
-
-  try {
-    await loadClasses();
-    await fillClassSelects();
-    await loadSessions();
-  } catch(e) { /* ignore on first load */ }
-});
-<!-- STRIPPENKAARTEN -->
-<section id="tab-passes" class="tab">
-  <h2>Strippenkaarten</h2>
-  <form id="passForm" class="card">
-    <div class="grid">
-      <label>Klant (ID)
-        <input name="customerId" type="number" required />
-      </label>
-      <label>Type (bv. puppy-9)
-        <input name="type" placeholder="puppy-9" required />
-      </label>
-      <label>Totaal strips
-        <input name="totalStrips" type="number" min="1" value="9" required />
-      </label>
-      <label>Geldig t/m
-        <input name="expiresAt" type="date" />
-      </label>
-      <label class="grid span-2">Opmerking
-        <input name="note" />
-      </label>
-    </div>
-    <button class="primary">+ Kaart toevoegen</button>
-  </form>
-
-  <div class="toolbar">
-    <label>Klant filter (ID)
-      <input id="passCustomerFilter" type="number" />
-    </label>
-    <button id="reloadPasses">🔄 Herlaad</button>
-  </div>
-
-  <table class="list">
-    <thead><tr>
-      <th>#</th><th>Klant</th><th>Type</th><th>Totaal</th><th>Gebruikt</th><th>Gereserveerd</th><th>Beschikbaar</th><th>Geldig t/m</th><th>Actief</th>
-    </tr></thead>
-    <tbody id="passesBody"></tbody>
-  </table>
-</section>
-
-<!-- INSCHRIJVINGEN -->
-<section id="tab-bookings" class="tab">
-  <h2>Inschrijvingen</h2>
-  <form id="bookingForm" class="card">
-    <div class="grid">
-      <label>Les (sessionId)
-        <input name="sessionId" type="number" required />
-      </label>
-      <label>Klant (customerId)
-        <input name="customerId" type="number" required />
-      </label>
-      <label>Hond (dogId)
-        <input name="dogId" type="number" />
-      </label>
-    </div>
-    <button class="primary">+ Inschrijven (reserveer 1 strip)</button>
-  </form>
-
-  <div class="toolbar">
-    <button id="reloadBookings">🔄 Herlaad</button>
-  </div>
-
-  <table class="list">
-    <thead><tr><th>#</th><th>Les</th><th>Klant</th><th>Hond</th><th>Status</th><th>Acties</th></tr></thead>
-    <tbody id="bookingsBody"></tbody>
-  </table>
-
-// --- Tabs wisselen ---
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".tab-btn");
-  if (!btn) return;
-
-  // active knop
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b === btn));
-
-  // panels
-  const target = btn.dataset.tab;
-  document.querySelectorAll(".tab-panel").forEach(p => {
-    p.hidden = p.id !== target;
-  });
-});
-  
-</section>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
