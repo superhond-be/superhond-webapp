@@ -224,6 +224,45 @@ async function loadCustomers() {
   setUpdated();
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  loadCustomers();
+
+  // tab switching (blijft zoals je al hebt)
+  const tabs = document.querySelectorAll("header .tab");
+  const panes = document.querySelectorAll(".tabpane");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+      const target = tab.dataset.tab;
+      panes.forEach((p) => p.classList.toggle("is-visible", p.id === "tab-" + target));
+    });
+  });
+
+  // demo/seed knoppen
+  document.getElementById("btn-seed")?.addEventListener("click", async () => {
+    try {
+      await fetch("/api/debug/seed", { method: "POST" });
+      await loadCustomers();
+      alert("Demo-data geladen ✅");
+    } catch (e) {
+      alert("Seeden mislukt: " + e.message);
+    }
+  });
+
+  document.getElementById("btn-reset")?.addEventListener("click", async () => {
+    if (!confirm("Alle in-memory gegevens wissen?")) return;
+    try {
+      await fetch("/api/debug/reset", { method: "POST" });
+      await loadCustomers();
+      alert("Gegevens gewist.");
+    } catch (e) {
+      alert("Reset mislukt: " + e.message);
+    }
+  });
+});
+
+
 /* ------------------ Dogs ------------------ */
 function fillCustomerSelect(customers) {
   const sel = document.getElementById("dog-customer");
