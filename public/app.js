@@ -367,6 +367,151 @@ function wirePassesOverview() {
   });
 }
 
+// ==================== Tab: Klanten & Honden ====================
+
+const people = {
+  formCustomer:  document.getElementById("form-customer"),
+  formDog:       document.getElementById("form-dog"),
+  ownerSelect:   document.getElementById("dog-owner"),
+  custStatus:    document.getElementById("cust-status"),
+  dogStatus:     document.getElementById("dog-status"),
+  tableBody:     document.getElementById("people-table"),
+  reloadBtn:     document.getElementById("people-reload"),
+  updated:       document.getElementById("people-updated"),
+};
+
+let _peopleCustomers = [];
+
+async function peopleLoadCustomers() {
+  _peopleCustomers = await fetchJSON("/api/customers");
+  // zorg dat er altijd een array 'dogs' is (sommige backends sturen losse ids)
+  _peopleCustomers = _peopleCustomers.map(c => ({
+    ...c,
+    dogs: Array.isArray(c.dogs) ? c.dogs : (c.dogs ? c.dogs : [])
+  })).sort((a,b)=> a.name.localeCompare(b.name));
+
+  // owner dropdown vullen
+  if (people.ownerSelect) {
+    people.ownerSelect.innerHTML = ['<option value="">— kies klant —</option>']
+      .concat(_peopleCustomers.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.email||"-")})</option>`))
+      .join("");
+  }
+}
+
+async function peopleRenderTable() {
+  if (!people.tableBody) return;
+  people.tableBody.innerHTML = `<tr><td colspan="4">(laden…)</td></tr>`;
+
+  const rows = [];
+  for (const c of _peopleCustomers) {
+    // indien backend geen dogs in customer stopt, haal per klant op:
+    let dogsFor = c.dogs;
+    if (!Array.isArray(dogsFor) || (dogsFor.length && typeof dogsFor[0] !== "object")) {
+      try {
+        dogsFor = await fetchJSON(`/api/dogs?ownerId=${encodeURIComponent(c.id)}`);
+      } catch { dogsFor = []; }
+    }
+    const dogsTxt = (dogsFor && dogsFor.length)
+      ? dogsFor.map(d => escapeHtml(d.name)).join(", ")
+      : "—";
+
+    rows.push(`
+      <tr>
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.email || "-")}</td>
+        <td>${escapeHtml(c.phone || "-")}</td>
+        <td>${dogsTxt}</td>
+      </tr>
+    `);
+  }
+
+  people.tableBody.innerHTML = rows.join("");
+  if (people.updated) people.updated.textContent = `Laatste update: ${stamp()}`;
+}
+
+async function wirePeopleTab() {
+  // laad klanten + dropdown
+  try { await peopleLoadCustomers(); await peopleRenderTable(); } catch (e) { console.error(e); }
+
+  // Nieuwe klant
+  people.formCustomer?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!people.formCustomer) return;
+    const fd = new FormData(people.formCustomer);
+    const payload = {
+      name: (fd.get("name") || "").toString().trim(),
+      email: (fd.get("email") || "").toString().trim(),
+      phone: (fd.get("phone") || "").toString().trim(),
+      emergency: (fd.get("emergency") || "").toString().trim(), // wordt door backend genegeerd als die prop niet bestaat, dat is oké
+    };
+    if (!payload.name) { people.custStatus.textContent = "Naam is verplicht."; return; }
+
+    setBusy(people.formCustomer.querySelector("button[type=submit]"), true);
+    people.custStatus.textContent = "";
+    try {
+      await postJSON("/api/customers", payload);
+      people.custStatus.textContent = "✅ Klant aangemaakt.";
+      people.formCustomer.reset();
+      await peopleLoadCustomers();
+      await peopleRenderTable();
+    } catch (e2) {
+      console.error(e2);
+      people.custStatus.textContent = "❌ Kon klant niet aanmaken.";
+    } finally {
+      setBusy(people.formCustomer.querySelector("button[type=submit]"), false);
+    }
+  });
+
+  // Nieuwe hond
+  people.formDog?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!people.formDog) return;
+    const fd = new FormData(people.formDog);
+    const payload = Object.fromEntries(fd.entries());
+    if (!payload.ownerId || !payload.name) {
+      people.dogStatus.textContent = "Kies klant en vul naam hond in.";
+      return;
+    }
+    // converteer numeriek veld
+    payload.ownerId = Number(payload.ownerId);
+
+    setBusy(people.formDog.querySelector("button[type=submit]"), true);
+    people.dogStatus.textContent = "";
+    try {
+      await postJSON("/api/dogs", payload);
+      people.dogStatus.textContent = "✅ Hond toegevoegd.";
+      people.formDog.reset();
+      // dropdown opnieuw vullen (klantenlijst blijft gelijk, maar tabel verversen)
+      await peopleRenderTable();
+    } catch (e2) {
+      console.error(e2);
+      people.dogStatus.textContent = "❌ Kon hond niet toevoegen.";
+    } finally {
+      setBusy(people.formDog.querySelector("button[type=submit]"), false);
+    }
+  });
+
+  // Herladen
+  people.reloadBtn?.addEventListener("click", async () => {
+    try {
+      await peopleLoadCustomers();
+      await peopleRenderTable();
+    } catch (e3) {
+      console.error(e3);
+    }
+  });
+}
+
+// activeer bij openen van de tab
+document.addEventListener("tab:open", (ev) => {
+  if (ev.detail?.id === "section-people") wirePeopleTab();
+});
+// als de tab al zichtbaar is bij laden:
+if (document.getElementById("section-people") && !document.getElementById("section-people").hidden) {
+  wirePeopleTab();
+}
+
+
 /* ---------- Start-up ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   wireTabs();
