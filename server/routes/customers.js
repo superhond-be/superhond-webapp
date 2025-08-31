@@ -1,172 +1,151 @@
 // server/routes/customers.js
 import express from "express";
-import { DOGS_REF } from "./dogs.js"; // om honden te kunnen koppelen in /with-dogs
 
 const router = express.Router();
 
 /**
- * In-memory klanten
- * Velden:
- *  - id (number)
- *  - name (string)            // verplicht
- *  - email (string|null)
- *  - phone (string|null)
- *  - address (string|null)
- *  - emergency (string|null)  // noodcontact/extra info
- *  - createdAt / updatedAt (ISO string)
+ * In-memory klanten (kan later naar DB)
+ * Let op: we exporteren de array-referentie via CUSTOMERS_REF zodat andere modules
+ * (bv. dogs.js) dezelfde referentie gebruiken.
  */
-export const CUSTOMERS_REF = [];
-let NEXT_CUSTOMER_ID = 1;
+let NEXT_CUSTOMER_ID = 2;
 
-const nowISO = () => new Date().toISOString();
-const toInt = (v) => (Number.isFinite(Number(v)) ? Number(v) : null);
-
-// -------------------- GET /api/customers --------------------
-// Optionele filters: ?q=zoekterm  (zoekt in name/email/phone)
-router.get("/", (req, res) => {
-  const { q } = req.query;
-  let list = [...CUSTOMERS_REF];
-
-  if (q && String(q).trim()) {
-    const s = String(q).trim().toLowerCase();
-    list = list.filter(c =>
-      (c.name || "").toLowerCase().includes(s) ||
-      (c.email || "").toLowerCase().includes(s) ||
-      (c.phone || "").toLowerCase().includes(s)
-    );
+const CUSTOMERS = [
+  {
+    id: 1,
+    name: "Demo Klant",
+    email: "demo@example.com",
+    phone: "000/00.00.00",
+    emergencyPhone: "",
+    vetName: "",
+    vetPhone: ""
   }
-  res.json(list);
-});
+];
 
-// -------------------- GET /api/customers-with-dogs --------------------
-// Zelfde als /api/customers maar voegt per klant een 'dogs' array toe.
-router.get("/with-dogs", (_req, res) => {
-  const out = CUSTOMERS_REF.map(c => {
-    const dogs = DOGS_REF.filter(d => d.ownerId === c.id);
-    return { ...c, dogs };
-  });
-  res.json(out);
-});
+// Belangrijke export: gedeelde referentie (NIET her-assignen, wel muteren)
+export const CUSTOMERS_REF = CUSTOMERS;
 
-// -------------------- GET /api/customers/:id --------------------
-router.get("/:id", (req, res) => {
-  const id = toInt(req.params.id);
-  const c = CUSTOMERS_REF.find(x => x.id === id);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(c);
-});
-
-// -------------------- POST /api/customers --------------------
-// Body minimaal: { name }
-// Optioneel: email, phone, address, emergency
-router.post("/", (req, res) => {
-  try {
-    const b = req.body || {};
-    const name = (b.name || "").toString().trim();
-    if (!name) return res.status(400).json({ error: "Naam is verplicht" });
-
-    // eenvoudige 'upsert' op email (optioneel): als email bestaat, update
-    const email = (b.email ?? "").toString().trim() || null;
-    if (email) {
-      const existing = CUSTOMERS_REF.find(
-        x => (x.email || "").toLowerCase() === email.toLowerCase()
-      );
-      if (existing) {
-        // update enkel meegegeven velden
-        if (name) existing.name = name;
-        if (b.phone !== undefined)    existing.phone = String(b.phone || "").trim() || null;
-        if (b.address !== undefined)  existing.address = String(b.address || "").trim() || null;
-        if (b.emergency !== undefined)existing.emergency = String(b.emergency || "").trim() || null;
-        existing.updatedAt = nowISO();
-        return res.status(200).json(existing);
-      }
-    }
-
-    const customer = {
-      id: NEXT_CUSTOMER_ID++,
-      name,
-      email,
-      phone: (b.phone ?? "").toString().trim() || null,
-      address: (b.address ?? "").toString().trim() || null,
-      emergency: (b.emergency ?? "").toString().trim() || null,
-      createdAt: nowISO(),
-      updatedAt: nowISO(),
-    };
-    CUSTOMERS_REF.push(customer);
-    res.status(201).json(customer);
-  } catch (e) {
-    res.status(500).json({ error: "Kon klant niet aanmaken", details: String(e?.message || e) });
-  }
-});
-
-// -------------------- PATCH /api/customers/:id --------------------
-// Alleen velden die je meestuurt worden aangepast.
-router.patch("/:id", (req, res) => {
-  const id = toInt(req.params.id);
-  const c = CUSTOMERS_REF.find(x => x.id === id);
-  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  const b = req.body || {};
-  const maybe = (k) => (b[k] !== undefined ? String(b[k]).trim() : undefined);
-
-  const updates = {
-    name: maybe("name"),
-    email: maybe("email"),
-    phone: maybe("phone"),
-    address: maybe("address"),
-    emergency: maybe("emergency"),
-  };
-
-  Object.entries(updates).forEach(([k, v]) => {
-    if (v !== undefined) c[k] = v || null;
-  });
-  c.updatedAt = nowISO();
-  res.json(c);
-});
-
-// -------------------- DELETE /api/customers/:id --------------------
-router.delete("/:id", (req, res) => {
-  const id = toInt(req.params.id);
-  const idx = CUSTOMERS_REF.findIndex(x => x.id === id);
-  if (idx === -1) return res.status(404).json({ error: "Klant niet gevonden" });
-  const [removed] = CUSTOMERS_REF.splice(idx, 1);
-  res.json({ ok: true, removed });
-});
-
-
-// ... onder je customerId/date filters:
-if (dogId != null) {
-  const did = String(dogId);
-  list = list.filter(l => String(l.dogId) === did);
+/** Eventueel nuttig voor seeding of testen vanuit elders */
+export function addCustomer(cust) {
+  const id = NEXT_CUSTOMER_ID++;
+  const customer = { id, ...cust };
+  CUSTOMERS.push(customer);
+  return customer;
 }
-// server/routes/customers.js (ONDERAAN TOEVOEGEN)
+
+/** Kleine helper voor lokale fetches */
 async function getJSON(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`GET ${url} -> ${r.status}`);
-  return r.json();
+  const res = await fetch(url);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Fetch ${url} failed: ${res.status} ${res.statusText} ${text}`);
+  }
+  return res.json();
 }
 
 /**
+ * GET /api/customers
+ * Optionele query:
+ *   - q: vrije tekst (match op name/email/phone)
+ *   - id: exact id (handig voor snel lookup)
+ */
+router.get("/", (req, res) => {
+  const { q, id } = req.query;
+
+  if (id) {
+    const num = Number(id);
+    const found = CUSTOMERS.find(c => c.id === num);
+    return res.json(found ? [found] : []);
+  }
+
+  if (!q) return res.json(CUSTOMERS);
+
+  const needle = String(q).toLowerCase();
+  const out = CUSTOMERS.filter(c =>
+    [c.name, c.email, c.phone]
+      .filter(Boolean)
+      .some(v => String(v).toLowerCase().includes(needle))
+  );
+  res.json(out);
+});
+
+/**
+ * GET /api/customers/:id
+ * Eén klant ophalen.
+ */
+router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const customer = CUSTOMERS.find(c => c.id === id);
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+  res.json(customer);
+});
+
+/**
+ * POST /api/customers
+ * Body: { name, email, phone, emergencyPhone, vetName, vetPhone }
+ * (Koppeling van honden/lessen/strippenkaarten gebeurt in hun eigen routes.)
+ */
+router.post("/", (req, res) => {
+  const { name, email, phone, emergencyPhone, vetName, vetPhone } = req.body || {};
+
+  if (!name || !email) {
+    return res.status(400).json({ error: "Naam en e-mail zijn verplicht" });
+  }
+
+  const exists = CUSTOMERS.some(c => c.email && email && c.email.toLowerCase() === String(email).toLowerCase());
+  if (exists) {
+    return res.status(409).json({ error: "Er bestaat al een klant met dit e-mailadres" });
+  }
+
+  const created = addCustomer({
+    name: String(name).trim(),
+    email: String(email).trim(),
+    phone: phone || "",
+    emergencyPhone: emergencyPhone || "",
+    vetName: vetName || "",
+    vetPhone: vetPhone || ""
+  });
+
+  res.status(201).json(created);
+});
+
+/**
  * GET /api/customers/:id/summary
- * Retourneert:
- * { customer, dogs:[], passes:[], lessons:[] }
+ * Samenvatting met gekoppelde data uit andere endpoints:
+ *  - /api/dogs?ownerId=:id
+ *  - /api/passes?customerId=:id
+ *  - /api/lessons?customerId=:id[&dogId=:dogId]
+ *
+ * Optionele query:
+ *  - dogId: filter lessen op hond
  */
 router.get("/:id/summary", async (req, res) => {
   try {
     const id = Number(req.params.id);
-    const customer = CUSTOMERS_REF.find(c => c.id === id);
+    const customer = CUSTOMERS.find(c => c.id === id);
     if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
 
-    const base = ""; // relatieve URL's op dezelfde service
+    const { dogId } = req.query;
+
+    // Base URL leeg laten: we roepen dezelfde service aan.
+    const base = "";
+
     const [dogs, passes, lessons] = await Promise.all([
       getJSON(`${base}/api/dogs?ownerId=${encodeURIComponent(id)}`),
       getJSON(`${base}/api/passes?customerId=${encodeURIComponent(id)}`),
-      getJSON(`${base}/api/lessons?customerId=${encodeURIComponent(id)}`)
+      getJSON(
+        `${base}/api/lessons?customerId=${encodeURIComponent(id)}${
+          dogId ? `&dogId=${encodeURIComponent(dogId)}` : ""
+        }`
+      )
     ]);
 
     res.json({ customer, dogs, passes, lessons });
   } catch (e) {
-    res.status(500).json({ error: "Kon klantenoverzicht niet laden", details: String(e?.message || e) });
+    res.status(500).json({
+      error: "Kon klantenoverzicht niet laden",
+      details: String(e?.message || e)
+    });
   }
 });
 
