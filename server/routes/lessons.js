@@ -1,21 +1,39 @@
-// public/lessons.js
-(() => {
-  // Eigen kleine HTTP-helper (los van app.js om conflicts te vermijden)
-  async function http(method, url, data) {
-    const opt = { method, headers: { "Content-Type": "application/json" } };
-    if (data) opt.body = JSON.stringify(data);
-    const res = await fetch(url, opt);
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      throw new Error(`${res.status} ${res.statusText}${t ? " - " + t : ""}`);
-    }
-    try { return await res.json(); } catch { return {}; }
+// server/routes/lessons.js
+import express from "express";
+const router = express.Router();
+
+// Tijdelijke in-memory data (kan later naar DB)
+let LESSONS = [
+  { id: 1, name: "Puppycursus", description: "Basis training voor pups" },
+  { id: 2, name: "Gehoorzaamheid 1", description: "Beginnende gehoorzaamheid" },
+  { id: 3, name: "Gehoorzaamheid 2", description: "Vervolg op niveau 1" }
+];
+
+// Alle lessen ophalen
+router.get("/", (_req, res) => {
+  res.json(LESSONS);
+});
+
+// Nieuwe les toevoegen
+router.post("/", (req, res) => {
+  const { name, description } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: "Naam van les is verplicht" });
   }
+  const newLesson = {
+    id: LESSONS.length + 1,
+    name,
+    description: description || ""
+  };
+  LESSONS.push(newLesson);
+  res.status(201).json(newLesson);
+});
 
-  // DOM refs
-  let formAdd, btnReload, list;
+// Les verwijderen
+router.delete("/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  LESSONS = LESSONS.filter(l => l.id !== id);
+  res.json({ message: `Les ${id} verwijderd` });
+});
 
-  // Render helpers
-  function escapeHTML(str) {
-    if (str == null) return "";
-    return String
+export default router;
