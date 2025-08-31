@@ -18,6 +18,10 @@ body {
   font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+.pick-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:.6rem .7rem; border-bottom:1px solid var(--line,#223); }
+.pick-item:last-child { border-bottom:0; }
+.badge { display:inline-block; padding:.15rem .5rem; border-radius:999px; background:#1c4a6b; color:#d7efff; font-size:.8rem; margin-left:.4rem; }
+
 /* Header & navigatie */
 header {
   display: flex;
