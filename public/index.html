@@ -1,45 +1,85 @@
 <!doctype html>
 <html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Superhond Coach Portaal</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    /* Kleine basisstijl als fallback; je eigen styles.css blijft werken */
-    :root { --accent:#0aa2ff; --bg:#0b1b2b; --card:#12263a; --text:#e9f1f7; }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    header{background:#0a4c78;padding:18px 16px;position:sticky;top:0;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-    header h1{margin:0;font-size:20px;display:flex;align-items:center;gap:8px}
-    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 16px}
-    .tab-btn{background:#14476a;border:1px solid #1c5e8c;color:#cfe9fb;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#042136}
-    main{padding:0 16px 28px}
-    .card{background:var(--card);border:1px solid #1e3a4f;border-radius:12px;padding:14px;margin:12px 0}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:800px){ .row{grid-template-columns:1fr} }
-    label{font-size:12px;opacity:.9}
-    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid #2a4c64;background:#0f2132;color:#e9f1f7}
-    .actions{display:flex;gap:10px;margin-top:12px}
-    button.primary{background:var(--accent);color:#081623;border:0;padding:10px 14px;border-radius:10px;cursor:pointer}
-    .muted{opacity:.8;font-size:12px}
-    .list{margin-top:8px}
-    .list-item{padding:10px;border-bottom:1px solid #1d3850}
-    .badge{display:inline-block;background:#1d5a86;color:#d8efff;border-radius:999px;padding:2px 8px;font-size:12px;margin-left:6px}
-    .empty{opacity:.7;font-style:italic}
-  </style>
-</head>
-<body>
-  <header>
-    <h1>🐾 Superhond Coach Portaal</h1>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Superhond Coach Portaal</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>🐾 Superhond Coach Portaal</h1>
+      <nav class="tabs">
+        <button class="tab active" data-view="customers">Klanten</button>
+        <button class="tab" data-view="passes">Strippenkaarten</button>
+      </nav>
+    </header>
 
-  <nav class="tabs" id="tabs"></nav>
+    <main id="view-customers" class="view active">
+      <section class="card">
+        <h2>Registratie: Klant + Hond</h2>
 
-  <main>
-    <div id="view"></div>
-  </main>
+        <form id="registerForm" autocomplete="off">
+          <fieldset>
+            <legend>Klantgegevens</legend>
+            <div class="grid-2">
+              <label>Naam <input required id="c_name" /></label>
+              <label>E-mail <input id="c_email" type="email" /></label>
+              <label>Telefoon <input id="c_phone" /></label>
+              <label>Lestype
+                <select id="lessonType">
+                  <option value="">— kies —</option>
+                  <option>PUPPY – Puppy Pack</option>
+                  <option>PUPPY – Starters</option>
+                  <option>PUBER – Coachgroep</option>
+                  <option>GEHOORZAAMHEID – Groep</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
 
-  <script type="module" src="/app.js"></script>
-</body>
+          <fieldset>
+            <legend>Hond</legend>
+            <div class="grid-2">
+              <label>Naam hond <input id="d_name" /></label>
+              <label>Ras <input id="d_breed" /></label>
+              <label>Geboortedatum <input id="d_birth" type="date" /></label>
+              <label>Geslacht
+                <select id="d_gender">
+                  <option value="-">—</option>
+                  <option value="reut">Reu</option>
+                  <option value="teef">Teef</option>
+                </select>
+              </label>
+              <label>Dierenarts – telefoon <input id="d_vetPhone" /></label>
+              <label>Dierenarts – naam <input id="d_vetName" /></label>
+              <label>Vaccinatiestatus <input id="d_vaccine" /></label>
+              <label>Inentingsboekje ref. <input id="d_booklet" /></label>
+              <label class="span-2">Noodnummer <input id="d_emergency" /></label>
+            </div>
+          </fieldset>
+
+          <button class="primary" type="submit">Registreren</button>
+          <span id="formMsg" class="muted"></span>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>Bestaande klanten</h2>
+          <button id="reloadBtn" class="secondary">Herladen</button>
+        </div>
+        <div id="customersList" class="list"></div>
+      </section>
+    </main>
+
+    <main id="view-passes" class="view">
+      <section class="card">
+        <h2>Strippenkaarten (per klant)</h2>
+        <div id="passesList" class="list"></div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
 </html>
