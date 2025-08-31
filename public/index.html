@@ -1,99 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Superhond Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond Coach Portaal</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    /* Kleine basisstijl als fallback; je eigen styles.css blijft werken */
+    :root { --accent:#0aa2ff; --bg:#0b1b2b; --card:#12263a; --text:#e9f1f7; }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    header{background:#0a4c78;padding:18px 16px;position:sticky;top:0;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+    header h1{margin:0;font-size:20px;display:flex;align-items:center;gap:8px}
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 16px}
+    .tab-btn{background:#14476a;border:1px solid #1c5e8c;color:#cfe9fb;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#042136}
+    main{padding:0 16px 28px}
+    .card{background:var(--card);border:1px solid #1e3a4f;border-radius:12px;padding:14px;margin:12px 0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:800px){ .row{grid-template-columns:1fr} }
+    label{font-size:12px;opacity:.9}
+    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid #2a4c64;background:#0f2132;color:#e9f1f7}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    button.primary{background:var(--accent);color:#081623;border:0;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .muted{opacity:.8;font-size:12px}
+    .list{margin-top:8px}
+    .list-item{padding:10px;border-bottom:1px solid #1d3850}
+    .badge{display:inline-block;background:#1d5a86;color:#d8efff;border-radius:999px;padding:2px 8px;font-size:12px;margin-left:6px}
+    .empty{opacity:.7;font-style:italic}
+  </style>
 </head>
 <body>
-  <nav>
-    <button class="tab-btn" id="tab-dashboard" data-target="section-dashboard">Dashboard</button>
-    <button class="tab-btn" id="tab-customers" data-target="section-customers">Klanten</button>
-  </nav>
+  <header>
+    <h1>🐾 Superhond Coach Portaal</h1>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
 
   <main>
-    <!-- Dashboard -->
-    <section id="section-dashboard">
-      <h1>Welkom bij Superhond</h1>
-      <p>Kies een tabblad hierboven.</p>
-    </section>
-
-    <!-- Klanten -->
-    <section id="section-customers" class="tab-section" hidden>
-      <div class="row" style="gap:10px;align-items:center;">
-        <button id="seed-btn" class="secondary">🔄 Demo vullen</button>
-        <button id="customers-reload" class="secondary">🔄 Herladen</button>
-        <input id="customers-search" placeholder="Zoeken (naam/email/tel)" />
-        <span id="customers-updated" class="muted"></span>
-      </div>
-
-      <table class="data-table" id="customers-table" style="margin-top:10px;">
-        <thead>
-          <tr>
-            <th>Naam</th>
-            <th>E-mail</th>
-            <th>Telefoon</th>
-            <th>Honden</th>
-            <th>Strippenkaarten</th>
-            <th>Acties</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="6" class="muted">(nog geen data)</td></tr>
-        </tbody>
-      </table>
-
-      <!-- Klant detailpaneel -->
-      <div id="customer-detail" class="card" style="display:none; margin-top:16px;">
-        <h3 id="cd-title">Klantdetail</h3>
-        <div class="grid-2">
-          <div>
-            <h4>Honden</h4>
-            <ul id="cd-dogs" class="bullets"></ul>
-            <h4>Strippenkaarten</h4>
-            <table class="data-table" id="cd-passes">
-              <thead><tr><th>Lestype</th><th>Resterend</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div>
-            <h4>Nieuwe les plannen</h4>
-            <form id="cd-lesson-form">
-              <label>Hond
-                <select name="dogId" id="cd-dog"></select>
-              </label>
-              <label>Lestype
-                <input name="classType" id="cd-class" required />
-              </label>
-              <label>Datum
-                <input type="date" name="date" id="cd-date" required />
-              </label>
-              <label>Start
-                <input type="time" name="startTime" id="cd-start" required />
-              </label>
-              <label>Einde
-                <input type="time" name="endTime" id="cd-end" />
-              </label>
-              <label>Locatie
-                <input name="location" id="cd-loc" />
-              </label>
-              <div class="row">
-                <button type="button" id="cd-dry" class="secondary">Proefcontrole</button>
-                <button type="submit" class="primary">Boek les</button>
-                <span id="cd-status" class="muted"></span>
-              </div>
-            </form>
-            <h4 style="margin-top:16px;">Geplande lessen</h4>
-            <table class="data-table" id="cd-lessons">
-              <thead><tr><th>Datum</th><th>Tijd</th><th>Lestype</th><th>Hond</th><th>Locatie</th><th>Actie</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div id="view"></div>
   </main>
 
-  <script src="app.js"></script>
+  <script type="module" src="/app.js"></script>
 </body>
 </html>
