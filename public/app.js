@@ -1,87 +1,84 @@
-/* ------------------ Lessen ------------------ */
-async function loadLessons() {
-  const list = document.getElementById("lessons-list");
-  if (!list) return;
-  list.innerHTML = `<div class="muted">Laden…</div>`;
+const api = {
+  list: async () => (await fetch("/api/passes")).json(),
+  add: async (type, strips) => (await fetch("/api/passes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type, strips: Number(strips) })
+  })).json(),
+  useOne: async (id) => (await fetch(`/api/passes/${id}/use`, { method: "POST" })).json()
+};
 
-  const lessons = await api("/api/lessons");
-  if (!lessons.length) {
-    list.innerHTML = `<div class="muted">Nog geen lessen gepland.</div>`;
+const $ = (sel) => document.querySelector(sel);
+const tableBody = $("#passesBody");
+const statusLine = $("#statusLine");
+
+function setStatus(msg) {
+  statusLine.textContent = msg;
+}
+
+async function refresh() {
+  setStatus("Vernieuwen…");
+  try {
+    const data = await api.list();
+    renderRows(data);
+    setStatus(`Laatst geladen: ${new Date().toLocaleString()}`);
+  } catch (e) {
+    console.error(e);
+    setStatus("Fout bij laden.");
+  }
+}
+
+function renderRows(passes) {
+  tableBody.innerHTML = "";
+  if (!passes || passes.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="4" class="muted">Geen kaarten</td></tr>`;
     return;
   }
 
-  list.innerHTML = "";
-  lessons.forEach((l) => {
-    const el = document.createElement("div");
-    el.className = "card";
-
-    // deelnemerslijst met status + knop "Bevestig"
-    const deelnemersHTML = (l.participants && l.participants.length)
-      ? `<ul class="bullets">
-          ${l.participants.map((p, idx) => `
-            <li>
-              Klant #${p.customerId}${p.dogId ? ` · Hond #${p.dogId}` : ""}
-              ${p.status === "bevestigd"
-                ? ` <span class="muted">— bevestigd ✅</span>`
-                : ` <button class="btn small" data-act="confirm" data-lesson="${l.id}" data-customer="${p.customerId}">Bevestig</button>`}
-            </li>
-          `).join("")}
-         </ul>`
-      : `<div class="muted">Nog geen deelnemers</div>`;
-
-    el.innerHTML = `
-      <div class="card-head">
-        <div>
-          <strong>${escapeHTML(l.title)}</strong>
-          <div class="sub">${escapeHTML(l.date)} ${escapeHTML(l.time)} · Plaatsen: ${l.participants.length}/${l.capacity || "∞"}</div>
-        </div>
-        <div class="actions">
-          <button class="btn small" data-act="enroll" data-id="${l.id}">Inschrijven</button>
-        </div>
-      </div>
-      <div class="card-body">
-        ${deelnemersHTML}
-      </div>
+  for (const p of passes) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${p.id}</td>
+      <td>${p.type}</td>
+      <td><span class="pill">${p.strips}</span></td>
+      <td><button data-id="${p.id}" class="use-btn">Gebruik 1 strip</button></td>
     `;
+    tableBody.appendChild(tr);
+  }
 
-    el.addEventListener("click", async (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-
-      // Inschrijven (plant deelname; verbruikt nog geen strip)
-      if (btn.dataset.act === "enroll") {
-        const custId = Number(prompt("Geef klantId om in te schrijven:"));
-        if (!custId) return;
-        const dogId = Number(prompt("Geef hondId (optioneel, leeg laten = geen):", "")) || null;
-        try {
-          await api(`/api/lessons/${btn.dataset.id}/enroll`, {
-            method: "POST",
-            body: JSON.stringify({ customerId: custId, dogId }),
-          });
-          await loadLessons();
-          await loadCustomers(); // voor het geval UI elders afhankelijk is
-        } catch (err) {
-          alert("Inschrijven mislukt: " + err.message);
-        }
-      }
-
-      // ✅ Bevestigen (verbruikt 1 strip)
-      if (btn.dataset.act === "confirm") {
-        const lessonId = Number(btn.dataset.lesson);
-        const customerId = Number(btn.dataset.customer);
-        try {
-          await api(`/api/lessons/${lessonId}/confirm`, {
-            method: "POST",
-            body: JSON.stringify({ customerId }),
-          });
-          await loadLessons();
-          await loadCustomers(); // update strippenkaarten in klantenlijst
-        } catch (err) {
-          alert("Bevestigen mislukt: " + err.message);
-        }
+  // Koppel events
+  tableBody.querySelectorAll(".use-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      setStatus(`Strip gebruiken voor kaart #${id}…`);
+      const res = await api.useOne(id);
+      if (res.error) {
+        setStatus(`Fout: ${res.error}`);
+      } else {
+        setStatus(`OK: ${res.message}`);
+        refresh();
       }
     });
-
-    list.appendChild(el);
   });
 }
+
+$("#addBtn").addEventListener("click", async () => {
+  const type = $("#typeInput").value.trim();
+  const strips = $("#stripsInput").value;
+  if (!type || !strips) {
+    setStatus("Geef type én aantal strips in.");
+    return;
+  }
+  setStatus("Kaart toevoegen…");
+  const res = await api.add(type, strips);
+  if (res.error) {
+    setStatus(`Fout: ${res.error}`);
+  } else {
+    $("#typeInput").value = "";
+    $("#stripsInput").value = "";
+    setStatus(`Toegevoegd: ${res.type} (${res.strips} strips)`);
+    refresh();
+  }
+});
+
+refresh();
