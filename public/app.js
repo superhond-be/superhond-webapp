@@ -1,327 +1,391 @@
-const api = {
-  list: async () => (await fetch("/api/passes")).json(),
-  add: async (type, strips) => (await fetch("/api/passes", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type, strips: Number(strips) })
-  })).json(),
-  useOne: async (id) => (await fetch(`/api/passes/${id}/use`, { method: "POST" })).json()
-};
+/* ============================================================
+   Superhond – public/app.js  (VOLLEDIG VERVANGEN)
+   ============================================================ */
 
-const $ = (sel) => document.querySelector(sel);
-const tableBody = $("#passesBody");
-const statusLine = $("#statusLine");
-
-function setStatus(msg) {
-  statusLine.textContent = msg;
-}
-
-async function refresh() {
-  setStatus("Vernieuwen…");
-  try {
-    const data = await api.list();
-    renderRows(data);
-    setStatus(`Laatst geladen: ${new Date().toLocaleString()}`);
-  } catch (e) {
-    console.error(e);
-    setStatus("Fout bij laden.");
-  }
-}
-
-function renderRows(passes) {
-  tableBody.innerHTML = "";
-  if (!passes || passes.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4" class="muted">Geen kaarten</td></tr>`;
-    return;
-  }
-
-  for (const p of passes) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.id}</td>
-      <td>${p.type}</td>
-      <td><span class="pill">${p.strips}</span></td>
-      <td><button data-id="${p.id}" class="use-btn">Gebruik 1 strip</button></td>
-    `;
-    tableBody.appendChild(tr);
-  }
-
-  // Koppel events
-  tableBody.querySelectorAll(".use-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-id");
-      setStatus(`Strip gebruiken voor kaart #${id}…`);
-      const res = await api.useOne(id);
-      if (res.error) {
-        setStatus(`Fout: ${res.error}`);
-      } else {
-        setStatus(`OK: ${res.message}`);
-        refresh();
-      }
-    });
-  });
-}
-
-$("#addBtn").addEventListener("click", async () => {
-  const type = $("#typeInput").value.trim();
-  const strips = $("#stripsInput").value;
-  if (!type || !strips) {
-    setStatus("Geef type én aantal strips in.");
-    return;
-  }
-  setStatus("Kaart toevoegen…");
-  const res = await api.add(type, strips);
-  if (res.error) {
-    setStatus(`Fout: ${res.error}`);
-  } else {
-    $("#typeInput").value = "";
-    $("#stripsInput").value = "";
-    setStatus(`Toegevoegd: ${res.type} (${res.strips} strips)`);
-    refresh();
-  }
-});
-
-
-// ==================== Lessen & Strippenkaart Frontend ====================
-
-const API = {
-  customers: '/api/customers',
-  lessons:   '/api/lessons',
-  passes:    '/api/passes',
-  usePass:   '/api/passes/use',
-};
-
-// Dom refs
-const $ = (q) => document.querySelector(q);
-
-// Dropdowns (lessen)
-const lsCustomerSel = $('#ls-customer');
-const lsDogSel      = $('#ls-dog');
-const lsClassSel    = $('#ls-classType');
-const lsLoc         = $('#ls-location');
-const lsDate        = $('#ls-date');
-const lsStart       = $('#ls-start');
-const lsEnd         = $('#ls-end');
-const lsBookBtn     = $('#ls-book');
-const lsBookStatus  = $('#ls-book-status');
-
-// Strippenkaart
-const psCustomerSel = $('#ps-customer');
-const psClassSel    = $('#ps-classType');
-const psCheckBtn    = $('#ps-check');
-const psRemaining   = $('#ps-remaining');
-const psUseBtn      = $('#ps-use');
-const psUseStatus   = $('#ps-use-status');
-
-const lessonsLastUpdated = $('#lessons-last-updated');
-
-let _customers = [];
-
-// Helpers
-function setBusy(el, busy) {
-  if (!el) return;
-  if (busy) {
-    el.setAttribute('disabled', 'disabled');
-    el.classList.add('is-busy');
-  } else {
-    el.removeAttribute('disabled');
-    el.classList.remove('is-busy');
-  }
-}
-
-function stamp() {
-  const d = new Date();
-  const pad = (n) => `${n}`.padStart(2, '0');
-  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
+/* ---------- Kleine helpers ---------- */
+const $  = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
 async function fetchJSON(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`GET ${url} -> ${res.status}`);
   return res.json();
 }
-
 async function postJSON(url, body) {
   const res = await fetch(url, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(body)
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify(body || {})
   });
   if (!res.ok) {
-    const txt = await res.text().catch(()=>'');
-    throw new Error(`HTTP ${res.status} ${txt}`);
+    const t = await res.text().catch(()=> "");
+    throw new Error(`POST ${url} -> ${res.status} ${t}`);
   }
-  return res.json().catch(()=> ({}));
+  try { return await res.json(); } catch { return {}; }
 }
-
-// Load customers + fill selects
-async function loadCustomersInto(selectA, selectB) {
-  setBusy(selectA, true);
-  setBusy(selectB, true);
-  try {
-    if (_customers.length === 0) {
-      _customers = await fetchJSON(API.customers);
-      // sort by name for convenience
-      _customers.sort((a,b)=>a.name.localeCompare(b.name));
-    }
-
-    const opts = ['<option value="">— kies klant —</option>']
-      .concat(_customers.map(c => `<option value="${c.id}">${escapeHtml(`${c.name} (${c.email||'—'})`)}</option>`));
-    selectA.innerHTML = opts.join('');
-    selectB.innerHTML = opts.join('');
-  } catch (e) {
-    console.error(e);
-    selectA.innerHTML = '<option value="">(laden mislukt)</option>';
-    selectB.innerHTML = '<option value="">(laden mislukt)</option>';
-  } finally {
-    setBusy(selectA, false);
-    setBusy(selectB, false);
-  }
-}
-
-// Fill dogs when a customer changes (for lesson form)
-function refreshDogsForCustomer(customerId) {
-  const c = _customers.find(x => String(x.id) === String(customerId));
-  const dogs = c?.dogs || [];
-  lsDogSel.innerHTML = dogs.length
-    ? dogs.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('')
-    : '<option value="">(geen honden voor klant)</option>';
-}
-
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+function stamp() {
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function setBusy(el, busy=true) {
+  if (!el) return;
+  if (busy) { el.setAttribute("disabled","disabled"); el.classList.add("is-busy"); }
+  else { el.removeAttribute("disabled"); el.classList.remove("is-busy"); }
+}
 
-// Events wiring
-function wireLessonsUI() {
-  // initial load
-  loadCustomersInto(lsCustomerSel, psCustomerSel).then(()=>{
-    // auto-select first for ease (optional)
-    if (lsCustomerSel.options.length > 1) {
-      lsCustomerSel.selectedIndex = 1;
-      refreshDogsForCustomer(lsCustomerSel.value);
+/* ---------- Tab navigatie ---------- */
+function wireTabs() {
+  const btns = $$(".tab-btn");
+  const sections = $$(".tab-section");
+  if (!btns.length || !sections.length) return;
+
+  function show(targetId) {
+    sections.forEach(sec => sec.hidden = sec.id !== targetId);
+    btns.forEach(b => b.classList.toggle("active", b.dataset.target === targetId));
+  }
+
+  btns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.target;
+      if (target) show(target);
+      // Event sturen zodat specifieke tab code kan initialiseren
+      document.dispatchEvent(new CustomEvent("tab:open", { detail:{ id: target }}));
+    });
+  });
+
+  // Eerste tab als actief markeren (als nog geen active is)
+  const currentActive = btns.find(b => b.classList.contains("active")) || btns[0];
+  if (currentActive) {
+    const target = currentActive.dataset.target;
+    show(target);
+    document.dispatchEvent(new CustomEvent("tab:open", { detail:{ id: target }}));
+  }
+}
+
+/* ============================================================
+   LESSONS TAB (boeken + strippenkaart acties)
+   Vereist in HTML:
+   - Selects: #ls-customer, #ls-dog, #ls-classType
+   - Inputs:  #ls-location, #ls-date, #ls-start, #ls-end
+   - Buttons: #ls-book
+   - Status:  #ls-book-status, #lessons-last-updated
+   - Passes:  #ps-customer, #ps-classType, #ps-check, #ps-remaining, #ps-use, #ps-use-status
+   Endpoints (pas aan indien nodig):
+   - GET  /api/customers  (verwacht [{id,name,email,dogs:[{id,name}]}] of zonder dogs)
+   - POST /api/lessons    ({customerId,dogId,classType,date,startTime,endTime,location})
+   - GET  /api/passes?customerId=.. (lijst met kaarten voor klant; gebruikt in overview, optioneel hier)
+   - GET  /api/passes?customerId=..&classType=.. (backend kan je uitbreiden om remaining op te leveren)
+   - POST /api/passes/use ({customerId,classType,count})
+   ============================================================ */
+const API = {
+  customers: "/api/customers",
+  lessons:   "/api/lessons",
+  passes:    "/api/passes",
+  usePass:   "/api/passes/use"
+};
+
+const ls = {
+  customerSel: $("#ls-customer"),
+  dogSel:      $("#ls-dog"),
+  classSel:    $("#ls-classType"),
+  loc:         $("#ls-location"),
+  date:        $("#ls-date"),
+  start:       $("#ls-start"),
+  end:         $("#ls-end"),
+  bookBtn:     $("#ls-book"),
+  status:      $("#ls-book-status"),
+  updated:     $("#lessons-last-updated")
+};
+const ps = {
+  customerSel: $("#ps-customer"),
+  classSel:    $("#ps-classType"),
+  checkBtn:    $("#ps-check"),
+  remaining:   $("#ps-remaining"),
+  useBtn:      $("#ps-use"),
+  useStatus:   $("#ps-use-status")
+};
+
+let _customersCache = [];   // [{id,name,email,dogs:[{id,name}]}]
+
+async function loadCustomersInto(selects = []) {
+  try {
+    if (!_customersCache.length) {
+      _customersCache = await fetchJSON(API.customers);
+      // fallback als backend geen dogs inline retourneert:
+      _customersCache = _customersCache.map(c => ({ ...c, dogs: Array.isArray(c.dogs) ? c.dogs : (c.dogs ? c.dogs : []) }));
+      _customersCache.sort((a,b)=> a.name.localeCompare(b.name));
     }
-    if (psCustomerSel.options.length > 1) psCustomerSel.selectedIndex = 1;
-  });
+    const options = ['<option value="">— kies klant —</option>']
+      .concat(_customersCache.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.email||"-")})</option>`));
+    selects.forEach(sel => { if (sel) sel.innerHTML = options.join(""); });
+  } catch (e) {
+    console.error("loadCustomersInto:", e);
+    selects.forEach(sel => { if (sel) sel.innerHTML = '<option value="">(laden mislukt)</option>'; });
+  }
+}
 
-  lsCustomerSel.addEventListener('change', () => {
-    refreshDogsForCustomer(lsCustomerSel.value);
-  });
+function refreshDogsFor(customerId) {
+  if (!ls.dogSel) return;
+  const c = _customersCache.find(x => String(x.id) === String(customerId));
+  const dogs = c?.dogs || [];
+  ls.dogSel.innerHTML = dogs.length
+    ? dogs.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join("")
+    : '<option value="">(geen honden)</option>';
+}
 
-  lsBookBtn.addEventListener('click', async () => {
-    lsBookStatus.textContent = '';
-    const customerId = lsCustomerSel.value;
-    const dogId      = lsDogSel.value;
-    const classType  = lsClassSel.value;
-    const location   = lsLoc.value.trim();
-    const date       = lsDate.value;
-    const startTime  = lsStart.value;
-    const endTime    = lsEnd.value;
+async function wireLessonsTab() {
+  if (!ls.customerSel && !ps.customerSel) return; // tab niet aanwezig
 
-    if (!customerId || !dogId || !classType || !date || !startTime || !endTime) {
-      lsBookStatus.textContent = 'Gelieve alle verplichte velden in te vullen.';
+  // Init dropdowns
+  await loadCustomersInto([ls.customerSel, ps.customerSel].filter(Boolean));
+
+  // Bij start: selecteer eerste klant indien beschikbaar
+  if (ls.customerSel && ls.customerSel.options.length > 1) {
+    ls.customerSel.selectedIndex = 1;
+    refreshDogsFor(ls.customerSel.value);
+  }
+  if (ps.customerSel && ps.customerSel.options.length > 1) {
+    ps.customerSel.selectedIndex = 1;
+  }
+
+  // Events
+  ls.customerSel?.addEventListener("change", () => refreshDogsFor(ls.customerSel.value));
+
+  ls.bookBtn?.addEventListener("click", async () => {
+    if (!ls.customerSel || !ls.dogSel || !ls.classSel || !ls.date || !ls.start || !ls.end) return;
+    ls.status.textContent = "";
+    const payload = {
+      customerId: Number(ls.customerSel.value || 0),
+      dogId:      Number(ls.dogSel.value || 0),
+      classType:  ls.classSel.value || "",
+      location:   (ls.loc?.value || "").trim() || null,
+      date:       ls.date.value || "",
+      startTime:  ls.start.value || "",
+      endTime:    ls.end.value || ""
+    };
+    if (!payload.customerId || !payload.dogId || !payload.classType || !payload.date || !payload.startTime || !payload.endTime) {
+      ls.status.textContent = "Gelieve alle velden in te vullen.";
       return;
     }
-
-    setBusy(lsBookBtn, true);
+    setBusy(ls.bookBtn, true);
     try {
-      await postJSON(API.lessons, {
-        customerId: Number(customerId),
-        dogId: Number(dogId),
-        classType, location, date, startTime, endTime
-      });
-      lsBookStatus.textContent = '✅ Les toegevoegd.';
-      lessonsLastUpdated.textContent = `Laatste update: ${stamp()}`;
+      await postJSON(API.lessons, payload);
+      ls.status.textContent = "✅ Les toegevoegd (strip afgeschreven).";
+      if (ls.updated) ls.updated.textContent = `Laatste update: ${stamp()}`;
     } catch (e) {
-      console.error(e);
-      lsBookStatus.textContent = '❌ Fout bij les toevoegen.';
+      console.error("Les toevoegen:", e);
+      ls.status.textContent = "❌ Fout bij les toevoegen (controleer strippenkaart).";
     } finally {
-      setBusy(lsBookBtn, false);
+      setBusy(ls.bookBtn, false);
     }
   });
 
-  psCheckBtn.addEventListener('click', async () => {
-    psRemaining.textContent = '…';
-    const customerId = psCustomerSel.value;
-    const classType  = psClassSel.value;
-    if (!customerId || !classType) {
-      psRemaining.textContent = '—';
-      return;
-    }
+  ps.checkBtn?.addEventListener("click", async () => {
+    if (!ps.customerSel || !ps.classSel || !ps.remaining) return;
+    ps.remaining.textContent = "…";
     try {
-      const data = await fetchJSON(`${API.passes}?customerId=${encodeURIComponent(customerId)}&classType=${encodeURIComponent(classType)}`);
-      psRemaining.textContent = `${data.remaining ?? 0} strips`;
-      lessonsLastUpdated.textContent = `Laatste update: ${stamp()}`;
+      // Je backend mag ofwel lijst teruggeven, of enkel 1 object met remaining.
+      const url = `${API.passes}?customerId=${encodeURIComponent(ps.customerSel.value)}&classType=${encodeURIComponent(ps.classSel.value)}`;
+      const data = await fetchJSON(url);
+      if (Array.isArray(data)) {
+        // neem som van alle matching kaarten of toon eerste
+        const rem = data.reduce((acc, p) => acc + Number(p.remaining ?? p.strips ?? 0), 0);
+        ps.remaining.textContent = `${rem} strips`;
+      } else {
+        const rem = Number(data.remaining ?? data.strips ?? 0);
+        ps.remaining.textContent = `${rem} strips`;
+      }
+      if (ls.updated) ls.updated.textContent = `Laatste update: ${stamp()}`;
     } catch (e) {
-      console.error(e);
-      psRemaining.textContent = 'fout';
+      console.error("Passes check:", e);
+      ps.remaining.textContent = "fout";
     }
   });
 
-  psUseBtn.addEventListener('click', async () => {
-    psUseStatus.textContent = '';
-    const customerId = psCustomerSel.value;
-    const classType  = psClassSel.value;
-    if (!customerId || !classType) {
-      psUseStatus.textContent = 'Kies klant en lestype.';
+  ps.useBtn?.addEventListener("click", async () => {
+    if (!ps.customerSel || !ps.classSel || !ps.useStatus) return;
+    ps.useStatus.textContent = "";
+    const payload = { customerId: Number(ps.customerSel.value || 0), classType: ps.classSel.value, count: 1 };
+    if (!payload.customerId || !payload.classType) {
+      ps.useStatus.textContent = "Kies klant & lestype.";
       return;
     }
-    setBusy(psUseBtn, true);
+    setBusy(ps.useBtn, true);
     try {
-      await postJSON(API.usePass, { customerId: Number(customerId), classType, count: 1 });
-      psUseStatus.textContent = '✅ 1 strip gebruikt.';
-      // refresh remaining right after
-      psCheckBtn.click();
+      await postJSON(API.usePass, payload);
+      ps.useStatus.textContent = "✅ 1 strip gebruikt.";
+      ps.checkBtn?.click(); // direct bijwerken
     } catch (e) {
-      console.error(e);
-      psUseStatus.textContent = '❌ Kon strip niet gebruiken.';
+      console.error("Use pass:", e);
+      ps.useStatus.textContent = "❌ Kon strip niet gebruiken.";
     } finally {
-      setBusy(psUseBtn, false);
-      lessonsLastUpdated.textContent = `Laatste update: ${stamp()}`;
+      setBusy(ps.useBtn, false);
+      if (ls.updated) ls.updated.textContent = `Laatste update: ${stamp()}`;
     }
   });
 }
-// ==================== Strippenkaart Overzicht ====================
 
-const psRefreshBtn = document.querySelector('#ps-refresh');
-const psTableBody  = document.querySelector('#ps-table tbody');
+/* ============================================================
+   OVERZICHT STRIPPENKAARTEN (filters + sorteerbaar)
+   Vereist in HTML:
+   - Tabel:  #passes-table (thead th: name,email,type,remaining) + tbody
+   - Knoppen: #passes-refresh
+   - Filters: #filter-class, #filter-threshold, #filter-apply, #filter-reset
+   - Info:    #passes-last-update, #filter-summary
+   Endpoints:
+   - GET /api/customers
+   - GET /api/passes?customerId=ID   => lijst( type, remaining | strips )
+   ============================================================ */
 
-async function loadPassesOverview() {
-  psTableBody.innerHTML = `<tr><td colspan="3">Laden…</td></tr>`;
-  try {
-    // haal klanten op
-    const customers = await fetchJSON(API.customers);
+const passesTableBody   = $("#passes-table tbody");
+const passesRefreshBtn  = $("#passes-refresh");
+const passesLastUpdate  = $("#passes-last-update");
+const passesTableEl     = $("#passes-table");
+const filterClassSel    = $("#filter-class");
+const filterThInput     = $("#filter-threshold");
+const filterApplyBtn    = $("#filter-apply");
+const filterResetBtn    = $("#filter-reset");
+const filterSummaryEl   = $("#filter-summary");
 
-    // per klant → per lestype checken
-    let rows = [];
-    for (let c of customers) {
-      // voorbeeld: 3 soorten pakketten (pas aan naar jouw PACKAGE_MAP)
-      for (let t of ["PUPPY", "PUBER", "GEHOORZAAM"]) {
-        try {
-          const data = await fetchJSON(`${API.passes}?customerId=${c.id}&classType=${t}`);
-          rows.push(`
-            <tr>
-              <td>${escapeHtml(c.name)}</td>
-              <td>${escapeHtml
+let passesRows = [];   // ruwe data [{name,email,type,remaining}]
+let filteredRows = [];
+let sortState = { key: "name", dir: "asc" };
 
-                    
-// activeer alleen wanneer de tab zichtbaar wordt (of nu meteen als je wil)
-document.addEventListener('DOMContentLoaded', () => {
-  const tabBtn = document.querySelector('#tab-lessons');
-  if (tabBtn) {
-    tabBtn.addEventListener('click', () => {
-      // als de tab geopend wordt en we hebben nog geen klanten opgehaald
-      if (_customers.length === 0) wireLessonsUI();
-    });
+function setSortIndicators() {
+  if (!passesTableEl) return;
+  passesTableEl.querySelectorAll("th .sort").forEach(s => s.textContent = "");
+  const th = passesTableEl.querySelector(`th[data-key="${sortState.key}"] .sort`);
+  if (th) th.textContent = sortState.dir === "asc" ? "▲" : "▼";
+}
+function sortRows(rows) {
+  const { key, dir } = sortState;
+  const mul = dir === "asc" ? 1 : -1;
+  return [...rows].sort((a,b) => {
+    const va = (a[key] ?? "");
+    const vb = (b[key] ?? "");
+    if (typeof va === "number" && typeof vb === "number") return (va - vb) * mul;
+    return String(va).localeCompare(String(vb)) * mul;
+  });
+}
+function applyFilters() {
+  const wantType = (filterClassSel?.value || "").trim();
+  const thRaw    = (filterThInput?.value || "").trim();
+  const th       = thRaw === "" ? null : Number(thRaw);
+
+  filteredRows = passesRows.filter(r => {
+    if (wantType && r.type !== wantType) return false;
+    if (th !== null) {
+      const rem = Number(r.remaining ?? 0);
+      if (!(rem < th)) return false;
+    }
+    return true;
+  });
+
+  const parts = [];
+  if (wantType) parts.push(`type: ${wantType}`);
+  if (th !== null) parts.push(`< ${th} strips`);
+  if (filterSummaryEl) filterSummaryEl.textContent = parts.length ? `Filter actief (${parts.join(", ")})` : "";
+}
+function renderPassesTable() {
+  if (!passesTableBody) return;
+  setSortIndicators();
+  const list = sortRows(filteredRows.length ? filteredRows : passesRows);
+  if (!list.length) {
+    passesTableBody.innerHTML = `<tr><td colspan="4">(geen resultaten)</td></tr>`;
+    return;
   }
-  // Direct klaarzetten als sectie al zichtbaar is
-  const sec = document.querySelector('#section-lessons');
-  if (sec && !sec.hasAttribute('hidden') && _customers.length === 0) {
-    wireLessonsUI();
+  passesTableBody.innerHTML = list.map(r => `
+    <tr>
+      <td>${escapeHtml(r.name)}</td>
+      <td>${escapeHtml(r.email || "-")}</td>
+      <td>${escapeHtml(r.type)}</td>
+      <td>${r.remaining ?? 0}</td>
+    </tr>
+  `).join("");
+}
+async function loadPassesOverview() {
+  if (!passesTableBody) return;
+  passesTableBody.innerHTML = `<tr><td colspan="4">(laden...)</td></tr>`;
+  if (filterSummaryEl) filterSummaryEl.textContent = "";
+  filteredRows = [];
+  try {
+    const customers = await fetchJSON("/api/customers");
+    const acc = [];
+    for (const c of customers) {
+      const list = await fetchJSON(`/api/passes?customerId=${encodeURIComponent(c.id)}`);
+      if (Array.isArray(list) && list.length) {
+        list.forEach(p => acc.push({
+          name: c.name,
+          email: c.email || "",
+          type: p.type,
+          remaining: Number(p.remaining ?? p.strips ?? 0)
+        }));
+      } else {
+        acc.push({ name: c.name, email: c.email || "", type: "(geen strippenkaart)", remaining: null });
+      }
+    }
+    passesRows = acc;
+    applyFilters();
+    renderPassesTable();
+    if (passesLastUpdate) passesLastUpdate.textContent = `Laatste update: ${stamp()}`;
+  } catch (e) {
+    console.error("loadPassesOverview:", e);
+    passesTableBody.innerHTML = `<tr><td colspan="4">❌ Laden mislukt</td></tr>`;
+  }
+}
+function wirePassesOverview() {
+  if (!passesTableEl) return;
+  // Sort headers
+  const heads = passesTableEl.querySelectorAll("thead th");
+  const keys = ["name","email","type","remaining"];
+  heads.forEach((th, i) => {
+    th.setAttribute("data-key", keys[i]);
+    if (!th.querySelector(".sort")) {
+      const span = document.createElement("span");
+      span.className = "sort";
+      th.appendChild(span);
+    }
+    th.addEventListener("click", () => {
+      const key = th.getAttribute("data-key");
+      if (sortState.key === key) sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+      else { sortState.key = key; sortState.dir = key === "remaining" ? "desc" : "asc"; }
+      renderPassesTable();
+    });
+  });
+
+  passesRefreshBtn?.addEventListener("click", loadPassesOverview);
+  filterApplyBtn?.addEventListener("click", () => { applyFilters(); renderPassesTable(); });
+  filterResetBtn?.addEventListener("click", () => {
+    if (filterClassSel) filterClassSel.value = "";
+    if (filterThInput) filterThInput.value = "";
+    filteredRows = [];
+    if (filterSummaryEl) filterSummaryEl.textContent = "";
+    renderPassesTable();
+  });
+}
+
+/* ---------- Start-up ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  wireTabs();
+
+  // Init specifieke tabs zodra ze geopend worden
+  document.addEventListener("tab:open", (ev) => {
+    const id = ev.detail?.id || "";
+    if (id === "section-lessons") {
+      wireLessonsTab();  // laadt klanten & events
+    }
+    if (id === "section-passes-overview") {
+      wirePassesOverview();
+      loadPassesOverview();
+    }
+  });
+
+  // Als een tab al zichtbaar is bij laden (geen hidden)
+  if ($("#section-lessons") && !$("#section-lessons").hidden) wireLessonsTab();
+  if ($("#section-passes-overview") && !$("#section-passes-overview").hidden) {
+    wirePassesOverview(); loadPassesOverview();
   }
 });
-
-// =======================================================================
-
-
-refresh();
