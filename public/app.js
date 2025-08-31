@@ -414,5 +414,3 @@ let currentDogId = null;
   // publiek maken voor Overview-module
   window.loadPasses = renderPasses;
 })();
-
-// Einde bestand
