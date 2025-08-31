@@ -2,60 +2,45 @@
 import express from "express";
 const router = express.Router();
 
-// We krijgen een referentie naar CUSTOMERS uit customers.js
-let CUSTOMERS_REF = null;
-export function setCustomersRef(ref) { CUSTOMERS_REF = ref; }
+// Referentie naar klanten (wordt gezet vanuit index.js)
+let CUSTOMERS = null;
+export function setCustomersRef(ref) { CUSTOMERS = ref; }
 
 // In-memory honden
-const DOGS = [];
 let NEXT_DOG_ID = 1;
+let DOGS = [];
 
-/**
- * GET /api/dogs?customerId=1  (optioneel filteren)
- */
+// alle honden (optioneel filter ?customerId=)
 router.get("/", (req, res) => {
-  const q = req.query.customerId ? Number(req.query.customerId) : null;
-  const list = q ? DOGS.filter(d => d.ownerId === q) : DOGS;
+  const { customerId } = req.query || {};
+  const list = customerId ? DOGS.filter(d => d.ownerId === Number(customerId)) : DOGS;
   res.json(list);
 });
 
-/**
- * POST /api/dogs/:customerId
- * Body: { name, breed?, birthDate?, sex?, vetName?, vetPhone?, vaccineStatus?, vaccineRef?, emergencyPhone? }
- */
+// hond toevoegen en koppelen aan klant
 router.post("/:customerId", (req, res) => {
-  if (!CUSTOMERS_REF) return res.status(500).json({ error: "customers not wired" });
+  if (!CUSTOMERS) return res.status(500).json({ error: "Customers referentie niet ingesteld" });
 
   const customerId = Number(req.params.customerId);
-  const customer = CUSTOMERS_REF.find(c => c.id === customerId);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+  const owner = CUSTOMERS.find(c => c.id === customerId);
+  if (!owner) return res.status(404).json({ error: "Klant niet gevonden" });
 
   const {
-    name, breed, birthDate, sex,
-    vetName, vetPhone, vaccineStatus, vaccineRef, emergencyPhone
+    name, breed = "", birthDate = "", gender = "-",
+    vaccStatus = "", vetPhone = "", vetName = "", emergencyPhone = "", bookRef = ""
   } = req.body || {};
 
   if (!name) return res.status(400).json({ error: "Naam hond is verplicht" });
 
-  const dog = {
-    id: NEXT_DOG_ID++,
-    ownerId: customerId,
-    name: name || "",
-    breed: breed || "",
-    birthDate: birthDate || "",
-    sex: sex || "",
-    vetName: vetName || "",
-    vetPhone: vetPhone || "",
-    vaccineStatus: vaccineStatus || "",
-    vaccineRef: vaccineRef || "",
-    emergencyPhone: emergencyPhone || "",
-    createdAt: new Date().toISOString(),
+  const newDog = {
+    id: NEXT_DOG_ID++, ownerId: customerId, name, breed, birthDate, gender,
+    vaccStatus, vetPhone, vetName, emergencyPhone, bookRef
   };
+  DOGS.push(newDog);
+  owner.dogs = owner.dogs || [];
+  owner.dogs.push(newDog.id);
 
-  DOGS.push(dog);
-  customer.dogs.push(dog.id);
-
-  res.status(201).json(dog);
+  res.status(201).json(newDog);
 });
 
 export default router;
