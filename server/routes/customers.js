@@ -133,8 +133,6 @@ router.delete("/:id", (req, res) => {
   res.json({ ok: true, removed });
 });
 
-// BOVENIN in de GET "/" handler:
-const { customerId, date, dogId } = req.query;
 
 // ... onder je customerId/date filters:
 if (dogId != null) {
