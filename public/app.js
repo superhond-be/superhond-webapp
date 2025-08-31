@@ -8,32 +8,54 @@
   const section  = document.getElementById("view-overview");
 
   if (!qInput || !btn || !pickBox || !pickList || !results || !section) return;
-function renderOverviewCard(ov) {
-  const c = ov.customer || {};
-  const dogs = ov.dogs || [];
-  const passes = ov.passes || [];
-  const past = (ov.lessons && ov.lessons.past) || [];
-  const future = (ov.lessons && ov.lessons.future) || [];
 
-  return `
-    <div style="margin-bottom:12px;">
-      <button id="backToMatches" class="btn">← Terug naar resultaten</button>
-    </div>
+  // Tab-button integreren met jouw tabs
+  const tabBtn = document.querySelector('.tab[data-view="overview"]');
+  tabBtn?.addEventListener("click", () => {
+    document.querySelectorAll(".view").forEach(v => v.hidden = true);
+    section.hidden = false;
+    qInput.focus();
+  });
 
-    <h3>Klant</h3>
-    <div class="card" style="margin-bottom:12px;">
-      <div><b>${escapeHtml(c.name || "-")}</b></div>
-      <div class="muted">${escapeHtml(c.email || "-")} • ${escapeHtml(c.phone || "-")}</div>
-      <div class="muted">ID: ${escapeHtml(c.id)}</div>
-    </div>
-    ...
-  `;
-}
-
-  
   const escapeHtml = (s="") => String(s).replace(/[&<>"']/g, m => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[m]));
+
+  btn.addEventListener("click", search);
+  qInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); search(); } });
+
+  async function search() {
+    const term = (qInput.value || "").trim();
+    results.style.display = "block";
+    results.innerHTML = `Zoeken…`;
+    pickBox.style.display = "none";
+    pickList.innerHTML = "";
+
+    if (term.length < 2) {
+      results.innerHTML = `<div class="muted">Geef min. 2 tekens in.</div>`;
+      return;
+    }
+
+    try {
+      const base = location.origin; // werkt lokaal en op Render
+      const r1 = await fetch(`${base}/api/customers/search?q=${encodeURIComponent(term)}`);
+      const matches = await r1.json();
+
+      if (!Array.isArray(matches) || matches.length === 0) {
+        results.innerHTML = `<div class="muted">Geen klant of hond gevonden voor <b>${escapeHtml(term)}</b>.</div>`;
+        return;
+      }
+      if (matches.length === 1) {
+        await loadOverview(matches[0].customer.id);
+        return;
+      }
+      // Toon keuzelijst
+      results.innerHTML = `<div class="muted">Kies een klant uit de lijst hieronder.</div>`;
+      showPickList(matches);
+    } catch (e) {
+      results.innerHTML = `<div class="error">Fout bij zoeken: ${escapeHtml(e.message)}</div>`;
+    }
+  }
 
   function showPickList(matches) {
     if (!matches?.length) { pickBox.style.display = "none"; return; }
@@ -64,40 +86,6 @@ function renderOverviewCard(ov) {
     });
   }
 
-  async function search() {
-    const term = (qInput.value || "").trim();
-    results.style.display = "block";
-    results.innerHTML = `Zoeken…`;
-    pickBox.style.display = "none";
-    pickList.innerHTML = "";
-
-    if (term.length < 2) {
-      results.innerHTML = `<div class="muted">Geef min. 2 tekens in.</div>`;
-      return;
-    }
-
-    try {
-      const base = location.origin;
-      const r1 = await fetch(`${base}/api/customers/search?q=${encodeURIComponent(term)}`);
-      const matches = await r1.json();
-
-      if (!Array.isArray(matches) || matches.length === 0) {
-        results.innerHTML = `<div class="muted">Geen klant of hond gevonden voor <b>${escapeHtml(term)}</b>.</div>`;
-        return;
-      }
-      if (matches.length === 1) {
-        // direct door naar overview
-        await loadOverview(matches[0].customer.id);
-        return;
-      }
-      // toon keuzelijst
-      results.innerHTML = `<div class="muted">Kies een klant uit de lijst hieronder.</div>`;
-      showPickList(matches);
-    } catch (e) {
-      results.innerHTML = `<div class="error">Fout bij zoeken: ${escapeHtml(e.message)}</div>`;
-    }
-  }
-
   async function loadOverview(customerId) {
     try {
       const base = location.origin;
@@ -110,6 +98,25 @@ function renderOverviewCard(ov) {
       const ov = await r2.json();
 
       results.innerHTML = renderOverviewCard(ov);
+
+      // Knoppen activeren
+      const backBtn = document.getElementById("backToMatches");
+      if (backBtn) {
+        backBtn.addEventListener("click", () => {
+          pickBox.style.display = "block";
+          results.innerHTML = `<div class="muted">Kies opnieuw een klant.</div>`;
+        });
+      }
+
+      const newSearchBtn = document.getElementById("newSearch");
+      if (newSearchBtn) {
+        newSearchBtn.addEventListener("click", () => {
+          pickBox.style.display = "none";
+          results.style.display = "none";
+          qInput.value = "";
+          qInput.focus();
+        });
+      }
     } catch (e) {
       results.innerHTML = `<div class="error">Fout bij laden: ${escapeHtml(e.message)}</div>`;
     }
@@ -152,6 +159,11 @@ function renderOverviewCard(ov) {
       : `<div class="muted">Geen items.</div>`;
 
     return `
+      <div style="margin-bottom:12px; display:flex; gap:10px;">
+        <button id="backToMatches" class="btn">← Terug naar resultaten</button>
+        <button id="newSearch" class="btn secondary">🔍 Nieuwe zoekopdracht</button>
+      </div>
+
       <h3>Klant</h3>
       <div class="card" style="margin-bottom:12px;">
         <div><b>${escapeHtml(c.name || "-")}</b></div>
@@ -184,16 +196,4 @@ function renderOverviewCard(ov) {
       </div>
     `;
   }
-
-  // events
-  btn.addEventListener("click", search);
-  qInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); search(); } });
-
-  // tab zichtbaar maken via jouw tab-router (voorbeeld):
-  const tabBtn = document.querySelector('.tab[data-view="overview"]');
-  tabBtn?.addEventListener("click", () => {
-    document.querySelectorAll(".view").forEach(v => v.hidden = true);
-    section.hidden = false;
-    qInput.focus();
-  });
 })();
