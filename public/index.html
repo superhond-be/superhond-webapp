@@ -62,6 +62,33 @@
 
   <div id="ov-results" class="card" style="display:none;"></div>
 </section>
+
+<section id="view-overview" class="view" hidden>
+  <div class="card">
+    <h2>Zoek klant of hond</h2>
+    <div class="row" style="align-items:end; gap:10px;">
+      <div>
+        <label for="ov-q">Zoekterm</label>
+        <input id="ov-q" placeholder="bv. klantnaam, e-mail, telefoon of hondnaam" />
+      </div>
+      <div>
+        <button id="ov-search" class="primary">Zoeken</button>
+      </div>
+    </div>
+    <div id="ov-hint" class="muted" style="margin-top:6px;">
+      Tip: typ min. 2 tekens en druk op Enter of klik Zoeken.
+    </div>
+  </div>
+
+  <!-- Lijst met matches (alleen zichtbaar bij >1 resultaat) -->
+  <div id="ov-pick" class="card" style="display:none; margin-top:12px;">
+    <h3>Meerdere resultaten gevonden</h3>
+    <div id="ov-pick-list"></div>
+  </div>
+
+  <!-- Gekozen klant: volledig overzicht -->
+  <div id="ov-results" class="card" style="display:none; margin-top:12px;"></div>
+</section>
     
     <main id="view-customers" class="view active">
       <section class="card">
