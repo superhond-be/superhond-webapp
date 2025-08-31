@@ -526,6 +526,109 @@ document.addEventListener("DOMContentLoaded", () => {
       wirePassesOverview();
       loadPassesOverview();
     }
+
+// ---------------- Lessen tab ----------------
+
+function renderLessonsTab() {
+  const main = document.querySelector("#main-content");
+  main.innerHTML = `
+    <h2>Nieuwe les plannen</h2>
+    <form id="lesson-form">
+      <label>Klant-ID <input type="number" name="customerId" required></label><br>
+      <label>Hond-ID <input type="number" name="dogId"></label><br>
+      <label>Lestype <input type="text" name="classType" required></label><br>
+      <label>Datum <input type="date" name="date" required></label><br>
+      <label>Begintijd <input type="time" name="startTime" required></label><br>
+      <label>Eindtijd <input type="time" name="endTime"></label><br>
+      <label>Locatie <input type="text" name="location"></label><br>
+      <label>Trainer <input type="text" name="trainer"></label><br>
+      <label>Thema <input type="text" name="theme"></label><br>
+      <button type="submit">Definitief boeken</button>
+      <button type="button" id="dry-run-btn">Proefcontrole</button>
+    </form>
+    <div id="lesson-status" style="margin-top:10px; color:#333;"></div>
+
+    <h2>Bestaande lessen</h2>
+    <button id="reload-lessons">Herlaad</button>
+    <ul id="lesson-list"></ul>
+  `;
+
+  // formulier submit = definitieve boeking
+  const form = main.querySelector("#lesson-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.customerId = Number(data.customerId);
+    if (data.dogId) data.dogId = Number(data.dogId);
+
+    const status = main.querySelector("#lesson-status");
+    status.textContent = "Bezig met boeken...";
+
+    try {
+      const res = await fetch("/api/lessons", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(data),
+      });
+      const js = await res.json();
+      if (!res.ok) {
+        status.textContent = "FOUT: " + (js.error || res.status);
+      } else {
+        status.textContent = "✅ Les geboekt voor klant " + data.customerId;
+        loadLessons();
+      }
+    } catch (e) {
+      status.textContent = "FOUT: " + e.message;
+    }
+  });
+
+  // dry-run
+  main.querySelector("#dry-run-btn").addEventListener("click", async () => {
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.customerId = Number(data.customerId);
+    if (data.dogId) data.dogId = Number(data.dogId);
+    data.dryRun = true;
+
+    const status = main.querySelector("#lesson-status");
+    status.textContent = "Dry-run bezig...";
+
+    try {
+      const res = await fetch("/api/lessons", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(data),
+      });
+      const js = await res.json();
+      if (!res.ok) {
+        status.textContent = "Dry-run FOUT: " + (js.error || res.status);
+      } else {
+        status.textContent = "Dry-run OK: alles in orde ✅";
+      }
+    } catch (e) {
+      status.textContent = "Dry-run FOUT: " + e.message;
+    }
+  });
+
+  // lijst laden
+  async function loadLessons() {
+    const ul = main.querySelector("#lesson-list");
+    ul.innerHTML = "laden...";
+    try {
+      const list = await fetch("/api/lessons").then(r=>r.json());
+      ul.innerHTML = "";
+      list.forEach(l => {
+        const li = document.createElement("li");
+        li.textContent = `#${l.id} klant ${l.customerId} hond ${l.dogId||"-"} | ${l.classType} | ${l.date} ${l.startTime}`;
+        ul.appendChild(li);
+      });
+    } catch (e) {
+      ul.innerHTML = "FOUT: " + e.message;
+    }
+  }
+  main.querySelector("#reload-lessons").addEventListener("click", loadLessons);
+  loadLessons();
+}
+     
   });
 
   // Als een tab al zichtbaar is bij laden (geen hidden)
