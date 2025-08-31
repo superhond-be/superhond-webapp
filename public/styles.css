@@ -229,4 +229,10 @@ footer {
 .dogs-thumb { width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--line); }
 @media (max-width: 900px){ .grid-2 { grid-template-columns:1fr; } }
 
+  .pick-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:.6rem .7rem; border-bottom:1px solid var(--line,#223); }
+.pick-item:last-child { border-bottom:0; }
+.badge { display:inline-block; padding:.15rem .5rem; border-radius:999px; background:#1c4a6b; color:#d7efff; font-size:.8rem; margin-left:.4rem; }
+.btn.secondary { background:#2a3342; border:1px solid var(--line,#334); color:#e9f1f7; }
+.bullets { padding-left: 18px; margin: 0; }
+
   
