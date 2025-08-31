@@ -156,7 +156,28 @@
 <section id="section-passes-overview" class="tab-section" hidden>
   <h2>Overzicht strippenkaarten</h2>
   <p class="muted">Hier zie je per klant en per lestype hoeveel strips er nog over zijn.</p>
+  
+  <!-- Filters -->
+  <div class="row" id="passes-filters">
+    <label>
+      Lestype
+      <select id="filter-class">
+        <option value="">(alle)</option>
+        <option value="Puppycursus">Puppycursus</option>
+        <option value="Pubertraining">Pubertraining</option>
+        <option value="Gehoorzaamheid">Gehoorzaamheid</option>
+      </select>
+    </label>
 
+    <label>
+      Minder dan X strips
+      <input id="filter-threshold" type="number" min="0" step="1" placeholder="bv. 3" />
+    </label>
+
+    <button id="filter-apply" class="secondary">Filter toepassen</button>
+    <button id="filter-reset">Reset</button>
+    <span id="filter-summary" class="muted"></span>
+  </div>
   <table id="passes-table" class="data-table">
     <thead>
       <tr>
