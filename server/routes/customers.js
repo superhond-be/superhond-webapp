@@ -1,73 +1,119 @@
-import express from "express";
+import { Router } from "express";
+import { assignInitialPasses, listPassesForCustomer, getPassCountForLessonType } from "./passes.js";
 
-const router = express.Router();
+const router = Router();
 
-let customers = [];
-let lessons = [];
-let nextCust = 1, nextDog = 1, nextPass = 1, nextLesson = 1;
+// In-memory klanten & honden
+// klant: { id, name, email, phone }
+// hond:  { id, customerId, name, breed, birthDate, gender, vetPhone, vetName, vaccineStatus, bookletRef, emergency }
+let CUSTOMERS = [];
+let DOGS = [];
+let NEXT_CUSTOMER_ID = 1;
+let NEXT_DOG_ID = 1;
 
-// klant registreren
-router.post("/register", (req,res)=>{
-  const { name, email, phone } = req.body;
-  const c = { id: nextCust++, name, email, phone, dogs:[], passes:[] };
-  customers.push(c);
-  res.json(c);
-});
-
-// hond toevoegen
-router.post("/:cid/dogs", (req,res)=>{
-  const c = customers.find(x=>x.id==req.params.cid);
-  if(!c) return res.status(404).json({error:"not found"});
-  const d = { id: nextDog++, ...req.body };
-  c.dogs.push(d);
-  res.json(d);
-});
-
-// pass toevoegen
-router.post("/:cid/passes", (req,res)=>{
-  const c = customers.find(x=>x.id==req.params.cid);
-  if(!c) return res.status(404).json({error:"not found"});
-  const p = { id: nextPass++, type:req.body.type, totalStrips:req.body.totalStrips, usedStrips:0 };
-  c.passes.push(p);
-  res.json(p);
-});
-
-// lijst klanten
-router.get("/", (req,res)=>{
-  res.json(customers.map(c=>({
+// Alle klanten (met honden en strippen)
+router.get("/", (_req, res) => {
+  const data = CUSTOMERS.map(c => ({
     ...c,
-    passes: c.passes.map(p=>({...p, remaining:p.totalStrips-p.usedStrips}))
-  })));
+    dogs: DOGS.filter(d => d.customerId === c.id),
+    passes: listPassesForCustomer(c.id),
+  }));
+  res.json(data);
 });
 
-// summary met lessen
-router.get("/:cid/summary", (req,res)=>{
-  const c = customers.find(x=>x.id==req.params.cid);
-  if(!c) return res.status(404).json({error:"not found"});
-  const customerLessons = lessons.filter(l=>l.customerId==c.id);
+// Eén klant detail
+router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const c = CUSTOMERS.find(k => k.id === id);
+  if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
   res.json({
-    customer:c,
-    dogs:c.dogs,
-    passes:c.passes.map(p=>({...p, remaining:p.totalStrips-p.usedStrips})),
-    lessons:customerLessons
+    ...c,
+    dogs: DOGS.filter(d => d.customerId === id),
+    passes: listPassesForCustomer(id),
   });
 });
 
-// demo seed
-router.post("/dev/seed", (req,res)=>{
-  customers = [];
-  lessons = [];
-  nextCust=nextDog=nextPass=nextLesson=1;
-  const c1={id:nextCust++, name:"Jan Jansen", email:"jan@test.be", phone:"123", dogs:[], passes:[]};
-  const d1={id:nextDog++, name:"Rex", breed:"Labrador"}; c1.dogs.push(d1);
-  const p1={id:nextPass++, type:"Puppycursus", totalStrips:9, usedStrips:2}; c1.passes.push(p1);
-  customers.push(c1);
-  res.json({customers});
+// Registreren: klant + (optioneel) hond + (optioneel) lestype => strippenkaart
+router.post("/", (req, res) => {
+  const { customer, dog, lessonType } = req.body || {};
+
+  if (!customer?.name) return res.status(400).json({ error: "Klantnaam is verplicht" });
+
+  const newCustomer = {
+    id: NEXT_CUSTOMER_ID++,
+    name: customer.name ?? "",
+    email: customer.email ?? "",
+    phone: customer.phone ?? "",
+    createdAt: new Date().toISOString(),
+  };
+  CUSTOMERS.push(newCustomer);
+
+  let newDog = null;
+  if (dog?.name) {
+    newDog = {
+      id: NEXT_DOG_ID++,
+      customerId: newCustomer.id,
+      name: dog.name ?? "",
+      breed: dog.breed ?? "",
+      birthDate: dog.birthDate ?? "",
+      gender: dog.gender ?? "-",
+      vetPhone: dog.vetPhone ?? "",
+      vetName: dog.vetName ?? "",
+      vaccineStatus: dog.vaccineStatus ?? "",
+      bookletRef: dog.bookletRef ?? "",
+      emergency: dog.emergency ?? "",
+      createdAt: new Date().toISOString(),
+    };
+    DOGS.push(newDog);
+  }
+
+  let pass = null;
+  if (lessonType) {
+    const total = getPassCountForLessonType(lessonType);
+    if (total > 0) {
+      pass = assignInitialPasses(newCustomer.id, lessonType);
+    }
+  }
+
+  return res.status(201).json({
+    customer: newCustomer,
+    dog: newDog,
+    pass,
+  });
 });
 
-// lessen API
-router.post("/../lessons", (req,res)=>{
-  res.status(500).json({error:"wrong route"});
+// Hond toevoegen aan bestaande klant
+router.post("/:customerId/dogs", (req, res) => {
+  const customerId = Number(req.params.customerId);
+  const cust = CUSTOMERS.find(c => c.id === customerId);
+  if (!cust) return res.status(404).json({ error: "Klant niet gevonden" });
+
+  const d = req.body?.dog || {};
+  if (!d.name) return res.status(400).json({ error: "Naam hond is verplicht" });
+
+  const newDog = {
+    id: NEXT_DOG_ID++,
+    customerId,
+    name: d.name ?? "",
+    breed: d.breed ?? "",
+    birthDate: d.birthDate ?? "",
+    gender: d.gender ?? "-",
+    vetPhone: d.vetPhone ?? "",
+    vetName: d.vetName ?? "",
+    vaccineStatus: d.vaccineStatus ?? "",
+    bookletRef: d.bookletRef ?? "",
+    emergency: d.emergency ?? "",
+    createdAt: new Date().toISOString(),
+  };
+  DOGS.push(newDog);
+  res.status(201).json(newDog);
+});
+
+// (optioneel) reset endpoint voor testen
+router.post("/__reset", (_req, res) => {
+  CUSTOMERS = [];
+  DOGS = [];
+  res.json({ ok: true });
 });
 
 export default router;
