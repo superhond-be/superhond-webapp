@@ -1,22 +1,21 @@
+// src/server/routes/lessonTypes.js
 import express from "express";
 const router = express.Router();
 
-// heel eenvoudige in-memory store (later DB)
-let LESSON_TYPES = [
-  { id: 1, name: "Puppy – Coachgroep", description: "Beginnende pups in kleine groep", active: true },
+/**
+ * In-memory lestypes. Elke entry bepaalt ook het aantal strippen (credits) per kaart.
+ * Later kun je dit natuurlijk uit een DB halen.
+ */
+const LESSON_TYPES = [
+  { id: 1, code: "PUPPY9",   name: "Puppy – 9 lessen",   stripsPerCard: 9 },
+  { id: 2, code: "PUBER6",   name: "Puber – 6 lessen",   stripsPerCard: 6 },
+  { id: 3, code: "GEVORD8",  name: "Gevorderd – 8 lessen", stripsPerCard: 8 },
 ];
-let NEXT_ID = 2;
 
-// lijst
-router.get("/", (_req, res) => res.json(LESSON_TYPES));
-
-// toevoegen
-router.post("/", (req, res) => {
-  const { name, description = "", active = true } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Naam is verplicht" });
-  const item = { id: NEXT_ID++, name, description, active: !!active };
-  LESSON_TYPES.push(item);
-  res.status(201).json(item);
+// Alle lestypes
+router.get("/", (_req, res) => {
+  res.json(LESSON_TYPES);
 });
 
 export default router;
+export { LESSON_TYPES };
