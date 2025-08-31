@@ -1,30 +1,32 @@
-// server/index.js
+// src/server/index.js
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Routers importeren — LET OP: default én named kloppen
-import customersRoutes from "./routes/customers.js";
-import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
-import passesRoutes from "./routes/passes.js";
-import sessionsRoutes from "./routes/sessions.js"; // simple placeholder
-
+// --- App setup
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// eerst routers koppelen waarvoor geen extra init nodig is
+// --- Routes (alleen deze twee voor een stabiele baseline)
+import customersRoutes from "./routes/customers.js";
+import dogsRoutes from "./routes/dogs.js";
+
 app.use("/api/customers", customersRoutes);
-app.use("/api/passes", passesRoutes);
-app.use("/api/sessions", sessionsRoutes);
-
-// dogsRoutes heeft een verwijzing naar de customers-array nodig.
-// Die krijgt hij via setCustomersRef (wordt door customers.js geëxporteerd).
-import { CUSTOMERS_REF } from "./routes/customers.js";
-setCustomersRef(CUSTOMERS_REF);
 app.use("/api/dogs", dogsRoutes);
 
-// healthcheck en statische files
-app.get("/", (_req, res) => res.send("✅ Superhond backend draait!"));
-app.use(express.static("public", { extensions: ["html"] }));
+// --- Healthcheck
+app.get("/health", (_req, res) => res.json({ ok: true }));
 
+// --- Static frontend
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public")));
+app.get("/", (_req, res) =>
+  res.sendFile(path.join(__dirname, "../public/index.html"))
+);
+
+// --- Start
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
