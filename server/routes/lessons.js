@@ -2,7 +2,7 @@
 import express from "express";
 const router = express.Router();
 
-// Tijdelijke in-memory data (kan later naar DB)
+// Tijdelijke in-memory data (later vervangen door database)
 let LESSONS = [
   { id: 1, name: "Puppycursus", description: "Basis training voor pups" },
   { id: 2, name: "Gehoorzaamheid 1", description: "Beginnende gehoorzaamheid" },
