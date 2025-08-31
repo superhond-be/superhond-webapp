@@ -3,67 +3,82 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ---- Routes importeren ----
+// --- Project routes (altijd aanwezig) ---
 import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
-import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
-import settingsRoutes from "./routes/settings.js";
-import integrationsRoutes from "./routes/integrations.js";
-import lessonsRoutes from "./routes/lessons.js";
-app.use("/api/lessons", lessonsRoutes);
-// ---- Basis setup ----
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// ---- API routes koppelen ----
-app.use("/api/customers", customersRoutes);
-app.use("/api/dogs", dogsRoutes);
-app.use("/api/passes", passesRoutes);
-app.use("/api/lessons", lessonsRoutes);
-app.use("/api/settings", settingsRoutes);
-app.use(integrationsRoutes); // deze definieert zelf /api/integrations/...
-
-// ---- Static files (frontend) ----
+// __dirname opzetten (ESM)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "../public")));
 
-// ---- Health check ----
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
+// App
+const app = express();
 
-// ---- Server starten ----
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Server draait op poort ${PORT}`);
+// Render/Proxy: correcte IP & HTTPS headers vertrouwen
+app.set("trust proxy", true);
+
+// Body parsers
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true }));
+
+// Static files (frontend)
+const publicDir = path.resolve(__dirname, "../public");
+app.use(express.static(publicDir));
+
+// -------------------- Healthcheck --------------------
+app.get("/api/health", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "superhond",
+    version: "1.0.0",
+    time: new Date().toISOString(),
+  });
 });
 
-// vervang je bestaande summary-handler door deze
-async function getJSON(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`GET ${url} -> ${r.status}`);
-  return r.json();
-}
+// -------------------- API routes --------------------
+// Verplichte routes
+app.use("/api/customers", customersRoutes);
+app.use("/api/lessons", lessonsRoutes);
 
-router.get("/:cid/summary", async (req, res) => {
+// Optionele routes (alleen mounten als bestand bestaat)
+const mountOptional = async (routePath, mountAt) => {
   try {
-    const cid = Number(req.params.cid);
-    const customer = (customers || []).find(c => c.id === cid);
-    if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-
-    const lessons = await getJSON(`/api/lessons?customerId=${encodeURIComponent(cid)}`);
-
-    res.json({
-      customer,
-      dogs: customer.dogs || [],
-      passes: (customer.passes || []).map(p => ({
-        ...p,
-        remaining: Math.max(0, Number(p.totalStrips || 0) - Number(p.usedStrips || 0))
-      })),
-      lessons
-    });
+    const mod = await import(routePath);
+    const router = mod.default || mod;
+    if (router) {
+      app.use(mountAt, router);
+      console.log(`[routes] mounted ${mountAt} from ${routePath}`);
+    }
   } catch (e) {
-    res.status(500).json({ error: "Kon klantenoverzicht niet laden", details: String(e?.message || e) });
+    // Stil overslaan als bestand niet bestaat
+    if (String(e?.message || e).includes("Cannot find module")) {
+      console.log(`[routes] optional ${routePath} not found – skipped`);
+    } else {
+      console.warn(`[routes] failed to mount ${routePath}:`, e.message || e);
+    }
   }
+};
+
+// Probeer optioneel te mounten (alleen als je deze files hebt)
+await mountOptional("./routes/dogs.js", "/api/dogs");
+await mountOptional("./routes/passes.js", "/api/passes");
+await mountOptional("./routes/classes.js", "/api/classes");
+await mountOptional("./routes/sessions.js", "/api/sessions");
+await mountOptional("./routes/settings.js", "/api/settings");
+
+// -------------------- API 404 handler --------------------
+app.use("/api", (_req, res, _next) => {
+  res.status(404).json({ error: "API endpoint niet gevonden" });
+});
+
+// -------------------- Frontend fallback --------------------
+// Zorgt dat refreshen in de browser op een route gewoon index.html serveert
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
+
+// -------------------- Start server --------------------
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Superhond server luistert op http://localhost:${PORT}`);
 });
