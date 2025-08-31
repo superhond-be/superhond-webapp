@@ -1,94 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Superhond Coach Portaal</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Strippenkaarten — Demo</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    h1 { margin-bottom: 8px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+    input, button { padding: 8px 10px; font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    .muted { color: #6b7280; font-size: 14px; }
+    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; background:#eef2ff; }
+  </style>
 </head>
 <body>
+  <h1>Strippenkaarten</h1>
+  <p class="muted">Backend endpoints: <code>GET/POST /api/passes</code>, <code>POST /api/passes/:id/use</code></p>
 
-  <header>
-    <h1>🐾 Superhond Coach Portaal</h1>
-    <p class="update-info">Laatst geüpdatet: <span id="lastUpdated"></span></p>
-  </header>
+  <section>
+    <h2>Nieuwe kaart toevoegen</h2>
+    <div class="row">
+      <input id="typeInput" placeholder="Type (bv. Puppycursus)" />
+      <input id="stripsInput" type="number" min="1" step="1" placeholder="Aantal strips (bv. 9)" />
+      <button id="addBtn">Toevoegen</button>
+    </div>
+  </section>
 
-  <!-- Navigatie -->
-  <nav>
-    <ul>
-      <li><a href="#" data-tab="customers">Klanten</a></li>
-      <li><a href="#" data-tab="dogs">Honden</a></li>
-      <li><a href="#" data-tab="passes">Strippenkaarten</a></li>
-      <li><a href="#" data-tab="lessons">Lessen</a></li>
-    </ul>
-  </nav>
+  <section>
+    <h2>Bestaande kaarten</h2>
+    <table id="passesTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Strips over</th>
+          <th>Actie</th>
+        </tr>
+      </thead>
+      <tbody id="passesBody">
+        <tr><td colspan="4" class="muted">Laden…</td></tr>
+      </tbody>
+    </table>
+  </section>
 
-  <!-- Tabs -->
-  <main>
-    <!-- Klanten -->
-    <section id="tab-customers" class="tab active">
-      <h2>Klanten</h2>
-      <form id="customerForm">
-        <input type="text" name="name" placeholder="Naam klant" required />
-        <input type="email" name="email" placeholder="E-mail" />
-        <input type="tel" name="phone" placeholder="Telefoon" />
-        <button type="submit">➕ Klant toevoegen</button>
-      </form>
-      <div id="customerList"></div>
-    </section>
+  <p class="muted" id="statusLine">—</p>
 
-    <!-- Honden -->
-    <section id="tab-dogs" class="tab">
-      <h2>Honden</h2>
-      <form id="dogForm">
-        <select name="customerId" required></select>
-        <input type="text" name="name" placeholder="Naam hond" required />
-        <input type="text" name="breed" placeholder="Ras" />
-        <input type="date" name="birthDate" />
-        <input type="text" name="sex" placeholder="Geslacht" />
-        <input type="text" name="vetName" placeholder="Dierenarts naam" />
-        <input type="tel" name="vetPhone" placeholder="Dierenarts tel" />
-        <input type="text" name="vaccineStatus" placeholder="Vaccinatie status" />
-        <input type="text" name="vaccineRef" placeholder="Vaccinatie ref." />
-        <input type="tel" name="emergencyPhone" placeholder="Noodnummer" />
-        <button type="submit">➕ Hond koppelen</button>
-      </form>
-      <div id="dogList"></div>
-    </section>
-
-    <!-- Strippenkaarten -->
-    <section id="tab-passes" class="tab">
-      <h2>Strippenkaarten</h2>
-      <form id="passTypeForm">
-        <input type="text" name="name" placeholder="Naam pakket" required />
-        <input type="number" name="strips" placeholder="Aantal strips" required />
-        <button type="submit">➕ Type toevoegen</button>
-      </form>
-      <div id="passTypeList"></div>
-
-      <h3>Aankoop koppelen</h3>
-      <form id="passBuyForm">
-        <select name="customerId" required></select>
-        <select name="typeId" required></select>
-        <button type="submit">➕ Strippenkaart kopen</button>
-      </form>
-      <div id="purchaseList"></div>
-    </section>
-
-    <!-- Lessen -->
-    <section id="tab-lessons" class="tab">
-      <h2>Lessen</h2>
-      <form id="lessonForm">
-        <input type="text" name="title" placeholder="Titel les" required />
-        <input type="date" name="date" required />
-        <input type="time" name="time" required />
-        <input type="text" name="location" placeholder="Locatie" />
-        <input type="number" name="capacity" placeholder="Capaciteit" />
-        <button type="submit">➕ Les plannen</button>
-      </form>
-      <div id="lessonList"></div>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
