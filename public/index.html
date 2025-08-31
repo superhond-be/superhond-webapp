@@ -148,6 +148,32 @@
 </section>
 <!-- /TAB: Lessen -------------------------------------------------------->
 
+  <!-- TAB: Strippenkaarten overzicht -->
+<button class="tab-btn" id="tab-passes-overview" data-target="section-passes-overview">
+  Overzicht strippenkaarten
+</button>
+
+<section id="section-passes-overview" class="tab-section" hidden>
+  <h2>Overzicht strippenkaarten</h2>
+  <p class="muted">Hier zie je per klant en per lestype hoeveel strips er nog over zijn.</p>
+
+  <table id="passes-table" class="data-table">
+    <thead>
+      <tr>
+        <th data-key="name">Klant <span class="sort"></span></th>
+        <th data-key="email">Email <span class="sort"></span></th>
+        <th data-key="type">Lestype <span class="sort"></span></th>
+        <th data-key="remaining">Resterend <span class="sort"></span></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="row">
+    <button id="passes-refresh" class="secondary">🔄 Ververs overzicht</button>
+    <span id="passes-last-update" class="muted"></span>
+  </div>
+</section>
   
   <p class="muted" id="statusLine">—</p>
 
