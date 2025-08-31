@@ -38,3 +38,32 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server draait op poort ${PORT}`);
 });
+
+// vervang je bestaande summary-handler door deze
+async function getJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`GET ${url} -> ${r.status}`);
+  return r.json();
+}
+
+router.get("/:cid/summary", async (req, res) => {
+  try {
+    const cid = Number(req.params.cid);
+    const customer = (customers || []).find(c => c.id === cid);
+    if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+
+    const lessons = await getJSON(`/api/lessons?customerId=${encodeURIComponent(cid)}`);
+
+    res.json({
+      customer,
+      dogs: customer.dogs || [],
+      passes: (customer.passes || []).map(p => ({
+        ...p,
+        remaining: Math.max(0, Number(p.totalStrips || 0) - Number(p.usedStrips || 0))
+      })),
+      lessons
+    });
+  } catch (e) {
+    res.status(500).json({ error: "Kon klantenoverzicht niet laden", details: String(e?.message || e) });
+  }
+});
