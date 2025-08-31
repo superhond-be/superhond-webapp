@@ -46,6 +46,90 @@
     </table>
   </section>
 
+<!-- TAB: Lessen --------------------------------------------------------->
+<button class="tab-btn" id="tab-lessons" data-target="section-lessons">Lessen</button>
+
+<section id="section-lessons" class="tab-section" hidden>
+  <h2>Les boeken & strippen</h2>
+
+  <div class="card">
+    <h3>Les boeken</h3>
+    <div class="grid-2">
+      <label>
+        Klant
+        <select id="ls-customer"></select>
+      </label>
+      <label>
+        Hond
+        <select id="ls-dog"></select>
+      </label>
+
+      <label>
+      Lestype
+        <select id="ls-classType">
+          <option value="PUPPY">PUPPY – Puppy Pack</option>
+          <option value="PUBER">PUBER – Coachgroep</option>
+          <option value="GEVORDERD">GEVORDERD</option>
+        </select>
+      </label>
+      <label>
+        Locatie
+        <input id="ls-location" type="text" placeholder="bv. Retie Prinsenpark">
+      </label>
+
+      <label>
+        Datum
+        <input id="ls-date" type="date">
+      </label>
+      <label>
+        Starttijd
+        <input id="ls-start" type="time">
+      </label>
+      <label>
+        Eindtijd
+        <input id="ls-end" type="time">
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="ls-book" class="primary">Les toevoegen</button>
+      <span id="ls-book-status" class="muted"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Strippenkaart</h3>
+    <div class="grid-2">
+      <label>
+        Klant
+        <select id="ps-customer"></select>
+      </label>
+      <label>
+        Lestype
+        <select id="ps-classType">
+          <option value="PUPPY">PUPPY – Puppy Pack</option>
+          <option value="PUBER">PUBER – Coachgroep</option>
+          <option value="GEVORDERD">GEVORDERD</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="ps-check" class="secondary">Bekijk resterende strips</button>
+      <div id="ps-remaining" class="pill">—</div>
+    </div>
+
+    <div class="row">
+      <button id="ps-use" class="danger">Gebruik 1 strip</button>
+      <span id="ps-use-status" class="muted"></span>
+    </div>
+  </div>
+
+  <p class="muted" id="lessons-last-updated"></p>
+</section>
+<!-- /TAB: Lessen -------------------------------------------------------->
+
+  
   <p class="muted" id="statusLine">—</p>
 
   <script src="/app.js"></script>
