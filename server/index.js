@@ -1,43 +1,31 @@
 // server/index.js
 import express from "express";
 
-// --- Routes (allemaal als default import om naam-conflicten te vermijden)
+// Routers importeren — LET OP: default én named kloppen
 import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
-import settingsRoutes from "./routes/settings.js";
-import lessonsRoutes from "./routes/lessons.js";
-import purchasesRoutes from "./routes/purchases.js";
-import passesRoutes from "./routes/passes.js"; // <— NIEUW
+import dogsRoutes, { setCustomersRef } from "./routes/dogs.js";
+import passesRoutes from "./routes/passes.js";
+import sessionsRoutes from "./routes/sessions.js"; // simple placeholder
 
 const app = express();
-
-// --- Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Static files (frontend)
-app.use(express.static("public", { index: "index.html" }));
+// eerst routers koppelen waarvoor geen extra init nodig is
+app.use("/api/customers", customersRoutes);
+app.use("/api/passes", passesRoutes);
+app.use("/api/sessions", sessionsRoutes);
 
-// --- Healthchecks
-app.get("/", (_req, res) => {
-  res.type("text").send("✅ Superhond backend draait!");
-});
-app.get("/health", (_req, res) => {
-  res.json({ ok: true, ts: new Date().toISOString() });
-});
+// dogsRoutes heeft een verwijzing naar de customers-array nodig.
+// Die krijgt hij via setCustomersRef (wordt door customers.js geëxporteerd).
+import { CUSTOMERS_REF } from "./routes/customers.js";
+setCustomersRef(CUSTOMERS_REF);
+app.use("/api/dogs", dogsRoutes);
 
-// --- API routes
-if (customersRoutes) app.use("/api/customers", customersRoutes);
-if (dogsRoutes) app.use("/api/dogs", dogsRoutes);
-if (settingsRoutes) app.use("/api/settings", settingsRoutes);
-if (lessonsRoutes) app.use("/api/lessons", lessonsRoutes);
-if (purchasesRoutes) app.use("/api/purchases", purchasesRoutes);
-if (passesRoutes) app.use("/api/passes", passesRoutes); // <— NIEUW
+// healthcheck en statische files
+app.get("/", (_req, res) => res.send("✅ Superhond backend draait!"));
+app.use(express.static("public", { extensions: ["html"] }));
 
-// --- Starten (werkt op Render/Node, blijft compatibel met import als module)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 export default app;
