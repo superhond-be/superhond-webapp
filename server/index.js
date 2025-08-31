@@ -1,30 +1,43 @@
 // server/index.js
 import express from "express";
 
-// ROUTES importeren (maar niets dubbel!)
+// Routes importeren (exact 1x elk)
 import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
-import dogsRoutes, { setCustomersRef as setDogsCustomersRef } from "./routes/dogs.js";
-import passesRoutes, { setCustomersRef as setPassesCustomersRef } from "./routes/passes.js";
-// (optioneel) settingsRoutes als je die hebt:
-// import settingsRoutes from "./routes/settings.js";
+import dogsRoutes, { setCustomersRef as connectDogsToCustomers } from "./routes/dogs.js";
+import passesRoutes, { setCustomersRef as connectPassesToCustomers } from "./routes/passes.js";
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
 app.use(express.json());
 
-// simple health
-app.get("/", (_req, res) => res.send("Superhond backend draait!"));
+// (optioneel) statische files voor je coach UI
+app.use(express.static("public"));
 
-// routes koppelen
+// Healthchecks
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+app.get("/", (_req, res) => res.send("✅ Superhond backend draait!"));
+
+// API routes
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/passes", passesRoutes);
-// app.use("/api/settings", settingsRoutes);
 
-// **gedeelde referentie** naar klanten doorgeven aan modules die dat nodig hebben
-setDogsCustomersRef(CUSTOMERS);
-setPassesCustomersRef(CUSTOMERS);
+// Gedeelde referentie naar klanten (voor dogs en passes)
+connectDogsToCustomers(CUSTOMERS);
+connectPassesToCustomers(CUSTOMERS);
 
-const PORT = process.env.PORT || 3000;
+// 404 fallback
+app.use((req, res) => res.status(404).json({ error: "Not found" }));
+
+// Error handler (houd het simpel)
+app.use((err, _req, res, _next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "Server error" });
+});
+
+// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 export default app;
