@@ -29,7 +29,27 @@
     <span id="dogPhotoInfo" class="muted">Geen bestand gekozen</span>
   </div>
 </div>
+<!-- Voeg in je tabnavigatie deze knop toe -->
+<button class="tab" data-view="overview">Overzicht</button>
 
+<!-- Sectie Overzicht -->
+<section id="view-overview" class="view" hidden>
+  <div class="card">
+    <h2>Zoek klant of hond</h2>
+    <div class="row" style="align-items:end; gap:10px;">
+      <div>
+        <label>Zoekterm</label>
+        <input id="ov-q" placeholder="bv. klantnaam, e-mail, telefoon of hondnaam" />
+      </div>
+      <div>
+        <button id="ov-search" class="primary">Zoeken</button>
+      </div>
+    </div>
+    <div id="ov-hint" class="muted" style="margin-top:6px;">Tip: typ min. 2 tekens en druk op Enter of klik Zoeken.</div>
+  </div>
+
+  <div id="ov-results" class="card" style="display:none;"></div>
+</section>
     
     <main id="view-customers" class="view active">
       <section class="card">
