@@ -1,46 +1,50 @@
 // server/index.js
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Routes importeren (exact 1x elk)
+// Routes importeren
 import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
 import dogsRoutes, { setCustomersRef as connectDogsToCustomers } from "./routes/dogs.js";
 import passesRoutes, { setCustomersRef as connectPassesToCustomers } from "./routes/passes.js";
-// BOVENIN bij imports:
 import lessonsRoutes from "./routes/lessons.js";
 
-// ONDER je andere app.use()’s
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
 
-// (optioneel) statische files voor je coach UI
-app.use(express.static("public"));
+// Static files (frontend in public/)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public")));
 
-// Healthchecks
+// Healthcheck
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
-app.get("/", (_req, res) => res.send("✅ Superhond backend draait!"));
 
 // API routes
 app.use("/api/customers", customersRoutes);
 app.use("/api/dogs", dogsRoutes);
 app.use("/api/passes", passesRoutes);
+app.use("/api/lessons", lessonsRoutes);
 
-// Gedeelde referentie naar klanten (voor dogs en passes)
+// Referenties leggen
 connectDogsToCustomers(CUSTOMERS);
 connectPassesToCustomers(CUSTOMERS);
 
-// 404 fallback
-app.use((req, res) => res.status(404).json({ error: "Not found" }));
+// 404 fallback voor API
+app.use("/api/*", (_req, res) => res.status(404).json({ error: "Not found" }));
 
-// Error handler (houd het simpel)
+// Error handler
 app.use((err, _req, res, _next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ error: "Server error" });
 });
 
 // Start server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`✅ Superhond server draait op poort ${PORT}`);
+});
 
 export default app;
