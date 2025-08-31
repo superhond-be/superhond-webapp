@@ -15,6 +15,22 @@
       </nav>
     </header>
 
+<!-- Foto upload -->
+<div class="form-row">
+  <label for="dogPhoto">Foto hond</label>
+  <input type="file" id="dogPhoto" accept="image/*">
+</div>
+
+<!-- Live preview -->
+<div class="form-row">
+  <label>Preview</label>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <img id="dogPhotoPreview" alt="Preview hond" style="max-width:120px;max-height:120px;display:none;border-radius:8px;border:1px solid var(--line);" />
+    <span id="dogPhotoInfo" class="muted">Geen bestand gekozen</span>
+  </div>
+</div>
+
+    
     <main id="view-customers" class="view active">
       <section class="card">
         <h2>Registratie: Klant + Hond</h2>
