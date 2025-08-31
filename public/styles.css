@@ -202,4 +202,6 @@ footer {
 .data-table th { cursor: pointer; user-select: none; }
 .data-table th .sort {
   font-size: 12px; opacity: .7; margin-left: 6px;
+  #passes-filters { gap: 12px; align-items: end; flex-wrap: wrap; }
+#passes-filters label { display: flex; flex-direction: column; gap: 6px
 }
