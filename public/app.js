@@ -1,216 +1,352 @@
-// ===== Helpers =====
-async function fetchJSON(url, opts = {}) {
-  const r = await fetch(url, opts);
-  const data = await r.json();
-  if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
-  return data;
-}
-function escapeHtml(s) {
-  return String(s || "").replace(/[&<>"']/g, c => (
-    { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
-  ));
-}
-function stamp() {
-  return new Date().toLocaleString("nl-BE");
-}
-function showSection(id) {
-  document.querySelectorAll("main > section").forEach(sec => sec.hidden = true);
-  document.getElementById(id).hidden = false;
-}
-
-// ===== Tabs =====
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    showSection(btn.dataset.target);
+// --- eenvoudige helper voor fetch ---
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
   });
-});
-
-// ===== Klanten-tab =====
-const cust = {
-  section:        document.getElementById("section-customers"),
-  btnTab:         document.getElementById("tab-customers"),
-  btnSeed:        document.getElementById("seed-btn"),
-  btnReload:      document.getElementById("customers-reload"),
-  search:         document.getElementById("customers-search"),
-  tableBody:      document.querySelector("#customers-table tbody"),
-  updated:        document.getElementById("customers-updated"),
-};
-
-let _customersList = [];
-
-function renderCustomersTable(list) {
-  if (!cust.tableBody) return;
-  if (!list || !list.length) {
-    cust.tableBody.innerHTML = `<tr><td colspan="6" class="muted">(geen resultaten)</td></tr>`;
-    return;
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${res.statusText} – ${txt}`);
   }
+  return res.json().catch(() => ({}));
+}
 
-  const rows = list.map(c => {
-    const dogsTxt = (c.dogs && c.dogs.length) ? c.dogs.map(d => escapeHtml(d.name)).join(", ") : "—";
-    const passesTxt = (c.passes && c.passes.length)
-      ? c.passes.map(p => `${escapeHtml(p.type)} → ${Number(p.remaining ?? (p.totalStrips - (p.usedStrips||0)) || 0)}`).join("<br>")
-      : "—";
-    return `
-      <tr data-customer-id="${c.id}">
-        <td>${escapeHtml(c.name)}</td>
-        <td>${escapeHtml(c.email || "-")}</td>
-        <td>${escapeHtml(c.phone || "-")}</td>
-        <td>${dogsTxt}</td>
-        <td>${passesTxt}</td>
-        <td>
-          <button class="tiny view-customer" data-id="${c.id}">Bekijken</button>
-          <button class="tiny primary book-customer" data-id="${c.id}">Boek les</button>
-        </td>
-      </tr>`;
-  });
+// --- tabs config ---
+const TABS = [
+  { id: "klanten", label: "Klanten" },
+  { id: "honden", label: "Honden" },
+  { id: "lessen", label: "Lessen" },
+  { id: "instellingen", label: "Instellingen" },
+  { id: "overzicht", label: "Overzicht" },
+];
 
-  cust.tableBody.innerHTML = rows.join("");
-  if (cust.updated) cust.updated.textContent = `Laatst bijgewerkt: ${stamp()}`;
+const tabsEl = document.getElementById("tabs");
+const viewEl = document.getElementById("view");
 
-  cust.tableBody.querySelectorAll(".view-customer").forEach(btn => {
-    btn.addEventListener("click", () => openCustomerDetail(Number(btn.dataset.id)));
-  });
-  cust.tableBody.querySelectorAll(".book-customer").forEach(btn => {
-    btn.addEventListener("click", () => openCustomerDetail(Number(btn.dataset.id), { focusForm:true }));
+// UI: tabbuttons renderen
+function renderTabs(activeId) {
+  tabsEl.innerHTML = "";
+  TABS.forEach(tab => {
+    const b = document.createElement("button");
+    b.className = "tab-btn" + (tab.id === activeId ? " active" : "");
+    b.textContent = tab.label;
+    b.onclick = () => go(tab.id);
+    tabsEl.appendChild(b);
   });
 }
 
-async function loadCustomers(q = "") {
-  const url = q ? `/api/customers?q=${encodeURIComponent(q)}` : "/api/customers";
-  const list = await fetchJSON(url);
-  _customersList = Array.isArray(list) ? list : [];
-  renderCustomersTable(_customersList);
+// Router
+function go(tabId) {
+  renderTabs(tabId);
+  switch (tabId) {
+    case "klanten": return renderKlanten();
+    case "honden": return renderHonden();
+    case "lessen": return renderLessen();
+    case "instellingen": return renderInstellingen();
+    case "overzicht": return renderOverzicht();
+    default: return renderWelcome();
+  }
 }
 
-function wireCustomersTab() {
-  if (!cust.section) return;
+// --- Views ---
+function renderWelcome() {
+  viewEl.innerHTML = `
+    <div class="card">
+      <h2>Welkom</h2>
+      <p class="muted">Kies een tabblad hierboven.</p>
+    </div>`;
+}
 
-  cust.search?.addEventListener("input", (e) => {
-    const val = (e.target.value || "").trim().toLowerCase();
-    if (!val) return renderCustomersTable(_customersList);
-    const filtered = _customersList.filter(c =>
-      [c.name, c.email, c.phone].filter(Boolean)
-        .some(v => String(v).toLowerCase().includes(val))
-    );
-    renderCustomersTable(filtered);
-  });
+async function renderKlanten() {
+  viewEl.innerHTML = `
+    <div class="card">
+      <h2>Klanten</h2>
+      <div class="row">
+        <div>
+          <label>Naam</label>
+          <input id="c_name" placeholder="Voornaam Achternaam" />
+        </div>
+        <div>
+          <label>E-mail</label>
+          <input id="c_email" placeholder="naam@example.com" />
+        </div>
+        <div>
+          <label>Telefoon</label>
+          <input id="c_phone" placeholder="bv. 0470 00 00 00" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="btnAddC">Klant registreren</button>
+        <span id="c_msg" class="muted"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Bestaande klanten</h3>
+      <div id="c_list" class="list"><div class="empty">Laden…</div></div>
+    </div>
+  `;
 
-  cust.btnReload?.addEventListener("click", async () => {
-    cust.btnReload.disabled = true;
-    try { await loadCustomers(); } finally { cust.btnReload.disabled = false; }
-  });
-
-  cust.btnSeed?.addEventListener("click", async () => {
-    if (!confirm("Demo-gegevens opnieuw laden?")) return;
-    cust.btnSeed.disabled = true;
+  document.getElementById("btnAddC").onclick = async () => {
+    const body = {
+      name: document.getElementById("c_name").value.trim(),
+      email: document.getElementById("c_email").value.trim(),
+      phone: document.getElementById("c_phone").value.trim(),
+    };
+    const msg = document.getElementById("c_msg");
     try {
-      await fetch("/api/customers/dev/seed", { method:"POST" });
+      await api("/api/customers", { method: "POST", body: JSON.stringify(body) });
+      msg.textContent = "Klant toegevoegd.";
       await loadCustomers();
-      alert("✅ Demo gevuld.");
     } catch (e) {
-      console.error(e);
-      alert("❌ Seed mislukt.");
-    } finally {
-      cust.btnSeed.disabled = false;
+      msg.textContent = "Fout: " + e.message;
     }
-  });
-
-  loadCustomers().catch(console.error);
-}
-cust.btnTab?.addEventListener("click", () => {
-  showSection("section-customers");
-  wireCustomersTab();
-});
-
-// ===== Detailpaneel =====
-async function openCustomerDetail(customerId, opts = {}) {
-  const panel = document.getElementById("customer-detail");
-  const title = document.getElementById("cd-title");
-  const dogsUl = document.getElementById("cd-dogs");
-  const passesTbody = document.querySelector("#cd-passes tbody");
-  const lessonsTbody = document.querySelector("#cd-lessons tbody");
-  const dogSelect = document.getElementById("cd-dog");
-  const status = document.getElementById("cd-status");
-  const form = document.getElementById("cd-lesson-form");
-
-  if (!panel) return;
-  panel.style.display = "block";
-  status.textContent = "Laden…";
-
-  try {
-    const summary = await fetchJSON(`/api/customers/${customerId}/summary`);
-    const { customer, dogs, passes, lessons } = summary;
-
-    title.textContent = `Klantdetail — ${customer.name}`;
-
-    dogsUl.innerHTML = dogs.length
-      ? dogs.map(d => `<li>${escapeHtml(d.name)}</li>`).join("")
-      : "<li>— geen honden —</li>";
-
-    dogSelect.innerHTML = dogs.length
-      ? dogs.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join("")
-      : `<option value="">(geen honden)</option>`;
-
-    passesTbody.innerHTML = passes.length
-      ? passes.map(p => `<tr><td>${escapeHtml(p.type)}</td><td>${Number(p.remaining)}</td></tr>`).join("")
-      : `<tr><td colspan="2">— geen strippenkaarten —</td></tr>`;
-
-    lessonsTbody.innerHTML = lessons.length
-      ? lessons.map(l => `
-        <tr>
-          <td>${escapeHtml(l.date)}</td>
-          <td>${escapeHtml(l.startTime)}-${escapeHtml(l.endTime||"")}</td>
-          <td>${escapeHtml(l.classType)}</td>
-          <td>${escapeHtml(dogs.find(d => d.id===l.dogId)?.name || "-" )}</td>
-          <td>${escapeHtml(l.location||"-")}</td>
-          <td><button class="tiny danger cancel-lesson" data-id="${l.id}">Annuleer</button></td>
-        </tr>`).join("")
-      : `<tr><td colspan="6">— geen lessen —</td></tr>`;
-
-    lessonsTbody.querySelectorAll(".cancel-lesson").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.dataset.id;
-        if (!confirm("Les annuleren?")) return;
-        await fetch(`/api/lessons/${id}`, { method:"DELETE" });
-        openCustomerDetail(customerId);
-      });
-    });
-
-    form.dataset.customerId = customer.id;
-    status.textContent = "—";
-    if (opts.focusForm) document.getElementById("cd-class")?.focus();
-  } catch (e) {
-    status.textContent = "❌ Laden mislukt.";
-  }
-}
-
-document.getElementById("cd-lesson-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const form = e.currentTarget;
-  const status = document.getElementById("cd-status");
-  const customerId = Number(form.dataset.customerId || 0);
-  const data = Object.fromEntries(new FormData(form).entries());
-
-  const payload = {
-    customerId,
-    dogId: data.dogId ? Number(data.dogId) : null,
-    classType: data.classType,
-    date: data.date,
-    startTime: data.startTime,
-    endTime: data.endTime,
-    location: data.location
   };
 
-  status.textContent = "Boeken…";
-  try {
-    await fetchJSON("/api/lessons", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    status.textContent = "✅ Les geboekt.";
-    openCustomerDetail(customerId);
-  } catch (e2) {
-    status.textContent = "❌ " + e2.message;
+  await loadCustomers();
+
+  async function loadCustomers() {
+    const list = document.getElementById("c_list");
+    try {
+      const data = await api("/api/customers");
+      if (!data || !data.length) {
+        list.innerHTML = `<div class="empty">Geen klanten gevonden.</div>`;
+        return;
+      }
+      list.innerHTML = data.map(c =>
+        `<div class="list-item">
+           <strong>${escapeHtml(c.name || "-")}</strong>
+           <span class="badge">${escapeHtml(c.email || "")}</span>
+           <div class="muted">Tel: ${escapeHtml(c.phone || "-")}</div>
+         </div>`
+      ).join("");
+    } catch (e) {
+      list.innerHTML = `<div class="empty">Kon klanten niet laden: ${escapeHtml(e.message)}</div>`;
+    }
   }
-});
+}
+
+async function renderHonden() {
+  viewEl.innerHTML = `
+    <div class="card">
+      <h2>Honden</h2>
+      <div class="row">
+        <div>
+          <label>Naam hond</label>
+          <input id="d_name" placeholder="bv. Rex" />
+        </div>
+        <div>
+          <label>Ras</label>
+          <input id="d_breed" placeholder="bv. Border Collie" />
+        </div>
+        <div>
+          <label>Geboortedatum</label>
+          <input id="d_dob" type="date" />
+        </div>
+        <div>
+          <label>Geslacht</label>
+          <select id="d_gender">
+            <option value="">-</option>
+            <option>Reu</option>
+            <option>Teef</option>
+          </select>
+        </div>
+        <div>
+          <label>Klant (e-mail)</label>
+          <input id="d_owner" placeholder="email van eigenaar" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="btnAddD">Hond registreren</button>
+        <span id="d_msg" class="muted"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Bestaande honden</h3>
+      <div id="d_list" class="list"><div class="empty">Laden…</div></div>
+    </div>
+  `;
+
+  document.getElementById("btnAddD").onclick = async () => {
+    const body = {
+      name: document.getElementById("d_name").value.trim(),
+      breed: document.getElementById("d_breed").value.trim(),
+      dob: document.getElementById("d_dob").value || null,
+      gender: document.getElementById("d_gender").value || null,
+      ownerEmail: document.getElementById("d_owner").value.trim() || null,
+    };
+    const msg = document.getElementById("d_msg");
+    try {
+      await api("/api/dogs", { method: "POST", body: JSON.stringify(body) });
+      msg.textContent = "Hond toegevoegd.";
+      await loadDogs();
+    } catch (e) {
+      msg.textContent = "Fout: " + e.message;
+    }
+  };
+
+  await loadDogs();
+
+  async function loadDogs() {
+    const list = document.getElementById("d_list");
+    try {
+      const data = await api("/api/dogs");
+      if (!data || !data.length) {
+        list.innerHTML = `<div class="empty">Geen honden gevonden.</div>`;
+        return;
+      }
+      list.innerHTML = data.map(d =>
+        `<div class="list-item">
+           <strong>${escapeHtml(d.name || "-")}</strong>
+           <span class="badge">${escapeHtml(d.breed || "")}</span>
+           <div class="muted">
+             Geboorte: ${escapeHtml(d.dob || "-")} • Geslacht: ${escapeHtml(d.gender || "-")}
+             ${d.ownerEmail ? `• Eigenaar: ${escapeHtml(d.ownerEmail)}` : ""}
+           </div>
+         </div>`
+      ).join("");
+    } catch (e) {
+      list.innerHTML = `<div class="empty">Kon honden niet laden: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+}
+
+async function renderLessen() {
+  viewEl.innerHTML = `
+    <div class="card">
+      <h2>Lessen</h2>
+      <div class="row">
+        <div>
+          <label>Lesnaam</label>
+          <input id="l_name" placeholder="bv. Puppy Pack" />
+        </div>
+        <div>
+          <label>Strippen (aantal)</label>
+          <input id="l_credits" type="number" min="1" value="9" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="btnAddL">Lestype toevoegen</button>
+        <span id="l_msg" class="muted"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Beschikbare lestypes</h3>
+      <div id="l_list" class="list"><div class="empty">Laden…</div></div>
+    </div>
+  `;
+
+  document.getElementById("btnAddL").onclick = async () => {
+    const body = {
+      name: document.getElementById("l_name").value.trim(),
+      credits: Number(document.getElementById("l_credits").value || 0),
+    };
+    const msg = document.getElementById("l_msg");
+    try {
+      await api("/api/lessontypes", { method: "POST", body: JSON.stringify(body) });
+      msg.textContent = "Lestype toegevoegd.";
+      await loadLessonTypes();
+    } catch (e) {
+      msg.textContent = "Fout: " + e.message;
+    }
+  };
+
+  await loadLessonTypes();
+
+  async function loadLessonTypes() {
+    const list = document.getElementById("l_list");
+    try {
+      const data = await api("/api/lessontypes");
+      if (!data || !data.length) {
+        list.innerHTML = `<div class="empty">Nog geen lestypes.</div>`;
+        return;
+      }
+      list.innerHTML = data.map(t =>
+        `<div class="list-item">
+           <strong>${escapeHtml(t.name || "-")}</strong>
+           <span class="badge">${Number(t.credits) || 0} strippen</span>
+         </div>`
+      ).join("");
+    } catch (e) {
+      list.innerHTML = `<div class="empty">Kon lestypes niet laden: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+}
+
+async function renderInstellingen() {
+  viewEl.innerHTML = `
+    <div class="card">
+      <h2>Instellingen</h2>
+      <div id="s_wrap" class="muted">Laden…</div>
+    </div>
+  `;
+  const wrap = document.getElementById("s_wrap");
+  try {
+    const s = await api("/api/settings");
+    wrap.innerHTML = `
+      <div class="row">
+        <div>
+          <label>Organisatie</label>
+          <input id="s_org" value="${escapeAttr(s?.org?.name || "Superhond")}" />
+        </div>
+        <div>
+          <label>E-mail</label>
+          <input id="s_email" value="${escapeAttr(s?.org?.email || "info@superhond.be")}" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="btnSaveS">Opslaan</button>
+        <span id="s_msg" class="muted"></span>
+      </div>
+    `;
+    document.getElementById("btnSaveS").onclick = async () => {
+      const body = {
+        org: {
+          name: document.getElementById("s_org").value.trim(),
+          email: document.getElementById("s_email").value.trim(),
+        }
+      };
+      const msg = document.getElementById("s_msg");
+      try {
+        await api("/api/settings", { method: "PUT", body: JSON.stringify(body) });
+        msg.textContent = "Instellingen opgeslagen.";
+      } catch (e) {
+        msg.textContent = "Fout: " + e.message;
+      }
+    };
+  } catch (e) {
+    wrap.textContent = "Kon instellingen niet laden: " + e.message;
+  }
+}
+
+async function renderOverzicht() {
+  viewEl.innerHTML = `
+    <div class="card">
+      <h2>Overzicht</h2>
+      <div class="muted">Snelle samenvatting van klanten, honden en lestypes.</div>
+      <div id="ov"></div>
+    </div>
+  `;
+  const el = document.getElementById("ov");
+  try {
+    const [customers, dogs, types] = await Promise.all([
+      api("/api/customers").catch(() => []),
+      api("/api/dogs").catch(() => []),
+      api("/api/lessontypes").catch(() => []),
+    ]);
+    el.innerHTML = `
+      <p>Klanten: <strong>${customers.length}</strong></p>
+      <p>Honden: <strong>${dogs.length}</strong></p>
+      <p>Lestypes: <strong>${types.length}</strong></p>
+    `;
+  } catch (e) {
+    el.textContent = "Kon overzicht niet laden: " + e.message;
+  }
+}
+
+// utilities
+function escapeHtml(s=""){return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]))}
+function escapeAttr(s=""){return escapeHtml(s).replace(/"/g,"&quot;")}
+
+// start
+renderTabs("klanten");
+go("klanten");
