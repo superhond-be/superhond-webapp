@@ -281,7 +281,30 @@ function wireLessonsUI() {
     }
   });
 }
+// ==================== Strippenkaart Overzicht ====================
 
+const psRefreshBtn = document.querySelector('#ps-refresh');
+const psTableBody  = document.querySelector('#ps-table tbody');
+
+async function loadPassesOverview() {
+  psTableBody.innerHTML = `<tr><td colspan="3">Laden…</td></tr>`;
+  try {
+    // haal klanten op
+    const customers = await fetchJSON(API.customers);
+
+    // per klant → per lestype checken
+    let rows = [];
+    for (let c of customers) {
+      // voorbeeld: 3 soorten pakketten (pas aan naar jouw PACKAGE_MAP)
+      for (let t of ["PUPPY", "PUBER", "GEHOORZAAM"]) {
+        try {
+          const data = await fetchJSON(`${API.passes}?customerId=${c.id}&classType=${t}`);
+          rows.push(`
+            <tr>
+              <td>${escapeHtml(c.name)}</td>
+              <td>${escapeHtml
+
+                    
 // activeer alleen wanneer de tab zichtbaar wordt (of nu meteen als je wil)
 document.addEventListener('DOMContentLoaded', () => {
   const tabBtn = document.querySelector('#tab-lessons');
