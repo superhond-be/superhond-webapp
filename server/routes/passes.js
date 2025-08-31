@@ -1,4 +1,99 @@
- 1 // server/routes/passes.js
+ 1 const express = require("express");
+ 2 const router = express.Router();
+ 3 
+ 4 // In-memory opslag voor strippenkaarten
+ 5 let passes = [];
+ 6 
+ 7 // ---- GET alle passes (optioneel filter: customerId / dogId / type) ----
+ 8 router.get("/", (req, res) => {
+ 9   const { customerId, dogId, type } = req.query;
+10   let list = passes;
+11   if (customerId) list = list.filter(p => p.customerId === Number(customerId));
+12   if (dogId)      list = list.filter(p => p.dogId === Number(dogId));
+13   if (type)       list = list.filter(p => p.type === String(type));
+14   res.json(list);
+15 });
+16 
+17 // ---- GET pass op ID ----
+18 router.get("/:id", (req, res) => {
+19   const pass = passes.find(p => p.id === Number(req.params.id));
+20   if (!pass) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
+21   res.json(pass);
+22 });
+23 
+24 // ---- POST nieuwe strippenkaart toekennen ----
+25 router.post("/", (req, res) => {
+26   const {
+27     customerId,        // verplicht
+28     dogId,             // optioneel, kan later
+29     type,              // bv. "PUPPY", "JUNIOR", ...
+30     totalStrips        // totaal aantal strips volgens lestype
+31   } = req.body;
+32 
+33   if (!customerId || !type || !totalStrips) {
+34     return res.status(400).json({ message: "customerId, type en totalStrips zijn verplicht" });
+35   }
+36 
+37   const newPass = {
+38     id: passes.length + 1,
+39     customerId: Number(customerId),
+40     dogId: dogId ? Number(dogId) : null,
+41     type: String(type),
+42     totalStrips: Number(totalStrips),
+43     usedStrips: 0,
+44     createdAt: new Date().toISOString()
+45   };
+46 
+47   passes.push(newPass);
+48   res.status(201).json(newPass);
+49 });
+50 
+51 // ---- POST strips verbruiken ----
+52 router.post("/:id/consume", (req, res) => {
+53   const pass = passes.find(p => p.id === Number(req.params.id));
+54   if (!pass) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
+55 
+56   const count = req.body.count ? Number(req.body.count) : 1;
+57   const remaining = pass.totalStrips - pass.usedStrips;
+58   if (count <= 0) return res.status(400).json({ message: "count moet > 0 zijn" });
+59   if (count > remaining) {
+60     return res.status(400).json({ message: `Onvoldoende strips (nog ${remaining} over)` });
+61   }
+62 
+63   pass.usedStrips += count;
+64   res.json({ ...pass, remainingStrips: pass.totalStrips - pass.usedStrips });
+65 });
+66 
+67 // ---- PUT pass bijwerken (bv. aan hond koppelen of type aanpassen) ----
+68 router.put("/:id", (req, res) => {
+69   const pass = passes.find(p => p.id === Number(req.params.id));
+70   if (!pass) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
+71 
+72   if (req.body.dogId !== undefined) pass.dogId = req.body.dogId === null ? null : Number(req.body.dogId);
+73   if (req.body.type !== undefined) pass.type = String(req.body.type);
+74   if (req.body.totalStrips !== undefined) {
+75     const nextTotal = Number(req.body.totalStrips);
+76     if (nextTotal < pass.usedStrips) {
+77       return res.status(400).json({ message: "totalStrips kan niet kleiner zijn dan usedStrips" });
+78     }
+79     pass.totalStrips = nextTotal;
+80   }
+81   res.json(pass);
+82 });
+83 
+84 // ---- DELETE pass ----
+85 router.delete("/:id", (req, res) => {
+86   const before = passes.length;
+87   passes = passes.filter(p => p.id !== Number(req.params.id));
+88   if (passes.length === before) {
+89     return res.status(404).json({ message: "Strippenkaart niet gevonden" });
+90   }
+91   res.json({ message: "Strippenkaart verwijderd" });
+92 });
+93 
+94 module.exports = router;
+
+1 // server/routes/passes.js
  2 import express from "express";
  3 const router = express.Router();
  4 
