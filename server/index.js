@@ -4,6 +4,9 @@ import { fileURLToPath } from "url";
 
 // Routers
 import customersRoutes from "./routes/customers.js";
+ 7 import lessonsRoutes from "./routes/lessons.js";
+ 8 import passesRoutes from "./routes/passes.js";
+
 import passesRoutes from "./routes/passes.js";
 
 // --- App setup (1x definiëren!) ---
