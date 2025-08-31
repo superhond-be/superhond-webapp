@@ -54,6 +54,33 @@
     </table>
   </section>
 
+<!-- TAB: Klanten -->
+<button class="tab-btn" id="tab-customers" data-target="section-customers">Klanten</button>
+
+<section id="section-customers" class="tab-section" hidden>
+  <div class="row" style="gap:10px;align-items:center;">
+    <button id="seed-btn" class="secondary">🔄 Demo vullen</button>
+    <button id="customers-reload" class="secondary">🔄 Herladen</button>
+    <input id="customers-search" placeholder="Zoeken (naam/email/tel)" />
+    <span id="customers-updated" class="muted"></span>
+  </div>
+
+  <table class="data-table" id="customers-table" style="margin-top:10px;">
+    <thead>
+      <tr>
+        <th>Naam</th>
+        <th>E-mail</th>
+        <th>Telefoon</th>
+        <th>Honden</th>
+        <th>Strippenkaarten (type → resterend)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5" class="muted">(nog geen data)</td></tr>
+    </tbody>
+  </table>
+</section>
+  
 <!-- TAB: Lessen --------------------------------------------------------->
 <button class="tab-btn" id="tab-lessons" data-target="section-lessons">Lessen</button>
 
