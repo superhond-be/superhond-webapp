@@ -1,3 +1,46 @@
+  // server/routes/lessons.js
+  import express from "express";
+  const router = express.Router();
+  
+  /**
+   * In-memory lestypes en lessen.
+   * Dit is eenvoudig te vervangen door DB later.
+   */
+  const LESSTYPES = [
+   { id: 1, code: "PUPPY", name: "Puppy Pack", strips: 9 },
+   { id: 2, code: "PUBER", name: "Puber – Coachgroep", strips: 5 },
+   { id: 3, code: "GEV", name: "Gevorderd", strips: 10 }
+ ];
+ 
+ const LESSONS = [
+   // voorbeeldlessen
+   { id: 101, typeCode: "PUPPY", date: "2025-09-07", start: "09:00", end: "10:00", location: "Tabloo" },
+   { id: 102, typeCode: "PUPPY", date: "2025-09-14", start: "09:00", end: "10:00", location: "Tabloo" },
+   { id: 201, typeCode: "PUBER", date: "2025-09-07", start: "11:00", end: "12:00", location: "Tabloo" },
+   { id: 202, typeCode: "PUBER", date: "2025-09-14", start: "11:00", end: "12:00", location: "Tabloo" }
+ ];
+ 
+ // Alle lestypes (incl. standaard strippen per type)
+ router.get("/types", (_req, res) => {
+   res.json(LESSTYPES);
+ }); 
+ // Lessen filterbaar op typeCode (?type=PUPPY) en vanaf datum (?from=YYYY-MM-DD)
+ router.get("/", (req, res) => {
+ const { type, from } = req.query;
+31   let out = LESSONS.slice();
+32 
+33   if (type) out = out.filter(l => l.typeCode === type);
+34   if (from) out = out.filter(l => l.date >= from);
+35 
+36   res.json(out);
+37 });
+38 
+39 export default router;
+
+
+
+
+
 // server/routes/lessons.js
 import express from "express";
 
