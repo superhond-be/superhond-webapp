@@ -1,403 +1,99 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Strippenkaarten — Demo</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; }
-    h1 { margin-bottom: 8px; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
-    input, button { padding: 8px 10px; font-size: 16px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-    th, td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: left; }
-    .muted { color: #6b7280; font-size: 14px; }
-    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; background:#eef2ff; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Superhond Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Strippenkaarten</h1>
-  <p class="muted">Backend endpoints: <code>GET/POST /api/passes</code>, <code>POST /api/passes/:id/use</code></p>
+  <nav>
+    <button class="tab-btn" id="tab-dashboard" data-target="section-dashboard">Dashboard</button>
+    <button class="tab-btn" id="tab-customers" data-target="section-customers">Klanten</button>
+  </nav>
 
-  <section>
-    <h2>Nieuwe kaart toevoegen</h2>
-    
-    <div class="row">
-      <input id="typeInput" placeholder="Type (bv. Puppycursus)" />
-      <input id="stripsInput" type="number" min="1" step="1" placeholder="Aantal strips (bv. 9)" />
-      <button id="addBtn">Toevoegen</button>
-    </div>
-  </section>
-<section id="section-people" class="tab-section" hidden>
-  ...
-  <div class="card">
-    <h3>Overzicht klanten & honden</h3>
-    ...
-  </div>
-</section>
+  <main>
+    <!-- Dashboard -->
+    <section id="section-dashboard">
+      <h1>Welkom bij Superhond</h1>
+      <p>Kies een tabblad hierboven.</p>
+    </section>
 
-  
-  <section>
+    <!-- Klanten -->
+    <section id="section-customers" class="tab-section" hidden>
+      <div class="row" style="gap:10px;align-items:center;">
+        <button id="seed-btn" class="secondary">🔄 Demo vullen</button>
+        <button id="customers-reload" class="secondary">🔄 Herladen</button>
+        <input id="customers-search" placeholder="Zoeken (naam/email/tel)" />
+        <span id="customers-updated" class="muted"></span>
+      </div>
 
-    <!-- Klant detailpaneel -->
-<div id="customer-detail" class="card" style="display:none; margin-top:16px;">
-  <h3 id="cd-title">Klantdetail</h3>
-
-  <div class="grid-2">
-    <div>
-      <h4>Honden</h4>
-      <ul id="cd-dogs" class="bullets"></ul>
-
-      <h4>Strippenkaarten</h4>
-      <table class="data-table" id="cd-passes">
-        <thead><tr><th>Lestype</th><th>Resterend</th></tr></thead>
-        <tbody></tbody>
+      <table class="data-table" id="customers-table" style="margin-top:10px;">
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>E-mail</th>
+            <th>Telefoon</th>
+            <th>Honden</th>
+            <th>Strippenkaarten</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="6" class="muted">(nog geen data)</td></tr>
+        </tbody>
       </table>
-    </div>
 
-    <div>
-      <h4>Nieuwe les plannen</h4>
-      <form id="cd-lesson-form">
-        <label>Hond
-          <select name="dogId" id="cd-dog"></select>
-        </label>
-        <label>Lestype
-          <input name="classType" id="cd-class" placeholder="bv. Puppycursus" required />
-        </label>
-        <label>Datum
-          <input type="date" name="date" id="cd-date" required />
-        </label>
-        <label>Start
-          <input type="time" name="startTime" id="cd-start" required />
-        </label>
-        <label>Einde
-          <input type="time" name="endTime" id="cd-end" />
-        </label>
-        <label>Locatie
-          <input name="location" id="cd-loc" placeholder="bv. Prinsenpark" />
-        </label>
-        <div class="row">
-          <button type="button" id="cd-dry" class="secondary">Proefcontrole</button>
-          <button type="submit" class="primary">Boek les</button>
-          <span id="cd-status" class="muted"></span>
+      <!-- Klant detailpaneel -->
+      <div id="customer-detail" class="card" style="display:none; margin-top:16px;">
+        <h3 id="cd-title">Klantdetail</h3>
+        <div class="grid-2">
+          <div>
+            <h4>Honden</h4>
+            <ul id="cd-dogs" class="bullets"></ul>
+            <h4>Strippenkaarten</h4>
+            <table class="data-table" id="cd-passes">
+              <thead><tr><th>Lestype</th><th>Resterend</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div>
+            <h4>Nieuwe les plannen</h4>
+            <form id="cd-lesson-form">
+              <label>Hond
+                <select name="dogId" id="cd-dog"></select>
+              </label>
+              <label>Lestype
+                <input name="classType" id="cd-class" required />
+              </label>
+              <label>Datum
+                <input type="date" name="date" id="cd-date" required />
+              </label>
+              <label>Start
+                <input type="time" name="startTime" id="cd-start" required />
+              </label>
+              <label>Einde
+                <input type="time" name="endTime" id="cd-end" />
+              </label>
+              <label>Locatie
+                <input name="location" id="cd-loc" />
+              </label>
+              <div class="row">
+                <button type="button" id="cd-dry" class="secondary">Proefcontrole</button>
+                <button type="submit" class="primary">Boek les</button>
+                <span id="cd-status" class="muted"></span>
+              </div>
+            </form>
+            <h4 style="margin-top:16px;">Geplande lessen</h4>
+            <table class="data-table" id="cd-lessons">
+              <thead><tr><th>Datum</th><th>Tijd</th><th>Lestype</th><th>Hond</th><th>Locatie</th><th>Actie</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
-      </form>
-
-      <h4 style="margin-top:16px;">Geplande lessen</h4>
-      <table class="data-table" id="cd-lessons">
-        <thead><tr><th>Datum</th><th>Tijd</th><th>Lestype</th><th>Hond</th><th>Locatie</th><th>Actie</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-    <h2>Bestaande kaarten</h2>
-    <table id="passesTable">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Type</th>
-          <th>Strips over</th>
-          <th>Actie</th>
-        </tr>
-      </thead>
-      <tbody id="passesBody">
-        <tr><td colspan="4" class="muted">Laden…</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-<!-- TAB: Klanten -->
-<button class="tab-btn" id="tab-customers" data-target="section-customers">Klanten</button>
-
-<section id="section-customers" class="tab-section" hidden>
-  <div class="row" style="gap:10px;align-items:center;">
-    <button id="seed-btn" class="secondary">🔄 Demo vullen</button>
-    <button id="customers-reload" class="secondary">🔄 Herladen</button>
-    <input id="customers-search" placeholder="Zoeken (naam/email/tel)" />
-    <span id="customers-updated" class="muted"></span>
-  </div>
-
-  <table class="data-table" id="customers-table" style="margin-top:10px;">
-    <thead>
-      <tr>
-        <th>Naam</th>
-        <th>E-mail</th>
-        <th>Telefoon</th>
-        <th>Honden</th>
-        <th>Strippenkaarten (type → resterend)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="5" class="muted">(nog geen data)</td></tr>
-    </tbody>
-  </table>
-</section>
-  
-<!-- TAB: Lessen --------------------------------------------------------->
-<button class="tab-btn" id="tab-lessons" data-target="section-lessons">Lessen</button>
-
-<section id="section-lessons" class="tab-section" hidden>
-  <h2>Les boeken & strippen</h2>
-
-  <div class="card">
-    <h3>Les boeken</h3>
-    <div class="grid-2">
-      <label>
-        Klant
-        <select id="ls-customer"></select>
-      </label>
-      <label>
-        Hond
-        <select id="ls-dog"></select>
-      </label>
-
-      <label>
-      Lestype
-        <select id="ls-classType">
-          <option value="PUPPY">PUPPY – Puppy Pack</option>
-          <option value="PUBER">PUBER – Coachgroep</option>
-          <option value="GEVORDERD">GEVORDERD</option>
-        </select>
-      </label>
-      <label>
-        Locatie
-        <input id="ls-location" type="text" placeholder="bv. Retie Prinsenpark">
-      </label>
-
-      <label>
-        Datum
-        <input id="ls-date" type="date">
-      </label>
-      <label>
-        Starttijd
-        <input id="ls-start" type="time">
-      </label>
-      <label>
-        Eindtijd
-        <input id="ls-end" type="time">
-      </label>
-    </div>
-
-    <div class="row">
-      <button id="ls-book" class="primary">Les toevoegen</button>
-      <span id="ls-book-status" class="muted"></span>
-    </div>
-  </div>
-
-
-  
-<div class="card">
-  <h3>Overzicht strippenkaarten</h3>
-  <button id="ps-refresh" class="secondary">Vernieuw overzicht</button>
-  <table id="ps-table" class="strip-table">
-    <thead>
-      <tr>
-        <th>Klant</th>
-        <th>Lestype</th>
-        <th>Resterend</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="3" class="muted">(nog niet geladen)</td></tr>
-    </tbody>
-  </table>
-</div>
-
-  <div class="card">
-    <h3>Strippenkaart</h3>
-    <div class="grid-2">
-      <label>
-        Klant
-        <select id="ps-customer"></select>
-      </label>
-      <label>
-        Lestype
-        <select id="ps-classType">
-          <option value="PUPPY">PUPPY – Puppy Pack</option>
-          <option value="PUBER">PUBER – Coachgroep</option>
-          <option value="GEVORDERD">GEVORDERD</option>
-        </select>
-      </label>
-    </div>
-
-    <div class="row">
-      <button id="ps-check" class="secondary">Bekijk resterende strips</button>
-      <div id="ps-remaining" class="pill">—</div>
-    </div>
-
-    <div class="row">
-      <button id="ps-use" class="danger">Gebruik 1 strip</button>
-      <span id="ps-use-status" class="muted"></span>
-    </div>
-  </div>
-
-  <p class="muted" id="lessons-last-updated"></p>
-</section>
-<!-- /TAB: Lessen -------------------------------------------------------->
-
-  <!-- TAB: Strippenkaarten overzicht -->
-<button class="tab-btn" id="tab-passes-overview" data-target="section-passes-overview">
-  Overzicht strippenkaarten
-</button>
-
-<section id="section-passes-overview" class="tab-section" hidden>
-  <h2>Overzicht strippenkaarten</h2>
-  <p class="muted">Hier zie je per klant en per lestype hoeveel strips er nog over zijn.</p>
-  
-  <!-- Filters -->
-  <div class="row" id="passes-filters">
-    <label>
-      Lestype
-      <select id="filter-class">
-        <option value="">(alle)</option>
-        <option value="Puppycursus">Puppycursus</option>
-        <option value="Pubertraining">Pubertraining</option>
-        <option value="Gehoorzaamheid">Gehoorzaamheid</option>
-      </select>
-    </label>
-
-
-<!-- TAB: Klanten & Honden -->
-<button class="tab-btn" id="tab-people" data-target="section-people">
-  Klanten & Honden
-</button>
-
-<section id="section-people" class="tab-section" hidden>
-  <h2>Klanten & Honden</h2>
-
-  <div class="card">
-    <h3>Nieuwe klant</h3>
-    <form id="form-customer">
-      <div class="grid">
-        <label>Naam
-          <input name="name" required placeholder="bv. Jan Jansen" />
-        </label>
-        <label>E-mail
-          <input name="email" type="email" placeholder="jan@example.com" />
-        </label>
-        <label>Telefoon
-          <input name="phone" placeholder="0470 00 00 00" />
-        </label>
-        <label>Noodcontact (optioneel)
-          <input name="emergency" placeholder="Naam/nummer noodcontact" />
-        </label>
       </div>
-      <div class="row">
-        <button class="primary" type="submit">Klant aanmaken</button>
-        <span id="cust-status" class="muted"></span>
-      </div>
-    </form>
-  </div>
+    </section>
+  </main>
 
-  <div class="card">
-    <h3>Nieuwe hond koppelen aan klant</h3>
-    <form id="form-dog">
-      <div class="grid">
-        <label>Klant
-          <select id="dog-owner" name="ownerId" required></select>
-        </label>
-        <label>Naam hond
-          <input name="name" required placeholder="bv. Fido" />
-        </label>
-        <label>Ras
-          <input name="breed" placeholder="bv. Labrador" />
-        </label>
-        <label>Geslacht
-          <select name="sex">
-            <option value="">—</option>
-            <option value="reu">Reu</option>
-            <option value="teef">Teef</option>
-          </select>
-        </label>
-        <label>Geboortedatum
-          <input type="date" name="birthdate" />
-        </label>
-        <label>Inentingen / boekje (optioneel)
-          <input name="bookRef" placeholder="boekje ref / opmerking" />
-        </label>
-        <label>Dierenarts (naam)
-          <input name="vetName" placeholder="bv. Dierenarts Peeters" />
-        </label>
-        <label>Dierenarts (tel)
-          <input name="vetPhone" placeholder="bv. 014 00 00 00" />
-        </label>
-        <label>Noodnummer
-          <input name="emergencyPhone" placeholder="bv. 0470 00 00 00" />
-        </label>
-        <label>Vaccinatiestatus
-          <input name="vaccStatus" placeholder="bv. volledig / in orde" />
-        </label>
-      </div>
-      <div class="row">
-        <button class="primary" type="submit">Hond toevoegen</button>
-        <span id="dog-status" class="muted"></span>
-      </div>
-    </form>
-  </div>
-
-  <div class="card">
-    <h3>Overzicht klanten & honden</h3>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Klant</th>
-          <th>E-mail</th>
-          <th>Telefoon</th>
-          <th>Honden</th>
-        </tr>
-      </thead>
-      <tbody id="people-table">
-        <tr><td colspan="4" class="muted">(nog geen data)</td></tr>
-      </tbody>
-    </table>
-    <div class="row">
-      <button id="people-reload" class="secondary">🔄 Herladen</button>
-      <span id="people-updated" class="muted"></span>
-    </div>
-  </div>
-</section>
-    
-
-
-    <label>
-      Minder dan X strips
-      <input id="filter-threshold" type="number" min="0" step="1" placeholder="bv. 3" />
-    </label>
-
-    <button id="filter-apply" class="secondary">Filter toepassen</button>
-    <button id="filter-reset">Reset</button>
-    <span id="filter-summary" class="muted"></span>
-  </div>
-  <table id="passes-table" class="data-table">
-    <thead>
-      <tr>
-        <th data-key="name">Klant <span class="sort"></span></th>
-        <th data-key="email">Email <span class="sort"></span></th>
-        <th data-key="type">Lestype <span class="sort"></span></th>
-        <th data-key="remaining">Resterend <span class="sort"></span></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <div class="row">
-    <button id="passes-refresh" class="secondary">🔄 Ververs overzicht</button>
-    <span id="passes-last-update" class="muted"></span>
-  </div>
-</section>
-
-  <!-- Menuknoppen -->
-<button class="tab-btn" id="tab-lessons" data-target="section-lessons">Lessen</button>
-
-<!-- Sectie voor Lessen (leeg, wordt door JS gevuld) -->
-<section id="section-lessons" class="tab-section" hidden>
-  <div id="main-content"></div>
-</section>
-  
-  <p class="muted" id="statusLine">—</p>
-
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
