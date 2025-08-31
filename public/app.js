@@ -1,153 +1,197 @@
-// Kleine helper
-const $ = (sel) => document.querySelector(sel);
-const API = {
-  customers: "/api/customers",
-  passesFor: (id) => `/api/passes/${id}`,
-  passUse: "/api/passes/use",
-};
+/* =========================================================================
+   HONDEN TAB – foto upload + preview + lijst met thumbnails
+   Vereist server endpoints: 
+     - POST /api/dogs/upload-photo (FormData 'dogPhoto') => { photoUrl }
+     - GET  /api/dogs?customerId=...
+     - POST /api/dogs (JSON)
+   ======================================================================= */
 
-function switchView(view) {
-  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.view === view));
-  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === `view-${view}`));
-}
-
-// Tabs
-document.querySelectorAll(".tab").forEach(btn => {
-  btn.addEventListener("click", () => {
-    switchView(btn.dataset.view);
-    if (btn.dataset.view === "customers") loadCustomers();
-    if (btn.dataset.view === "passes") loadPassesOverview();
-  });
-});
-
-// Registratie form
-$("#registerForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  $("#formMsg").textContent = "Bezig…";
-
-  const payload = {
-    customer: {
-      name: $("#c_name").value.trim(),
-      email: $("#c_email").value.trim(),
-      phone: $("#c_phone").value.trim(),
-    },
-    dog: {
-      name: $("#d_name").value.trim(),
-      breed: $("#d_breed").value.trim(),
-      birthDate: $("#d_birth").value || "",
-      gender: $("#d_gender").value,
-      vetPhone: $("#d_vetPhone").value.trim(),
-      vetName: $("#d_vetName").value.trim(),
-      vaccineStatus: $("#d_vaccine").value.trim(),
-      bookletRef: $("#d_booklet").value.trim(),
-      emergency: $("#d_emergency").value.trim(),
-    },
-    lessonType: $("#lessonType").value || undefined,
+const DogsUI = (() => {
+  // ------- DOM refs (pas selectors aan als jouw HTML anders is) ----------
+  const refs = {
+    // Form velden
+    customerId: document.getElementById("dogCustomerId") || document.getElementById("customerId"),
+    name:       document.getElementById("dogName")       || document.getElementById("nameDog"),
+    breed:      document.getElementById("breed"),
+    birthdate:  document.getElementById("birthdate"),
+    gender:     document.getElementById("gender"),
+    vacc:       document.getElementById("vaccinationStatus") || document.getElementById("vacc"),
+    bookletRef: document.getElementById("bookletRef"),
+    vetName:    document.getElementById("vetName"),
+    vetPhone:   document.getElementById("vetPhone"),
+    emergency:  document.getElementById("emergency"),
+    // Foto
+    photoInput:  document.getElementById("dogPhoto"),
+    photoPrev:   document.getElementById("dogPhotoPreview"),
+    photoInfo:   document.getElementById("dogPhotoInfo"),
+    // Acties/lijsten
+    createBtn:   document.getElementById("dogCreateBtn") || document.querySelector("[data-action='dog-create']"),
+    reloadBtn:   document.getElementById("dogsReloadBtn")|| document.querySelector("[data-action='dogs-reload']"),
+    listBody:    document.getElementById("dogsListBody") || document.querySelector("#dogsTable tbody"),
+    // (optioneel) filter
+    filterCustomerId: document.getElementById("dogsFilterCustomerId")
   };
 
-  // indien geen hondnaam opgegeven, stuur geen dog object door
-  if (!payload.dog.name) delete payload.dog;
+  // ------- Staat -------
+  let currentFilterCustomerId = "";
 
-  try {
-    const res = await fetch(API.customers, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.error || "Registratie mislukt");
-
-    $("#formMsg").textContent = "✅ Geregistreerd";
-    e.target.reset();
-    loadCustomers();
-    loadPassesOverview();
-  } catch (err) {
-    $("#formMsg").textContent = "❌ " + err.message;
+  // ------- Helpers -------
+  function toast(msg, type="info") {
+    console.log(`[${type}]`, msg);
+    // voeg gerust je eigen toast popup in
   }
-});
 
-$("#reloadBtn").addEventListener("click", () => loadCustomers());
-
-// Laders/renderers
-async function loadCustomers() {
-  const box = $("#customersList");
-  box.textContent = "Laden…";
-  try {
-    const res = await fetch(API.customers);
-    const list = await res.json();
-    box.innerHTML = list.length ? "" : "<p class='muted'>Geen klanten gevonden.</p>";
-    list.forEach(c => {
-      const dogs = (c.dogs || []).map(d => `${d.name} (${d.breed || "-"})`).join(", ") || "—";
-      const passes = (c.passes || [])
-        .map(p => `${p.lessonType}: ${p.used}/${p.total}`)
-        .join(" • ") || "—";
-
-      const row = document.createElement("div");
-      row.className = "item";
-      row.innerHTML = `
-        <div>
-          <div class="title">${escapeHtml(c.name)}</div>
-          <div class="muted">${escapeHtml(c.email || "")} ${escapeHtml(c.phone || "")}</div>
-          <div class="muted">Honden: ${escapeHtml(dogs)}</div>
-          <div class="muted">Strippen: ${escapeHtml(passes)}</div>
-        </div>
-        <div class="actions">
-          <button data-cid="${c.id}" class="use1">Gebruik 1 strip</button>
-        </div>
-      `;
-      row.querySelector(".use1").addEventListener("click", () => useOnePass(c.id));
-      box.appendChild(row);
+  function readAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
     });
-  } catch {
-    box.innerHTML = "<p class='error'>Kon klanten niet laden.</p>";
   }
-}
 
-async function useOnePass(customerId) {
-  try {
-    const res = await fetch(API.passUse, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customerId, count: 1 }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.error || "Mislukt");
-    await loadCustomers();
-    await loadPassesOverview();
-  } catch (e) {
-    alert("Strip gebruiken: " + e.message);
+  async function uploadPhoto(file) {
+    const fd = new FormData();
+    fd.append("dogPhoto", file);
+    const res = await fetch("/api/dogs/upload-photo", { method: "POST", body: fd });
+    if (!res.ok) throw new Error("Upload mislukt");
+    return res.json(); // { photoUrl }
   }
-}
 
-async function loadPassesOverview() {
-  const box = $("#passesList");
-  box.textContent = "Laden…";
-  try {
-    const res = await fetch(API.customers);
-    const list = await res.json();
-    box.innerHTML = list.length ? "" : "<p class='muted'>Geen klanten.</p>";
-    list.forEach(c => {
-      const passes = (c.passes || []).map(p =>
-        `<span class="pill">${escapeHtml(p.lessonType)}: ${p.used}/${p.total}</span>`
-      ).join(" ");
-      const row = document.createElement("div");
-      row.className = "item";
-      row.innerHTML = `
-        <div>
-          <div class="title">${escapeHtml(c.name)}</div>
-          <div class="muted">${passes || "—"}</div>
-        </div>
-      `;
-      box.appendChild(row);
-    });
-  } catch {
-    box.innerHTML = "<p class='error'>Kon strippenkaarten niet laden.</p>";
+  async function fetchDogs(customerId) {
+    const url = customerId ? `/api/dogs?customerId=${encodeURIComponent(customerId)}` : "/api/dogs";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Kon honden niet laden");
+    return res.json();
   }
-}
 
-function escapeHtml(s) {
-  return (s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-}
+  function row(d) {
+    return `
+      <tr>
+        <td>${d.id}</td>
+        <td>${d.photoUrl ? `<img src="${d.photoUrl}" class="dogs-thumb" alt="hond">` : ""}</td>
+        <td>${escapeHtml(d.name)}</td>
+        <td>${escapeHtml(d.breed || "")}</td>
+        <td>${escapeHtml(d.gender || "")}</td>
+        <td>${escapeHtml(d.birthdate || "")}</td>
+        <td>${escapeHtml(String(d.customerId))}</td>
+      </tr>
+    `;
+  }
 
-// Init
-loadCustomers();
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  async function renderList() {
+    const list = await fetchDogs(currentFilterCustomerId);
+    refs.listBody.innerHTML = list.map(row).join("") || `<tr><td colspan="7" class="muted">Nog geen honden</td></tr>`;
+  }
+
+  // ------- Event handlers -------
+  async function onCreateDog() {
+    try {
+      // 1) eventueel foto uploaden
+      let photoUrl = "";
+      const file = refs.photoInput?.files?.[0];
+      if (file) {
+        const up = await uploadPhoto(file);
+        photoUrl = up.photoUrl;
+      }
+
+      // 2) payload opbouwen
+      const payload = {
+        customerId: refs.customerId?.value || currentFilterCustomerId,
+        name:       refs.name?.value?.trim(),
+        breed:      refs.breed?.value || "",
+        birthdate:  refs.birthdate?.value || "",
+        gender:     refs.gender?.value || "",
+        vaccinationStatus: refs.vacc?.value || "",
+        bookletRef: refs.bookletRef?.value || "",
+        vetName:    refs.vetName?.value || "",
+        vetPhone:   refs.vetPhone?.value || "",
+        emergencyNumber: refs.emergency?.value || "",
+        photoUrl
+      };
+
+      // mini-validatie
+      if (!payload.customerId) throw new Error("customerId ontbreekt");
+      if (!payload.name)       throw new Error("Naam hond is verplicht");
+
+      // 3) hond aanmaken
+      const res = await fetch("/api/dogs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.errors?.join(", ") || data?.error || "Aanmaken mislukt");
+
+      toast("Hond geregistreerd", "success");
+
+      // 4) form reset + preview reset
+      if (refs.photoInput) refs.photoInput.value = "";
+      if (refs.photoPrev)  { refs.photoPrev.src = ""; refs.photoPrev.style.display = "none"; }
+      if (refs.photoInfo)  refs.photoInfo.textContent = "Geen bestand gekozen";
+
+      // Naam/velden leegmaken naar wens
+      if (refs.name) refs.name.value = "";
+      if (refs.breed) refs.breed.value = "";
+      if (refs.birthdate) refs.birthdate.value = "";
+      if (refs.gender) refs.gender.value = "";
+      if (refs.vacc) refs.vacc.value = "";
+      if (refs.bookletRef) refs.bookletRef.value = "";
+      if (refs.vetName) refs.vetName.value = "";
+      if (refs.vetPhone) refs.vetPhone.value = "";
+      if (refs.emergency) refs.emergency.value = "";
+
+      // 5) lijst verversen
+      await renderList();
+    } catch (err) {
+      console.error(err);
+      toast(err.message || "Er ging iets mis", "error");
+    }
+  }
+
+  async function onPhotoChange() {
+    const file = refs.photoInput?.files?.[0];
+    if (!file) {
+      if (refs.photoPrev)  { refs.photoPrev.src = ""; refs.photoPrev.style.display = "none"; }
+      if (refs.photoInfo)  refs.photoInfo.textContent = "Geen bestand gekozen";
+      return;
+    }
+    // Preview tonen
+    const dataUrl = await readAsDataURL(file);
+    if (refs.photoPrev)  { refs.photoPrev.src = dataUrl; refs.photoPrev.style.display = "block"; }
+    if (refs.photoInfo)  refs.photoInfo.textContent = `${file.name} (${Math.round(file.size/1024)} KB)`;
+  }
+
+  async function onFilterChange() {
+    currentFilterCustomerId = refs.filterCustomerId?.value?.trim() || "";
+    await renderList();
+  }
+
+  // ------- Init -------
+  async function initDogsTab({ defaultCustomerId = "" } = {}) {
+    currentFilterCustomerId = defaultCustomerId;
+
+    // events
+    refs.createBtn?.addEventListener("click", (e) => { e.preventDefault(); onCreateDog(); });
+    refs.reloadBtn?.addEventListener("click", (e) => { e.preventDefault(); renderList(); });
+    refs.photoInput?.addEventListener("change", onPhotoChange);
+    refs.filterCustomerId?.addEventListener("change", onFilterChange);
+
+    // lijst laden
+    await renderList();
+  }
+
+  return { initDogsTab };
+})();
+
+// Roep dit aan wanneer je Honden-tab opent of bij app start:
+DogsUI.initDogsTab({ defaultCustomerId: "" }); // of bv. geselecteerde klant-id
