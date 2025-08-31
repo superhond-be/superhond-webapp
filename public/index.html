@@ -1,139 +1,70 @@
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Superhond Coach Portaal</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 0; background:#0f172a; color:#e2e8f0; }
-    header { background:#0ea5e9; color:#fff; padding:16px 20px; font-weight:700; font-size:20px; }
-    main { max-width: 960px; margin: 24px auto; padding: 0 16px; }
-    fieldset { border:1px solid #334155; border-radius:8px; margin:18px 0; padding:14px; }
-    legend { padding: 0 8px; color:#93c5fd; }
-    label { display:block; font-size:14px; margin:10px 0 6px; }
-    input, select { width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0b1220; color:#e2e8f0; }
-    .row { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
-    .actions { display:flex; gap:10px; margin-top:14px; }
-    button { padding:10px 14px; border:0; border-radius:8px; cursor:pointer; }
-    .primary{ background:#22c55e; color:#052e16; font-weight:700; }
-    .secondary{ background:#1f2937; color:#e5e7eb; }
-    #dog-preview { margin-top:10px; }
-    #dog-preview img{ max-width:180px; border-radius:10px; border:1px solid #334155; display:block; }
-    .notice { font-size:13px; color:#94a3b8; margin-top:6px; }
-    .card { border:1px dashed #334155; border-radius:8px; padding:12px; margin-top:12px; }
-    .ok { color:#22c55e; }
-    .err { color:#ef4444; white-space:pre-wrap; }
-  </style>
-</head>
-<body>
-  <header>🐾 Superhond Coach Portaal</header>
-  <main>
-    <h2>Registratie: Klant + Hond</h2>
+// public/app.js
+const formEl = document.getElementById("register-form");
+const dogFileEl = document.getElementById("dogPhoto");
+const previewBox = document.getElementById("dog-preview");
+const resultBox = document.getElementById("result");
+const reloadBtn = document.getElementById("reloadBtn");
 
-    <!-- Foto upload + preview -->
-    <fieldset>
-      <legend>Hond — Foto</legend>
-      <label for="dogPhoto">Foto hond (JPG/PNG, max 5MB)</label>
-      <input type="file" id="dogPhoto" name="dogPhoto" accept="image/*" />
-      <div id="dog-preview" class="notice">Nog geen foto geselecteerd.</div>
-    </fieldset>
+// Preview van de gekozen foto
+dogFileEl.addEventListener("change", () => {
+  const file = dogFileEl.files?.[0];
+  if (!file) {
+    previewBox.innerHTML = "Nog geen foto geselecteerd.";
+    return;
+  }
+  const url = URL.createObjectURL(file);
+  previewBox.innerHTML = `<img src="${url}" alt="Voorbeeld hond" />`;
+});
 
-    <form id="register-form">
-      <fieldset>
-        <legend>Klantgegevens</legend>
-        <div class="row">
-          <div>
-            <label for="customerName">Naam</label>
-            <input id="customerName" name="customerName" required />
-          </div>
-          <div>
-            <label for="customerEmail">E-mail</label>
-            <input id="customerEmail" type="email" name="customerEmail" required />
-          </div>
-        </div>
-        <div class="row">
-          <div>
-            <label for="customerPhone">Telefoon</label>
-            <input id="customerPhone" name="customerPhone" />
-          </div>
-          <div>
-            <label for="lessonType">Lestype (gekocht pakket)</label>
-            <select id="lessonType" name="lessonType" required>
-              <option value="">— kies —</option>
-              <option value="PUPPY_PACK">Puppy Pack</option>
-              <option value="PUBER_COACHGROEP">PUBER — Coachgroep</option>
-              <option value="GEVORDERD">Gevorderd</option>
-            </select>
-          </div>
-        </div>
-      </fieldset>
+// Herladen knopje
+reloadBtn.addEventListener("click", () => location.reload());
 
-      <fieldset>
-        <legend>Hond</legend>
-        <div class="row">
-          <div>
-            <label for="dogName">Naam hond</label>
-            <input id="dogName" name="dogName" required />
-          </div>
-          <div>
-            <label for="breed">Ras</label>
-            <input id="breed" name="breed" />
-          </div>
-        </div>
-        <div class="row">
-          <div>
-            <label for="birthdate">Geboortedatum</label>
-            <input id="birthdate" name="birthdate" type="date" />
-          </div>
-          <div>
-            <label for="gender">Geslacht</label>
-            <select id="gender" name="gender">
-              <option value="">—</option>
-              <option value="M">Reu</option>
-              <option value="F">Teef</option>
-            </select>
-          </div>
-        </div>
-      </fieldset>
+// Submit: multipart/form-data met FormData (inclusief foto)
+formEl.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  resultBox.textContent = "Versturen…";
 
-      <fieldset>
-        <legend>Inentingen & Dierenarts</legend>
-        <div class="row">
-          <div>
-            <label for="vaccination">Vaccinatiestatus</label>
-            <input id="vaccination" name="vaccination" />
-          </div>
-          <div>
-            <label for="vaccinationBookRef">Inentingsboekje ref.</label>
-            <input id="vaccinationBookRef" name="vaccinationBookRef" />
-          </div>
-        </div>
-        <div class="row">
-          <div>
-            <label for="vetPhone">Dierenarts – telefoon</label>
-            <input id="vetPhone" name="vetPhone" />
-          </div>
-          <div>
-            <label for="vetName">Dierenarts – naam</label>
-            <input id="vetName" name="vetName" />
-          </div>
-        </div>
+  const fd = new FormData(formEl);
+
+  // voeg foto toe (name="dogPhoto" komt al uit index.html)
+  if (dogFileEl.files?.[0]) {
+    fd.set("dogPhoto", dogFileEl.files[0]);
+  }
+
+  try {
+    const res = await fetch("/api/customers/register", {
+      method: "POST",
+      body: fd
+      // géén headers hier — browser zet multipart boundary zelf
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error || "Onbekende fout");
+    }
+
+    // Toon resultaat
+    const { customer, dog } = data;
+    const photo = dog?.photoUrl
+      ? `<img src="${dog.photoUrl}" alt="hond" style="max-width:120px;border-radius:8px;border:1px solid #334155" />`
+      : "<em>geen foto</em>";
+
+    resultBox.innerHTML = `
+      <div class="ok"><strong>✔ Geregistreerd!</strong></div>
+      <div style="display:flex; gap:16px; align-items:flex-start; margin-top:8px">
+        <div>${photo}</div>
         <div>
-          <label for="emergencyPhone">Noodnummer</label>
-          <input id="emergencyPhone" name="emergencyPhone" />
+          <div><strong>Klant:</strong> ${customer.name} (${customer.email})</div>
+          <div><strong>Telefoon:</strong> ${customer.phone || "-"}</div>
+          <div><strong>Lestype:</strong> ${customer.lessonType || "-"}</div>
+          <div style="margin-top:8px"><strong>Hond:</strong> ${dog.name} (${dog.breed || "-"})</div>
         </div>
-      </fieldset>
-
-      <div class="actions">
-        <button class="primary" type="submit">Registreren</button>
-        <button class="secondary" type="button" id="reloadBtn">Herladen</button>
       </div>
-    </form>
+    `;
 
-    <div id="result" class="card"></div>
-  </main>
-
-  <script src="/app.js" type="module"></script>
-</body>
-</html>
+    // leeg formulier (preview laten staan)
+    formEl.reset();
+  } catch (err) {
+    resultBox.innerHTML = `<div class="err">✖ ${err.message}</div>`;
+  }
+});
