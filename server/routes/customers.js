@@ -4,12 +4,23 @@ const router = express.Router();
 
 // In-memory opslag
 let NEXT_CUSTOMER_ID = 2;
-export let CUSTOMERS_REF = [
-  { id: 1, name: "Demo Klant", email: "demo@example.com", phone: "000/00.00.00", dogs: [], passBalance: 0 }
+
+// Deze array exporteren we expliciet, zodat index.js hem kan importeren
+export const CUSTOMERS_REF = [
+  {
+    id: 1,
+    name: "Demo Klant",
+    email: "demo@example.com",
+    phone: "000/00.00.00",
+    dogs: [],
+    passBalance: 0
+  }
 ];
 
-// Helpers (named exports)
-export function getAllCustomers() { return CUSTOMERS_REF; }
+// Helpers
+export function getAllCustomers() {
+  return CUSTOMERS_REF;
+}
 
 export function findCustomer(id) {
   const n = Number(id);
@@ -19,12 +30,21 @@ export function findCustomer(id) {
 export function addCustomer(data) {
   const { name, email = "", phone = "" } = data || {};
   if (!name) throw new Error("Naam is verplicht");
-  const newCustomer = { id: NEXT_CUSTOMER_ID++, name, email, phone, dogs: [], passBalance: 0 };
+
+  const newCustomer = {
+    id: NEXT_CUSTOMER_ID++,
+    name,
+    email,
+    phone,
+    dogs: [],
+    passBalance: 0
+  };
+
   CUSTOMERS_REF.push(newCustomer);
   return newCustomer;
 }
 
-// REST
+// REST endpoints
 router.get("/", (_req, res) => res.json(CUSTOMERS_REF));
 
 router.get("/:id", (req, res) => {
@@ -34,19 +54,25 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  try { res.status(201).json(addCustomer(req.body || {})); }
-  catch (e) { res.status(400).json({ error: String(e.message || e) }); }
+  try {
+    const nieuw = addCustomer(req.body || {});
+    res.status(201).json(nieuw);
+  } catch (e) {
+    res.status(400).json({ error: String(e.message || e) });
+  }
 });
 
 router.patch("/:id", (req, res) => {
   const c = findCustomer(req.params.id);
   if (!c) return res.status(404).json({ error: "Klant niet gevonden" });
+
   const { name, email, phone, passBalance, dogs } = req.body || {};
   if (name !== undefined) c.name = name;
   if (email !== undefined) c.email = email;
   if (phone !== undefined) c.phone = phone;
   if (typeof passBalance === "number") c.passBalance = passBalance;
   if (Array.isArray(dogs)) c.dogs = dogs;
+
   res.json(c);
 });
 
