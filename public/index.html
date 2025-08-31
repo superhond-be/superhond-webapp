@@ -22,6 +22,7 @@
 
   <section>
     <h2>Nieuwe kaart toevoegen</h2>
+    
     <div class="row">
       <input id="typeInput" placeholder="Type (bv. Puppycursus)" />
       <input id="stripsInput" type="number" min="1" step="1" placeholder="Aantal strips (bv. 9)" />
@@ -38,6 +39,59 @@
 
   
   <section>
+
+    <!-- Klant detailpaneel -->
+<div id="customer-detail" class="card" style="display:none; margin-top:16px;">
+  <h3 id="cd-title">Klantdetail</h3>
+
+  <div class="grid-2">
+    <div>
+      <h4>Honden</h4>
+      <ul id="cd-dogs" class="bullets"></ul>
+
+      <h4>Strippenkaarten</h4>
+      <table class="data-table" id="cd-passes">
+        <thead><tr><th>Lestype</th><th>Resterend</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div>
+      <h4>Nieuwe les plannen</h4>
+      <form id="cd-lesson-form">
+        <label>Hond
+          <select name="dogId" id="cd-dog"></select>
+        </label>
+        <label>Lestype
+          <input name="classType" id="cd-class" placeholder="bv. Puppycursus" required />
+        </label>
+        <label>Datum
+          <input type="date" name="date" id="cd-date" required />
+        </label>
+        <label>Start
+          <input type="time" name="startTime" id="cd-start" required />
+        </label>
+        <label>Einde
+          <input type="time" name="endTime" id="cd-end" />
+        </label>
+        <label>Locatie
+          <input name="location" id="cd-loc" placeholder="bv. Prinsenpark" />
+        </label>
+        <div class="row">
+          <button type="button" id="cd-dry" class="secondary">Proefcontrole</button>
+          <button type="submit" class="primary">Boek les</button>
+          <span id="cd-status" class="muted"></span>
+        </div>
+      </form>
+
+      <h4 style="margin-top:16px;">Geplande lessen</h4>
+      <table class="data-table" id="cd-lessons">
+        <thead><tr><th>Datum</th><th>Tijd</th><th>Lestype</th><th>Hond</th><th>Locatie</th><th>Actie</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
     <h2>Bestaande kaarten</h2>
     <table id="passesTable">
       <thead>
