@@ -2,7 +2,13 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+// BOVENAAN je file
+import passesRoutes from "./routes/passes.js";
 
+// ... je bestaande app/middleware
+// let op: app slechts 1x definiëren in dit bestand!
+
+app.use(passesRoutes); // routes beginnen zelf op /api/...
 // --- App setup
 const app = express();
 app.use(express.json());
