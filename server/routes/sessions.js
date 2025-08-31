@@ -1,7 +1,13 @@
 import express from "express";
 import { CLASSES } from "./classes.js";
 const router = express.Router();
+// server/routes/sessions.js
+import express from "express";
+const router = express.Router();
 
+router.get("/", (_req, res) => res.json([]));
+
+export default router;
 /** In-memory sessions (lessen-momenten) */
 let SESSIONS = [
   // voorbeeld:
