@@ -1,3 +1,95 @@
+ 1 const express = require("express");
+ 2 const router = express.Router();
+ 3 
+ 4 // In-memory opslag voor honden
+ 5 let dogs = [];
+ 6 
+ 7 // ---- GET alle honden (optioneel filter op customerId) ----
+ 8 router.get("/", (req, res) => {
+ 9   const { customerId } = req.query;
+10   if (customerId) {
+11     const filtered = dogs.filter(d => d.customerId === Number(customerId));
+12     return res.json(filtered);
+13   }
+14   res.json(dogs);
+15 });
+16 
+17 // ---- GET hond op ID ----
+18 router.get("/:id", (req, res) => {
+19   const dog = dogs.find(d => d.id === Number(req.params.id));
+20   if (!dog) return res.status(404).json({ message: "Hond niet gevonden" });
+21   res.json(dog);
+22 });
+23 
+24 // ---- POST nieuwe hond ----
+25 router.post("/", (req, res) => {
+26   const {
+27     name,
+28     breed,
+29     birthDate,
+30     gender,
+31     vetPhone,
+32     vetName,
+33     vaccinationStatus,
+34     passportRef,
+35     emergencyPhone,
+36     customerId,     // koppeling naar klant
+37     photoUrl        // optioneel: URL (upload kan later)
+38   } = req.body;
+39 
+40   const newDog = {
+41     id: dogs.length + 1,
+42     name: name || "",
+43     breed: breed || "",
+44     birthDate: birthDate || null,
+45     gender: gender || "-",
+46     vetPhone: vetPhone || "",
+47     vetName: vetName || "",
+48     vaccinationStatus: vaccinationStatus || "",
+49     passportRef: passportRef || "",
+50     emergencyPhone: emergencyPhone || "",
+51     customerId: customerId ? Number(customerId) : null,
+52     photoUrl: photoUrl || null
+53   };
+54 
+55   dogs.push(newDog);
+56   res.status(201).json(newDog);
+57 });
+58 
+59 // ---- PUT hond bijwerken ----
+60 router.put("/:id", (req, res) => {
+61   const dog = dogs.find(d => d.id === Number(req.params.id));
+62   if (!dog) return res.status(404).json({ message: "Hond niet gevonden" });
+63 
+64   Object.assign(dog, {
+65     name: req.body.name ?? dog.name,
+66     breed: req.body.breed ?? dog.breed,
+67     birthDate: req.body.birthDate ?? dog.birthDate,
+68     gender: req.body.gender ?? dog.gender,
+69     vetPhone: req.body.vetPhone ?? dog.vetPhone,
+70     vetName: req.body.vetName ?? dog.vetName,
+71     vaccinationStatus: req.body.vaccinationStatus ?? dog.vaccinationStatus,
+72     passportRef: req.body.passportRef ?? dog.passportRef,
+73     emergencyPhone: req.body.emergencyPhone ?? dog.emergencyPhone,
+74     customerId: req.body.customerId !== undefined ? Number(req.body.customerId) : dog.customerId,
+75     photoUrl: req.body.photoUrl ?? dog.photoUrl
+76   });
+77 
+78   res.json(dog);
+79 });
+80 
+81 // ---- DELETE hond ----
+82 router.delete("/:id", (req, res) => {
+83   const before = dogs.length;
+84   dogs = dogs.filter(d => d.id !== Number(req.params.id));
+85   if (dogs.length === before) {
+86     return res.status(404).json({ message: "Hond niet gevonden" });
+87   }
+88   res.json({ message: "Hond verwijderd" });
+89 });
+90 
+91 module.exports = router;
+
 // server/routes/dogs.js
 import express from "express";
 import multer from "multer";
