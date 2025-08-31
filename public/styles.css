@@ -193,3 +193,8 @@ footer {
   text-align: center;
   font-size: 13px;
 }
+
+.data-table th { cursor: pointer; user-select: none; }
+.data-table th .sort {
+  font-size: 12px; opacity: .7; margin-left: 6px;
+}
