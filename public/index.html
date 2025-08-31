@@ -169,6 +169,109 @@
       </select>
     </label>
 
+
+<!-- TAB: Klanten & Honden -->
+<button class="tab-btn" id="tab-people" data-target="section-people">
+  Klanten & Honden
+</button>
+
+<section id="section-people" class="tab-section" hidden>
+  <h2>Klanten & Honden</h2>
+
+  <div class="card">
+    <h3>Nieuwe klant</h3>
+    <form id="form-customer">
+      <div class="grid">
+        <label>Naam
+          <input name="name" required placeholder="bv. Jan Jansen" />
+        </label>
+        <label>E-mail
+          <input name="email" type="email" placeholder="jan@example.com" />
+        </label>
+        <label>Telefoon
+          <input name="phone" placeholder="0470 00 00 00" />
+        </label>
+        <label>Noodcontact (optioneel)
+          <input name="emergency" placeholder="Naam/nummer noodcontact" />
+        </label>
+      </div>
+      <div class="row">
+        <button class="primary" type="submit">Klant aanmaken</button>
+        <span id="cust-status" class="muted"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Nieuwe hond koppelen aan klant</h3>
+    <form id="form-dog">
+      <div class="grid">
+        <label>Klant
+          <select id="dog-owner" name="ownerId" required></select>
+        </label>
+        <label>Naam hond
+          <input name="name" required placeholder="bv. Fido" />
+        </label>
+        <label>Ras
+          <input name="breed" placeholder="bv. Labrador" />
+        </label>
+        <label>Geslacht
+          <select name="sex">
+            <option value="">—</option>
+            <option value="reu">Reu</option>
+            <option value="teef">Teef</option>
+          </select>
+        </label>
+        <label>Geboortedatum
+          <input type="date" name="birthdate" />
+        </label>
+        <label>Inentingen / boekje (optioneel)
+          <input name="bookRef" placeholder="boekje ref / opmerking" />
+        </label>
+        <label>Dierenarts (naam)
+          <input name="vetName" placeholder="bv. Dierenarts Peeters" />
+        </label>
+        <label>Dierenarts (tel)
+          <input name="vetPhone" placeholder="bv. 014 00 00 00" />
+        </label>
+        <label>Noodnummer
+          <input name="emergencyPhone" placeholder="bv. 0470 00 00 00" />
+        </label>
+        <label>Vaccinatiestatus
+          <input name="vaccStatus" placeholder="bv. volledig / in orde" />
+        </label>
+      </div>
+      <div class="row">
+        <button class="primary" type="submit">Hond toevoegen</button>
+        <span id="dog-status" class="muted"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Overzicht klanten & honden</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Klant</th>
+          <th>E-mail</th>
+          <th>Telefoon</th>
+          <th>Honden</th>
+        </tr>
+      </thead>
+      <tbody id="people-table">
+        <tr><td colspan="4" class="muted">(nog geen data)</td></tr>
+      </tbody>
+    </table>
+    <div class="row">
+      <button id="people-reload" class="secondary">🔄 Herladen</button>
+      <span id="people-updated" class="muted"></span>
+    </div>
+  </div>
+</section>
+    
+
+
     <label>
       Minder dan X strips
       <input id="filter-threshold" type="number" min="0" step="1" placeholder="bv. 3" />
