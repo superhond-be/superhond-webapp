@@ -1,57 +1,49 @@
 // server/routes/passes.js
 import express from "express";
-
 const router = express.Router();
 
-// Simpele in-memory data
-let PASSES = [];
+import { findCustomer } from "./customers.js";
 
-/**
- * Voeg een strippenkaart toe aan een klant
- */
-export function useOnStripForCustomer(customerId, passData) {
-  const newPass = {
-    id: Date.now().toString(),
-    customerId,
-    ...passData,
-    used: 0,
-  };
-  PASSES.push(newPass);
-  return newPass;
+// Named helpers (zodat import { useOneStripForCustomer } geldig is)
+export function getPassBalance(customerId) {
+  const c = findCustomer(customerId);
+  if (!c) throw new Error("Klant niet gevonden");
+  return c.passBalance || 0;
 }
 
-/**
- * API endpoint: lijst alle strippenkaarten
- */
-router.get("/", (req, res) => {
-  res.json(PASSES);
+export function addPasses(customerId, amount) {
+  const c = findCustomer(customerId);
+  if (!c) throw new Error("Klant niet gevonden");
+  const qty = Number(amount) || 0;
+  c.passBalance = (c.passBalance || 0) + qty;
+  return c.passBalance;
+}
+
+export function useOneStripForCustomer(customerId) {
+  const c = findCustomer(customerId);
+  if (!c) throw new Error("Klant niet gevonden");
+  const bal = c.passBalance || 0;
+  if (bal <= 0) throw new Error("Geen strippen meer beschikbaar");
+  c.passBalance = bal - 1;
+  return c.passBalance;
+}
+
+// REST
+router.get("/:customerId/balance", (req, res) => {
+  try { res.json({ balance: getPassBalance(req.params.customerId) }); }
+  catch (e) { res.status(400).json({ error: String(e.message || e) }); }
 });
 
-/**
- * API endpoint: voeg een nieuwe strippenkaart toe
- */
-router.post("/", (req, res) => {
-  const { customerId, type, credits } = req.body;
-  if (!customerId || !type || !credits) {
-    return res.status(400).json({ error: "customerId, type en credits zijn verplicht" });
-  }
-  const newPass = useOnStripForCustomer(customerId, { type, credits });
-  res.status(201).json(newPass);
+router.post("/:customerId/add", (req, res) => {
+  try {
+    const { amount } = req.body || {};
+    res.json({ balance: addPasses(req.params.customerId, amount) });
+  } catch (e) { res.status(400).json({ error: String(e.message || e) }); }
 });
 
-/**
- * API endpoint: gebruik een strip
- */
-router.post("/:id/use", (req, res) => {
-  const pass = PASSES.find(p => p.id === req.params.id);
-  if (!pass) return res.status(404).json({ error: "Strippenkaart niet gevonden" });
-
-  if (pass.used >= pass.credits) {
-    return res.status(400).json({ error: "Geen credits meer" });
-  }
-
-  pass.used += 1;
-  res.json(pass);
+router.post("/:customerId/use", (req, res) => {
+  try { res.json({ balance: useOneStripForCustomer(req.params.customerId) }); }
+  catch (e) { res.status(400).json({ error: String(e.message || e) }); }
 });
 
 export default router;
