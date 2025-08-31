@@ -1,48 +1,48 @@
 
 
- 1 // server/routes/passes.js
- 2 import express from "express";
- 3 const router = express.Router();
- 4 
- 5 /**
- 6  * In-memory aankopen / strippenkaarten.
- 7  * purchase:
- 8  *  { id, customerId, dogId, typeCode, totalStrips, usedStrips }
- 9  */
-10 const PURCHASES = [];
-11 
-12 /** Hulpfunctie: hoeveel strips hoort bij een lestype */
-13 const STRIPS_PER_TYPE = {
-14   PUPPY: 9,
-15   PUBER: 5,
-16   GEV: 10
-17 };
-18 
-19 // Overzicht aankopen (optioneel filteren op klant of hond)
-20 router.get("/", (req, res) => {
-21   const { customerId, dogId } = req.query;
-22   let out = PURCHASES.slice();
-23   if (customerId) out = out.filter(p => String(p.customerId) === String(customerId));
-24   if (dogId) out = out.filter(p => String(p.dogId) === String(dogId));
-25   res.json(out);
-26 });
-27 
-28 // Nieuwe strippenkaart registreren (koppelt aan klant + hond + lestype)
-29 router.post("/", (req, res) => {
-30   const { customerId, dogId, typeCode } = req.body || {};
-31   if (!customerId || !dogId || !typeCode) {
-32     return res.status(400).json({ error: "customerId, dogId en typeCode zijn verplicht" });
-33   }
-34   const total = STRIPS_PER_TYPE[typeCode];
-35   if (!total) return res.status(400).json({ error: "Onbekend lestype" });
-36 
-37   const id = Date.now(); // eenvoudige ID
-38   const purchase = { id, customerId, dogId, typeCode, totalStrips: total, usedStrips: 0 };
-39   PURCHASES.push(purchase);
-40   res.status(201).json(purchase);
-41 });
-42 
-43 // Verbruik 1 strip voor een bepaalde aankoop (bijv. bij aanwezigheid)
+  // server/routes/passes.js 
+  import express from "express";
+  const router = express.Router();
+  
+  /**
+   * In-memory aankopen / strippenkaarten.
+   * purchase:
+   *  { id, customerId, dogId, typeCode, totalStrips, usedStrips }
+   */
+ const PURCHASES = [];
+ 
+ /** Hulpfunctie: hoeveel strips hoort bij een lestype */
+ const STRIPS_PER_TYPE = {
+   PUPPY: 9,
+   PUBER: 5,
+   GEV: 10
+ };
+ 
+ // Overzicht aankopen (optioneel filteren op klant of hond)
+ router.get("/", (req, res) => {
+   const { customerId, dogId } = req.query;
+   let out = PURCHASES.slice();
+    if (customerId) out = out.filter(p => String(p.customerId) === String(customerId));
+   if (dogId) out = out.filter(p => String(p.dogId) === String(dogId));
+   res.json(out);
+ });
+ 
+ // Nieuwe strippenkaart registreren (koppelt aan klant + hond + lestype
+ router.post("/", (req, res) => {
+   const { customerId, dogId, typeCode } = req.body || {};
+   if (!customerId || !dogId || !typeCode) {
+     return res.status(400).json({ error: "customerId, dogId en typeCode zijn verplicht" });
+   }
+   const total = STRIPS_PER_TYPE[typeCode];
+   if (!total) return res.status(400).json({ error: "Onbekend lestype" });
+ 
+   const id = Date.now(); // eenvoudige ID
+   const purchase = { id, customerId, dogId, typeCode, totalStrips: total, usedStrips: 0 };
+   PURCHASES.push(purchase);
+   res.status(201).json(purchase);
+ });
+ 
+ // Verbruik 1 strip voor een bepaalde aankoop (bijv. bij aanwezigheid)
 44 router.post("/:id/consume", (req, res) => {
 45   const id = Number(req.params.id);
 46   const p = PURCHASES.find(x => x.id === id);
