@@ -1,669 +1,31 @@
-/* ============================================================
-   Superhond – public/app.js  (VOLLEDIG VERVANGEN)
-   ============================================================ */
-
-/* ---------- Kleine helpers ---------- */
-const $  = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-
-async function fetchJSON(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`GET ${url} -> ${res.status}`);
-  return res.json();
-}
-async function postJSON(url, body) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type":"application/json" },
-    body: JSON.stringify(body || {})
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(()=> "");
-    throw new Error(`POST ${url} -> ${res.status} ${t}`);
-  }
-  try { return await res.json(); } catch { return {}; }
+// ===== Helpers =====
+async function fetchJSON(url, opts = {}) {
+  const r = await fetch(url, opts);
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+  return data;
 }
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  return String(s || "").replace(/[&<>"']/g, c => (
+    { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
+  ));
 }
 function stamp() {
-  const d=new Date(), p=n=>String(n).padStart(2,"0");
-  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  return new Date().toLocaleString("nl-BE");
 }
-function setBusy(el, busy=true) {
-  if (!el) return;
-  if (busy) { el.setAttribute("disabled","disabled"); el.classList.add("is-busy"); }
-  else { el.removeAttribute("disabled"); el.classList.remove("is-busy"); }
-}
-
-/* ---------- Tab navigatie ---------- */
-function wireTabs() {
-  const btns = $$(".tab-btn");
-  const sections = $$(".tab-section");
-  if (!btns.length || !sections.length) return;
-
-  function show(targetId) {
-    sections.forEach(sec => sec.hidden = sec.id !== targetId);
-    btns.forEach(b => b.classList.toggle("active", b.dataset.target === targetId));
-  }
-
-  btns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const target = btn.dataset.target;
-      if (target) show(target);
-      // Event sturen zodat specifieke tab code kan initialiseren
-      document.dispatchEvent(new CustomEvent("tab:open", { detail:{ id: target }}));
-    });
-  });
-
-  // Eerste tab als actief markeren (als nog geen active is)
-  const currentActive = btns.find(b => b.classList.contains("active")) || btns[0];
-  if (currentActive) {
-    const target = currentActive.dataset.target;
-    show(target);
-    document.dispatchEvent(new CustomEvent("tab:open", { detail:{ id: target }}));
-  }
-}
-
-/* ============================================================
-   LESSONS TAB (boeken + strippenkaart acties)
-   Vereist in HTML:
-   - Selects: #ls-customer, #ls-dog, #ls-classType
-   - Inputs:  #ls-location, #ls-date, #ls-start, #ls-end
-   - Buttons: #ls-book
-   - Status:  #ls-book-status, #lessons-last-updated
-   - Passes:  #ps-customer, #ps-classType, #ps-check, #ps-remaining, #ps-use, #ps-use-status
-   Endpoints (pas aan indien nodig):
-   - GET  /api/customers  (verwacht [{id,name,email,dogs:[{id,name}]}] of zonder dogs)
-   - POST /api/lessons    ({customerId,dogId,classType,date,startTime,endTime,location})
-   - GET  /api/passes?customerId=.. (lijst met kaarten voor klant; gebruikt in overview, optioneel hier)
-   - GET  /api/passes?customerId=..&classType=.. (backend kan je uitbreiden om remaining op te leveren)
-   - POST /api/passes/use ({customerId,classType,count})
-   ============================================================ */
-const API = {
-  customers: "/api/customers",
-  lessons:   "/api/lessons",
-  passes:    "/api/passes",
-  usePass:   "/api/passes/use"
-};
-
-const ls = {
-  customerSel: $("#ls-customer"),
-  dogSel:      $("#ls-dog"),
-  classSel:    $("#ls-classType"),
-  loc:         $("#ls-location"),
-  date:        $("#ls-date"),
-  start:       $("#ls-start"),
-  end:         $("#ls-end"),
-  bookBtn:     $("#ls-book"),
-  status:      $("#ls-book-status"),
-  updated:     $("#lessons-last-updated")
-};
-const ps = {
-  customerSel: $("#ps-customer"),
-  classSel:    $("#ps-classType"),
-  checkBtn:    $("#ps-check"),
-  remaining:   $("#ps-remaining"),
-  useBtn:      $("#ps-use"),
-  useStatus:   $("#ps-use-status")
-};
-
-let _customersCache = [];   // [{id,name,email,dogs:[{id,name}]}]
-
-async function loadCustomersInto(selects = []) {
-  try {
-    if (!_customersCache.length) {
-      _customersCache = await fetchJSON(API.customers);
-      // fallback als backend geen dogs inline retourneert:
-      _customersCache = _customersCache.map(c => ({ ...c, dogs: Array.isArray(c.dogs) ? c.dogs : (c.dogs ? c.dogs : []) }));
-      _customersCache.sort((a,b)=> a.name.localeCompare(b.name));
-    }
-    const options = ['<option value="">— kies klant —</option>']
-      .concat(_customersCache.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.email||"-")})</option>`));
-    selects.forEach(sel => { if (sel) sel.innerHTML = options.join(""); });
-  } catch (e) {
-    console.error("loadCustomersInto:", e);
-    selects.forEach(sel => { if (sel) sel.innerHTML = '<option value="">(laden mislukt)</option>'; });
-  }
-}
-
-function refreshDogsFor(customerId) {
-  if (!ls.dogSel) return;
-  const c = _customersCache.find(x => String(x.id) === String(customerId));
-  const dogs = c?.dogs || [];
-  ls.dogSel.innerHTML = dogs.length
-    ? dogs.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join("")
-    : '<option value="">(geen honden)</option>';
-}
-
-async function wireLessonsTab() {
-  if (!ls.customerSel && !ps.customerSel) return; // tab niet aanwezig
-
-  // Init dropdowns
-  await loadCustomersInto([ls.customerSel, ps.customerSel].filter(Boolean));
-
-  // Bij start: selecteer eerste klant indien beschikbaar
-  if (ls.customerSel && ls.customerSel.options.length > 1) {
-    ls.customerSel.selectedIndex = 1;
-    refreshDogsFor(ls.customerSel.value);
-  }
-  if (ps.customerSel && ps.customerSel.options.length > 1) {
-    ps.customerSel.selectedIndex = 1;
-  }
-
-  // Events
-  ls.customerSel?.addEventListener("change", () => refreshDogsFor(ls.customerSel.value));
-
-  ls.bookBtn?.addEventListener("click", async () => {
-    if (!ls.customerSel || !ls.dogSel || !ls.classSel || !ls.date || !ls.start || !ls.end) return;
-    ls.status.textContent = "";
-    const payload = {
-      customerId: Number(ls.customerSel.value || 0),
-      dogId:      Number(ls.dogSel.value || 0),
-      classType:  ls.classSel.value || "",
-      location:   (ls.loc?.value || "").trim() || null,
-      date:       ls.date.value || "",
-      startTime:  ls.start.value || "",
-      endTime:    ls.end.value || ""
-    };
-    if (!payload.customerId || !payload.dogId || !payload.classType || !payload.date || !payload.startTime || !payload.endTime) {
-      ls.status.textContent = "Gelieve alle velden in te vullen.";
-      return;
-    }
-    setBusy(ls.bookBtn, true);
-    try {
-      await postJSON(API.lessons, payload);
-      ls.status.textContent = "✅ Les toegevoegd (strip afgeschreven).";
-      if (ls.updated) ls.updated.textContent = `Laatste update: ${stamp()}`;
-    } catch (e) {
-      console.error("Les toevoegen:", e);
-      ls.status.textContent = "❌ Fout bij les toevoegen (controleer strippenkaart).";
-    } finally {
-      setBusy(ls.bookBtn, false);
-    }
-  });
-
-  ps.checkBtn?.addEventListener("click", async () => {
-    if (!ps.customerSel || !ps.classSel || !ps.remaining) return;
-    ps.remaining.textContent = "…";
-    try {
-      // Je backend mag ofwel lijst teruggeven, of enkel 1 object met remaining.
-      const url = `${API.passes}?customerId=${encodeURIComponent(ps.customerSel.value)}&classType=${encodeURIComponent(ps.classSel.value)}`;
-      const data = await fetchJSON(url);
-      if (Array.isArray(data)) {
-        // neem som van alle matching kaarten of toon eerste
-        const rem = data.reduce((acc, p) => acc + Number(p.remaining ?? p.strips ?? 0), 0);
-        ps.remaining.textContent = `${rem} strips`;
-      } else {
-        const rem = Number(data.remaining ?? data.strips ?? 0);
-        ps.remaining.textContent = `${rem} strips`;
-      }
-      if (ls.updated) ls.updated.textContent = `Laatste update: ${stamp()}`;
-    } catch (e) {
-      console.error("Passes check:", e);
-      ps.remaining.textContent = "fout";
-    }
-  });
-
-  ps.useBtn?.addEventListener("click", async () => {
-    if (!ps.customerSel || !ps.classSel || !ps.useStatus) return;
-    ps.useStatus.textContent = "";
-    const payload = { customerId: Number(ps.customerSel.value || 0), classType: ps.classSel.value, count: 1 };
-    if (!payload.customerId || !payload.classType) {
-      ps.useStatus.textContent = "Kies klant & lestype.";
-      return;
-    }
-    setBusy(ps.useBtn, true);
-    try {
-      await postJSON(API.usePass, payload);
-      ps.useStatus.textContent = "✅ 1 strip gebruikt.";
-      ps.checkBtn?.click(); // direct bijwerken
-    } catch (e) {
-      console.error("Use pass:", e);
-      ps.useStatus.textContent = "❌ Kon strip niet gebruiken.";
-    } finally {
-      setBusy(ps.useBtn, false);
-      if (ls.updated) ls.updated.textContent = `Laatste update: ${stamp()}`;
-    }
-  });
-}
-
-/* ============================================================
-   OVERZICHT STRIPPENKAARTEN (filters + sorteerbaar)
-   Vereist in HTML:
-   - Tabel:  #passes-table (thead th: name,email,type,remaining) + tbody
-   - Knoppen: #passes-refresh
-   - Filters: #filter-class, #filter-threshold, #filter-apply, #filter-reset
-   - Info:    #passes-last-update, #filter-summary
-   Endpoints:
-   - GET /api/customers
-   - GET /api/passes?customerId=ID   => lijst( type, remaining | strips )
-   ============================================================ */
-
-const passesTableBody   = $("#passes-table tbody");
-const passesRefreshBtn  = $("#passes-refresh");
-const passesLastUpdate  = $("#passes-last-update");
-const passesTableEl     = $("#passes-table");
-const filterClassSel    = $("#filter-class");
-const filterThInput     = $("#filter-threshold");
-const filterApplyBtn    = $("#filter-apply");
-const filterResetBtn    = $("#filter-reset");
-const filterSummaryEl   = $("#filter-summary");
-
-let passesRows = [];   // ruwe data [{name,email,type,remaining}]
-let filteredRows = [];
-let sortState = { key: "name", dir: "asc" };
-
-function setSortIndicators() {
-  if (!passesTableEl) return;
-  passesTableEl.querySelectorAll("th .sort").forEach(s => s.textContent = "");
-  const th = passesTableEl.querySelector(`th[data-key="${sortState.key}"] .sort`);
-  if (th) th.textContent = sortState.dir === "asc" ? "▲" : "▼";
-}
-function sortRows(rows) {
-  const { key, dir } = sortState;
-  const mul = dir === "asc" ? 1 : -1;
-  return [...rows].sort((a,b) => {
-    const va = (a[key] ?? "");
-    const vb = (b[key] ?? "");
-    if (typeof va === "number" && typeof vb === "number") return (va - vb) * mul;
-    return String(va).localeCompare(String(vb)) * mul;
-  });
-}
-function applyFilters() {
-  const wantType = (filterClassSel?.value || "").trim();
-  const thRaw    = (filterThInput?.value || "").trim();
-  const th       = thRaw === "" ? null : Number(thRaw);
-
-  filteredRows = passesRows.filter(r => {
-    if (wantType && r.type !== wantType) return false;
-    if (th !== null) {
-      const rem = Number(r.remaining ?? 0);
-      if (!(rem < th)) return false;
-    }
-    return true;
-  });
-
-  const parts = [];
-  if (wantType) parts.push(`type: ${wantType}`);
-  if (th !== null) parts.push(`< ${th} strips`);
-  if (filterSummaryEl) filterSummaryEl.textContent = parts.length ? `Filter actief (${parts.join(", ")})` : "";
-}
-function renderPassesTable() {
-  if (!passesTableBody) return;
-  setSortIndicators();
-  const list = sortRows(filteredRows.length ? filteredRows : passesRows);
-  if (!list.length) {
-    passesTableBody.innerHTML = `<tr><td colspan="4">(geen resultaten)</td></tr>`;
-    return;
-  }
-  passesTableBody.innerHTML = list.map(r => `
-    <tr>
-      <td>${escapeHtml(r.name)}</td>
-      <td>${escapeHtml(r.email || "-")}</td>
-      <td>${escapeHtml(r.type)}</td>
-      <td>${r.remaining ?? 0}</td>
-    </tr>
-  `).join("");
-}
-async function loadPassesOverview() {
-  if (!passesTableBody) return;
-  passesTableBody.innerHTML = `<tr><td colspan="4">(laden...)</td></tr>`;
-  if (filterSummaryEl) filterSummaryEl.textContent = "";
-  filteredRows = [];
-  try {
-    const customers = await fetchJSON("/api/customers");
-    const acc = [];
-    for (const c of customers) {
-      const list = await fetchJSON(`/api/passes?customerId=${encodeURIComponent(c.id)}`);
-      if (Array.isArray(list) && list.length) {
-        list.forEach(p => acc.push({
-          name: c.name,
-          email: c.email || "",
-          type: p.type,
-          remaining: Number(p.remaining ?? p.strips ?? 0)
-        }));
-      } else {
-        acc.push({ name: c.name, email: c.email || "", type: "(geen strippenkaart)", remaining: null });
-      }
-    }
-    passesRows = acc;
-    applyFilters();
-    renderPassesTable();
-    if (passesLastUpdate) passesLastUpdate.textContent = `Laatste update: ${stamp()}`;
-  } catch (e) {
-    console.error("loadPassesOverview:", e);
-    passesTableBody.innerHTML = `<tr><td colspan="4">❌ Laden mislukt</td></tr>`;
-  }
-}
-function wirePassesOverview() {
-  if (!passesTableEl) return;
-  // Sort headers
-  const heads = passesTableEl.querySelectorAll("thead th");
-  const keys = ["name","email","type","remaining"];
-  heads.forEach((th, i) => {
-    th.setAttribute("data-key", keys[i]);
-    if (!th.querySelector(".sort")) {
-      const span = document.createElement("span");
-      span.className = "sort";
-      th.appendChild(span);
-    }
-    th.addEventListener("click", () => {
-      const key = th.getAttribute("data-key");
-      if (sortState.key === key) sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
-      else { sortState.key = key; sortState.dir = key === "remaining" ? "desc" : "asc"; }
-      renderPassesTable();
-    });
-  });
-
-  passesRefreshBtn?.addEventListener("click", loadPassesOverview);
-  filterApplyBtn?.addEventListener("click", () => { applyFilters(); renderPassesTable(); });
-  filterResetBtn?.addEventListener("click", () => {
-    if (filterClassSel) filterClassSel.value = "";
-    if (filterThInput) filterThInput.value = "";
-    filteredRows = [];
-    if (filterSummaryEl) filterSummaryEl.textContent = "";
-    renderPassesTable();
-  });
-}
-
-// ==================== Tab: Klanten & Honden ====================
-
-const people = {
-  formCustomer:  document.getElementById("form-customer"),
-  formDog:       document.getElementById("form-dog"),
-  ownerSelect:   document.getElementById("dog-owner"),
-  custStatus:    document.getElementById("cust-status"),
-  dogStatus:     document.getElementById("dog-status"),
-  tableBody:     document.getElementById("people-table"),
-  reloadBtn:     document.getElementById("people-reload"),
-  updated:       document.getElementById("people-updated"),
-};
-
-let _peopleCustomers = [];
-
-async function peopleLoadCustomers() {
-  _peopleCustomers = await fetchJSON("/api/customers");
-  // zorg dat er altijd een array 'dogs' is (sommige backends sturen losse ids)
-  _peopleCustomers = _peopleCustomers.map(c => ({
-    ...c,
-    dogs: Array.isArray(c.dogs) ? c.dogs : (c.dogs ? c.dogs : [])
-  })).sort((a,b)=> a.name.localeCompare(b.name));
-
-  // owner dropdown vullen
-  if (people.ownerSelect) {
-    people.ownerSelect.innerHTML = ['<option value="">— kies klant —</option>']
-      .concat(_peopleCustomers.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.email||"-")})</option>`))
-      .join("");
-  }
-}
-
-async function peopleRenderTable() {
-  if (!people.tableBody) return;
-  people.tableBody.innerHTML = `<tr><td colspan="4">(laden…)</td></tr>`;
-
-  const rows = [];
-  for (const c of _peopleCustomers) {
-    // indien backend geen dogs in customer stopt, haal per klant op:
-    let dogsFor = c.dogs;
-    if (!Array.isArray(dogsFor) || (dogsFor.length && typeof dogsFor[0] !== "object")) {
-      try {
-        dogsFor = await fetchJSON(`/api/dogs?ownerId=${encodeURIComponent(c.id)}`);
-      } catch { dogsFor = []; }
-    }
-    const dogsTxt = (dogsFor && dogsFor.length)
-      ? dogsFor.map(d => escapeHtml(d.name)).join(", ")
-      : "—";
-
-    rows.push(`
-      <tr>
-        <td>${escapeHtml(c.name)}</td>
-        <td>${escapeHtml(c.email || "-")}</td>
-        <td>${escapeHtml(c.phone || "-")}</td>
-        <td>${dogsTxt}</td>
-      </tr>
-    `);
-  }
-
-  people.tableBody.innerHTML = rows.join("");
-  if (people.updated) people.updated.textContent = `Laatste update: ${stamp()}`;
-}
-
-async function wirePeopleTab() {
-  // laad klanten + dropdown
-  try { await peopleLoadCustomers(); await peopleRenderTable(); } catch (e) { console.error(e); }
-
-  // Nieuwe klant
-  people.formCustomer?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!people.formCustomer) return;
-    const fd = new FormData(people.formCustomer);
-    const payload = {
-      name: (fd.get("name") || "").toString().trim(),
-      email: (fd.get("email") || "").toString().trim(),
-      phone: (fd.get("phone") || "").toString().trim(),
-      emergency: (fd.get("emergency") || "").toString().trim(), // wordt door backend genegeerd als die prop niet bestaat, dat is oké
-    };
-    if (!payload.name) { people.custStatus.textContent = "Naam is verplicht."; return; }
-
-    setBusy(people.formCustomer.querySelector("button[type=submit]"), true);
-    people.custStatus.textContent = "";
-    try {
-      await postJSON("/api/customers", payload);
-      people.custStatus.textContent = "✅ Klant aangemaakt.";
-      people.formCustomer.reset();
-      await peopleLoadCustomers();
-      await peopleRenderTable();
-    } catch (e2) {
-      console.error(e2);
-      people.custStatus.textContent = "❌ Kon klant niet aanmaken.";
-    } finally {
-      setBusy(people.formCustomer.querySelector("button[type=submit]"), false);
-    }
-  });
-
-  // Nieuwe hond
-  people.formDog?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!people.formDog) return;
-    const fd = new FormData(people.formDog);
-    const payload = Object.fromEntries(fd.entries());
-    if (!payload.ownerId || !payload.name) {
-      people.dogStatus.textContent = "Kies klant en vul naam hond in.";
-      return;
-    }
-    // converteer numeriek veld
-    payload.ownerId = Number(payload.ownerId);
-
-    setBusy(people.formDog.querySelector("button[type=submit]"), true);
-    people.dogStatus.textContent = "";
-    try {
-      await postJSON("/api/dogs", payload);
-      people.dogStatus.textContent = "✅ Hond toegevoegd.";
-      people.formDog.reset();
-      // dropdown opnieuw vullen (klantenlijst blijft gelijk, maar tabel verversen)
-      await peopleRenderTable();
-    } catch (e2) {
-      console.error(e2);
-      people.dogStatus.textContent = "❌ Kon hond niet toevoegen.";
-    } finally {
-      setBusy(people.formDog.querySelector("button[type=submit]"), false);
-    }
-  });
-
-  // Herladen
-  people.reloadBtn?.addEventListener("click", async () => {
-    try {
-      await peopleLoadCustomers();
-      await peopleRenderTable();
-    } catch (e3) {
-      console.error(e3);
-    }
-  });
-}
-
-// activeer bij openen van de tab
-document.addEventListener("tab:open", (ev) => {
-  if (ev.detail?.id === "section-people") wirePeopleTab();
-});
-// als de tab al zichtbaar is bij laden:
-if (document.getElementById("section-people") && !document.getElementById("section-people").hidden) {
-  wirePeopleTab();
-}
-
-
-/* ---------- Start-up ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  wireTabs();
-
-  // Init specifieke tabs zodra ze geopend worden
-  document.addEventListener("tab:open", (ev) => {
-    const id = ev.detail?.id || "";
-    if (id === "section-lessons") {
-      wireLessonsTab();  // laadt klanten & events
-    }
-    if (id === "section-passes-overview") {
-      wirePassesOverview();
-      loadPassesOverview();
-    }
-
-// ---------------- Lessen tab ----------------
-
-function renderLessonsTab() {
-  const main = document.querySelector("#main-content");
-  main.innerHTML = `
-    <h2>Nieuwe les plannen</h2>
-    <form id="lesson-form">
-      <label>Klant-ID <input type="number" name="customerId" required></label><br>
-      <label>Hond-ID <input type="number" name="dogId"></label><br>
-      <label>Lestype <input type="text" name="classType" required></label><br>
-      <label>Datum <input type="date" name="date" required></label><br>
-      <label>Begintijd <input type="time" name="startTime" required></label><br>
-      <label>Eindtijd <input type="time" name="endTime"></label><br>
-      <label>Locatie <input type="text" name="location"></label><br>
-      <label>Trainer <input type="text" name="trainer"></label><br>
-      <label>Thema <input type="text" name="theme"></label><br>
-      <button type="submit">Definitief boeken</button>
-      <button type="button" id="dry-run-btn">Proefcontrole</button>
-    </form>
-    <div id="lesson-status" style="margin-top:10px; color:#333;"></div>
-
-    <h2>Bestaande lessen</h2>
-    <button id="reload-lessons">Herlaad</button>
-    <ul id="lesson-list"></ul>
-  `;
-
-  // formulier submit = definitieve boeking
-  const form = main.querySelector("#lesson-form");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    data.customerId = Number(data.customerId);
-    if (data.dogId) data.dogId = Number(data.dogId);
-
-    const status = main.querySelector("#lesson-status");
-    status.textContent = "Bezig met boeken...";
-
-    try {
-      const res = await fetch("/api/lessons", {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify(data),
-      });
-      const js = await res.json();
-      if (!res.ok) {
-        status.textContent = "FOUT: " + (js.error || res.status);
-      } else {
-        status.textContent = "✅ Les geboekt voor klant " + data.customerId;
-        loadLessons();
-      }
-    } catch (e) {
-      status.textContent = "FOUT: " + e.message;
-    }
-  });
-
-  // dry-run
-  main.querySelector("#dry-run-btn").addEventListener("click", async () => {
-    const data = Object.fromEntries(new FormData(form).entries());
-    data.customerId = Number(data.customerId);
-    if (data.dogId) data.dogId = Number(data.dogId);
-    data.dryRun = true;
-
-    const status = main.querySelector("#lesson-status");
-    status.textContent = "Dry-run bezig...";
-
-    try {
-      const res = await fetch("/api/lessons", {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify(data),
-      });
-      const js = await res.json();
-      if (!res.ok) {
-        status.textContent = "Dry-run FOUT: " + (js.error || res.status);
-      } else {
-        status.textContent = "Dry-run OK: alles in orde ✅";
-      }
-    } catch (e) {
-      status.textContent = "Dry-run FOUT: " + e.message;
-    }
-  });
-
-  // lijst laden
-  async function loadLessons() {
-    const ul = main.querySelector("#lesson-list");
-    ul.innerHTML = "laden...";
-    try {
-      const list = await fetch("/api/lessons").then(r=>r.json());
-      ul.innerHTML = "";
-      list.forEach(l => {
-        const li = document.createElement("li");
-        li.textContent = `#${l.id} klant ${l.customerId} hond ${l.dogId||"-"} | ${l.classType} | ${l.date} ${l.startTime}`;
-        ul.appendChild(li);
-      });
-    } catch (e) {
-      ul.innerHTML = "FOUT: " + e.message;
-    }
-  }
-  main.querySelector("#reload-lessons").addEventListener("click", loadLessons);
-  loadLessons();
-}
-     
-  });
-
-  // Als een tab al zichtbaar is bij laden (geen hidden)
-  if ($("#section-lessons") && !$("#section-lessons").hidden) wireLessonsTab();
-  if ($("#section-passes-overview") && !$("#section-passes-overview").hidden) {
-    wirePassesOverview(); loadPassesOverview();
-  }
-});
-
-// Toon juiste sectie en activeer tab-knop
 function showSection(id) {
-  document.querySelectorAll(".tab-section").forEach(s => s.hidden = s.id !== id);
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.target === id));
+  document.querySelectorAll("main > section").forEach(sec => sec.hidden = true);
+  document.getElementById(id).hidden = false;
 }
 
-// Klik op LESSONS-tab
-const lessonsTabBtn = document.getElementById("tab-lessons");
-if (lessonsTabBtn) {
-  lessonsTabBtn.addEventListener("click", () => {
-    showSection("section-lessons");
-    // bouw/refresh de Lessen-UI
-    if (typeof renderLessonsTab === "function") renderLessonsTab();
+// ===== Tabs =====
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    showSection(btn.dataset.target);
   });
-}
-
-// Als pagina laadt en 'Lessen' is al zichtbaar (bv. als default)
-document.addEventListener("DOMContentLoaded", () => {
-  const sec = document.getElementById("section-lessons");
-  if (sec && !sec.hidden && typeof renderLessonsTab === "function") {
-    renderLessonsTab();
-  }
 });
 
-// ==================== TAB: Klanten (overzicht + seed) ====================
-
+// ===== Klanten-tab =====
 const cust = {
   section:        document.getElementById("section-customers"),
   btnTab:         document.getElementById("tab-customers"),
@@ -674,24 +36,20 @@ const cust = {
   updated:        document.getElementById("customers-updated"),
 };
 
-let _customersList = [];  // cache van /api/customers (met dogs[] en passes[] {remaining})
+let _customersList = [];
 
 function renderCustomersTable(list) {
   if (!cust.tableBody) return;
   if (!list || !list.length) {
-    cust.tableBody.innerHTML = `<tr><td colspan="5" class="muted">(geen resultaten)</td></tr>`;
+    cust.tableBody.innerHTML = `<tr><td colspan="6" class="muted">(geen resultaten)</td></tr>`;
     return;
   }
 
   const rows = list.map(c => {
-    const dogsTxt = (c.dogs && c.dogs.length)
-      ? c.dogs.map(d => escapeHtml(d.name)).join(", ")
-      : "—";
-
+    const dogsTxt = (c.dogs && c.dogs.length) ? c.dogs.map(d => escapeHtml(d.name)).join(", ") : "—";
     const passesTxt = (c.passes && c.passes.length)
       ? c.passes.map(p => `${escapeHtml(p.type)} → ${Number(p.remaining ?? (p.totalStrips - (p.usedStrips||0)) || 0)}`).join("<br>")
       : "—";
-
     return `
       <tr data-customer-id="${c.id}">
         <td>${escapeHtml(c.name)}</td>
@@ -699,12 +57,22 @@ function renderCustomersTable(list) {
         <td>${escapeHtml(c.phone || "-")}</td>
         <td>${dogsTxt}</td>
         <td>${passesTxt}</td>
-      </tr>
-    `;
+        <td>
+          <button class="tiny view-customer" data-id="${c.id}">Bekijken</button>
+          <button class="tiny primary book-customer" data-id="${c.id}">Boek les</button>
+        </td>
+      </tr>`;
   });
 
   cust.tableBody.innerHTML = rows.join("");
   if (cust.updated) cust.updated.textContent = `Laatst bijgewerkt: ${stamp()}`;
+
+  cust.tableBody.querySelectorAll(".view-customer").forEach(btn => {
+    btn.addEventListener("click", () => openCustomerDetail(Number(btn.dataset.id)));
+  });
+  cust.tableBody.querySelectorAll(".book-customer").forEach(btn => {
+    btn.addEventListener("click", () => openCustomerDetail(Number(btn.dataset.id), { focusForm:true }));
+  });
 }
 
 async function loadCustomers(q = "") {
@@ -717,7 +85,6 @@ async function loadCustomers(q = "") {
 function wireCustomersTab() {
   if (!cust.section) return;
 
-  // zoeker
   cust.search?.addEventListener("input", (e) => {
     const val = (e.target.value || "").trim().toLowerCase();
     if (!val) return renderCustomersTable(_customersList);
@@ -728,19 +95,16 @@ function wireCustomersTab() {
     renderCustomersTable(filtered);
   });
 
-  // herladen
   cust.btnReload?.addEventListener("click", async () => {
     cust.btnReload.disabled = true;
     try { await loadCustomers(); } finally { cust.btnReload.disabled = false; }
   });
 
-  // seed (demo vullen)
   cust.btnSeed?.addEventListener("click", async () => {
-    if (!confirm("Demo-gegevens opnieuw laden? (huidige in-memory data wordt vervangen)")) return;
+    if (!confirm("Demo-gegevens opnieuw laden?")) return;
     cust.btnSeed.disabled = true;
     try {
-      const res = await fetch("/api/customers/dev/seed", { method:"POST" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await fetch("/api/customers/dev/seed", { method:"POST" });
       await loadCustomers();
       alert("✅ Demo gevuld.");
     } catch (e) {
@@ -751,18 +115,102 @@ function wireCustomersTab() {
     }
   });
 
-  // init load
   loadCustomers().catch(console.error);
 }
-
-// tab zichtbaar maken en initialiseren
 cust.btnTab?.addEventListener("click", () => {
-  // jouw globale tab-show mechanisme; kies de juiste functie:
-  if (typeof showSection === "function") showSection("section-customers");
+  showSection("section-customers");
   wireCustomersTab();
 });
 
-// als de sectie al zichtbaar is bij pageload:
-document.addEventListener("DOMContentLoaded", () => {
-  if (cust.section && !cust.section.hidden) wireCustomersTab();
+// ===== Detailpaneel =====
+async function openCustomerDetail(customerId, opts = {}) {
+  const panel = document.getElementById("customer-detail");
+  const title = document.getElementById("cd-title");
+  const dogsUl = document.getElementById("cd-dogs");
+  const passesTbody = document.querySelector("#cd-passes tbody");
+  const lessonsTbody = document.querySelector("#cd-lessons tbody");
+  const dogSelect = document.getElementById("cd-dog");
+  const status = document.getElementById("cd-status");
+  const form = document.getElementById("cd-lesson-form");
+
+  if (!panel) return;
+  panel.style.display = "block";
+  status.textContent = "Laden…";
+
+  try {
+    const summary = await fetchJSON(`/api/customers/${customerId}/summary`);
+    const { customer, dogs, passes, lessons } = summary;
+
+    title.textContent = `Klantdetail — ${customer.name}`;
+
+    dogsUl.innerHTML = dogs.length
+      ? dogs.map(d => `<li>${escapeHtml(d.name)}</li>`).join("")
+      : "<li>— geen honden —</li>";
+
+    dogSelect.innerHTML = dogs.length
+      ? dogs.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join("")
+      : `<option value="">(geen honden)</option>`;
+
+    passesTbody.innerHTML = passes.length
+      ? passes.map(p => `<tr><td>${escapeHtml(p.type)}</td><td>${Number(p.remaining)}</td></tr>`).join("")
+      : `<tr><td colspan="2">— geen strippenkaarten —</td></tr>`;
+
+    lessonsTbody.innerHTML = lessons.length
+      ? lessons.map(l => `
+        <tr>
+          <td>${escapeHtml(l.date)}</td>
+          <td>${escapeHtml(l.startTime)}-${escapeHtml(l.endTime||"")}</td>
+          <td>${escapeHtml(l.classType)}</td>
+          <td>${escapeHtml(dogs.find(d => d.id===l.dogId)?.name || "-" )}</td>
+          <td>${escapeHtml(l.location||"-")}</td>
+          <td><button class="tiny danger cancel-lesson" data-id="${l.id}">Annuleer</button></td>
+        </tr>`).join("")
+      : `<tr><td colspan="6">— geen lessen —</td></tr>`;
+
+    lessonsTbody.querySelectorAll(".cancel-lesson").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+        if (!confirm("Les annuleren?")) return;
+        await fetch(`/api/lessons/${id}`, { method:"DELETE" });
+        openCustomerDetail(customerId);
+      });
+    });
+
+    form.dataset.customerId = customer.id;
+    status.textContent = "—";
+    if (opts.focusForm) document.getElementById("cd-class")?.focus();
+  } catch (e) {
+    status.textContent = "❌ Laden mislukt.";
+  }
+}
+
+document.getElementById("cd-lesson-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.currentTarget;
+  const status = document.getElementById("cd-status");
+  const customerId = Number(form.dataset.customerId || 0);
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  const payload = {
+    customerId,
+    dogId: data.dogId ? Number(data.dogId) : null,
+    classType: data.classType,
+    date: data.date,
+    startTime: data.startTime,
+    endTime: data.endTime,
+    location: data.location
+  };
+
+  status.textContent = "Boeken…";
+  try {
+    await fetchJSON("/api/lessons", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+    status.textContent = "✅ Les geboekt.";
+    openCustomerDetail(customerId);
+  } catch (e2) {
+    status.textContent = "❌ " + e2.message;
+  }
 });
