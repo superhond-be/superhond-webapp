@@ -32,6 +32,136 @@ const DogsUI = (() => {
     filterCustomerId: document.getElementById("dogsFilterCustomerId")
   };
 
+// ============== OVERZICHT (zoeken + klantfiche) =================
+(() => {
+  const qInput  = document.getElementById("ov-q");
+  const btn     = document.getElementById("ov-search");
+  const results = document.getElementById("ov-results");
+  const section = document.getElementById("view-overview");
+
+  if (!qInput || !btn || !results || !section) return;
+
+  const escapeHtml = (s="") => String(s).replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
+
+  async function search() {
+    const term = (qInput.value || "").trim();
+    if (term.length < 2) {
+      results.style.display = "block";
+      results.innerHTML = `<div class="muted">Geef min. 2 tekens in.</div>`;
+      return;
+    }
+
+    try {
+      results.style.display = "block";
+      results.innerHTML = `Zoeken…`;
+
+      const base = location.origin; // werkt lokaal/render
+      const r1 = await fetch(`${base}/api/customers/search?q=${encodeURIComponent(term)}`);
+      const matches = await r1.json();
+      if (!Array.isArray(matches) || matches.length === 0) {
+        results.innerHTML = `<div class="muted">Geen klant of hond gevonden voor <b>${escapeHtml(term)}</b>.</div>`;
+        return;
+      }
+
+      // Neem de eerste match; eventueel lijst tonen met keuze (kan later)
+      const picked = matches[0].customer;
+      const r2 = await fetch(`${base}/api/customers/overview/${picked.id}`);
+      if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
+      const ov = await r2.json();
+
+      // Build UI
+      results.innerHTML = renderOverviewCard(ov);
+    } catch (e) {
+      results.innerHTML = `<div class="error">Fout bij zoeken: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function renderOverviewCard(ov) {
+    const c = ov.customer || {};
+    const dogs = ov.dogs || [];
+    const passes = ov.passes || [];
+    const past = (ov.lessons && ov.lessons.past) || [];
+    const future = (ov.lessons && ov.lessons.future) || [];
+
+    const dogsHtml = dogs.length
+      ? dogs.map(d => `
+          <li style="display:flex; align-items:center; gap:10px;">
+            ${d.photoUrl ? `<img src="${escapeHtml(d.photoUrl)}" alt="hond" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #0002;" />` : ""}
+            <div>
+              <div><b>${escapeHtml(d.name)}</b>${d.breed ? ` — ${escapeHtml(d.breed)}` : ""}</div>
+              <div class="muted">
+                ${d.birthdate ? `Geboren: ${escapeHtml(d.birthdate)} • ` : ""}
+                ${d.gender ? `Geslacht: ${escapeHtml(d.gender)} • ` : ""}
+                ${d.vaccinationStatus ? `Vacc.: ${escapeHtml(d.vaccinationStatus)} ` : ""}
+              </div>
+            </div>
+          </li>
+        `).join("")
+      : `<li class="muted">Geen honden geregistreerd.</li>`;
+
+    const passesHtml = passes.length
+      ? `<ul class="bullets">` + passes.map(p => {
+          const rest = Math.max(0, Number(p.total) - Number(p.used || 0));
+          return `<li>${escapeHtml(p.lessonType)} — totaal: ${p.total}, gebruikt: ${p.used || 0}, resterend: ${rest}</li>`;
+        }).join("") + `</ul>`
+      : `<div class="muted">Geen strippenkaarten gevonden.</div>`;
+
+    const lessonsHtml = (arr) => arr.length
+      ? `<ul class="bullets">` + arr.map(l => `
+           <li>${escapeHtml(l.date)} ${l.startTime ? escapeHtml(l.startTime) : ""} — ${escapeHtml(l.classType || "-")} @ ${escapeHtml(l.location || "-")}</li>
+         `).join("") + `</ul>`
+      : `<div class="muted">Geen items.</div>`;
+
+    return `
+      <h3>Klant</h3>
+      <div class="card" style="margin-bottom:12px;">
+        <div><b>${escapeHtml(c.name || "-")}</b></div>
+        <div class="muted">${escapeHtml(c.email || "-")} • ${escapeHtml(c.phone || "-")}</div>
+        <div class="muted">ID: ${escapeHtml(c.id)}</div>
+      </div>
+
+      <h3>Honden</h3>
+      <div class="card" style="margin-bottom:12px;">
+        <ul style="padding-left:18px; margin:0;">${dogsHtml}</ul>
+      </div>
+
+      <h3>Strippenkaarten</h3>
+      <div class="card" style="margin-bottom:12px;">
+        ${passesHtml}
+      </div>
+
+      <h3>Reservaties</h3>
+      <div class="card">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <h4>Toekomstig (${ov.counters?.futureCount ?? future.length})</h4>
+            ${lessonsHtml(future)}
+          </div>
+          <div>
+            <h4>Verleden (${ov.counters?.pastCount ?? past.length})</h4>
+            ${lessonsHtml(past)}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // events
+  btn.addEventListener("click", search);
+  qInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); search(); } });
+
+  // maak zichtbaar via jouw tab-router (voorbeeld):
+  const tabBtn = document.querySelector('.tab[data-view="overview"]');
+  tabBtn?.addEventListener("click", () => {
+    // verberg andere views en toon deze (pas aan naar jouw tab-systeem)
+    document.querySelectorAll(".view").forEach(v => v.hidden = true);
+    section.hidden = false;
+    qInput.focus();
+  });
+})();
+   
   // ------- Staat -------
   let currentFilterCustomerId = "";
 
