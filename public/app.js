@@ -637,3 +637,27 @@ function renderLessonsTab() {
     wirePassesOverview(); loadPassesOverview();
   }
 });
+
+// Toon juiste sectie en activeer tab-knop
+function showSection(id) {
+  document.querySelectorAll(".tab-section").forEach(s => s.hidden = s.id !== id);
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.target === id));
+}
+
+// Klik op LESSONS-tab
+const lessonsTabBtn = document.getElementById("tab-lessons");
+if (lessonsTabBtn) {
+  lessonsTabBtn.addEventListener("click", () => {
+    showSection("section-lessons");
+    // bouw/refresh de Lessen-UI
+    if (typeof renderLessonsTab === "function") renderLessonsTab();
+  });
+}
+
+// Als pagina laadt en 'Lessen' is al zichtbaar (bv. als default)
+document.addEventListener("DOMContentLoaded", () => {
+  const sec = document.getElementById("section-lessons");
+  if (sec && !sec.hidden && typeof renderLessonsTab === "function") {
+    renderLessonsTab();
+  }
+});
