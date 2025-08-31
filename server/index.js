@@ -1,39 +1,27 @@
-// src/server/index.js
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-// BOVENAAN je file
+
+// importeer je routes hier
 import passesRoutes from "./routes/passes.js";
 
-// ... je bestaande app/middleware
-// let op: app slechts 1x definiëren in dit bestand!
-
-app.use(passesRoutes); // routes beginnen zelf op /api/...
-// --- App setup
+// Express setup
 const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Routes (alleen deze twee voor een stabiele baseline)
-import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
+// Routes
+app.use("/api/passes", passesRoutes); // alle passes-routes beginnen met /api/passes
 
-app.use("/api/customers", customersRoutes);
-app.use("/api/dogs", dogsRoutes);
-
-// --- Healthcheck
-app.get("/health", (_req, res) => res.json({ ok: true }));
-
-// --- Static frontend
+// Serve static files (frontend)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "../public")));
-app.get("/", (_req, res) =>
-  res.sendFile(path.join(__dirname, "../public/index.html"))
-);
 
-// --- Start
+// Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-export default app;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
