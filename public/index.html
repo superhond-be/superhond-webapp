@@ -1,160 +1,139 @@
 <!doctype html>
 <html lang="nl">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Superhond Coach Portaal</title>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <header class="topbar">
-      <h1>🐾 Superhond Coach Portaal</h1>
-      <nav class="tabs">
-        <button class="tab active" data-view="customers">Klanten</button>
-        <button class="tab" data-view="passes">Strippenkaarten</button>
-      </nav>
-    </header>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond Coach Portaal</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 0; background:#0f172a; color:#e2e8f0; }
+    header { background:#0ea5e9; color:#fff; padding:16px 20px; font-weight:700; font-size:20px; }
+    main { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+    fieldset { border:1px solid #334155; border-radius:8px; margin:18px 0; padding:14px; }
+    legend { padding: 0 8px; color:#93c5fd; }
+    label { display:block; font-size:14px; margin:10px 0 6px; }
+    input, select { width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0b1220; color:#e2e8f0; }
+    .row { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+    .actions { display:flex; gap:10px; margin-top:14px; }
+    button { padding:10px 14px; border:0; border-radius:8px; cursor:pointer; }
+    .primary{ background:#22c55e; color:#052e16; font-weight:700; }
+    .secondary{ background:#1f2937; color:#e5e7eb; }
+    #dog-preview { margin-top:10px; }
+    #dog-preview img{ max-width:180px; border-radius:10px; border:1px solid #334155; display:block; }
+    .notice { font-size:13px; color:#94a3b8; margin-top:6px; }
+    .card { border:1px dashed #334155; border-radius:8px; padding:12px; margin-top:12px; }
+    .ok { color:#22c55e; }
+    .err { color:#ef4444; white-space:pre-wrap; }
+  </style>
+</head>
+<body>
+  <header>🐾 Superhond Coach Portaal</header>
+  <main>
+    <h2>Registratie: Klant + Hond</h2>
 
-<button class="tab" data-view="overview">Overzicht</button>
-    
-<!-- Resultaat: matches-lijst (wordt getoond indien meerdere treffers) -->
-<div id="ov-pick" class="card" style="display:none; margin-top:12px;">
-  <h3>Meerdere resultaten gevonden</h3>
-  <div id="ov-pick-list"></div>
-</div>
+    <!-- Foto upload + preview -->
+    <fieldset>
+      <legend>Hond — Foto</legend>
+      <label for="dogPhoto">Foto hond (JPG/PNG, max 5MB)</label>
+      <input type="file" id="dogPhoto" name="dogPhoto" accept="image/*" />
+      <div id="dog-preview" class="notice">Nog geen foto geselecteerd.</div>
+    </fieldset>
 
-<!-- Gekozen klant: volledig overzicht -->
-<div id="ov-results" class="card" style="display:none; margin-top:12px;"></div>
-
-
-<!-- Foto upload -->
-<div class="form-row">
-  <label for="dogPhoto">Foto hond</label>
-  <input type="file" id="dogPhoto" accept="image/*">
-</div>
-
-<!-- Live preview -->
-<div class="form-row">
-  <label>Preview</label>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <img id="dogPhotoPreview" alt="Preview hond" style="max-width:120px;max-height:120px;display:none;border-radius:8px;border:1px solid var(--line);" />
-    <span id="dogPhotoInfo" class="muted">Geen bestand gekozen</span>
-  </div>
-</div>
-<!-- Voeg in je tabnavigatie deze knop toe -->
-<button class="tab" data-view="overview">Overzicht</button>
-
-<!-- Sectie Overzicht -->
-<section id="view-overview" class="view" hidden>
-  <div class="card">
-    <h2>Zoek klant of hond</h2>
-    <div class="row" style="align-items:end; gap:10px;">
-      <div>
-        <label>Zoekterm</label>
-        <input id="ov-q" placeholder="bv. klantnaam, e-mail, telefoon of hondnaam" />
-      </div>
-      <div>
-        <button id="ov-search" class="primary">Zoeken</button>
-      </div>
-    </div>
-    <div id="ov-hint" class="muted" style="margin-top:6px;">Tip: typ min. 2 tekens en druk op Enter of klik Zoeken.</div>
-  </div>
-
-  <div id="ov-results" class="card" style="display:none;"></div>
-</section>
-
-<section id="view-overview" class="view" hidden>
-  <div class="card">
-    <h2>Zoek klant of hond</h2>
-    <div class="row" style="align-items:end; gap:10px;">
-      <div>
-        <label for="ov-q">Zoekterm</label>
-        <input id="ov-q" placeholder="bv. klantnaam, e-mail, telefoon of hondnaam" />
-      </div>
-      <div>
-        <button id="ov-search" class="primary">Zoeken</button>
-      </div>
-    </div>
-    <div id="ov-hint" class="muted" style="margin-top:6px;">
-      Tip: typ min. 2 tekens en druk op Enter of klik Zoeken.
-    </div>
-  </div>
-
-  <!-- Lijst met matches (alleen zichtbaar bij >1 resultaat) -->
-  <div id="ov-pick" class="card" style="display:none; margin-top:12px;">
-    <h3>Meerdere resultaten gevonden</h3>
-    <div id="ov-pick-list"></div>
-  </div>
-
-  <!-- Gekozen klant: volledig overzicht -->
-  <div id="ov-results" class="card" style="display:none; margin-top:12px;"></div>
-</section>
-    
-    <main id="view-customers" class="view active">
-      <section class="card">
-        <h2>Registratie: Klant + Hond</h2>
-
-        <form id="registerForm" autocomplete="off">
-          <fieldset>
-            <legend>Klantgegevens</legend>
-            <div class="grid-2">
-              <label>Naam <input required id="c_name" /></label>
-              <label>E-mail <input id="c_email" type="email" /></label>
-              <label>Telefoon <input id="c_phone" /></label>
-              <label>Lestype
-                <select id="lessonType">
-                  <option value="">— kies —</option>
-                  <option>PUPPY – Puppy Pack</option>
-                  <option>PUPPY – Starters</option>
-                  <option>PUBER – Coachgroep</option>
-                  <option>GEHOORZAAMHEID – Groep</option>
-                </select>
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Hond</legend>
-            <div class="grid-2">
-              <label>Naam hond <input id="d_name" /></label>
-              <label>Ras <input id="d_breed" /></label>
-              <label>Geboortedatum <input id="d_birth" type="date" /></label>
-              <label>Geslacht
-                <select id="d_gender">
-                  <option value="-">—</option>
-                  <option value="reut">Reu</option>
-                  <option value="teef">Teef</option>
-                </select>
-              </label>
-              <label>Dierenarts – telefoon <input id="d_vetPhone" /></label>
-              <label>Dierenarts – naam <input id="d_vetName" /></label>
-              <label>Vaccinatiestatus <input id="d_vaccine" /></label>
-              <label>Inentingsboekje ref. <input id="d_booklet" /></label>
-              <label class="span-2">Noodnummer <input id="d_emergency" /></label>
-            </div>
-          </fieldset>
-
-          <button class="primary" type="submit">Registreren</button>
-          <span id="formMsg" class="muted"></span>
-        </form>
-      </section>
-
-      <section class="card">
+    <form id="register-form">
+      <fieldset>
+        <legend>Klantgegevens</legend>
         <div class="row">
-          <h2>Bestaande klanten</h2>
-          <button id="reloadBtn" class="secondary">Herladen</button>
+          <div>
+            <label for="customerName">Naam</label>
+            <input id="customerName" name="customerName" required />
+          </div>
+          <div>
+            <label for="customerEmail">E-mail</label>
+            <input id="customerEmail" type="email" name="customerEmail" required />
+          </div>
         </div>
-        <div id="customersList" class="list"></div>
-      </section>
-    </main>
+        <div class="row">
+          <div>
+            <label for="customerPhone">Telefoon</label>
+            <input id="customerPhone" name="customerPhone" />
+          </div>
+          <div>
+            <label for="lessonType">Lestype (gekocht pakket)</label>
+            <select id="lessonType" name="lessonType" required>
+              <option value="">— kies —</option>
+              <option value="PUPPY_PACK">Puppy Pack</option>
+              <option value="PUBER_COACHGROEP">PUBER — Coachgroep</option>
+              <option value="GEVORDERD">Gevorderd</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
 
-    <main id="view-passes" class="view">
-      <section class="card">
-        <h2>Strippenkaarten (per klant)</h2>
-        <div id="passesList" class="list"></div>
-      </section>
-    </main>
+      <fieldset>
+        <legend>Hond</legend>
+        <div class="row">
+          <div>
+            <label for="dogName">Naam hond</label>
+            <input id="dogName" name="dogName" required />
+          </div>
+          <div>
+            <label for="breed">Ras</label>
+            <input id="breed" name="breed" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="birthdate">Geboortedatum</label>
+            <input id="birthdate" name="birthdate" type="date" />
+          </div>
+          <div>
+            <label for="gender">Geslacht</label>
+            <select id="gender" name="gender">
+              <option value="">—</option>
+              <option value="M">Reu</option>
+              <option value="F">Teef</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
 
-    <script src="/app.js" type="module"></script>
-  </body>
+      <fieldset>
+        <legend>Inentingen & Dierenarts</legend>
+        <div class="row">
+          <div>
+            <label for="vaccination">Vaccinatiestatus</label>
+            <input id="vaccination" name="vaccination" />
+          </div>
+          <div>
+            <label for="vaccinationBookRef">Inentingsboekje ref.</label>
+            <input id="vaccinationBookRef" name="vaccinationBookRef" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="vetPhone">Dierenarts – telefoon</label>
+            <input id="vetPhone" name="vetPhone" />
+          </div>
+          <div>
+            <label for="vetName">Dierenarts – naam</label>
+            <input id="vetName" name="vetName" />
+          </div>
+        </div>
+        <div>
+          <label for="emergencyPhone">Noodnummer</label>
+          <input id="emergencyPhone" name="emergencyPhone" />
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button class="primary" type="submit">Registreren</button>
+        <button class="secondary" type="button" id="reloadBtn">Herladen</button>
+      </div>
+    </form>
+
+    <div id="result" class="card"></div>
+  </main>
+
+  <script src="/app.js" type="module"></script>
+</body>
 </html>
