@@ -5,7 +5,10 @@ import express from "express";
 import customersRoutes, { CUSTOMERS } from "./routes/customers.js";
 import dogsRoutes, { setCustomersRef as connectDogsToCustomers } from "./routes/dogs.js";
 import passesRoutes, { setCustomersRef as connectPassesToCustomers } from "./routes/passes.js";
+// BOVENIN bij imports:
+import lessonsRoutes from "./routes/lessons.js";
 
+// ONDER je andere app.use()’s
 const app = express();
 const PORT = process.env.PORT || 3000;
 
