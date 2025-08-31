@@ -8,7 +8,29 @@
   const section  = document.getElementById("view-overview");
 
   if (!qInput || !btn || !pickBox || !pickList || !results || !section) return;
+function renderOverviewCard(ov) {
+  const c = ov.customer || {};
+  const dogs = ov.dogs || [];
+  const passes = ov.passes || [];
+  const past = (ov.lessons && ov.lessons.past) || [];
+  const future = (ov.lessons && ov.lessons.future) || [];
 
+  return `
+    <div style="margin-bottom:12px;">
+      <button id="backToMatches" class="btn">← Terug naar resultaten</button>
+    </div>
+
+    <h3>Klant</h3>
+    <div class="card" style="margin-bottom:12px;">
+      <div><b>${escapeHtml(c.name || "-")}</b></div>
+      <div class="muted">${escapeHtml(c.email || "-")} • ${escapeHtml(c.phone || "-")}</div>
+      <div class="muted">ID: ${escapeHtml(c.id)}</div>
+    </div>
+    ...
+  `;
+}
+
+  
   const escapeHtml = (s="") => String(s).replace(/[&<>"']/g, m => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[m]));
