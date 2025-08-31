@@ -2,48 +2,77 @@
 import express from "express";
 const router = express.Router();
 
-import { findCustomer } from "./customers.js";
+// Link naar klanten (alleen nodig om te valideren dat klant bestaat)
+let CUSTOMERS_REF = null;
+export function setCustomersRef(ref) { CUSTOMERS_REF = ref; }
 
-// Named helpers (zodat import { useOneStripForCustomer } geldig is)
-export function getPassBalance(customerId) {
-  const c = findCustomer(customerId);
-  if (!c) throw new Error("Klant niet gevonden");
-  return c.passBalance || 0;
-}
+// Types (strippenkaart-definities) en aankopen
+const PASS_TYPES = [];      // { id, name, strips }
+const PURCHASES = [];       // { id, customerId, typeId, remaining, createdAt }
+let NEXT_TYPE_ID = 1;
+let NEXT_PURCHASE_ID = 1;
 
-export function addPasses(customerId, amount) {
-  const c = findCustomer(customerId);
-  if (!c) throw new Error("Klant niet gevonden");
-  const qty = Number(amount) || 0;
-  c.passBalance = (c.passBalance || 0) + qty;
-  return c.passBalance;
-}
-
+/** Hulpfunctie: verbruik 1 strip voor een klant (eerste aankoop met remaining>0) */
 export function useOneStripForCustomer(customerId) {
-  const c = findCustomer(customerId);
-  if (!c) throw new Error("Klant niet gevonden");
-  const bal = c.passBalance || 0;
-  if (bal <= 0) throw new Error("Geen strippen meer beschikbaar");
-  c.passBalance = bal - 1;
-  return c.passBalance;
+  const pid = Number(customerId);
+  // zoek eerste aankoop met remaining > 0 (eenvoudig beleid)
+  const p = PURCHASES.find(x => x.customerId === pid && x.remaining > 0);
+  if (!p) return { ok: false, error: "Geen strips meer" };
+  p.remaining -= 1;
+  return { ok: true, purchase: p };
 }
 
-// REST
-router.get("/:customerId/balance", (req, res) => {
-  try { res.json({ balance: getPassBalance(req.params.customerId) }); }
-  catch (e) { res.status(400).json({ error: String(e.message || e) }); }
+/** GET /api/passes/types */
+router.get("/types", (_req, res) => res.json(PASS_TYPES));
+
+/** POST /api/passes/types  Body: { name, strips } */
+router.post("/types", (req, res) => {
+  const { name, strips } = req.body || {};
+  const n = Number(strips);
+  if (!name || !Number.isFinite(n) || n <= 0) {
+    return res.status(400).json({ error: "Ongeldig type" });
+  }
+  const t = { id: NEXT_TYPE_ID++, name: String(name), strips: n };
+  PASS_TYPES.push(t);
+  res.status(201).json(t);
 });
 
-router.post("/:customerId/add", (req, res) => {
-  try {
-    const { amount } = req.body || {};
-    res.json({ balance: addPasses(req.params.customerId, amount) });
-  } catch (e) { res.status(400).json({ error: String(e.message || e) }); }
+/** GET /api/passes/purchases?customerId=1 */
+router.get("/purchases", (req, res) => {
+  const cid = req.query.customerId ? Number(req.query.customerId) : null;
+  const list = cid ? PURCHASES.filter(p => p.customerId === cid) : PURCHASES;
+  res.json(list);
 });
 
-router.post("/:customerId/use", (req, res) => {
-  try { res.json({ balance: useOneStripForCustomer(req.params.customerId) }); }
-  catch (e) { res.status(400).json({ error: String(e.message || e) }); }
+/** POST /api/passes/buy  Body: { customerId, typeId } */
+router.post("/buy", (req, res) => {
+  if (!CUSTOMERS_REF) return res.status(500).json({ error: "customers not wired" });
+
+  const { customerId, typeId } = req.body || {};
+  const customer = CUSTOMERS_REF.find(c => c.id === Number(customerId));
+  const type = PASS_TYPES.find(t => t.id === Number(typeId));
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+  if (!type) return res.status(404).json({ error: "Type niet gevonden" });
+
+  const purchase = {
+    id: NEXT_PURCHASE_ID++,
+    customerId: customer.id,
+    typeId: type.id,
+    remaining: type.strips,
+    createdAt: new Date().toISOString(),
+  };
+  PURCHASES.push(purchase);
+  res.status(201).json(purchase);
+});
+
+/** POST /api/passes/use  Body: { purchaseId } */
+router.post("/use", (req, res) => {
+  const { purchaseId } = req.body || {};
+  const p = PURCHASES.find(x => x.id === Number(purchaseId));
+  if (!p) return res.status(404).json({ error: "Aankoop niet gevonden" });
+  if (p.remaining <= 0) return res.status(400).json({ error: "Geen strips meer" });
+  p.remaining -= 1;
+  res.json(p);
 });
 
 export default router;
