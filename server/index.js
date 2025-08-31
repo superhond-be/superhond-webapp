@@ -10,7 +10,8 @@ import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
 import settingsRoutes from "./routes/settings.js";
 import integrationsRoutes from "./routes/integrations.js";
-
+import lessonsRoutes from "./routes/lessons.js";
+app.use("/api/lessons", lessonsRoutes);
 // ---- Basis setup ----
 const app = express();
 app.use(express.json());
