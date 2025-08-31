@@ -661,3 +661,108 @@ document.addEventListener("DOMContentLoaded", () => {
     renderLessonsTab();
   }
 });
+
+// ==================== TAB: Klanten (overzicht + seed) ====================
+
+const cust = {
+  section:        document.getElementById("section-customers"),
+  btnTab:         document.getElementById("tab-customers"),
+  btnSeed:        document.getElementById("seed-btn"),
+  btnReload:      document.getElementById("customers-reload"),
+  search:         document.getElementById("customers-search"),
+  tableBody:      document.querySelector("#customers-table tbody"),
+  updated:        document.getElementById("customers-updated"),
+};
+
+let _customersList = [];  // cache van /api/customers (met dogs[] en passes[] {remaining})
+
+function renderCustomersTable(list) {
+  if (!cust.tableBody) return;
+  if (!list || !list.length) {
+    cust.tableBody.innerHTML = `<tr><td colspan="5" class="muted">(geen resultaten)</td></tr>`;
+    return;
+  }
+
+  const rows = list.map(c => {
+    const dogsTxt = (c.dogs && c.dogs.length)
+      ? c.dogs.map(d => escapeHtml(d.name)).join(", ")
+      : "—";
+
+    const passesTxt = (c.passes && c.passes.length)
+      ? c.passes.map(p => `${escapeHtml(p.type)} → ${Number(p.remaining ?? (p.totalStrips - (p.usedStrips||0)) || 0)}`).join("<br>")
+      : "—";
+
+    return `
+      <tr data-customer-id="${c.id}">
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.email || "-")}</td>
+        <td>${escapeHtml(c.phone || "-")}</td>
+        <td>${dogsTxt}</td>
+        <td>${passesTxt}</td>
+      </tr>
+    `;
+  });
+
+  cust.tableBody.innerHTML = rows.join("");
+  if (cust.updated) cust.updated.textContent = `Laatst bijgewerkt: ${stamp()}`;
+}
+
+async function loadCustomers(q = "") {
+  const url = q ? `/api/customers?q=${encodeURIComponent(q)}` : "/api/customers";
+  const list = await fetchJSON(url);
+  _customersList = Array.isArray(list) ? list : [];
+  renderCustomersTable(_customersList);
+}
+
+function wireCustomersTab() {
+  if (!cust.section) return;
+
+  // zoeker
+  cust.search?.addEventListener("input", (e) => {
+    const val = (e.target.value || "").trim().toLowerCase();
+    if (!val) return renderCustomersTable(_customersList);
+    const filtered = _customersList.filter(c =>
+      [c.name, c.email, c.phone].filter(Boolean)
+        .some(v => String(v).toLowerCase().includes(val))
+    );
+    renderCustomersTable(filtered);
+  });
+
+  // herladen
+  cust.btnReload?.addEventListener("click", async () => {
+    cust.btnReload.disabled = true;
+    try { await loadCustomers(); } finally { cust.btnReload.disabled = false; }
+  });
+
+  // seed (demo vullen)
+  cust.btnSeed?.addEventListener("click", async () => {
+    if (!confirm("Demo-gegevens opnieuw laden? (huidige in-memory data wordt vervangen)")) return;
+    cust.btnSeed.disabled = true;
+    try {
+      const res = await fetch("/api/customers/dev/seed", { method:"POST" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await loadCustomers();
+      alert("✅ Demo gevuld.");
+    } catch (e) {
+      console.error(e);
+      alert("❌ Seed mislukt.");
+    } finally {
+      cust.btnSeed.disabled = false;
+    }
+  });
+
+  // init load
+  loadCustomers().catch(console.error);
+}
+
+// tab zichtbaar maken en initialiseren
+cust.btnTab?.addEventListener("click", () => {
+  // jouw globale tab-show mechanisme; kies de juiste functie:
+  if (typeof showSection === "function") showSection("section-customers");
+  wireCustomersTab();
+});
+
+// als de sectie al zichtbaar is bij pageload:
+document.addEventListener("DOMContentLoaded", () => {
+  if (cust.section && !cust.section.hidden) wireCustomersTab();
+});
