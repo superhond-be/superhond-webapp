@@ -199,6 +199,11 @@ footer {
   font-size: 12px; opacity: .7; margin-left: 6px;
 }
 
+/* Kleinere polish voor deze tab */
+#section-people .grid { gap: 10px; }
+#section-people table { width: 100%; border-collapse: collapse; }
+#section-people th, #section-people td { padding: 8px; border-bottom: 1px solid #1f2937; }
+
 .data-table th { cursor: pointer; user-select: none; }
 .data-table th .sort {
   font-size: 12px; opacity: .7; margin-left: 6px;
