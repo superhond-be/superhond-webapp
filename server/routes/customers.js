@@ -133,4 +133,43 @@ router.delete("/:id", (req, res) => {
   res.json({ ok: true, removed });
 });
 
+// BOVENIN in de GET "/" handler:
+const { customerId, date, dogId } = req.query;
+
+// ... onder je customerId/date filters:
+if (dogId != null) {
+  const did = String(dogId);
+  list = list.filter(l => String(l.dogId) === did);
+}
+// server/routes/customers.js (ONDERAAN TOEVOEGEN)
+async function getJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`GET ${url} -> ${r.status}`);
+  return r.json();
+}
+
+/**
+ * GET /api/customers/:id/summary
+ * Retourneert:
+ * { customer, dogs:[], passes:[], lessons:[] }
+ */
+router.get("/:id/summary", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const customer = CUSTOMERS_REF.find(c => c.id === id);
+    if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+
+    const base = ""; // relatieve URL's op dezelfde service
+    const [dogs, passes, lessons] = await Promise.all([
+      getJSON(`${base}/api/dogs?ownerId=${encodeURIComponent(id)}`),
+      getJSON(`${base}/api/passes?customerId=${encodeURIComponent(id)}`),
+      getJSON(`${base}/api/lessons?customerId=${encodeURIComponent(id)}`)
+    ]);
+
+    res.json({ customer, dogs, passes, lessons });
+  } catch (e) {
+    res.status(500).json({ error: "Kon klantenoverzicht niet laden", details: String(e?.message || e) });
+  }
+});
+
 export default router;
