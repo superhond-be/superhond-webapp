@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Superhond · Instellingen</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="Superhond logo" height="40">
+    <h1>Instellingen</h1>
+  </header>
+
+  <main>
+    <!-- Kaart Les & trainingen -->
+    <section class="card">
+      <h2>Les & trainingen</h2>
+      <form id="training-form">
+        <label>
+          Benaming
+          <input type="text" name="benaming" required>
+        </label>
+        <label>
+          Beschrijving
+          <textarea name="beschrijving"></textarea>
+        </label>
+        <label>
+          Thema’s (tags, komma-gescheiden)
+          <input type="text" name="themas">
+        </label>
+        <label>
+          Thema omschrijving
+          <input type="text" name="thema_omschrijving">
+        </label>
+        <label>
+          Geldigheidsduur (maanden)
+          <input type="number" name="geldigheid" min="1">
+        </label>
+
+        <label>
+          Naam training
+          <input type="text" name="naam" required>
+        </label>
+        <label>
+          Aantal
+          <input type="number" name="aantal" min="0" value="0">
+        </label>
+        <label>
+          Max deelnemers
+          <input type="number" name="max" min="1">
+        </label>
+
+        <div>
+          Actief:
+          <label><input type="radio" name="actief" value="J" checked> Ja</label>
+          <label><input type="radio" name="actief" value="N"> Nee</label>
+        </div>
+        <div>
+          Online zichtbaar:
+          <label><input type="radio" name="online" value="J"> Ja</label>
+          <label><input type="radio" name="online" value="N" checked> Nee</label>
+        </div>
+
+        <button type="submit">Opslaan</button>
+      </form>
+    </section>
+
+    <!-- Kaart Registratie -->
+    <section class="card">
+      <h2>Registratie</h2>
+      <form id="registration-form">
+        <h3>Klant</h3>
+        <label><input type="checkbox" name="klant_naam" checked> Naam verplicht</label><br>
+        <label><input type="checkbox" name="klant_adres"> Adres verplicht</label><br>
+        <label><input type="checkbox" name="klant_email" checked> E-mail verplicht</label><br>
+        <label><input type="checkbox" name="klant_tel"> Telefoon verplicht</label>
+
+        <h3>Hond</h3>
+        <label><input type="checkbox" name="hond_naam" checked> Naam verplicht</label><br>
+        <label><input type="checkbox" name="hond_ras"> Ras verplicht</label><br>
+        <label><input type="checkbox" name="hond_geboortedatum"> Geboortedatum verplicht</label><br>
+        <label><input type="checkbox" name="hond_chip"> Chipnummer verplicht</label>
+
+        <button type="submit">Opslaan</button>
+      </form>
+    </section>
+
+    <pre id="output"></pre>
+  </main>
+
+  <script src="js/instellingen.js"></script>
+</body>
+</html>
