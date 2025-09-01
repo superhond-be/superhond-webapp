@@ -1,30 +1,22 @@
-// server/routes/dogs.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const DOGS = [];
-let NEXT_ID = 1;
-
-// Lijst (optioneel filteren op customerId: /api/dogs?customerId=1)
+// Alle honden ophalen
 router.get("/", (req, res) => {
-  const { customerId } = req.query;
-  if (customerId) return res.json(DOGS.filter(d => String(d.customerId) === String(customerId)));
-  res.json(DOGS);
+  res.json([
+    { id: 1, name: "Bello", breed: "Labrador" },
+    { id: 2, name: "Rex", breed: "Herder" }
+  ]);
 });
 
-// Aanmaken
+// Nieuwe hond toevoegen
 router.post("/", (req, res) => {
-  const { name, breed, gender, customerId } = req.body || {};
-  if (!name) return res.status(400).json({ error: "name is required" });
-  const dog = {
-    id: NEXT_ID++,
-    name,
-    breed: breed || "",
-    gender: gender || "",
-    customerId: customerId ? Number(customerId) : null
-  };
-  DOGS.push(dog);
-  res.status(201).json(dog);
+  const { name, breed } = req.body;
+  if (!name || !breed) {
+    return res.status(400).json({ error: "Naam en ras zijn verplicht" });
+  }
+  const newDog = { id: Date.now(), name, breed };
+  res.status(201).json(newDog);
 });
 
-module.exports = router;
+export default router;
