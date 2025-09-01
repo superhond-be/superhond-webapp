@@ -1,31 +1,27 @@
-// server/index.js
-
-// 1. Basis imports
+// routes/customers.js
 const express = require("express");
-const path = require("path");
+const router = express.Router();
 
-// 2. Routes importeren (gebruik require in plaats van import)
-const customersRoutes = require("./routes/customers.js");
-const dogsRoutes = require("./routes/dogs.js");
-const passesRoutes = require("./routes/passes.js");
+// Voorbeeld data (kan later vervangen worden door DB)
+let CUSTOMERS = [];
 
-// 3. App aanmaken
-const app = express();
-
-// 4. Middleware
-app.use(express.json()); // voor JSON body parsing
-app.use(express.urlencoded({ extended: true })); // voor form-data
-
-// 5. Routes koppelen
-app.use("/api/customers", customersRoutes);
-app.use("/api/dogs", dogsRoutes);
-app.use("/api/passes", passesRoutes);
-
-// 6. Statische bestanden (frontend)
-app.use(express.static(path.join(__dirname, "../public")));
-
-// 7. Start server
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+// Alle klanten ophalen
+router.get("/", (req, res) => {
+  res.json(CUSTOMERS);
 });
+
+// Nieuwe klant toevoegen
+router.post("/", (req, res) => {
+  const customer = req.body;
+  CUSTOMERS.push(customer);
+  res.status(201).json({ message: "✅ Klant toegevoegd", customer });
+});
+
+// Eén klant zoeken op email
+router.get("/:email", (req, res) => {
+  const customer = CUSTOMERS.find(c => c.email === req.params.email);
+  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
+  res.json(customer);
+});
+
+module.exports = router;
