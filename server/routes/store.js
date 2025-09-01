@@ -1,31 +1,31 @@
-// store.js
+// server/routes/store.js
 
 // In-memory opslag
 export const store = {
-  customers: [],
-  dogs: [],
-  passes: []
+  customers: [],   // lijst van klanten
+  dogs: [],        // lijst van honden
+  passes: []       // lijst van strippenkaarten
 };
 
-// Klant toevoegen
+// 👉 Functie om een klant toe te voegen
 export function addCustomer(customer) {
   store.customers.push(customer);
   return customer;
 }
 
-// Hond toevoegen
+// 👉 Functie om een hond toe te voegen
 export function addDog(dog) {
   store.dogs.push(dog);
   return dog;
 }
 
-// Strippenkaart toevoegen
+// 👉 Functie om een strippenkaart toe te voegen
 export function addPass(pass) {
   store.passes.push(pass);
   return pass;
 }
 
-// Strip gebruiken
+// 👉 Functie om een strip te gebruiken
 export function useStrip(passId) {
   const pass = store.passes.find(p => p.id === passId);
   if (!pass) throw new Error("Strippenkaart niet gevonden");
