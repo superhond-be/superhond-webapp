@@ -7,7 +7,25 @@ const reloadBtn = document.getElementById("reloadBtn");
 
 // Preview van de gekozen foto
 dogFileEl.addEventListener("change", () => {
-  const file = dogFileEl.files?.[0];
+      .container { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+     .card { background:#151923; border:1px solid #2d3340; border-radius:12px; padding:16px; }
+     .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+     .row-3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+     label { display:block; font-weight:600; margin:8px 0 6px; }
+        input, select { width:100%; background:#0f1115; color:#e6e9ef; border:1px solid #2d3340; border-radius:8px; padding:10px; }
+     fieldset { border:1px solid #2d3340; border-radius:12px; margin:14px 0; padding:12px; }
+     legend { padding:0 6px; color:#9fb3ff; }
+     .actions { display:flex; gap:8px; align-items:center; }
+       button { background:#1f8b4c; color:#fff; border:0; border-radius:10px; padding:10px 14px; font-weight:700; cursor:pointer; }
+       .ghost { background:transparent; border:1px solid #2d3340; color:#e6e9ef; }
+      #dog-preview img { max-width:160px; max-height:160px; object-fit:cover; border-radius:8px; border:1px solid #2d3340; }
+     .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+     .brand { font-size:24px; font-weight:800; letter-spacing:.3px; }
+     nav a { color:#cbd5ff; text-decoration:none; margin-left:10px; }
+   </style> 
+
+
+const file = dogFileEl.files?.[0];
   if (!file) {
     previewBox.innerHTML = "Nog geen foto geselecteerd.";
     return;
