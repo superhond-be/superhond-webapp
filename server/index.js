@@ -7,6 +7,11 @@ import { fileURLToPath } from "url";
 
 // Routes importeren
 import customersRoutes from "./routes/customers.js";
+ 3 import dogsRoutes from "./routes/dogs.js";
+ 4 import passesRoutes from "./routes/passes.js";
+ 5 import lessonsRoutes from
+
+import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
