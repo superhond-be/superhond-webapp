@@ -12,6 +12,10 @@ import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
 import debugRoutes from "./routes/debug.js";
 import searchRoutes from "./routes/search.js";
+import summaryRoutes from "./routes/summary.js";
+
+// ...
+app.use("/api/summary", summaryRoutes);
 
 // ...
 app.use("/api/debug", debugRoutes);
