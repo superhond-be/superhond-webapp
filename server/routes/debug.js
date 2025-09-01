@@ -1,60 +1,45 @@
-// server/routes/debug.js
+// server/routes/debug.js  (ESM)
 import express from "express";
-import { getCustomers, addCustomer, findCustomer } from "./customers.js";
+import { store, addCustomer, addDog, addPass } from "../store.js";
 
 const router = express.Router();
 
 /**
- * POST /api/debug/seed
- * Maakt 3 klanten, 3 honden en strippenkaarten aan (als ze nog niet bestaan).
+ * POST /api/debug/reset
+ * Leegt alle in-memory tabellen.
  */
-router.post("/debug/seed", (_req, res) => {
-  const customers = getCustomers();
-
-  // voorkom dubbel seeden
-  const already = customers.some(c => c.email === "demo1@superhond.be");
-  if (already) {
-    return res.json({ ok: true, message: "Seed bestond al", customersCount: customers.length });
-  }
-
-  // 1) klanten
-  const c1 = addCustomer({ name: "Demo Klant 1", email: "demo1@superhond.be", phone: "0470 11 22 33" });
-  const c2 = addCustomer({ name: "Demo Klant 2", email: "demo2@superhond.be", phone: "0470 22 33 44" });
-  const c3 = addCustomer({ name: "Demo Klant 3", email: "demo3@superhond.be", phone: "0470 33 44 55" });
-
-  // 2) honden
-  c1.dogs = [
-    { id: 1, name: "Rex", breed: "Border Collie", sex: "m", birthDate: "2022-03-10" },
-    { id: 2, name: "Bella", breed: "Labrador", sex: "v", birthDate: "2021-11-01" }
-  ];
-  c2.dogs = [{ id: 3, name: "Milo", breed: "Beagle", sex: "m", birthDate: "2023-05-20" }];
-  c3.dogs = [];
-
-  // 3) strippenkaarten
-  c1.passes = [
-    { id: 1, type: "puppy-9", totalStrips: 9, remaining: 7, createdAt: new Date().toISOString() }
-  ];
-  c2.passes = [
-    { id: 1, type: "puppy-9", totalStrips: 9, remaining: 9, createdAt: new Date().toISOString() }
-  ];
-  c3.passes = [];
-
-  return res.json({
-    ok: true,
-    customersSeeded: [c1.id, c2.id, c3.id],
-    dogsTotal: (c1.dogs?.length || 0) + (c2.dogs?.length || 0) + (c3.dogs?.length || 0)
-  });
+router.post("/reset", (_req, res) => {
+  store.customers.length = 0;
+  store.dogs.length = 0;
+  store.passes.length = 0;
+  store.lessons.length = 0;
+  store.seq = { customers: 1, dogs: 1, passes: 1, lessons: 1 };
+  res.json({ ok: true, msg: "Store reset." });
 });
 
 /**
- * POST /api/debug/reset
- * Leegt alle data (klanten/honden/passes). Handig voor schone test.
- * N.B.: alleen in-memory; server-herstart doet dit ook.
+ * POST /api/debug/seed
+ * Maakt wat voorbeelddata aan: 2 klanten, 2 honden, 2 strippenkaarten.
  */
-router.post("/debug/reset", (_req, res) => {
-  const customers = getCustomers();
-  customers.splice(0, customers.length); // leegt array
-  return res.json({ ok: true, message: "In-memory data gewist" });
+router.post("/seed", (_req, res) => {
+  // klanten
+  const paul   = addCustomer({ name: "Paul Thijs",  email: "paul@example.com",  phone: "0471 11 22 33" });
+  const sofie  = addCustomer({ name: "Sofie Jans",  email: "sofie@example.com", phone: "0468 44 55 66" });
+
+  // honden
+  const seda   = addDog({ ownerId: paul.id,  name: "Seda",  breed: "Puber", birthdate: "2024-03-10", sex: "F", vaccineStatus: "volledig" });
+  const rocky  = addDog({ ownerId: sofie.id, name: "Rocky", breed: "Border Collie", birthdate: "2023-11-02", sex: "M", vaccineStatus: "volledig" });
+
+  // strippenkaarten
+  addPass({ customerId: paul.id,  dogId: seda.id,  lessonType: "PUPPY", total: 9 });
+  addPass({ customerId: sofie.id, dogId: rocky.id, lessonType: "PUBER", total: 5 });
+
+  res.json({
+    ok: true,
+    customers: store.customers,
+    dogs: store.dogs,
+    passes: store.passes,
+  });
 });
 
 export default router;
