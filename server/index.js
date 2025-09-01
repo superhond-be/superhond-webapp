@@ -1,53 +1,41 @@
 // server/index.js
-
-// ====== Imports ======
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Routes importeren
-import customersRoutes from "./routes/customers.js";
-import dogsRoutes from "./routes/dogs.js";
-import passesRoutes from "./routes/passes.js";
-import lessonsRoutes from "./routes/lessons.js";
+// ⤵️ Optioneel: alleen gebruiken als je een routes/debug.js hebt
 import debugRoutes from "./routes/debug.js";
-import searchRoutes from "./routes/search.js";
-import summaryRoutes from "./routes/summary.js";
-import seedRoutes from "./routes/seed.js";
-app.use("/api/seed", seedRoutes);
 
-// ...
-app.use("/api/summary", summaryRoutes);
-
-// ...
-app.use("/api/debug", debugRoutes);
-app.use("/api/search", searchRoutes);
-
-// ====== Helpers voor __dirname (werkt in ES Modules) ======
+// __dirname voor ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ====== Express app ======
+// App
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Public map beschikbaar maken
-app.use(express.static(path.join(__dirname, "../public")));
+// Static frontend (public/)
+app.use(express.static(path.join(__dirname, "..", "public")));
 
-// ====== API routes ======
-app.use("/api/customers", customersRoutes);
-app.use("/api/dogs", dogsRoutes);
-app.use("/api/passes", passesRoutes);
-app.use("/api/lessons", lessonsRoutes);
-
-// Health check route
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Server draait correct 🚀" });
+// Health check
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, time: new Date().toISOString() });
 });
 
-// ====== Start server ======
+// Debug endpoints (optioneel)
+if (debugRoutes) {
+  app.use("/debug", debugRoutes);
+}
+
+// SPA fallback naar public/index.html
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+// Start
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
+
+export default app;
