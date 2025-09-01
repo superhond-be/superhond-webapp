@@ -1,69 +1,57 @@
-// store.js
+// server/store.js
 
-// --- Centrale data store ---
-const store = {
-  customers: [],  // alle klanten
-  dogs: [],       // alle honden
-  passes: []      // strippenkaarten
+// Simpele in-memory store
+export const store = {
+  customers: [],
+  dogs: [],
+  passes: []
 };
 
-// --- Functies voor klanten ---
-function addCustomer(customer) {
+// ----------------------
+// Customer functies
+// ----------------------
+export function addCustomer(customer) {
+  customer.id = store.customers.length + 1;
   store.customers.push(customer);
   return customer;
 }
 
-function findCustomerById(id) {
+export function findCustomerById(id) {
   return store.customers.find(c => c.id === id);
 }
 
-// --- Functies voor honden ---
-function addDog(dog) {
+// ----------------------
+// Dog functies
+// ----------------------
+export function addDog(dog) {
+  dog.id = store.dogs.length + 1;
   store.dogs.push(dog);
   return dog;
 }
 
-function findDogById(id) {
+export function findDogById(id) {
   return store.dogs.find(d => d.id === id);
 }
 
-// --- Functies voor strippenkaarten ---
-function addPass(pass) {
+// ----------------------
+// Pass (strippenkaart) functies
+// ----------------------
+export function addPass(pass) {
+  pass.id = store.passes.length + 1;
+  pass.remaining = pass.remaining || 0; // standaard geen strippen
   store.passes.push(pass);
   return pass;
 }
 
-function findPassById(id) {
+export function findPassById(id) {
   return store.passes.find(p => p.id === id);
 }
 
-// --- Exports ---
-export { store, addCustomer, findCustomerById, addDog, findDogById, addPass, findPassById };
-
-
-// --- Dummy testdata ---
-const testCustomer = addCustomer({
-  id: "C1",
-  name: "Mitchell de Heer",
-  email: "mitchell@example.com",
-  phone: "0470 12 34 56"
-});
-
-const testDog = addDog({
-  id: "D1",
-  customerId: "C1",
-  name: "Seda",
-  breed: "Border Collie",
-  birthdate: "2023-05-10"
-});
-
-const testPass = addPass({
-  id: "P1",
-  dogId: "D1",
-  lessonType: "Puppy Pack",
-  totalLessons: 9,
-  usedLessons: 2,
-  validUntil: "2026-03-11"
-});
-
-console.log("✅ Dummy data geladen:", { testCustomer, testDog, testPass });
+export function useStrip(passId) {
+  const pass = findPassById(passId);
+  if (pass && pass.remaining > 0) {
+    pass.remaining -= 1;
+    return pass;
+  }
+  return null;
+}
