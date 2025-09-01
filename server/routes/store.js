@@ -1,14 +1,41 @@
-// Eenvoudige gedeelde in-memory "database"
+// store.js
+
+// --- Centrale data store ---
 const store = {
-  customers: [],   // { id, name, email, phone, lessonType }
-  dogs: [],        // { id, customerId, name, breed, birthdate, gender, vaccinationStatus, passportRef, vetPhone, vetName, emergencyPhone, photoUrl }
-  passes: []       // { id, customerId, dogId, type, totalStrips, usedStrips, createdAt }
+  customers: [],  // alle klanten
+  dogs: [],       // alle honden
+  passes: []      // strippenkaarten
 };
 
-// Helper om nieuwe ID's te maken (uniek genoeg voor demo)
-function nextId(list) {
-  const max = list.reduce((m, r) => Math.max(m, Number(r.id) || 0), 0);
-  return max + 1;
+// --- Functies voor klanten ---
+function addCustomer(customer) {
+  store.customers.push(customer);
+  return customer;
 }
 
-module.exports = { store, nextId };
+function findCustomerById(id) {
+  return store.customers.find(c => c.id === id);
+}
+
+// --- Functies voor honden ---
+function addDog(dog) {
+  store.dogs.push(dog);
+  return dog;
+}
+
+function findDogById(id) {
+  return store.dogs.find(d => d.id === id);
+}
+
+// --- Functies voor strippenkaarten ---
+function addPass(pass) {
+  store.passes.push(pass);
+  return pass;
+}
+
+function findPassById(id) {
+  return store.passes.find(p => p.id === id);
+}
+
+// --- Exports ---
+export { store, addCustomer, findCustomerById, addDog, findDogById, addPass, findPassById };
