@@ -169,3 +169,79 @@
     }
   });
 })();
+
+(function setupSearchUI() {
+  const form   = document.getElementById("searchForm");
+  const input  = document.getElementById("searchInput");
+  const status = document.getElementById("searchStatus");
+  const box    = document.getElementById("searchResults");
+  if (!form || !input || !status || !box) return;
+
+  function htmlTable(title, rows, columns) {
+    if (!rows?.length) return "";
+    const thead = `<thead><tr>${columns.map(c => `<th style="text-align:left; padding:8px;">${c.label}</th>`).join("")}</tr></thead>`;
+    const tbody = `<tbody>${
+      rows.map(r => `<tr>${
+        columns.map(c => `<td style="padding:8px; border-top:1px solid #eee;">${c.render ? c.render(r) : (r[c.key] ?? "")}</td>`).join("")
+      }</tr>`).join("")
+    }</tbody>`;
+    return `
+      <div style="margin-top:16px;">
+        <h3 style="margin:0 0 8px 0;">${title}</h3>
+        <div style="overflow:auto;">
+          <table style="border-collapse:collapse; width:100%; font-size:16px;">${thead}${tbody}</table>
+        </div>
+      </div>
+    `;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const q = input.value.trim();
+    box.innerHTML = "";
+    if (!q) { status.textContent = "Typ eerst een zoekterm."; return; }
+
+    status.textContent = "Zoeken…";
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const payload = await res.json();
+
+      // De backend geeft { ok, query, results: { customers, dogs, passes } }
+      const r = payload?.results || {};
+      const customers = r.customers || [];
+      const dogs      = r.dogs || [];
+      const passes    = r.passes || [];
+
+      const customersTable = htmlTable("Klanten", customers, [
+        { key: "name",  label: "Naam" },
+        { key: "email", label: "E-mail" },
+        { key: "phone", label: "Telefoon" },
+      ]);
+
+      const dogsTable = htmlTable("Honden", dogs, [
+        { key: "name",  label: "Naam" },
+        { key: "breed", label: "Ras" },
+        { key: "ownerId", label: "Eigenaar ID" },
+      ]);
+
+      const passesTable = htmlTable("Strippenkaarten", passes, [
+        { key: "type",      label: "Type" },
+        { key: "total",     label: "Totaal" },
+        { key: "remaining", label: "Resterend" },
+        { key: "dogId",     label: "Hond ID" },
+      ]);
+
+      const any = customers.length + dogs.length + passes.length > 0;
+      status.textContent = any
+        ? `Resultaten voor “${payload.query ?? q}”.`
+        : `Geen resultaten voor “${payload.query ?? q}”.`;
+
+      box.innerHTML = customersTable + dogsTable + passesTable;
+    } catch (err) {
+      console.error(err);
+      status.textContent = "Zoeken mislukt. Controleer /api/search en je store-data.";
+      box.innerHTML = "";
+    }
+  });
+})();
