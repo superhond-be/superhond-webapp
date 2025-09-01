@@ -1,51 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond Beheerportaal</title>
-  <link rel="stylesheet" href="app.css" />
+  <!-- Eén stylesheet + cache-buster -->
+  <link rel="stylesheet" href="/app.css?v=2" />
 </head>
 <body>
-  <nav>
-    <ul>
-      <li><a href="/">Dashboard</a></li>
-      <li>Klanten</li>
-      <li>Honden</li>
-      <li>Lessen</li>
-      <li>Instellingen</li>
-    </ul>
+  <nav class="topnav">
+    <a data-link href="/">Dashboard</a>
+    <a data-link href="/customers">Klanten</a>
+    <a data-link href="/dogs">Honden</a>
+    <a data-link href="/passes">Strippenkaarten</a>
+    <a data-link href="/lessons">Lessen</a>
+    <a data-link href="/settings">Instellingen</a>
   </nav>
 
-  <main>
-    <h1>Superhond Beheerportaal</h1>
-    <p class="status">Gebruik de zoekbalk om klanten, honden of strippenkaarten te vinden.</p>
-
-    <div class="search-wrap">
-      <input id="searchBox" class="search-input" type="search"
-             placeholder="Typ bv. Paul, Sofie, Diva, Rocky of Puppycursus…"/>
-      <button class="btn" id="searchBtn" type="button">Zoek</button>
-    </div>
-
-    <div id="searchStatus" class="status" aria-live="polite"></div>
-
-    <!-- Resultaten-secties -->
-    <section id="secCustomers" class="section" hidden>
-      <div class="section-title">Klanten</div>
-      <div id="cardsCustomers" class="cards"></div>
-    </section>
-
-    <section id="secDogs" class="section" hidden>
-      <div class="section-title">Honden</div>
-      <div id="cardsDogs" class="cards"></div>
-    </section>
-
-    <section id="secPasses" class="section" hidden>
-      <div class="section-title">Strippenkaarten</div>
-      <div id="cardsPasses" class="cards"></div>
-    </section>
+  <main id="app" class="container">
+    <!-- app.js rendert hier het actieve scherm -->
   </main>
 
-  <script src="app.js"></script>
+  <!-- Frontend entrypoint -->
+  <script type="module" src="/app.js?v=2"></script>
 </body>
 </html>
