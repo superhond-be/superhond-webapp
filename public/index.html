@@ -2,115 +2,94 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond Beheer</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-      font-size: 18px; /* GROTERE BASIS TEKST */
+    :root{
+      --brand:#0066cc; --brand-dark:#004c99; --bg:#f4f6f8; --card:#ffffff; --muted:#666;
+      --line:#e4e7ec; --ink:#111827; --chip:#eaf2ff;
     }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height:1.6; font-size:18px; /* GROTERE TEKST */
+    }
+    header{
+      background:var(--brand); color:#fff; padding:22px 16px; text-align:center;
+      font-weight:800; font-size:30px; letter-spacing:.3px;
+    }
+    main{ max-width:1100px; margin:22px auto; padding:0 16px; }
+    h2{ font-size:26px; margin:0 0 10px 0; }
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:14px;
+      box-shadow:0 2px 8px rgba(16,24,40,.06); padding:18px; margin-bottom:18px;
+    }
+    .actions{ display:flex; gap:12px; align-items:center; }
+    input[type="text"]{
+      flex:1; padding:14px 16px; font-size:18px; border:1px solid var(--line); border-radius:12px; background:#fff;
+    }
+    button{
+      padding:12px 18px; font-size:18px; font-weight:700; border:0; border-radius:12px; cursor:pointer;
+      background:var(--brand); color:#fff;
+    }
+    button:hover{ background:var(--brand-dark); }
+    .muted{ color:var(--muted); }
 
-    header {
-      background: #0066cc;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 28px; /* GROTERE TITEL */
-      font-weight: bold;
+    /* Resultaatkaarten */
+    .result-card{
+      border:1px solid var(--line); border-radius:14px; padding:16px; margin:14px 0; background:#fff;
     }
+    .result-head{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;
+    }
+    .result-title{ font-size:22px; font-weight:800; }
+    .result-sub{ color:var(--muted); font-size:16px; }
+    .chip{
+      display:inline-block; background:var(--chip); color:var(--brand);
+      padding:4px 10px; border-radius:999px; font-size:16px; font-weight:700;
+    }
+    .result-section{ margin-top:12px; }
+    .result-section h3{ font-size:20px; margin:0 0 6px 0; }
+    .result-list{ margin:0; padding-left:22px; }
+    .btn-secondary{
+      background:#fff; color:var(--brand); border:2px solid var(--brand);
+    }
+    .btn-secondary:hover{ background:#f7fbff; }
 
-    main {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    input, button {
-      font-size: 18px; /* GROTERE KNOPPEN EN INPUTS */
-      padding: 10px;
-      margin: 5px 0;
-    }
-
-    input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      background: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #004c99;
-    }
-
-    ul {
-      margin: 10px 0;
-      padding-left: 20px;
-    }
-
-    .muted {
-      color: #666;
-      font-size: 16px;
-    }
+    /* Footer */
+    footer{ text-align:center; color:#8a8f9b; font-size:16px; padding:20px; }
   </style>
 </head>
 <body>
-  <header>
-    Superhond Beheerportaal
-  </header>
+  <header>🐾 Superhond Beheerportaal</header>
 
   <main>
-    <!-- Zoeksectie -->
+    <!-- Zoeken -->
     <section class="card">
       <h2>🔎 Zoeken naar klanten of honden</h2>
-      <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <input id="srch-q" placeholder="Geef naam, e-mail, telefoon of hondnaam in…" />
+      <div class="actions" style="margin-top:10px;">
+        <input id="srch-q" type="text" placeholder="Typ klantnaam, e-mail, telefoon of hondnaam…" />
         <button id="srch-run">Zoeken</button>
       </div>
-      <div id="srch-results" class="muted">Voer een zoekopdracht uit…</div>
+      <div id="srch-results" class="muted" style="margin-top:12px;">Voer een zoekopdracht uit…</div>
     </section>
 
-    <!-- Overzicht andere onderdelen -->
+    <!-- Plaats voor extra modules (optioneel) -->
     <section class="card">
       <h2>📋 Klanten & Honden</h2>
-      <p>Hier komt later het overzicht van alle klanten en gekoppelde honden.</p>
+      <p class="muted">Hier kunnen later snelacties of dashboards komen (registratie, nieuwe hond, …).</p>
     </section>
 
     <section class="card">
       <h2>🎟️ Strippenkaarten</h2>
-      <p>Hier zie je welke strippenkaarten beschikbaar zijn en hoeveel strippen nog openstaan.</p>
-    </section>
-
-    <section class="card">
-      <h2>📅 Lessen</h2>
-      <p>Hier kunnen geplande lessen getoond worden.</p>
+      <p class="muted">Hier kan later een overzicht komen per hond met ➖ strip verbruiken.</p>
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <footer>Laatste update wordt automatisch ververst in de app.js</footer>
+
+  <script src="/app.js"></script>
 </body>
 </html>
