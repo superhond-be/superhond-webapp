@@ -39,3 +39,31 @@ function findPassById(id) {
 
 // --- Exports ---
 export { store, addCustomer, findCustomerById, addDog, findDogById, addPass, findPassById };
+
+
+// --- Dummy testdata ---
+const testCustomer = addCustomer({
+  id: "C1",
+  name: "Mitchell de Heer",
+  email: "mitchell@example.com",
+  phone: "0470 12 34 56"
+});
+
+const testDog = addDog({
+  id: "D1",
+  customerId: "C1",
+  name: "Seda",
+  breed: "Border Collie",
+  birthdate: "2023-05-10"
+});
+
+const testPass = addPass({
+  id: "P1",
+  dogId: "D1",
+  lessonType: "Puppy Pack",
+  totalLessons: 9,
+  usedLessons: 2,
+  validUntil: "2026-03-11"
+});
+
+console.log("✅ Dummy data geladen:", { testCustomer, testDog, testPass });
