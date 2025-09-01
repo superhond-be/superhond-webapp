@@ -1,121 +1,307 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Superhond.be – Admin Portaal</title>
-  <link rel="stylesheet" href="/theme.css?v=1" />
-  <link rel="stylesheet" href="/app.css?v=1" />
+  <style>
+    /* ====== Superhond – Top Tabs Layout (offline, geen externe libs) ====== */
+    :root{
+      --sh-yellow:#ffd54d; --sh-bg:#fafafa; --sh-text:#212529; --sh-muted:#6c757d; --sh-border:#dee2e6;
+      --sh-card:#fff; --sh-primary:#0d6efd; --sh-primary-contrast:#fff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:var(--sh-text); background:var(--sh-bg)}
+
+    /* Header */
+    .sh-header{position:sticky; top:0; z-index:20; background:var(--sh-yellow); padding:.6rem .9rem; font-weight:700; display:flex; justify-content:space-between; align-items:center}
+    .sh-header small{color:var(--sh-muted); font-weight:500}
+
+    /* Top tabs (horizontaal, scrollbaar op smal) */
+    .sh-tabs-wrap{position:sticky; top:2.7rem; z-index:19; background:#fff; border-bottom:1px solid var(--sh-border)}
+    .sh-tabs{display:flex; gap:.25rem; padding:.25rem .5rem; margin:0; list-style:none; overflow-x:auto; white-space:nowrap}
+    .sh-tabs button{border:1px solid transparent; background:transparent; padding:.45rem .8rem; border-radius:.5rem .5rem 0 0; cursor:pointer; color:#495057}
+    .sh-tabs button:hover{background:#f1f3f5}
+    .sh-tabs button.active{background:#fff; border:1px solid var(--sh-border); border-bottom-color:#fff; font-weight:600; box-shadow:0 -1px 0 0 #fff inset}
+
+    /* Pagina’s */
+    .sh-main{padding:1rem}
+    .page{display:none}
+    .page.active{display:block}
+
+    /* Cards/alerts/buttons (eenvoudige, bootstrap-achtige look) */
+    .card{background:var(--sh-card); border:1px solid var(--sh-border); border-radius:.75rem; box-shadow:0 2px 10px rgba(0,0,0,.04); overflow:hidden}
+    .card-body{padding:1rem}
+    .alert{padding:.75rem 1rem; border-radius:.5rem; border:1px solid var(--sh-border); background:#fff}
+    .alert.info{border-color:#b6d4fe; background:#e7f1ff; color:#084298}
+    .btn{display:inline-block; padding:.45rem .8rem; border-radius:.5rem; border:1px solid var(--sh-border); background:#fff; cursor:pointer}
+    .btn.primary{background:var(--sh-primary); color:var(--sh-primary-contrast); border-color:var(--sh-primary)}
+    .btn.outline{background:#fff; color:#0b5ed7}
+    .btn.sm{padding:.3rem .6rem; font-size:.9rem}
+
+    /* Form controls */
+    .form-row{display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:flex-end; margin-bottom:1rem}
+    .form-group{display:flex; flex-direction:column}
+    .form-group label{font-size:.9rem; margin-bottom:.25rem; color:#495057}
+    .form-group input, .form-group select{padding:.45rem .6rem; border:1px solid var(--sh-border); border-radius:.5rem; background:#fff; min-width:220px}
+
+    /* Tabel (desktop/ipad) + Cards (iPhone) */
+    .table-wrap{overflow:auto}
+    table{width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--sh-border); border-radius:.5rem; overflow:hidden}
+    thead th{background:#f8f9fa; text-align:left; font-weight:600; border-bottom:1px solid var(--sh-border); padding:.6rem .7rem}
+    tbody td{border-top:1px solid var(--sh-border); padding:.6rem .7rem}
+    .text-end{text-align:right}
+    .stack{display:none}
+
+    /* Responsief: op heel smal scherm stapelen als kaarten */
+    @media (max-width: 576px){
+      .sh-main{padding:.75rem}
+      .table-wrap{display:none}
+      .stack{display:block}
+      .stack .card{margin-bottom:.6rem}
+      .form-group input, .form-group select{min-width:unset; width:100%}
+    }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <span class="paw">🐾</span>
-    <div class="brand">Superhond.be – Admin Portaal</div>
+  <!-- Gele header -->
+  <header class="sh-header">
+    <div>Superhond.be – Admin Portaal</div>
+    <small>v1.0</small>
   </header>
 
-  <div class="shell">
-    <aside class="sidebar">
-      <h4>Menu</h4>
-      <nav class="nav" id="nav">
-        <a href="#/dashboard" data-route="dashboard" class="active">Dashboard</a>
-        <a href="#/customers" data-route="customers">Klanten</a>
-        <a href="#/dogs" data-route="dogs">Honden</a>
-        <a href="#/passes" data-route="passes">Strippenkaarten</a>
-        <a href="#/lessons" data-route="lessons">Lessen</a>
-        <a href="#/settings" data-route="settings">Instellingen</a>
-      </nav>
-    </aside>
-
-    <main class="main">
-      <div class="header">
-        <h1 id="title">Dashboard</h1>
-        <div class="actions">
-          <button class="btn outline" onclick="location.reload()">Herladen</button>
-        </div>
-      </div>
-
-      <section id="view" class="card">
-        <p>Welkom! Kies een item in het menu.</p>
-      </section>
-
-      <div class="footer mt16">Laatst geladen: <span id="ts"></span></div>
-    </main>
+  <!-- Top tabbladen (vervangt de sidebar) -->
+  <div class="sh-tabs-wrap">
+    <ul id="topTabs" class="sh-tabs">
+      <li><button data-target="dash" class="active">Dashboard</button></li>
+      <li><button data-target="klanten">Klanten</button></li>
+      <li><button data-target="honden">Honden</button></li>
+      <li><button data-target="strip">Strippenkaarten</button></li>
+      <li><button data-target="lessen">Lessen</button></li>
+      <li><button data-target="instellingen">Instellingen</button></li>
+    </ul>
   </div>
 
+  <!-- Inhoud -->
+  <main class="sh-main">
+    <!-- Dashboard -->
+    <section id="page-dash" class="page active">
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-body">
+          <h2 style="margin:.2rem 0 1rem">Dashboard</h2>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap">
+            <div class="card" style="flex:1 1 260px">
+              <div class="card-body">
+                <strong>Vandaag</strong>
+                <ul style="margin:.5rem 0 0; padding-left:1rem">
+                  <li>Geplande lessen: <b>3</b></li>
+                  <li>Ingeschreven honden: <b>22</b></li>
+                  <li>No-shows vorige week: <b>2</b></li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="flex:2 1 420px">
+              <div class="card-body">
+                <strong>Snelkoppelingen</strong><br/><br/>
+                <button class="btn primary sm" data-nav="lessen">Nieuwe les plannen</button>
+                <button class="btn outline sm" data-nav="klanten">Klant zoeken</button>
+                <button class="btn outline sm" data-nav="strip">Strippenkaart toekennen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Klanten -->
+    <section id="page-klanten" class="page">
+      <h2>Klanten</h2>
+
+      <!-- Filters -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Zoek klant</label>
+          <input id="customerQuery" placeholder="min. 3 letters (naam/e-mail)">
+        </div>
+        <div class="form-group">
+          <label>Stad</label>
+          <input id="customerCity" placeholder="optioneel">
+        </div>
+        <button class="btn primary sm" id="btnCustomerSearch">Zoeken</button>
+      </div>
+
+      <!-- Tabel (iPad/desktop) -->
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th><th>Honden</th><th class="text-end">Acties</th></tr></thead>
+          <tbody id="customerTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Cards (iPhone) -->
+      <div id="customerCards" class="stack"></div>
+    </section>
+
+    <!-- Honden -->
+    <section id="page-honden" class="page">
+      <h2>Honden</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Zoek hond</label>
+          <input id="dogQuery" placeholder="min. 3 letters (naam)">
+        </div>
+        <button class="btn primary sm" id="btnDogSearch">Zoeken</button>
+      </div>
+      <div id="dogResults" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.75rem"></div>
+    </section>
+
+    <!-- Strippenkaarten -->
+    <section id="page-strip" class="page">
+      <h2>Strippenkaarten</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Klant</label>
+          <input placeholder="zoek klant...">
+        </div>
+        <div class="form-group">
+          <label>Pakket</label>
+          <select>
+            <option>Puppy 9-lessen</option>
+            <option>Puber 6-lessen</option>
+          </select>
+        </div>
+        <button class="btn primary sm">Toekennen</button>
+      </div>
+      <div class="alert info">Hier komt de lijst met actieve strippenkaarten.</div>
+    </section>
+
+    <!-- Lessen -->
+    <section id="page-lessen" class="page">
+      <h2>Lessen</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Vanaf</label>
+          <input type="datetime-local">
+        </div>
+        <div class="form-group">
+          <label>Tot</label>
+          <input type="datetime-local">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <input placeholder="Puppy, Puber...">
+        </div>
+        <button class="btn primary sm">Laden</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.75rem">
+        <div class="card">
+          <div class="card-body">
+            <strong>Puppy – ma 10:00</strong>
+            <div class="muted" style="margin:.25rem 0 .5rem">Retie · Coach Sofie</div>
+            <div>Capaciteit: 10 · Bezet: 7</div>
+            <div style="margin-top:.6rem">
+              <button class="btn sm outline">Deelnemers</button>
+              <button class="btn sm">Bewerken</button>
+            </div>
+          </div>
+        </div>
+        <!-- meer kaarten hier dynamisch -->
+      </div>
+    </section>
+
+    <!-- Instellingen -->
+    <section id="page-instellingen" class="page">
+      <h2>Instellingen</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:.75rem">
+        <div class="card">
+          <div class="card-body">
+            <strong>Algemeen</strong>
+            <div class="form-group" style="margin-top:.6rem">
+              <label>Annuleer-cutoff (uur)</label>
+              <input type="number" value="6">
+            </div>
+            <div class="form-group">
+              <label>Max. toekomstige boekingen per pas</label>
+              <input type="number" value="2">
+            </div>
+            <button class="btn primary sm">Opslaan</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <strong>E-mail</strong>
+            <div class="form-group" style="margin-top:.6rem">
+              <label>Afzender</label>
+              <input placeholder="Superhond <noreply@superhond.be>">
+            </div>
+            <div class="form-group">
+              <label>SMTP host</label>
+              <input placeholder="smtp.example.com">
+            </div>
+            <button class="btn primary sm">Opslaan</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
   <script>
-    // mini-router voor demo / uniforme navigatie
-    const title = document.getElementById('title');
-    const view  = document.getElementById('view');
-    const ts    = document.getElementById('ts');
-    const nav   = document.getElementById('nav');
-
-    const screens = {
-      dashboard: `
-        <div class="grid">
-          <div class="card"><div class="card-title">Snelstart</div>
-            <p>Gebruik het menu links om te navigeren. Dit is het uniforme Superhond-layout.</p>
-          </div>
-        </div>`,
-      customers: `
-        <div class="card">
-          <div class="card-title">Klanten zoeken</div>
-          <label>Zoek</label>
-          <input class="input" placeholder="Naam, e-mail of telefoon…" />
-          <div class="mt16">
-            <table class="table">
-              <thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th></tr></thead>
-              <tbody><tr><td>Paul Thijs</td><td>paul@example.com</td><td>0476 12 34 56</td></tr></tbody>
-            </table>
-          </div>
-        </div>`,
-      dogs: `
-        <div class="card">
-          <div class="card-title">Honden</div>
-          <div class="row">
-            <div class="col-6">
-              <label>Naam hond</label><input class="input" />
-            </div>
-            <div class="col-6">
-              <label>Ras</label><input class="input" />
-            </div>
-          </div>
-          <button class="btn primary mt16">Opslaan</button>
-        </div>`,
-      passes: `
-        <div class="card">
-          <div class="card-title">Strippenkaarten</div>
-          <p>Beheer strippen per hond. (UI placeholder – backend koppel je later.)</p>
-          <div class="alert">Nog geen echte data geladen.</div>
-        </div>`,
-      lessons: `
-        <div class="card">
-          <div class="card-title">Lessen</div>
-          <p>Plan lessen en registreer aanwezigheid.</p>
-          <button class="btn outline">Nieuwe les</button>
-        </div>`,
-      settings: `
-        <div class="card">
-          <div class="card-title">Instellingen</div>
-          <label>Organisatienaam</label><input class="input" value="Superhond.be" />
-          <button class="btn success mt16">Bewaar</button>
-        </div>`
-    };
-
-    function render(){
-      const hash = (location.hash || '#/dashboard').replace('#/','');
-      // active item in menu
-      [...nav.querySelectorAll('a')].forEach(a=>{
-        a.classList.toggle('active', a.dataset.route===hash);
-      });
-      title.textContent = {
-        dashboard:'Dashboard', customers:'Klanten', dogs:'Honden',
-        passes:'Strippenkaarten', lessons:'Lessen', settings:'Instellingen'
-      }[hash] || 'Dashboard';
-      view.innerHTML = screens[hash] || screens.dashboard;
-      ts.textContent = new Date().toLocaleString();
+    /* ====== Tabs navigatie ====== */
+    const tabs = document.querySelectorAll('#topTabs button');
+    const pages = document.querySelectorAll('.page');
+    function showPage(key){
+      pages.forEach(p => p.classList.toggle('active', p.id === 'page-'+key));
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.target === key));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    window.addEventListener('hashchange', render);
-    render();
+    tabs.forEach(t => t.addEventListener('click', () => showPage(t.dataset.target)));
+    document.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => showPage(b.dataset.nav)));
+    showPage('dash');
+
+    /* ====== Demo-data (vervang door echte fetches naar je API) ====== */
+    const demoCustomers = [
+      { name:'Paul Thijs', email:'paul@example.com', phone:'0476 11 22 33', dogs:2 },
+      { name:'Sofie Janssens', email:'sofie@example.com', phone:'0470 55 66 77', dogs:1 },
+      { name:'Tom Peeters', email:'tom@example.com', phone:'0468 00 11 22', dogs:3 }
+    ];
+
+    const tbody = document.getElementById('customerTableBody');
+    const cards = document.getElementById('customerCards');
+    demoCustomers.forEach(c => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td><td>${c.dogs}</td>
+        <td class="text-end"><button class="btn sm outline">Openen</button></td>`;
+      tbody.appendChild(tr);
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<div class="card-body">
+        <div style="font-weight:600">${c.name}</div>
+        <div class="muted" style="font-size:.9rem">${c.email}</div>
+        <div class="muted" style="font-size:.9rem">${c.phone}</div>
+        <div style="margin-top:.5rem"><button class="btn sm primary">Openen</button></div>
+      </div>`;
+      cards.appendChild(card);
+    });
+
+    const dogs = [
+      { name:'Luna', breed:'Labrador', owner:'Paul Thijs' },
+      { name:'Max', breed:'Border Collie', owner:'Sofie Janssens' },
+      { name:'Bella', breed:'Beagle', owner:'Tom Peeters' }
+    ];
+    const dogGrid = document.getElementById('dogResults');
+    dogs.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<div class="card-body">
+        <strong>${d.name}</strong> <span class="muted">${d.breed}</span><br/>
+        <span class="muted">Eigenaar: ${d.owner}</span>
+        <div style="margin-top:.5rem"><button class="btn sm outline">Details</button></div>
+      </div>`;
+      dogGrid.appendChild(card);
+    });
   </script>
 </body>
 </html>
