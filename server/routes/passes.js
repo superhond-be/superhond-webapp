@@ -1,87 +1,63 @@
 const express = require("express");
+const { store, nextId } = require("../store"); // gebruik gedeelde store
+
 const router = express.Router();
 
-let passes = [];
-
-// GET alle passes (filter mogelijk)
-router.get("/", (req, res) => {
-  const { customerId, dogId, type } = req.query;
-  let list = passes;
-  if (customerId) list = list.filter(p => p.customerId === Number(customerId));
-  if (dogId) list = list.filter(p => p.dogId === Number(dogId));
-  if (type) list = list.filter(p => p.type === String(type));
-  res.json(list);
+// ========================================================================
+// GET /api/passes → alle strippenkaarten
+// ========================================================================
+router.get("/", (_req, res) => {
+  res.json(store.passes);
 });
 
-// GET pass op ID
-router.get("/:id", (req, res) => {
-  const pass = passes.find(p => p.id === Number(req.params.id));
-  if (!pass) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
-  res.json(pass);
-});
-
-// POST nieuwe strippenkaart
+// ========================================================================
+// POST /api/passes → nieuwe strippenkaart toevoegen
+// Body: { customerId, dogId, type, totalStrips }
+// ========================================================================
 router.post("/", (req, res) => {
-  const { customerId, dogId, type, totalStrips } = req.body;
-
-  if (!customerId || !type || !totalStrips) {
-    return res.status(400).json({ message: "customerId, type en totalStrips zijn verplicht" });
+  const b = req.body || {};
+  if (!b.customerId || !b.type || !b.totalStrips) {
+    return res.status(400).json({ message: "customerId, type en totalStrips zijn verplicht." });
   }
 
-  const newPass = {
-    id: passes.length + 1,
-    customerId: Number(customerId),
-    dogId: dogId ? Number(dogId) : null,
-    type: String(type),
-    totalStrips: Number(totalStrips),
+  const pass = {
+    id: nextId(store.passes),
+    customerId: Number(b.customerId),
+    dogId: b.dogId ? Number(b.dogId) : null,
+    type: String(b.type).trim(),
+    totalStrips: Number(b.totalStrips),
     usedStrips: 0,
     createdAt: new Date().toISOString()
   };
-
-  passes.push(newPass);
-  res.status(201).json(newPass);
+  store.passes.push(pass);
+  res.status(201).json(pass);
 });
 
-// POST strips verbruiken
-router.post("/:id/consume", (req, res) => {
-  const pass = passes.find(p => p.id === Number(req.params.id));
-  if (!pass) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
+// ========================================================================
+// PUT /api/passes/:id/use → een strip afboeken
+// Body: { count } (standaard = 1)
+// ========================================================================
+router.put("/:id/use", (req, res) => {
+  const id = Number(req.params.id);
+  const p = store.passes.find((x) => x.id === id);
+  if (!p) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
 
-  const count = req.body.count ? Number(req.body.count) : 1;
-  const remaining = pass.totalStrips - pass.usedStrips;
-
-  if (count <= 0) return res.status(400).json({ message: "count moet > 0 zijn" });
-  if (count > remaining) {
-    return res.status(400).json({ message: `Onvoldoende strips (nog ${remaining} over)` });
+  const count = Number(req.body.count || 1);
+  if (p.usedStrips + count > p.totalStrips) {
+    return res.status(400).json({ message: "Niet genoeg strippen over" });
   }
 
-  pass.usedStrips += count;
-  res.json({ ...pass, remainingStrips: pass.totalStrips - pass.usedStrips });
+  p.usedStrips += count;
+  res.json(p);
 });
 
-// PUT pass bijwerken
-router.put("/:id", (req, res) => {
-  const pass = passes.find(p => p.id === Number(req.params.id));
-  if (!pass) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
-
-  if (req.body.dogId !== undefined) pass.dogId = req.body.dogId === null ? null : Number(req.body.dogId);
-  if (req.body.type !== undefined) pass.type = String(req.body.type);
-  if (req.body.totalStrips !== undefined) {
-    const nextTotal = Number(req.body.totalStrips);
-    if (nextTotal < pass.usedStrips) {
-      return res.status(400).json({ message: "totalStrips kan niet kleiner zijn dan usedStrips" });
-    }
-    pass.totalStrips = nextTotal;
-  }
-
-  res.json(pass);
-});
-
-// DELETE pass
+// ========================================================================
+// DELETE /api/passes/:id → strippenkaart verwijderen
+// ========================================================================
 router.delete("/:id", (req, res) => {
-  const before = passes.length;
-  passes = passes.filter(p => p.id !== Number(req.params.id));
-  if (passes.length === before) {
+  const before = store.passes.length;
+  store.passes = store.passes.filter((x) => x.id !== Number(req.params.id));
+  if (store.passes.length === before) {
     return res.status(404).json({ message: "Strippenkaart niet gevonden" });
   }
   res.json({ message: "Strippenkaart verwijderd" });
