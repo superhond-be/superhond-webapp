@@ -1,34 +1,35 @@
-import express from "express";
+// server/routes/lessons.js
+const express = require("express");
 const router = express.Router();
 
-/** Simpele lesdata */
-let LESSONS = [
-  // { id: 1, name: "Puppy Pack", date: "2025-09-01", trainers:["Sofie"], location:"Dessel" }
-];
-let NEXT_LESSON_ID = 1;
+/*
+  Lesson = lesmoment:
+  { id, date, start, end, lessonType, location, trainers: [string] }
+*/
+const LESSONS = [];
+let NEXT_ID = 1;
 
-/** GET /api/lessons */
-router.get("/", (_req, res) => {
-  const output = LESSONS.slice();
-  res.json(output);
+// Lijst (optionele filters: lessonType, from, to)
+router.get("/", (req, res) => {
+  const { lessonType, from, to } = req.query;
+  let data = LESSONS;
+  if (lessonType) data = data.filter(l => l.lessonType === lessonType);
+  if (from) data = data.filter(l => l.date >= from);
+  if (to) data = data.filter(l => l.date <= to);
+  res.json(data);
 });
 
-/** POST /api/lessons */
+// Aanmaken
 router.post("/", (req, res) => {
-  const { name, date, location, trainers } = req.body || {};
-  if (!name || !date) {
-    return res.status(400).json({ error: "name and date are required" });
-  }
+  const { date, start, end, lessonType, location, trainers } = req.body || {};
+  if (!date || !lessonType) return res.status(400).json({ error: "date and lessonType are required" });
   const lesson = {
-    id: NEXT_LESSON_ID++,
-    name,
-    date,
-    location: location || "",
-    trainers: Array.isArray(trainers) ? trainers : [],
-    createdAt: new Date().toISOString(),
+    id: NEXT_ID++,
+    date, start: start || "", end: end || "",
+    lessonType, location: location || "", trainers: Array.isArray(trainers) ? trainers : []
   };
   LESSONS.push(lesson);
   res.status(201).json(lesson);
 });
 
-export default router;
+module.exports = router;
