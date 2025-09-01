@@ -1,102 +1,112 @@
-// server/routes/customers.js
+// server/routes/customers.js (ESM)
 import express from "express";
+import { store, nextId } from "../store.js";
+
 const router = express.Router();
 
-// In-memory opslag (later kan dit vervangen worden door database)
-let CUSTOMERS = [];
-let NEXT_ID = 1;
-
 /**
- * GET /api/customers?q=...
- * → Alle klanten ophalen (optioneel filteren met querystring)
+ * GET /api/customers
+ * Optioneel: ?q=zoekterm  (filtert op name/email/phone)
  */
 router.get("/", (req, res) => {
-  const q = (req.query.q || "").toLowerCase();
-  const result = !q
-    ? CUSTOMERS
-    : CUSTOMERS.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          (c.email && c.email.toLowerCase().includes(q))
-      );
-  res.json(result);
+  const q = (req.query.q || "").toString().trim().toLowerCase();
+  if (!q) return res.json(store.customers);
+
+  const list = store.customers.filter((c) => {
+    const hay = [c.name, c.email, c.phone].filter(Boolean).join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+  res.json(list);
 });
 
-/**
- * GET /api/customers/:id
- * → Eén klant ophalen
- */
+/** GET /api/customers/:id */
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
-  const customer = CUSTOMERS.find((c) => c.id === id);
-  if (!customer) return res.status(404).json({ error: "Customer not found" });
-  res.json(customer);
+  const c = store.customers.find((x) => x.id === id);
+  if (!c) return res.status(404).json({ error: "Customer not found" });
+  res.json(c);
 });
 
 /**
  * POST /api/customers
- * body: { name, email?, phone? }
- * → Nieuwe klant aanmaken
+ * body: { name, email?, phone?, lessonType? }
  */
 router.post("/", (req, res) => {
-  const { name, email, phone } = req.body || {};
-  if (!name) return res.status(400).json({ error: "Name is required" });
+  const { name, email, phone, lessonType } = req.body || {};
+  if (!name) return res.status(400).json({ error: "name is required" });
 
   const customer = {
-    id: NEXT_ID++,
-    name,
-    email: email || "",
-    phone: phone || "",
-    dogs: [],     // gekoppelde honden
-    passes: [],   // strippenkaarten
-    createdAt: new Date().toISOString(),
+    id: nextId(store.customers),
+    name: String(name).trim(),
+    email: (email || "").trim(),
+    phone: (phone || "").trim(),
+    lessonType: (lessonType || "").trim(),
+    createdAt: new Date().toISOString()
   };
-
-  CUSTOMERS.push(customer);
+  store.customers.push(customer);
   res.status(201).json(customer);
 });
 
 /**
- * POST /api/customers/:id/dogs
- * body: { dogId }
- * → Hond koppelen aan klant
+ * PUT /api/customers/:id
+ * body: { name?, email?, phone?, lessonType? }
  */
-router.post("/:id/dogs", (req, res) => {
+router.put("/:id", (req, res) => {
   const id = Number(req.params.id);
-  const { dogId } = req.body || {};
-  const customer = CUSTOMERS.find((c) => c.id === id);
-  if (!customer) return res.status(404).json({ error: "Customer not found" });
-  if (!dogId) return res.status(400).json({ error: "dogId is required" });
+  const c = store.customers.find((x) => x.id === id);
+  if (!c) return res.status(404).json({ error: "Customer not found" });
 
-  if (!customer.dogs.includes(dogId)) customer.dogs.push(dogId);
-  res.json(customer);
+  const { name, email, phone, lessonType } = req.body || {};
+  if (name !== undefined) c.name = String(name).trim();
+  if (email !== undefined) c.email = String(email).trim();
+  if (phone !== undefined) c.phone = String(phone).trim();
+  if (lessonType !== undefined) c.lessonType = String(lessonType).trim();
+
+  res.json(c);
 });
 
 /**
- * POST /api/customers/:id/passes
- * body: { lessonType, total }
- * → Strippenkaart koppelen aan klant
+ * DELETE /api/customers/:id
+ * Verwijdert ook gekoppelde honden & passes (cascade light)
  */
-router.post("/:id/passes", (req, res) => {
+router.delete("/:id", (req, res) => {
   const id = Number(req.params.id);
-  const { lessonType, total } = req.body || {};
-  const customer = CUSTOMERS.find((c) => c.id === id);
+  const before = store.customers.length;
+  store.customers = store.customers.filter((x) => x.id !== id);
+  if (store.customers.length === before) {
+    return res.status(404).json({ error: "Customer not found" });
+  }
+  // Cascade: alle honden & passes van deze klant mee verwijderen
+  store.dogs = store.dogs.filter((d) => d.ownerId !== id);
+  store.passes = store.passes.filter((p) => p.customerId !== id);
+  res.json({ message: "Customer + related dogs/passes removed" });
+});
+
+/**
+ * GET /api/customers/overview/:id
+ * Combineert klant + honden + (indien later) passes + placeholders lessons
+ */
+router.get("/overview/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const customer = store.customers.find((c) => c.id === id);
   if (!customer) return res.status(404).json({ error: "Customer not found" });
 
-  if (!lessonType || !total) {
-    return res.status(400).json({ error: "lessonType and total required" });
-  }
+  const dogs = store.dogs.filter((d) => d.ownerId === id);
 
-  const pass = {
-    id: `${id}-${Date.now()}`,
-    lessonType,
-    total: Number(total),
-    used: 0,
-    createdAt: new Date().toISOString(),
-  };
+  const passes = store.passes
+    .filter((p) => p.customerId === id)
+    .map((p) => ({
+      id: p.id,
+      dogId: p.dogId ?? null,
+      lessonType: p.lessonType,
+      total: p.total,
+      used: p.used
+    }));
 
-  customer.passes.push(pass);
-  res.status(201).json(pass);
+  const lessons = { past: [], future: [] };
+  const counters = { pastCount: 0, futureCount: 0 };
+
+  res.json({ customer, dogs, passes, lessons, counters });
 });
 
 export default router;
