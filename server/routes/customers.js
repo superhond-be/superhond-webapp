@@ -1,30 +1,31 @@
-// server/routes/customers.js
-const express = require("express");
+// routes/customers.js
+
+import express from "express";
 const router = express.Router();
 
-// simpele in-memory opslag
-const CUSTOMERS = [];
-let NEXT_ID = 1;
-
-// Lijst
+// Voorbeeld: alle klanten ophalen
 router.get("/", (req, res) => {
-  res.json(CUSTOMERS);
+  res.json([
+    { id: 1, name: "Jan Jansen", email: "jan@example.com" },
+    { id: 2, name: "Piet Pieters", email: "piet@example.com" }
+  ]);
 });
 
-// Detail
-router.get("/:id", (req, res) => {
-  const c = CUSTOMERS.find(x => x.id === Number(req.params.id));
-  if (!c) return res.status(404).json({ error: "Customer not found" });
-  res.json(c);
-});
-
-// Aanmaken
+// Voorbeeld: nieuwe klant toevoegen
 router.post("/", (req, res) => {
-  const { name, email, phone } = req.body || {};
-  if (!name) return res.status(400).json({ error: "name is required" });
-  const customer = { id: NEXT_ID++, name, email: email || "", phone: phone || "" };
-  CUSTOMERS.push(customer);
-  res.status(201).json(customer);
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: "Naam en e-mail zijn verplicht" });
+  }
+
+  const newCustomer = {
+    id: Date.now(),
+    name,
+    email
+  };
+
+  res.status(201).json(newCustomer);
 });
 
-module.exports = router;
+// Exporteren (belangrijk bij ES Modules!)
+export default router;
