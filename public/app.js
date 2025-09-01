@@ -245,3 +245,67 @@
     }
   });
 })();
+const resultsBox = document.getElementById("search-results");
+
+function renderCustomer(customer) {
+  return `
+    <div class="result-card">
+      <div class="tag">Klant</div>
+      <h3>${customer.name}</h3>
+      <p><strong>Email:</strong> ${customer.email}</p>
+      <p><strong>Telefoon:</strong> ${customer.phone}</p>
+    </div>
+  `;
+}
+
+function renderDog(dog) {
+  return `
+    <div class="result-card">
+      <div class="tag" style="background-color:#27ae60;">Hond</div>
+      <h3>${dog.name}</h3>
+      <p><strong>Ras:</strong> ${dog.breed}</p>
+      <p><strong>Geboortedatum:</strong> ${dog.birthdate || "-"}</p>
+    </div>
+  `;
+}
+
+function renderPass(pass) {
+  return `
+    <div class="result-card">
+      <div class="tag" style="background-color:#e67e22;">Strippenkaart</div>
+      <h3>${pass.type}</h3>
+      <p><strong>Beschikbaar:</strong> ${pass.remaining} strippen</p>
+      <p><strong>Geldig tot:</strong> ${pass.validUntil}</p>
+    </div>
+  `;
+}
+
+async function performSearch() {
+  const query = document.getElementById("searchBox").value.trim();
+  if (!query) return;
+
+  resultsBox.innerHTML = `<p>Zoeken naar <strong>${query}</strong>...</p>`;
+
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    if (!data.ok || data.results.length === 0) {
+      resultsBox.innerHTML = `<p>Geen resultaten gevonden voor <strong>${query}</strong>.</p>`;
+      return;
+    }
+
+    // Bouw de kaarten
+    resultsBox.innerHTML = data.results.map(item => {
+      if (item.type === "customer") return renderCustomer(item);
+      if (item.type === "dog") return renderDog(item);
+      if (item.type === "pass") return renderPass(item);
+      return "";
+    }).join("");
+  } catch (err) {
+    console.error("Zoekfout:", err);
+    resultsBox.innerHTML = `<p style="color:red;">Er ging iets mis bij het zoeken.</p>`;
+  }
+}
+
+
