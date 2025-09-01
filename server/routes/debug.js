@@ -1,45 +1,53 @@
-// server/routes/debug.js  (ESM)
+// server/routes/debug.js
 import express from "express";
-import { store, addCustomer, addDog, addPass } from "../store.js";
+import { store, addCustomer, addDog, addPass, useStrip } from "../store.js";
 
 const router = express.Router();
 
-/**
- * POST /api/debug/reset
- * Leegt alle in-memory tabellen.
- */
-router.post("/reset", (_req, res) => {
-  store.customers.length = 0;
-  store.dogs.length = 0;
-  store.passes.length = 0;
-  store.lessons.length = 0;
-  store.seq = { customers: 1, dogs: 1, passes: 1, lessons: 1 };
-  res.json({ ok: true, msg: "Store reset." });
+// Test route om een klant toe te voegen
+router.get("/test-add-customer", (req, res) => {
+  const newCustomer = addCustomer({
+    name: "Jan Jansen",
+    email: "jan@example.com",
+    phone: "0499 12 34 56",
+    lessonType: "Puppy cursus"
+  });
+  res.json({ message: "Klant toegevoegd", customer: newCustomer });
 });
 
-/**
- * POST /api/debug/seed
- * Maakt wat voorbeelddata aan: 2 klanten, 2 honden, 2 strippenkaarten.
- */
-router.post("/seed", (_req, res) => {
-  // klanten
-  const paul   = addCustomer({ name: "Paul Thijs",  email: "paul@example.com",  phone: "0471 11 22 33" });
-  const sofie  = addCustomer({ name: "Sofie Jans",  email: "sofie@example.com", phone: "0468 44 55 66" });
-
-  // honden
-  const seda   = addDog({ ownerId: paul.id,  name: "Seda",  breed: "Puber", birthdate: "2024-03-10", sex: "F", vaccineStatus: "volledig" });
-  const rocky  = addDog({ ownerId: sofie.id, name: "Rocky", breed: "Border Collie", birthdate: "2023-11-02", sex: "M", vaccineStatus: "volledig" });
-
-  // strippenkaarten
-  addPass({ customerId: paul.id,  dogId: seda.id,  lessonType: "PUPPY", total: 9 });
-  addPass({ customerId: sofie.id, dogId: rocky.id, lessonType: "PUBER", total: 5 });
-
-  res.json({
-    ok: true,
-    customers: store.customers,
-    dogs: store.dogs,
-    passes: store.passes,
+// Test route om een hond toe te voegen
+router.get("/test-add-dog", (req, res) => {
+  const newDog = addDog({
+    name: "Fido",
+    breed: "Labrador",
+    birthdate: "2022-01-01"
   });
+  res.json({ message: "Hond toegevoegd", dog: newDog });
+});
+
+// Test route om een strippenkaart toe te voegen
+router.get("/test-add-pass", (req, res) => {
+  const newPass = addPass({
+    customerId: 1,
+    dogId: 1,
+    remaining: 9
+  });
+  res.json({ message: "Strippenkaart toegevoegd", pass: newPass });
+});
+
+// Test route om een strip te gebruiken
+router.get("/test-use-strip", (req, res) => {
+  const updatedPass = useStrip(1); // gebruik de strippenkaart met ID 1
+  if (!updatedPass) {
+    res.status(400).json({ error: "Geen strippen meer beschikbaar" });
+  } else {
+    res.json({ message: "Strip gebruikt", pass: updatedPass });
+  }
+});
+
+// Debug route om alle data te tonen
+router.get("/all", (req, res) => {
+  res.json(store);
 });
 
 export default router;
