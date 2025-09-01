@@ -6,7 +6,74 @@
   --line: #203040;
   --pri: #4da3ff;
 }
+(function setupSearch() {
+  const form = document.getElementById("searchForm");
+  const input = document.getElementById("searchInput");
+  const box = document.getElementById("searchResults");
+  if (!form || !input || !box) return;
 
+  function card(html) {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = html;
+    return div;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const q = input.value.trim();
+    if (!q) { box.innerHTML = `<p>Typ eerst een zoekterm.</p>`; return; }
+
+    box.textContent = "Zoeken…";
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const results = data?.results ?? [];
+
+      box.innerHTML = "";
+      if (!results.length) {
+        box.innerHTML = `<p>Geen resultaten voor <strong>${q}</strong>.</p>`;
+        return;
+      }
+
+      results.forEach(r => {
+        if (r.type === "customer") {
+          const dogs = r.dogs?.length
+            ? `<ul>${r.dogs.map(d => `<li>${d.name} <small>(${d.breed})</small></li>`).join("")}</ul>`
+            : `<em>Geen honden gekoppeld</em>`;
+          box.appendChild(card(`
+            <h3>👤 Klant: ${r.title}</h3>
+            <p class="muted">${r.subtitle || ""}</p>
+            <div><strong>Honden:</strong> ${dogs}</div>
+          `));
+        } else {
+          const stats = r.stats || {};
+          const owner = r.owner
+            ? `👤 ${r.owner.name} <small>${r.owner.email || ""}</small>`
+            : `<em>Geen eigenaar gevonden</em>`;
+          const photo = r.photoUrl
+            ? `<img class="dogphoto" src="${r.photoUrl}" alt="Foto van ${r.title}" />`
+            : "";
+          box.appendChild(card(`
+            <h3>🐶 Hond: ${r.title}</h3>
+            <p class="muted">${r.subtitle || ""}</p>
+            ${photo}
+            <div>${owner}</div>
+            <div class="grid">
+              <div><strong>Passes:</strong> ${stats.passesCount ?? 0}</div>
+              <div><strong>Strips:</strong> ${(stats.usedStrips ?? 0)} / ${(stats.totalStrips ?? 0)}</div>
+              <div><strong>Toekomstige lessen:</strong> ${stats.futureLessons ?? 0}</div>
+              <div><strong>Voorbije lessen:</strong> ${stats.pastLessons ?? 0}</div>
+            </div>
+          `));
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      box.innerHTML = `<p>Zoeken mislukt. Probeer later opnieuw.</p>`;
+    }
+  });
+})();
 /* Basis */
 * {
   box-sizing: border-box;
