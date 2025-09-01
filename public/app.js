@@ -161,9 +161,12 @@
         }
         return;
       }
-
+${photoHtml}
+ Klant: ${customer.name || "-"} (${customer.email || "-"})<br>
+ Telefoon: ${customer.phone || "-"}<br> Lestype: ${customer.lessonType || "-"}<br><br> Hond: ${dog.name || "-"} (${dog.breed || "-"})
+         `;
       try {
-        // Belangrijk: endpoint moet bestaan en multipart accepteren
+         // Belangrijk: endpoint moet bestaan en multipart accepteren
         const res = await fetch("/api/customers/register", {
           method: "POST",
           body: fd, // browser zet boundary zelf
@@ -181,7 +184,10 @@
         const data = await res.json();
         const customer = data && data.customer ? data.customer : {};
         const dog = data && data.dog ? data.dog : {};
-
+       .badge-ok  { background:#1f8b4c; color:#fff; }
+       .badge-err { background:#b3261e; color:#fff; }
+       #result { padding: 12px; border:1px solid #2d3340; border-radius:8px; margin-top:12px; }
+     `);
         // Foto tonen: backend zou een publiek toegankelijke URL moeten terugsturen
         const photoHtml =
           dog && dog.photoUrl
