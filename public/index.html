@@ -1,70 +1,48 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superhond Portaal</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Superhond Beheerportaal</title>
+  <link rel="stylesheet" href="app.css" />
 </head>
 <body>
-  
-<section style="padding:16px 20px; border:1px solid #ddd; border-radius:10px; margin-top:16px; background:#fff;">
-  <h2 style="margin:0 0 12px 0;">Zoeken (klanten • honden • strippenkaarten)</h2>
-
-  <form id="searchForm" novalidate style="display:flex; gap:8px; flex-wrap:wrap;">
-    <input id="searchInput" type="search"
-           placeholder="Typ bv. Paul, Sofie, Diva, Rocky of Puppycursus…"
-           style="flex:1; min-width:260px; padding:10px; font-size:18px;">
-    <button type="submit" style="padding:10px 16px; font-size:18px; cursor:pointer;">Zoek</button>
-  </form>
-
-  <div id="searchStatus" style="margin-top:10px; color:#555;"></div>
-  <div id="searchResults" style="margin-top:12px;"></div>
-</section>
-  
-  <!-- Hoofdmenu -->
   <nav>
     <ul>
       <li><a href="/">Dashboard</a></li>
-      <li>Klanten
-        <ul>
-          <li><a href="/admin/customers/new">Nieuwe klant</a></li>
-          <li><a href="/admin/customers">Overzicht klanten</a></li>
-        </ul>
-      </li>
-      <li>Honden
-        <ul>
-          <li><a href="/admin/dogs/new">Nieuwe hond</a></li>
-          <li><a href="/admin/dogs">Overzicht honden</a></li>
-        </ul>
-      </li>
-      <li>Lessen
-        <ul>
-          <li><a href="/admin/lessons/new">Nieuwe les</a></li>
-          <li><a href="/admin/lessons">Overzicht lessen</a></li>
-        </ul>
-      </li>
-      <li>Instellingen
-        <ul>
-          <li><a href="/admin/settings/org">Organisatiegegevens</a></li>
-          <li><a href="/admin/settings/branding">Logo & stijl</a></li>
-        </ul>
-      </li>
+      <li>Klanten</li>
+      <li>Honden</li>
+      <li>Lessen</li>
+      <li>Instellingen</li>
     </ul>
   </nav>
 
-  <!-- Welkomsttekst -->
-  <main style="padding:20px;">
-    <h1>Welkom bij Superhond</h1>
-    <p>Kies een optie uit het menu of gebruik de zoekfunctie hieronder.</p>
+  <main>
+    <h1>Superhond Beheerportaal</h1>
+    <p class="status">Gebruik de zoekbalk om klanten, honden of strippenkaarten te vinden.</p>
 
-    <!-- 🔎 Zoekfunctie -->
-    <section style="margin-top:30px;">
-      <h2>Zoeken</h2>
-      <input type="text" id="searchInput" placeholder="Typ naam klant, hond of cursus..." />
-      <button onclick="performSearch()">Zoek</button>
+    <div class="search-wrap">
+      <input id="searchBox" class="search-input" type="search"
+             placeholder="Typ bv. Paul, Sofie, Diva, Rocky of Puppycursus…"/>
+      <button class="btn" id="searchBtn" type="button">Zoek</button>
+    </div>
 
-      <div id="searchResults" style="margin-top:20px; font-size:1.2em;"></div>
+    <div id="searchStatus" class="status" aria-live="polite"></div>
+
+    <!-- Resultaten-secties -->
+    <section id="secCustomers" class="section" hidden>
+      <div class="section-title">Klanten</div>
+      <div id="cardsCustomers" class="cards"></div>
+    </section>
+
+    <section id="secDogs" class="section" hidden>
+      <div class="section-title">Honden</div>
+      <div id="cardsDogs" class="cards"></div>
+    </section>
+
+    <section id="secPasses" class="section" hidden>
+      <div class="section-title">Strippenkaarten</div>
+      <div id="cardsPasses" class="cards"></div>
     </section>
   </main>
 
