@@ -2,12 +2,13 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Superhond Beheerportaal</title>
-  <!-- Eén stylesheet + cache-buster -->
-  <link rel="stylesheet" href="/app.css?v=2" />
+  <!-- Stylesheet met cache-buster -->
+  <link rel="stylesheet" href="app.css?v=3" />
 </head>
 <body>
+  <!-- Navigatiebalk -->
   <nav class="topnav">
     <a data-link href="/">Dashboard</a>
     <a data-link href="/customers">Klanten</a>
@@ -17,11 +18,11 @@
     <a data-link href="/settings">Instellingen</a>
   </nav>
 
+  <!-- Container voor dynamische inhoud -->
   <main id="app" class="container">
-    <!-- app.js rendert hier het actieve scherm -->
+    <!-- app.js rendert hier de actieve pagina -->
+    <h1>Welkom bij Superhond</h1>
+    <p>Kies een optie in het menu hierboven.</p>
   </main>
-
-  <!-- Frontend entrypoint -->
-  <script type="module" src="/app.js?v=2"></script>
 </body>
 </html>
