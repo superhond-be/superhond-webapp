@@ -1,7 +1,65 @@
 import { Router } from "express";
 import { store } from "./store.js"; // aangenomen bestaande in-memory store
 
+
+
+
+
 const router = Router();
+// server/routes/store.js
+
+// Klanten
+export const customers = [
+  { 
+    id: 1, 
+    name: "Paul Thijs", 
+    email: "paul@example.com", 
+    phone: "0476123456" 
+  },
+  { 
+    id: 2, 
+    name: "Sofie Thijs", 
+    email: "sofie@example.com", 
+    phone: "0476987654" 
+  }
+];
+
+// Honden
+export const dogs = [
+  { 
+    id: 1, 
+    name: "Diva", 
+    breed: "Dobermann", 
+    ownerId: 1   // gekoppeld aan Paul
+  },
+  { 
+    id: 2, 
+    name: "Rocky", 
+    breed: "Border Collie", 
+    ownerId: 2   // gekoppeld aan Sofie
+  }
+];
+
+// Strippenkaarten
+export const passes = [
+  { 
+    id: 1, 
+    dogId: 1,          // Diva
+    type: "Puppycursus", 
+    total: 9,          // totaal aantal lessen
+    remaining: 9       // nog niet gebruikt
+  },
+  { 
+    id: 2, 
+    dogId: 2,          // Rocky
+    type: "Pubercursus", 
+    total: 5, 
+    remaining: 5
+  }
+];
+
+// Lessen (voorlopig leeg, je kunt later vullen)
+export const lessons = [];
 
 /** Kleine helpers */
 const norm = (s) => (s ?? "").toString().toLowerCase().trim();
