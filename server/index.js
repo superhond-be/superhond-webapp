@@ -13,6 +13,8 @@ import lessonsRoutes from "./routes/lessons.js";
 import debugRoutes from "./routes/debug.js";
 import searchRoutes from "./routes/search.js";
 import summaryRoutes from "./routes/summary.js";
+import seedRoutes from "./routes/seed.js";
+app.use("/api/seed", seedRoutes);
 
 // ...
 app.use("/api/summary", summaryRoutes);
