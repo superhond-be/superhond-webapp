@@ -4,17 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond.be – Admin Portaal</title>
-  <link rel="stylesheet" href="app.css?v=10" />
+  <link rel="stylesheet" href="/app.css?v=10" />
 </head>
 <body>
-
-  <!-- Sticky titelbalk -->
+  <!-- Sticky titelbalk met hamburger -->
   <header class="app-header">
     <button class="menu-toggle" aria-label="Zijmenu openen">☰</button>
     <h1>🐾 Superhond.be – Admin Portaal</h1>
   </header>
 
-  <!-- Zijmenu met inklapbare submenu's -->
+  <!-- Zijmenu met submenu's -->
   <nav id="sideMenu" class="side-menu" aria-label="Zijmenu">
     <ul>
       <li><a href="/" data-link>Dashboard</a></li>
@@ -63,14 +62,14 @@
     </ul>
   </nav>
 
-  <!-- Overlay achter zijmenu -->
+  <!-- Overlay achter menu -->
   <div id="menuOverlay" class="menu-overlay" hidden></div>
 
-  <!-- Hoofdcontainer waar de router content in tekent -->
+  <!-- Hoofdinhoud -->
   <main id="app" class="container">
-    <!-- app.js rendert hier het actieve scherm -->
+    <!-- wordt gevuld door app.js -->
   </main>
 
-  <script type="module" src="app.js?v=10"></script>
+  <script type="module" src="/app.js?v=10"></script>
 </body>
 </html>
