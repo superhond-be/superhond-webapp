@@ -1,31 +1,31 @@
 // store.js
 
-// Geheugen-opslag (in-memory database)
+// In-memory opslag
 export const store = {
   customers: [],
   dogs: [],
   passes: []
 };
 
-// 👉 Functie: klant toevoegen
+// Klant toevoegen
 export function addCustomer(customer) {
   store.customers.push(customer);
   return customer;
 }
 
-// 👉 Functie: hond toevoegen
+// Hond toevoegen
 export function addDog(dog) {
   store.dogs.push(dog);
   return dog;
 }
 
-// 👉 Functie: strippenkaart toevoegen
+// Strippenkaart toevoegen
 export function addPass(pass) {
   store.passes.push(pass);
   return pass;
 }
 
-// 👉 Functie: strip gebruiken
+// Strip gebruiken
 export function useStrip(passId) {
   const pass = store.passes.find(p => p.id === passId);
   if (!pass) throw new Error("Strippenkaart niet gevonden");
@@ -33,7 +33,7 @@ export function useStrip(passId) {
   if (pass.remaining > 0) {
     pass.remaining -= 1;
   } else {
-    throw new Error("Geen strippen meer over");
+    throw new Error("Geen strippen meer beschikbaar");
   }
   return pass;
 }
