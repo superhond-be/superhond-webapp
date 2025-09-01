@@ -4,72 +4,56 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond.be – Admin Portaal</title>
-  <link rel="stylesheet" href="/app.css?v=10" />
+  <link rel="stylesheet" href="/app.css?v=3" />
+  <style>
+    /* heel klein beetje layout voor de demo */
+    .layout{display:flex;gap:16px;align-items:flex-start}
+    .sidebar{width:240px;background:#fff8d6;border:1px solid rgba(0,0,0,.06);border-radius:10px;box-shadow:0 10px 30px rgba(2,6,23,.06)}
+    .sidebar header{font-weight:700;padding:14px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+    .sidebar ul{list-style:none;padding:8px;margin:0}
+    .sidebar li a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:#222}
+    .sidebar li a:hover{background:rgba(255,193,7,.18)}
+    .sidebar li a.active{background:rgba(255,193,7,.28);font-weight:700}
+    .content{flex:1;min-height:50vh}
+    .toolbar{display:flex;gap:8px;margin-bottom:16px}
+    .toolbar .btn{background:#fff;border:1px solid rgba(0,0,0,.1);padding:8px 12px;border-radius:8px;cursor:pointer}
+    .toolbar .btn:hover{background:#fff7cf}
+    @media (max-width:900px){
+      .layout{flex-direction:column}
+      .sidebar{width:100%}
+    }
+  </style>
 </head>
 <body>
-  <!-- Sticky titelbalk met hamburger -->
-  <header class="app-header">
-    <button class="menu-toggle" aria-label="Zijmenu openen">☰</button>
+  <!-- Topbar (komt visueel uit je bestaande app.css kleuren) -->
+  <header class="topbar">
+    <button id="menuBtn" aria-label="Menu" class="iconbtn">☰</button>
     <h1>🐾 Superhond.be – Admin Portaal</h1>
   </header>
 
-  <!-- Zijmenu met submenu's -->
-  <nav id="sideMenu" class="side-menu" aria-label="Zijmenu">
-    <ul>
-      <li><a href="/" data-link>Dashboard</a></li>
-
-      <li class="has-sub">
-        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-customers">
-          Klanten <span class="caret">▸</span>
-        </button>
-        <ul id="sub-customers" class="submenu" hidden>
-          <li><a href="/customers" data-link>Overzicht klanten</a></li>
-          <li><a href="/customers/new" data-link>Nieuwe klant</a></li>
+  <main class="container">
+    <div class="layout">
+      <!-- ZIJBALK -->
+      <nav id="side" class="sidebar" aria-label="Hoofdmenu">
+        <header>Menu</header>
+        <ul>
+          <li><a href="#dashboard"   data-view="dashboard"   class="active">Dashboard</a></li>
+          <li><a href="#customers"   data-view="customers">Klanten</a></li>
+          <li><a href="#dogs"        data-view="dogs">Honden</a></li>
+          <li><a href="#passes"      data-view="passes">Strippenkaarten</a></li>
+          <li><a href="#lessons"     data-view="lessons">Lessen</a></li>
+          <li><a href="#settings"    data-view="settings">Instellingen</a></li>
         </ul>
-      </li>
+      </nav>
 
-      <li class="has-sub">
-        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-dogs">
-          Honden <span class="caret">▸</span>
-        </button>
-        <ul id="sub-dogs" class="submenu" hidden>
-          <li><a href="/dogs" data-link>Overzicht honden</a></li>
-          <li><a href="/dogs/new" data-link>Nieuwe hond</a></li>
-        </ul>
-      </li>
-
-      <li class="has-sub">
-        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-lessons">
-          Lessen <span class="caret">▸</span>
-        </button>
-        <ul id="sub-lessons" class="submenu" hidden>
-          <li><a href="/lessons" data-link>Overzicht lessen</a></li>
-          <li><a href="/lessons/new" data-link>Nieuwe les</a></li>
-          <li><a href="/passes" data-link>Strippenkaarten</a></li>
-        </ul>
-      </li>
-
-      <li class="has-sub">
-        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-settings">
-          Instellingen <span class="caret">▸</span>
-        </button>
-        <ul id="sub-settings" class="submenu" hidden>
-          <li><a href="/settings" data-link>Algemeen</a></li>
-          <li><a href="/settings/branding" data-link>Logo & stijl</a></li>
-          <li><a href="/settings/locations" data-link>Locaties</a></li>
-        </ul>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- Overlay achter menu -->
-  <div id="menuOverlay" class="menu-overlay" hidden></div>
-
-  <!-- Hoofdinhoud -->
-  <main id="app" class="container">
-    <!-- wordt gevuld door app.js -->
+      <!-- INHOUD -->
+      <section id="app" class="content" role="region" aria-live="polite">
+        <!-- app.js zet hier het actieve scherm -->
+      </section>
+    </div>
+    <p class="muted" style="margin-top:24px">Laatst geladen: <span id="loadedAt"></span></p>
   </main>
 
-  <script type="module" src="/app.js?v=10"></script>
+  <script src="/app.js?v=3" defer></script>
 </body>
 </html>
