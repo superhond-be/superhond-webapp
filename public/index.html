@@ -1,89 +1,179 @@
-
-// public/app.js
-const formEl = document.getElementById("register-form");
-const dogFileEl = document.getElementById("dogPhoto");
-const previewBox = document.getElementById("dog-preview");
-const resultBox = document.getElementById("result");
-const reloadBtn = document.getElementById("reloadBtn");
-
-// Preview van de gekozen foto
-dogFileEl.addEventListener("change", () => {
-      .container { max-width: 980px; margin: 24px auto; padding: 0 16px; }
-     .card { background:#151923; border:1px solid #2d3340; border-radius:12px; padding:16px; }
-     .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-     .row-3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
-     label { display:block; font-weight:600; margin:8px 0 6px; }
-        input, select { width:100%; background:#0f1115; color:#e6e9ef; border:1px solid #2d3340; border-radius:8px; padding:10px; }
-     fieldset { border:1px solid #2d3340; border-radius:12px; margin:14px 0; padding:12px; }
-     legend { padding:0 6px; color:#9fb3ff; }
-     .actions { display:flex; gap:8px; align-items:center; }
-       button { background:#1f8b4c; color:#fff; border:0; border-radius:10px; padding:10px 14px; font-weight:700; cursor:pointer; }
-       .ghost { background:transparent; border:1px solid #2d3340; color:#e6e9ef; }
-      #dog-preview img { max-width:160px; max-height:160px; object-fit:cover; border-radius:8px; border:1px solid #2d3340; }
-     .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-     .brand { font-size:24px; font-weight:800; letter-spacing:.3px; }
-     nav a { color:#cbd5ff; text-decoration:none; margin-left:10px; }
-   </style> 
-
-
-const file = dogFileEl.files?.[0];
-  if (!file) {
-    previewBox.innerHTML = "Nog geen foto geselecteerd.";
-    return;
-  }
-  const url = URL.createObjectURL(file);
-  previewBox.innerHTML = `<img src="${url}" alt="Voorbeeld hond" />`;
-});
-
-// Herladen knopje
-reloadBtn.addEventListener("click", () => location.reload());
-
-// Submit: multipart/form-data met FormData (inclusief foto)
-formEl.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  resultBox.textContent = "Versturen…";
-
-  const fd = new FormData(formEl);
-
-  // voeg foto toe (name="dogPhoto" komt al uit index.html)
-  if (dogFileEl.files?.[0]) {
-    fd.set("dogPhoto", dogFileEl.files[0]);
-  }
-
-  try {
-    const res = await fetch("/api/customers/register", {
-      method: "POST",
-      body: fd
-      // géén headers hier — browser zet multipart boundary zelf
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data?.error || "Onbekende fout");
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superhond Coach Portaal</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    :root{
+      --bg:#0f1115; --card:#151923; --line:#2d3340; --muted:#aab1c5; --brand:#9fb3ff;
+      --good:#1f8b4c; --warn:#b3261e; --accent:#0ea5e9;
     }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#e6e9ef;font-family:system-ui,Segoe UI,Arial,sans-serif}
+    .container{max-width:1100px;margin:24px auto;padding:0 16px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .brand{font-weight:800;font-size:22px;letter-spacing:.3px}
+    nav.tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{border:1px solid var(--line);background:transparent;color:#cbd5ff;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .tab.active{background:var(--card)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-weight:600;margin:8px 0 6px}
+    input,select{width:100%;background:var(--bg);color:#e6e9ef;border:1px solid var(--line);border-radius:8px;padding:10px}
+    fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0;padding:12px}
+    legend{padding:0 6px;color:var(--brand)}
+    .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    button{background:var(--good);color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid var(--line);color:#e6e9ef}
+    button.warn{background:var(--warn)}
+    .muted{color:var(--muted)}
+    #dog-preview img{max-width:160px;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+    .pick-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:.6rem .7rem;border-bottom:1px solid var(--line)}
+    .badge{display:inline-block;padding:.2rem .5rem;border-radius:999px;background:#1c4a6b;color:#d7efff;font-size:.8rem;margin-left:.4rem}
+    .list{display:grid;gap:10px}
+    .dog-row{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+    .dog-row.active{outline:2px solid var(--accent)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">🐾 Superhond Coach Portaal</div>
+      <nav class="tabs">
+        <button class="tab active" data-view="register">Registreren</button>
+        <button class="tab" data-view="search">Zoeken & Overzicht</button>
+      </nav>
+    </div>
 
-    // Toon resultaat
-    const { customer, dog } = data;
-    const photo = dog?.photoUrl
-      ? `<img src="${dog.photoUrl}" alt="hond" style="max-width:120px;border-radius:8px;border:1px solid #334155" />`
-      : "<em>geen foto</em>";
+    <!-- =============== VIEW: REGISTREREN =============== -->
+    <section id="view-register" class="card">
+      <form id="register-form" enctype="multipart/form-data">
+        <fieldset>
+          <legend>Klant</legend>
+          <div class="row">
+            <div>
+              <label for="customerName">Naam</label>
+              <input id="customerName" name="customerName" required autocomplete="name" />
+            </div>
+            <div>
+              <label for="customerEmail">E-mail</label>
+              <input id="customerEmail" name="customerEmail" type="email" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="customerPhone">Telefoon</label>
+              <input id="customerPhone" name="customerPhone" autocomplete="tel" />
+            </div>
+            <div>
+              <label for="lessonType">Lestype (optioneel)</label>
+              <select id="lessonType" name="lessonType">
+                <option value="">— kies —</option>
+                <option value="PUPPY">Puppy Pack</option>
+                <option value="PUBER">PUBER – Coachgroep</option>
+                <option value="GEV">Gevorderden</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
 
-    resultBox.innerHTML = `
-      <div class="ok"><strong>✔ Geregistreerd!</strong></div>
-      <div style="display:flex; gap:16px; align-items:flex-start; margin-top:8px">
-        <div>${photo}</div>
-        <div>
-          <div><strong>Klant:</strong> ${customer.name} (${customer.email})</div>
-          <div><strong>Telefoon:</strong> ${customer.phone || "-"}</div>
-          <div><strong>Lestype:</strong> ${customer.lessonType || "-"}</div>
-          <div style="margin-top:8px"><strong>Hond:</strong> ${dog.name} (${dog.breed || "-"})</div>
+        <fieldset>
+          <legend>Hond</legend>
+          <div class="row">
+            <div>
+              <label for="dogName">Naam hond</label>
+              <input id="dogName" name="dogName" required />
+            </div>
+            <div>
+              <label for="dogBreed">Ras</label>
+              <input id="dogBreed" name="dogBreed" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="dogBirth">Geboortedatum</label>
+              <input id="dogBirth" name="dogBirth" type="date" />
+            </div>
+            <div>
+              <label for="dogSex">Geslacht</label>
+              <select id="dogSex" name="dogSex">
+                <option value="">—</option>
+                <option>Reu</option>
+                <option>Teef</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="vaccineStatus">Vaccinatiestatus</label>
+              <input id="vaccineStatus" name="vaccineStatus" placeholder="Up-to-date / onbekend / …" />
+            </div>
+            <div>
+              <label for="bookRef">Inentingsboekje ref.</label>
+              <input id="bookRef" name="bookRef" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="vetPhone">Dierenarts – telefoon</label>
+              <input id="vetPhone" name="vetPhone" />
+            </div>
+            <div>
+              <label for="vetName">Dierenarts – naam</label>
+              <input id="vetName" name="vetName" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="emergency">Noodnummer</label>
+              <input id="emergency" name="emergency" />
+            </div>
+            <div>
+              <label for="dog-photo">Foto hond</label>
+              <input id="dog-photo" name="dogPhoto" type="file" accept="image/*" />
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label>Preview</label>
+            <div id="dog-preview"></div>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="submit">Registreren</button>
+          <button type="button" class="secondary" id="btn-reset">Formulier leegmaken</button>
         </div>
-      </div>
-    `;
+      </form>
+      <div id="result" style="margin-top:16px"></div>
+    </section>
 
-    // leeg formulier (preview laten staan)
-    formEl.reset();
-  } catch (err) {
-    resultBox.innerHTML = `<div class="err">✖ ${err.message}</div>`;
-  }
-});
+    <!-- =============== VIEW: ZOEKEN & OVERZICHT =============== -->
+    <section id="view-search" class="card" hidden>
+      <h3>Zoeken</h3>
+      <div class="actions" style="margin-bottom:12px">
+        <input id="ov-q" placeholder="Zoek op klantnaam, e-mail, telefoon of hondnaam…" style="flex:1" />
+        <button id="ov-search">Zoeken</button>
+      </div>
+
+      <div id="ov-pick" class="card" style="margin-bottom:12px;display:none">
+        <div class="muted" style="margin-bottom:8px">Meerdere resultaten. Kies de juiste klant:</div>
+        <div id="ov-pick-list" class="list"></div>
+      </div>
+
+      <div id="ov-results" style="display:none"></div>
+
+      <div id="passesBox" class="card" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+          <h3 style="margin:0">Strippenkaarten</h3>
+          <button id="addPassBtn" class="secondary">+ Nieuwe strippenkaart</button>
+        </div>
+        <div id="passesList" class="list"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
