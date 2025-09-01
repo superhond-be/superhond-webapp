@@ -1,34 +1,20 @@
 // public/app.js
-// ============================================================
-//  Superhond Coach Portaal - Frontend JS
-//  - Foto preview
-//  - Registratie klant + hond (multipart/form-data)
-//  - Feedback & kleine UX-hulpen
-// ============================================================
-
 (function () {
-  // ---- Helpers -------------------------------------------------------------
-
-  /** Select helper */
-  function $(sel, scope) {
-    return (scope || document).querySelector(sel);
-  }
-
-  /** Maak element met attrs en children */
+  // ---------- Helpers ----------
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const escapeHtml = (s = "") =>
+    String(s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
   function el(tag, attrs, children) {
     const n = document.createElement(tag);
     if (attrs) {
-      Object.keys(attrs).forEach((k) => {
-        if (k === "style" && typeof attrs[k] === "object") {
-          Object.assign(n.style, attrs[k]);
-        } else if (k in n) {
-          n[k] = attrs[k];
-        } else {
-          n.setAttribute(k, attrs[k]);
-        }
-      });
+      for (const k of Object.keys(attrs)) {
+        if (k === "style" && typeof attrs[k] === "object") Object.assign(n.style, attrs[k]);
+        else if (k in n) n[k] = attrs[k];
+        else n.setAttribute(k, attrs[k]);
+      }
     }
-    if (children) {
+    if (children !== undefined) {
       (Array.isArray(children) ? children : [children]).forEach((c) =>
         n.appendChild(typeof c === "string" ? document.createTextNode(c) : c)
       );
@@ -36,199 +22,362 @@
     return n;
   }
 
-  /** Klein statusbadgetje */
-  function badge(text, ok = true) {
-    return el(
-      "span",
-      {
-        className: ok ? "badge-ok" : "badge-err",
-        style: {
-          display: "inline-block",
-          padding: "0.25rem 0.5rem",
-          borderRadius: "999px",
-          fontWeight: "600",
-          marginRight: "8px",
-        },
-      },
-      text
-    );
-  }
-
-  /** Toon melding in resultBox */
-  function showMessage(html, ok = true) {
-    const box = $("#result");
-    if (!box) return;
-    box.innerHTML = "";
-    box.appendChild(badge(ok ? "✔ Geregistreerd!" : "✖ Fout", ok));
-    const wrap = el("div", { style: { marginTop: "8px" } });
-    wrap.innerHTML = html;
-    box.appendChild(wrap);
-    box.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  /** Converteer File -> lokale preview URL */
-  function fileToPreviewURL(file) {
-    try {
-      return URL.createObjectURL(file);
-    } catch {
-      return null;
+  // ---------- Tab switch ----------
+  (function initTabs() {
+    const tabs = $$(".tab");
+    function show(id) {
+      $$("#view-register, #view-search").forEach((v) => (v.hidden = true));
+      const section = document.getElementById(`view-${id}`);
+      if (section) section.hidden = false;
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.view === id));
+      if (id === "search") $("#ov-q")?.focus();
     }
-  }
+    tabs.forEach((t) => t.addEventListener("click", () => show(t.dataset.view)));
+    show("register"); // default
+  })();
 
-  // ---- DOM refs ------------------------------------------------------------
+  // =========================================================
+  // 1) REGISTRATIE (klant + hond + foto)
+  // =========================================================
+  (function initRegistration() {
+    const formEl = $("#register-form");
+    const dogFileEl = $("#dog-photo");
+    const previewBox = $("#dog-preview");
+    const resultBox = $("#result");
+    const resetBtn = $("#btn-reset");
 
-  const formEl = $("#register-form"); // hele registratieform
-  const dogFileEl = $("#dog-photo"); // <input type="file">
-  const previewBox = $("#dog-preview"); // container voor preview
-  const reloadBtn = $("#btn-reload"); // optioneel: herladen lijstje/overzicht
+    if (!formEl) return;
 
-  // ---- Foto preview --------------------------------------------------------
-
-  if (dogFileEl && previewBox) {
-    dogFileEl.addEventListener("change", function () {
-      const file = dogFileEl.files && dogFileEl.files[0];
+    // foto preview
+    dogFileEl?.addEventListener("change", () => {
       previewBox.innerHTML = "";
-      if (!file) return;
-
-      const url = fileToPreviewURL(file);
-      if (!url) {
-        previewBox.textContent = "Kon preview niet maken.";
-        return;
-      }
-
-      const img = el("img", {
-        src: url,
-        alt: "Voorbeeldfoto van hond",
-        style: {
-          maxWidth: "160px",
-          maxHeight: "160px",
-          objectFit: "cover",
-          borderRadius: "8px",
-          border: "1px solid #2d3340",
-          display: "block",
-        },
-      });
-      previewBox.appendChild(img);
+      const f = dogFileEl.files?.[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      previewBox.appendChild(
+        el("img", {
+          src: url,
+          alt: "Voorbeeld hond",
+          style: { maxWidth: "160px", maxHeight: "160px", objectFit: "cover", borderRadius: "8px", border: "1px solid #2d3340" }
+        })
+      );
     });
-  }
 
-  // ---- Optioneel: simpele reloadknop --------------------------------------
-
-  if (reloadBtn) {
-    reloadBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      location.reload();
+    resetBtn?.addEventListener("click", () => {
+      formEl.reset();
+      previewBox.innerHTML = "";
+      resultBox.innerHTML = "";
     });
-  }
 
-  // ---- Registratie submit --------------------------------------------------
-
-  if (formEl) {
-    formEl.addEventListener("submit", async function (e) {
+    formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      // Beveiliging: voorkom dubbelklikken
-      const submitBtn = formEl.querySelector('button[type="submit"], input[type="submit"]');
+      resultBox.textContent = "Versturen…";
+      const submitBtn = formEl.querySelector('button[type="submit"]');
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.dataset._origText = submitBtn.textContent || submitBtn.value || "";
-        if ("textContent" in submitBtn) submitBtn.textContent = "Versturen…";
-        if ("value" in submitBtn) submitBtn.value = "Versturen…";
+        submitBtn.dataset._t = submitBtn.textContent;
+        submitBtn.textContent = "Versturen…";
       }
 
-      // Bouw multipart/form-data op
       const fd = new FormData(formEl);
+      if (dogFileEl?.files?.[0]) fd.set("dogPhoto", dogFileEl.files[0]);
 
-      // Als er een fotobestand is, voeg het toe onder sleutel 'dogPhoto'
-      if (dogFileEl && dogFileEl.files && dogFileEl.files[0]) {
-        fd.set("dogPhoto", dogFileEl.files[0]); // naam moet backend-veld matchen
-      }
-
-      // Optioneel: kleine client-side sanity checks
-      // (we laten de backend de echte validatie doen)
-      const name = (fd.get("customerName") || "").toString().trim();
-      const email = (fd.get("customerEmail") || "").toString().trim();
-      const dogName = (fd.get("dogName") || "").toString().trim();
-      if (!name || !email || !dogName) {
-        showMessage(
-          "Vul minstens <strong>klantnaam</strong>, <strong>e-mail</strong> en <strong>naam hond</strong> in.",
-          false
-        );
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          if ("textContent" in submitBtn) submitBtn.textContent = submitBtn.dataset._origText || "Registreren";
-          if ("value" in submitBtn) submitBtn.value = submitBtn.dataset._origText || "Registreren";
+      const need = ["customerName", "customerEmail", "dogName"];
+      for (const k of need) {
+        if (!String(fd.get(k) || "").trim()) {
+          resultBox.innerHTML = `<span style="color:#b3261e">✖ Vul ${k} in.</span>`;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = submitBtn.dataset._t || "Registreren";
+          }
+          return;
         }
-        return;
       }
-${photoHtml}
- Klant: ${customer.name || "-"} (${customer.email || "-"})<br>
- Telefoon: ${customer.phone || "-"}<br> Lestype: ${customer.lessonType || "-"}<br><br> Hond: ${dog.name || "-"} (${dog.breed || "-"})
-         `;
+
       try {
-         // Belangrijk: endpoint moet bestaan en multipart accepteren
-        const res = await fetch("/api/customers/register", {
-          method: "POST",
-          body: fd, // browser zet boundary zelf
-        });
-
-        if (!res.ok) {
-          let msg = "Registratie mislukt.";
-          try {
-            const err = await res.json();
-            if (err && err.message) msg = err.message;
-          } catch {}
-          throw new Error(msg);
-        }
-
+        const res = await fetch("/api/customers/register", { method: "POST", body: fd });
         const data = await res.json();
-        const customer = data && data.customer ? data.customer : {};
-        const dog = data && data.dog ? data.dog : {};
-       .badge-ok  { background:#1f8b4c; color:#fff; }
-       .badge-err { background:#b3261e; color:#fff; }
-       #result { padding: 12px; border:1px solid #2d3340; border-radius:8px; margin-top:12px; }
-     `);
-        // Foto tonen: backend zou een publiek toegankelijke URL moeten terugsturen
-        const photoHtml =
-          dog && dog.photoUrl
-            ? `<img src="${dog.photoUrl}" alt="foto van hond" style="max-width:120px;display:block;margin:10px 0;border-radius:8px;border:1px solid #2d3340;">`
-            : "<em>geen foto</em>";
+        if (!res.ok) throw new Error(data?.message || "Registratie mislukt.");
 
-        const html = `
-${photoHtml}
-<strong>Klant:</strong> ${customer.name || "-"} (${customer.email || "-"})<br>
-<strong>Telefoon:</strong> ${customer.phone || "-"}<br>
-<strong>Lestype:</strong> ${customer.lessonType || "-"}<br><br>
-<strong>Hond:</strong> ${dog.name || "-"} (${dog.breed || "-"})
+        const { customer, dog } = data;
+        const photoHtml = dog?.photoUrl
+          ? `<img src="${dog.photoUrl}" alt="hond" style="max-width:120px;display:block;margin:10px 0;border-radius:8px;border:1px solid #2d3340;">`
+          : "<em>geen foto</em>";
+
+        resultBox.innerHTML = `
+          <div style="color:#1f8b4c"><strong>✔ Geregistreerd!</strong></div>
+          ${photoHtml}
+          <div><strong>Klant:</strong> ${escapeHtml(customer.name)} (${escapeHtml(customer.email)})</div>
+          <div><strong>Telefoon:</strong> ${escapeHtml(customer.phone || "-")}</div>
+          <div><strong>Lestype:</strong> ${escapeHtml(customer.lessonType || "-")}</div>
+          <div style="margin-top:8px"><strong>Hond:</strong> ${escapeHtml(dog.name)} (${escapeHtml(dog.breed || "-")})</div>
         `;
-
-        showMessage(html, true);
-
-        // Form resetten (laat preview staan zodat gebruiker weet wat is ingestuurd)
-        // Verwijder hieronder // om óók de preview te wissen:
         formEl.reset();
-        // previewBox.innerHTML = "";
-
+        previewBox.innerHTML = "";
       } catch (err) {
-        showMessage(err.message || "Er ging iets mis bij het registreren.", false);
+        resultBox.innerHTML = `<span style="color:#b3261e">✖ ${escapeHtml(err.message)}</span>`;
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
-          if ("textContent" in submitBtn) submitBtn.textContent = submitBtn.dataset._origText || "Registreren";
-          if ("value" in submitBtn) submitBtn.value = submitBtn.dataset._origText || "Registreren";
+          submitBtn.textContent = submitBtn.dataset._t || "Registreren";
         }
       }
     });
-  }
+  })();
 
-  // ---- Klein stijltje voor badges (fallback als CSS ontbreekt) ------------
-  (function injectBadgeCss() {
-    if (document.getElementById("sh-badge-style")) return;
-    const style = el("style", { id: "sh-badge-style" }, `
-      .badge-ok  { background:#1f8b4c; color:#fff; }
-      .badge-err { background:#b3261e; color:#fff; }
-      #result { padding: 12px; border:1px solid #2d3340; border-radius:8px; margin-top:12px; }
-    `);
-    document.head.appendChild(style);
+  // =========================================================
+  // 2) ZOEKEN → OVERZICHT → STRIPPENKAARTEN
+  // =========================================================
+  let currentCustomerId = null;
+  let currentDogId = null;
+
+  (function initSearch() {
+    const qInput = $("#ov-q");
+    const btn = $("#ov-search");
+    const pickBox = $("#ov-pick");
+    const pickList = $("#ov-pick-list");
+    const results = $("#ov-results");
+
+    if (!qInput || !btn || !pickBox || !pickList || !results) return;
+
+    btn.addEventListener("click", search);
+    qInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        search();
+      }
+    });
+
+    async function search() {
+      const term = (qInput.value || "").trim();
+      results.style.display = "block";
+      results.innerHTML = `Zoeken…`;
+      pickBox.style.display = "none";
+      pickList.innerHTML = "";
+
+      if (term.length < 2) {
+        results.innerHTML = `<div class="muted">Geef min. 2 tekens in.</div>`;
+        return;
+      }
+
+      try {
+        const r = await fetch(`/api/customers/search?q=${encodeURIComponent(term)}`);
+        const matches = await r.json();
+        if (!Array.isArray(matches) || matches.length === 0) {
+          results.innerHTML = `<div class="muted">Geen resultaat voor <b>${escapeHtml(term)}</b>.</div>`;
+          return;
+        }
+        if (matches.length === 1) {
+          await loadOverview(matches[0].customer.id);
+          return;
+        }
+        results.innerHTML = `<div class="muted">Kies een klant uit de lijst hieronder.</div>`;
+        showPickList(matches);
+      } catch (e) {
+        results.innerHTML = `<div style="color:#b3261e">Fout bij zoeken: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function showPickList(matches) {
+      pickBox.style.display = "block";
+      pickList.innerHTML = matches
+        .map((m) => {
+          const c = m.customer || {};
+          const tag = m.match === "dog" ? "Hond" : "Klant";
+          const sub = [c.email, c.phone].filter(Boolean).join(" • ");
+          return `
+            <div class="pick-item">
+              <div>
+                <div><strong>${escapeHtml(c.name || "-")}</strong><span class="badge">${tag}</span></div>
+                <div class="muted">ID: ${escapeHtml(c.id)} ${sub ? " • " + escapeHtml(sub) : ""}</div>
+              </div>
+              <div><button class="tab pick-btn" data-id="${c.id}">Kies</button></div>
+            </div>`;
+        })
+        .join("");
+
+      $$(".pick-btn", pickList).forEach((b) =>
+        b.addEventListener("click", () => loadOverview(Number(b.dataset.id)))
+      );
+    }
+
+    async function loadOverview(customerId) {
+      try {
+        results.style.display = "block";
+        results.innerHTML = `Laden…`;
+        pickBox.style.display = "none";
+
+        const r2 = await fetch(`/api/customers/overview/${encodeURIComponent(customerId)}`);
+        if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
+        const ov = await r2.json();
+
+        results.innerHTML = renderOverviewCard(ov);
+        currentCustomerId = ov.customer?.id || null;
+        currentDogId = null;
+
+        // events
+        $$(".dog-row", results).forEach((row) => {
+          row.addEventListener("click", () => {
+            $$(".dog-row", results).forEach((x) => x.classList.remove("active"));
+            row.classList.add("active");
+            currentDogId = Number(row.dataset.dogId);
+            renderPasses();
+            $("#passesBox")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        $("#newSearch")?.addEventListener("click", () => {
+          pickBox.style.display = "none";
+          results.style.display = "none";
+          qInput.value = "";
+          qInput.focus();
+        });
+      } catch (e) {
+        results.innerHTML = `<div style="color:#b3261e">Fout bij laden: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function renderOverviewCard(ov) {
+      const c = ov.customer || {};
+      const dogs = ov.dogs || [];
+      const passes = ov.passes || [];
+      const past = (ov.lessons && ov.lessons.past) || [];
+      const future = (ov.lessons && ov.lessons.future) || [];
+
+      const dogsHtml =
+        dogs.length > 0
+          ? dogs
+              .map(
+                (d) => `
+          <div class="dog-row" data-dog-id="${d.id}">
+            ${d.photoUrl ? `<img src="${escapeHtml(d.photoUrl)}" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #0002" />` : ""}
+            <div>
+              <div><b>${escapeHtml(d.name)}</b>${d.breed ? ` — ${escapeHtml(d.breed)}` : ""}</div>
+              <div class="muted">${[d.birthdate && `Geboren: ${escapeHtml(d.birthdate)}`, d.gender, d.vaccinationStatus && `Vacc.: ${escapeHtml(d.vaccinationStatus)}`].filter(Boolean).join(" • ")}</div>
+            </div>
+          </div>`
+              )
+              .join("")
+          : `<div class="muted">Geen honden geregistreerd.</div>`;
+
+      const passesSummary =
+        passes.length > 0
+          ? `<ul style="padding-left:18px;margin:0">${passes
+              .map((p) => {
+                const rest = Math.max(0, Number(p.total) - Number(p.used || 0));
+                return `<li>${escapeHtml(p.typeCode || p.type || "-")} — totaal: ${p.total ?? p.totalStrips ?? "-"}, gebruikt: ${p.used ?? p.usedStrips ?? 0}, resterend: ${rest}</li>`;
+              })
+              .join("")}</ul>`
+          : `<div class="muted">Nog geen strippenkaarten.</div>`;
+
+      const list = (arr) =>
+        arr.length
+          ? `<ul style="padding-left:18px;margin:0">${arr
+              .map((l) => `<li>${escapeHtml(l.date || "-")} ${l.startTime ? escapeHtml(l.startTime) : ""} — ${escapeHtml(l.classType || "-")} @ ${escapeHtml(l.location || "-")}</li>`)
+              .join("")}</ul>`
+          : `<div class="muted">Geen items.</div>`;
+
+      return `
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+          <button id="newSearch" class="secondary">🔍 Nieuwe zoekopdracht</button>
+        </div>
+
+        <h3>Klant</h3>
+        <div class="card" style="margin-bottom:12px">
+          <div><b>${escapeHtml(c.name || "-")}</b></div>
+          <div class="muted">${escapeHtml(c.email || "-")} • ${escapeHtml(c.phone || "-")}</div>
+          <div class="muted">ID: ${escapeHtml(c.id)}</div>
+        </div>
+
+        <h3>Honden (klik om strippenkaarten te beheren)</h3>
+        <div class="list" style="margin-bottom:12px">${dogsHtml}</div>
+
+        <h3>Strippenkaarten (samenvatting)</h3>
+        <div class="card" style="margin-bottom:12px">${passesSummary}</div>
+
+        <h3>Reservaties</h3>
+        <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><h4>Toekomstig (${ov.counters?.futureCount ?? 0})</h4>${list(future)}</div>
+          <div><h4>Verleden (${ov.counters?.pastCount ?? 0})</h4>${list(past)}</div>
+        </div>
+      `;
+    }
+
+    // -------- Strippenkaarten paneel --------
+    const passesList = $("#passesList");
+    const addPassBtn = $("#addPassBtn");
+
+    async function fetchPasses(customerId, dogId) {
+      const r = await fetch(`/api/passes?customerId=${encodeURIComponent(customerId)}&dogId=${encodeURIComponent(dogId)}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    }
+
+    async function renderPasses() {
+      if (!currentCustomerId || !currentDogId) {
+        passesList.innerHTML = `<p class="muted">Kies eerst een hond hierboven.</p>`;
+        return;
+      }
+      try {
+        const data = await fetchPasses(currentCustomerId, currentDogId);
+        if (!Array.isArray(data) || data.length === 0) {
+          passesList.innerHTML = `<p>Geen strippenkaarten gevonden voor deze hond.</p>`;
+          return;
+        }
+        passesList.innerHTML = data
+          .map(
+            (p) => `
+          <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <div><b>${escapeHtml(p.type)}</b> — ${escapeHtml(String(p.usedStrips))}/${escapeHtml(String(p.totalStrips))} gebruikt</div>
+            <div>
+              <button class="secondary consume-btn" data-id="${p.id}">➖ 1 strip</button>
+            </div>
+          </div>`
+          )
+          .join("");
+
+        $$(".consume-btn", passesList).forEach((btn) =>
+          btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            const r = await fetch(`/api/passes/${encodeURIComponent(id)}/use`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ count: 1 })
+            });
+            if (r.ok) {
+              renderPasses();
+            } else {
+              const err = await r.json().catch(() => ({}));
+              alert("Fout: " + (err.message || `HTTP ${r.status}`));
+            }
+          })
+        );
+      } catch (e) {
+        passesList.innerHTML = `<div style="color:#b3261e">Fout bij laden: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+    window.renderPasses = renderPasses; // optioneel extern oproepbaar
+
+    addPassBtn?.addEventListener("click", async () => {
+      if (!currentCustomerId || !currentDogId) {
+        alert("Kies eerst een hond in het overzicht.");
+        return;
+      }
+      const type = prompt("Type (bv. PUPPY / PUBER / GEV):");
+      if (!type) return;
+      const totalStrips = Number(prompt("Aantal strips (bv. 9):") || "0");
+      if (!totalStrips || totalStrips <= 0) return;
+
+      const r = await fetch("/api/passes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerId: currentCustomerId, dogId: currentDogId, type: String(type).toUpperCase(), totalStrips })
+      });
+      if (r.ok) renderPasses();
+      else {
+        const err = await r.json().catch(() => ({}));
+        alert("Fout: " + (err.message || `HTTP ${r.status}`));
+      }
+    });
   })();
 })();
