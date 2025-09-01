@@ -1,112 +1,114 @@
-/* ===== Superhond UI – Clean Card Look ===== */
-:root{
-  --bg: #f6f8fb;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --primary: #2563eb;
-  --accent: #f59e0b;
-  --ok: #16a34a;
-  --radius: 14px;
-  --shadow: 0 10px 30px rgba(2, 6, 23, .06);
+// Helpers voor element-ophalen
+const $ = (sel) => document.querySelector(sel);
+
+const elStatus   = $("#searchStatus");
+const elInput    = $("#searchBox");
+const elBtn      = $("#searchBtn");
+const secCust    = $("#secCustomers");
+const secDogs    = $("#secDogs");
+const secPass    = $("#secPasses");
+const cardsCust  = $("#cardsCustomers");
+const cardsDogs  = $("#cardsDogs");
+const cardsPass  = $("#cardsPasses");
+
+// Kaart-templates
+function cardCustomer(c){
+  const init = (c.name || "?").trim().slice(0,1).toUpperCase();
+  return `
+    <div class="card">
+      <div class="card-head">
+        <div class="avatar customer">${init}</div>
+        <div>
+          <h3>${c.name || "Onbekende klant"}</h3>
+          <div class="meta">${c.email || ""}${c.email && c.phone ? " • " : ""}${c.phone || ""}</div>
+        </div>
+      </div>
+      ${c.address ? `<div class="kv"><b>Adres:</b> ${c.address}</div>` : ""}
+    </div>
+  `;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background: linear-gradient(180deg, #f8fbff 0%, #f3f6fc 100%);
-  color:var(--text);
-  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+function cardDog(d){
+  const init = (d.name || "?").trim().slice(0,1).toUpperCase();
+  return `
+    <div class="card">
+      <div class="card-head">
+        <div class="avatar dog">${init}</div>
+        <div>
+          <h3>${d.name || "Hond"}</h3>
+          <div class="meta">${d.breed || "-"}${d.birthdate ? " • " + d.birthdate : ""}</div>
+        </div>
+      </div>
+      ${d.ownerId ? `<div class="kv"><b>Eigenaar ID:</b> ${d.ownerId}</div>` : ""}
+    </div>
+  `;
 }
 
-/* Top nav */
-nav ul{
-  list-style:none; padding:12px 20px; margin:0;
-  display:flex; gap:16px; flex-wrap:wrap;
-  background:#ffffffcc; backdrop-filter:saturate(1.2) blur(6px);
-  border-bottom:1px solid var(--border)
-}
-nav a, nav li{color:var(--text); text-decoration:none; font-weight:600}
-
-/* Page */
-main{max-width:1100px; margin:24px auto; padding:0 20px}
-h1{font-size: clamp(24px, 2.8vw, 36px); margin:0 0 8px}
-h2{font-size: clamp(18px, 2.2vw, 24px); margin:18px 0 10px}
-h3{font-size:18px; margin:0 0 6px}
-.status{margin-top:8px; color:var(--muted)}
-
-/* Search */
-.search-wrap{
-  margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-}
-.search-input{
-  flex:1; min-width:260px; padding:12px 14px;
-  border:1px solid var(--border); border-radius: 12px; background:#fff; font-size:16px; outline:none;
-  box-shadow: inset 0 1px 0 rgba(0,0,0,.02);
-}
-.search-input:focus{border-color:var(--primary)}
-.btn{
-  padding:10px 16px; border:0; border-radius:12px;
-  background:var(--primary); color:#fff; font-weight:700; cursor:pointer;
-  box-shadow: 0 6px 16px rgba(37,99,235,.25);
-}
-.btn:hover{filter:brightness(.98)}
-
-/* Sections & cards */
-.section{
-  margin-top:18px;
-  background: var(--card);
-  border:1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding:14px;
-}
-.section-title{
-  display:flex; align-items:center; gap:10px; margin:2px 0 10px; color:var(--muted);
-  font-weight:800; letter-spacing:.02em; text-transform:uppercase; font-size:12px;
+function cardPass(p){
+  const init = "SP";
+  return `
+    <div class="card">
+      <div class="card-head">
+        <div class="avatar pass">${init}</div>
+        <div>
+          <h3>${p.type || "Strippenkaart"}</h3>
+          <div class="meta">Hond ID: ${p.dogId ?? "-"}</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="badge">Totaal: ${p.total ?? "-"}</span>
+        <span class="badge">Resterend: ${p.remaining ?? "-"}</span>
+      </div>
+      ${p.validUntil ? `<div class="kv" style="margin-top:8px;"><b>Geldig tot:</b> ${p.validUntil}</div>` : ""}
+    </div>
+  `;
 }
 
-.cards{
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap:14px;
+// Renderfunctie voor resultaten
+function renderResults(payload, q){
+  const r = payload?.results || {};
+  const customers = r.customers || [];
+  const dogs      = r.dogs || [];
+  const passes    = r.passes || [];
+
+  // status
+  const any = customers.length + dogs.length + passes.length > 0;
+  elStatus.textContent = any ? `Resultaten voor “${q}”` : `Geen resultaten voor “${q}”`;
+
+  // Secties tonen/verbergen
+  secCust.hidden = customers.length === 0;
+  secDogs.hidden = dogs.length === 0;
+  secPass.hidden = passes.length === 0;
+
+  // Kaarten vullen
+  cardsCust.innerHTML = customers.map(cardCustomer).join("");
+  cardsDogs.innerHTML = dogs.map(cardDog).join("");
+  cardsPass.innerHTML = passes.map(cardPass).join("");
 }
 
-.card{
-  background:#fff; border:1px solid var(--border); border-radius: 12px;
-  padding:14px; box-shadow: 0 6px 16px rgba(2,6,23,.05);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.card:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px rgba(2,6,23,.08); }
+// Zoeken
+async function performSearch(){
+  const q = (elInput?.value || "").trim();
+  if (!q) { elStatus.textContent = "Typ eerst een zoekterm."; return; }
 
-.card-head{display:flex; align-items:center; gap:10px; margin-bottom:8px}
-.avatar{
-  width:38px; height:38px; border-radius:10px; display:grid; place-items:center;
-  color:#fff; font-weight:800; font-size:14px;
-}
-.avatar.customer{ background: linear-gradient(135deg, var(--primary), #5b8ef7);}
-.avatar.dog{ background: linear-gradient(135deg, #10b981, #4ade80);}
-.avatar.pass{ background: linear-gradient(135deg, var(--accent), #fbbf24);}
+  elStatus.textContent = "Zoeken…";
+  secCust.hidden = secDogs.hidden = secPass.hidden = true;
+  cardsCust.innerHTML = cardsDogs.innerHTML = cardsPass.innerHTML = "";
 
-.card h3{margin:0; font-size:16px}
-.meta{color:var(--muted); font-size:13px}
-.row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-.badge{
-  background:#eef2ff; color:#3730a3; border:1px solid #e0e7ff;
-  padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700;
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Onbekende fout");
+    renderResults(data, q);
+  } catch (err) {
+    console.error(err);
+    elStatus.textContent = "Zoeken mislukt. Controleer /api/search en de server logs.";
+  }
 }
-.kv{font-size:13px; color:var(--text)}
-.kv b{color:#111827}
 
-/* Dark mode */
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#1f2a44; --shadow: 0 10px 30px rgba(0,0,0,.45);}
-  body{background:linear-gradient(180deg,#0b1220,#0e1424)}
-  nav ul{background:#0f172acc; border-color:#1f2a44}
-  .search-input{background:#0f172a; color:var(--text); border-color:#1f2a44}
-  .card{background:#0f172a; border-color:#1f2a44}
-  .section{background:#0f172a; border-color:#1f2a44}
-  .badge{background:#172554; color:#c7d2fe; border-color:#1e3a8a}
-}
+// Events
+if (elBtn) elBtn.addEventListener("click", performSearch);
+if (elInput) elInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { e.preventDefault(); performSearch(); }
+});
