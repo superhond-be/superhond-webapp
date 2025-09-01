@@ -1,66 +1,55 @@
-const express = require("express");
-const { store, nextId } = require("../store"); // gebruik gedeelde store
-
+import express from "express";
 const router = express.Router();
 
-// ========================================================================
-// GET /api/passes → alle strippenkaarten
-// ========================================================================
-router.get("/", (_req, res) => {
-  res.json(store.passes);
+/**
+ * We beheren strippenkaarten los in deze module.
+ * Elke pass: { id, customerId, dogId?, lessonType, total, used, createdAt }
+ */
+let PASSES = [];
+let NEXT_PASS_ID = 1;
+
+/** GET /api/passes?customerId=&dogId= */
+router.get("/", (req, res) => {
+  const customerId = req.query.customerId ? Number(req.query.customerId) : null;
+  const dogId = req.query.dogId ? Number(req.query.dogId) : null;
+
+  let list = PASSES;
+  if (customerId) list = list.filter((p) => p.customerId === customerId);
+  if (dogId) list = list.filter((p) => p.dogId === dogId);
+
+  res.json(list);
 });
 
-// ========================================================================
-// POST /api/passes → nieuwe strippenkaart toevoegen
-// Body: { customerId, dogId, type, totalStrips }
-// ========================================================================
+/** POST /api/passes (aanmaken) */
 router.post("/", (req, res) => {
-  const b = req.body || {};
-  if (!b.customerId || !b.type || !b.totalStrips) {
-    return res.status(400).json({ message: "customerId, type en totalStrips zijn verplicht." });
-  }
+  const { customerId, dogId, lessonType, total } = req.body || {};
+  if (!Number.isFinite(Number(customerId)))
+    return res.status(400).json({ error: "customerId is required" });
+  if (!lessonType || !Number.isFinite(total) || total <= 0)
+    return res.status(400).json({ error: "lessonType and positive total required" });
 
   const pass = {
-    id: nextId(store.passes),
-    customerId: Number(b.customerId),
-    dogId: b.dogId ? Number(b.dogId) : null,
-    type: String(b.type).trim(),
-    totalStrips: Number(b.totalStrips),
-    usedStrips: 0,
-    createdAt: new Date().toISOString()
+    id: NEXT_PASS_ID++,
+    customerId: Number(customerId),
+    dogId: Number.isFinite(Number(dogId)) ? Number(dogId) : null,
+    lessonType,
+    total,
+    used: 0,
+    createdAt: new Date().toISOString(),
   };
-  store.passes.push(pass);
+  PASSES.push(pass);
   res.status(201).json(pass);
 });
 
-// ========================================================================
-// PUT /api/passes/:id/use → een strip afboeken
-// Body: { count } (standaard = 1)
-// ========================================================================
-router.put("/:id/use", (req, res) => {
+/** POST /api/passes/:id/use (1 strip verbruiken) */
+router.post("/:id/use", (req, res) => {
   const id = Number(req.params.id);
-  const p = store.passes.find((x) => x.id === id);
-  if (!p) return res.status(404).json({ message: "Strippenkaart niet gevonden" });
-
-  const count = Number(req.body.count || 1);
-  if (p.usedStrips + count > p.totalStrips) {
-    return res.status(400).json({ message: "Niet genoeg strippen over" });
-  }
-
-  p.usedStrips += count;
-  res.json(p);
+  const pass = PASSES.find((p) => p.id === id);
+  if (!pass) return res.status(404).json({ error: "Pass not found" });
+  if (pass.used >= pass.total)
+    return res.status(400).json({ error: "No strips remaining" });
+  pass.used += 1;
+  res.json(pass);
 });
 
-// ========================================================================
-// DELETE /api/passes/:id → strippenkaart verwijderen
-// ========================================================================
-router.delete("/:id", (req, res) => {
-  const before = store.passes.length;
-  store.passes = store.passes.filter((x) => x.id !== Number(req.params.id));
-  if (store.passes.length === before) {
-    return res.status(404).json({ message: "Strippenkaart niet gevonden" });
-  }
-  res.json({ message: "Strippenkaart verwijderd" });
-});
-
-module.exports = router;
+export default router;
