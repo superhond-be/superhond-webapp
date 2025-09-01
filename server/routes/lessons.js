@@ -1,35 +1,22 @@
-// server/routes/lessons.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-/*
-  Lesson = lesmoment:
-  { id, date, start, end, lessonType, location, trainers: [string] }
-*/
-const LESSONS = [];
-let NEXT_ID = 1;
-
-// Lijst (optionele filters: lessonType, from, to)
+// Alle lessen ophalen
 router.get("/", (req, res) => {
-  const { lessonType, from, to } = req.query;
-  let data = LESSONS;
-  if (lessonType) data = data.filter(l => l.lessonType === lessonType);
-  if (from) data = data.filter(l => l.date >= from);
-  if (to) data = data.filter(l => l.date <= to);
-  res.json(data);
+  res.json([
+    { id: 1, date: "2025-09-10", topic: "Puppy training", location: "Retie" },
+    { id: 2, date: "2025-09-17", topic: "Gehoorzaamheid", location: "Dessel" }
+  ]);
 });
 
-// Aanmaken
+// Nieuwe les toevoegen
 router.post("/", (req, res) => {
-  const { date, start, end, lessonType, location, trainers } = req.body || {};
-  if (!date || !lessonType) return res.status(400).json({ error: "date and lessonType are required" });
-  const lesson = {
-    id: NEXT_ID++,
-    date, start: start || "", end: end || "",
-    lessonType, location: location || "", trainers: Array.isArray(trainers) ? trainers : []
-  };
-  LESSONS.push(lesson);
-  res.status(201).json(lesson);
+  const { date, topic, location } = req.body;
+  if (!date || !topic || !location) {
+    return res.status(400).json({ error: "Datum, thema en locatie zijn verplicht" });
+  }
+  const newLesson = { id: Date.now(), date, topic, location };
+  res.status(201).json(newLesson);
 });
 
-module.exports = router;
+export default router;
