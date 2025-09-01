@@ -307,5 +307,41 @@ async function performSearch() {
     resultsBox.innerHTML = `<p style="color:red;">Er ging iets mis bij het zoeken.</p>`;
   }
 }
+.results-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
+.result-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.result-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.result-card p {
+  margin: 4px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.result-card .tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #3498db;
+  margin-bottom: 8px;
+}
 
