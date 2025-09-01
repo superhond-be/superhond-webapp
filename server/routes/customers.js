@@ -1,27 +1,30 @@
-// routes/customers.js
+// server/routes/customers.js
 const express = require("express");
 const router = express.Router();
 
-// Voorbeeld data (kan later vervangen worden door DB)
-let CUSTOMERS = [];
+// simpele in-memory opslag
+const CUSTOMERS = [];
+let NEXT_ID = 1;
 
-// Alle klanten ophalen
+// Lijst
 router.get("/", (req, res) => {
   res.json(CUSTOMERS);
 });
 
-// Nieuwe klant toevoegen
-router.post("/", (req, res) => {
-  const customer = req.body;
-  CUSTOMERS.push(customer);
-  res.status(201).json({ message: "✅ Klant toegevoegd", customer });
+// Detail
+router.get("/:id", (req, res) => {
+  const c = CUSTOMERS.find(x => x.id === Number(req.params.id));
+  if (!c) return res.status(404).json({ error: "Customer not found" });
+  res.json(c);
 });
 
-// Eén klant zoeken op email
-router.get("/:email", (req, res) => {
-  const customer = CUSTOMERS.find(c => c.email === req.params.email);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-  res.json(customer);
+// Aanmaken
+router.post("/", (req, res) => {
+  const { name, email, phone } = req.body || {};
+  if (!name) return res.status(400).json({ error: "name is required" });
+  const customer = { id: NEXT_ID++, name, email: email || "", phone: phone || "" };
+  CUSTOMERS.push(customer);
+  res.status(201).json(customer);
 });
 
 module.exports = router;
