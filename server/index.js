@@ -10,6 +10,12 @@ import customersRoutes from "./routes/customers.js";
 import dogsRoutes from "./routes/dogs.js";
 import passesRoutes from "./routes/passes.js";
 import lessonsRoutes from "./routes/lessons.js";
+import debugRoutes from "./routes/debug.js";
+import searchRoutes from "./routes/search.js";
+
+// ...
+app.use("/api/debug", debugRoutes);
+app.use("/api/search", searchRoutes);
 
 // ====== Helpers voor __dirname (werkt in ES Modules) ======
 const __filename = fileURLToPath(import.meta.url);
