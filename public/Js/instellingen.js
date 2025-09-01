@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const registrationForm = document.getElementById("registration-form");
   const output = document.getElementById("output");
 
-  // sync zichtbaarheidslogica
+  // --- Logica Les & trainingen ---
   function syncOnline() {
     const actief = trainingForm.actief.value === "J";
     [...trainingForm.online].forEach(input => {
@@ -14,12 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
   trainingForm.actief.forEach(radio => radio.addEventListener("change", syncOnline));
   syncOnline();
 
-  // opslaan training
   trainingForm.addEventListener("submit", e => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(trainingForm).entries());
 
-    // validatie: aantal <= max
+    // validatie aantal <= max
     const aantal = parseInt(data.aantal || 0, 10);
     const max = parseInt(data.max || 0, 10);
     if (data.max && aantal > max) {
@@ -35,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     output.textContent = "Training opgeslagen:\n" + JSON.stringify(data, null, 2);
   });
 
-  // opslaan registratie
+  // --- Logica Registratie ---
   registrationForm.addEventListener("submit", e => {
     e.preventDefault();
     const data = {};
@@ -46,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     output.textContent = "Registratie opgeslagen:\n" + JSON.stringify(data, null, 2);
   });
 
-  // laad eerdere data uit localStorage
+  // --- Data laden uit localStorage ---
   const trainingData = localStorage.getItem("trainingSettings");
   if (trainingData) {
     const parsed = JSON.parse(trainingData);
