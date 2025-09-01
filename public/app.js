@@ -1,264 +1,153 @@
-// public/app.js (ES module)
-import { els } from "./components/cards.js";
+/* Superhond – eenvoudige client-side router + schermen */
 
-const $ = (s, r=document) => r.querySelector(s);
-const app = $("#app");
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-/* ---------------- Router (simpel SPA) ---------------- */
-const routes = {
-  "/": renderDashboard,
-  "/customers": renderCustomers,
-  "/customers/new": renderCustomerNew,
-  "/dogs": renderDogs,
-  "/dogs/new": renderDogNew,
-  "/passes": renderPasses,
-  "/lessons": renderLessons,
-  "/lessons/new": renderLessonNew,
-  "/settings": renderSettings,
-  "/settings/branding": renderBranding,
-  "/settings/locations": renderLocations,
+// Mini "views"
+const VIEWS = {
+  dashboard() {
+    return /*html*/`
+      <h2>Welkom bij Superhond</h2>
+      <p>Kies een onderdeel in het menu of gebruik de knoppen hieronder.</p>
+      <div class="toolbar">
+        <button class="btn" data-view="customers">➕ Nieuwe klant</button>
+        <button class="btn" data-view="dogs">➕ Nieuwe hond</button>
+        <button class="btn" data-view="passes">🎫 Strip verbruiken</button>
+      </div>
+      <div class="card">
+        <h3>Snelle statistieken</h3>
+        <ul>
+          <li>Klanten (demo): 1</li>
+          <li>Honden (demo): 1</li>
+          <li>Openstaande lessen (demo): 5</li>
+        </ul>
+      </div>
+    `;
+  },
+
+  customers() {
+    return /*html*/`
+      <h2>Klanten</h2>
+      <p>Zoeken / toevoegen van klanten (demo-scherm).</p>
+      <div class="card">
+        <label>Zoek klant</label>
+        <input placeholder="Naam, e-mail of telefoon…" />
+        <div class="muted" style="margin-top:8px">Voorbeeldresultaat:</div>
+        <table class="table" style="margin-top:8px">
+          <thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th></tr></thead>
+          <tbody><tr><td>Paul Thijs</td><td>paul@example.com</td><td>0476 12 34 56</td></tr></tbody>
+        </table>
+      </div>
+    `;
+  },
+
+  dogs() {
+    return /*html*/`
+      <h2>Honden</h2>
+      <p>Beheer honden en koppelingen aan klanten (demo-scherm).</p>
+      <div class="card">
+        <label>Naam hond</label>
+        <input placeholder="Bv. Seda" />
+        <div class="toolbar"><button class="btn">Opslaan</button></div>
+      </div>
+    `;
+  },
+
+  passes() {
+    return /*html*/`
+      <h2>Strippenkaarten</h2>
+      <p>Hier verbruik je een strip of maak je een kaart aan op basis van een lespakket.</p>
+      <div class="card">
+        <div class="grid">
+          <div>
+            <label>Klant of hond</label>
+            <input placeholder="Zoek 'Paul' of 'Seda' (demo)" />
+          </div>
+          <div>
+            <label>Lespakket</label>
+            <select>
+              <option>Puppy – 9 lessen</option>
+              <option>Puber – 5 lessen</option>
+            </select>
+          </div>
+        </div>
+        <div class="toolbar"><button class="btn">🎫 Strip verbruiken</button></div>
+      </div>
+    `;
+  },
+
+  lessons() {
+    return /*html*/`
+      <h2>Lessen</h2>
+      <p>Plan lessen, voeg deelnemers toe, registreer aanwezigheid (demo-scherm).</p>
+      <div class="card">
+        <label>Nieuwe les</label>
+        <div class="grid">
+          <input type="date" />
+          <input type="time" />
+          <input placeholder="Locatie" />
+        </div>
+        <div class="toolbar"><button class="btn">Les toevoegen</button></div>
+      </div>
+    `;
+  },
+
+  settings() {
+    return /*html*/`
+      <h2>Instellingen</h2>
+      <div class="card">
+        <label>Organisatie-naam</label>
+        <input value="Superhond.be" />
+        <label style="margin-top:10px">Kleur (primaire)</label>
+        <input value="#FFC107" />
+        <div class="toolbar"><button class="btn">Opslaan</button></div>
+      </div>
+    `;
+  }
 };
 
-window.addEventListener("popstate", render);
-document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-link]");
-  if (!a) return;
-  e.preventDefault();
-  history.pushState(null, "", a.getAttribute("href"));
-  render();
-});
-
-async function render() {
-  const path = location.pathname;
-  const fn = routes[path] || routes["/"];
-  await fn();
+// Router
+function render(viewName) {
+  const view = VIEWS[viewName] ? viewName : 'dashboard';
+  // Active link wisselen
+  $$('#side a[data-view]').forEach(a =>
+    a.classList.toggle('active', a.dataset.view === view)
+  );
+  // Inhoud plaatsen
+  $('#app').innerHTML = VIEWS[view]();
+  // Buttons binnen content die ook een data-view hebben, laten navigeren
+  $$('#app [data-view]').forEach(btn =>
+    btn.addEventListener('click', () => navigate(btn.dataset.view))
+  );
+  // URL updaten voor back/forward
+  history.replaceState({ view }, '', `#${view}`);
 }
 
-/* ---------------- Helpers ---------------- */
-async function fetchJSON(url, opts) {
-  const r = await fetch(url, opts);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
+function navigate(viewName) {
+  render(viewName);
 }
 
-function section(title){
-  const tmp = document.createElement("div");
-  tmp.innerHTML = els.section(title);
-  return tmp.firstElementChild;
-}
-function pushCards(container, cards){
-  const grid = container.querySelector('[data-slot="grid"]');
-  grid.innerHTML = cards.join("");
-}
-
-/* ---------------- Menu + overlay + submenu's ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  const menuButton = document.querySelector(".menu-toggle");
-  const sideMenu   = document.getElementById("sideMenu");
-  const overlay    = document.getElementById("menuOverlay");
-
-  function openMenu() {
-    sideMenu.classList.add("open");
-    overlay.classList.add("show");
-    overlay.hidden = false;
-    document.body.classList.add("noscroll");
-  }
-  function closeMenu() {
-    sideMenu.classList.remove("open");
-    overlay.classList.remove("show");
-    setTimeout(() => { overlay.hidden = true; }, 250);
-    document.body.classList.remove("noscroll");
-  }
-  function toggleMenu() {
-    sideMenu.classList.contains("open") ? closeMenu() : openMenu();
-  }
-
-  if (menuButton) menuButton.addEventListener("click", toggleMenu);
-  if (overlay) overlay.addEventListener("click", closeMenu);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && sideMenu.classList.contains("open")) closeMenu();
+function initNav() {
+  // Menuklikken
+  $$('#side a[data-view]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigate(a.dataset.view);
+    });
   });
 
-  // Submenu toggle + state
-  const SUB_KEY = "sh_submenu_state";
-  try {
-    const saved = JSON.parse(sessionStorage.getItem(SUB_KEY) || "{}");
-    // herstellen
-    Object.entries(saved).forEach(([id, isOpen]) => {
-      const btn = sideMenu.querySelector(`.sub-toggle[aria-controls="${id}"]`);
-      const panel = document.getElementById(id);
-      if (btn && panel && isOpen) {
-        btn.setAttribute("aria-expanded", "true");
-        panel.hidden = false;
-        panel.classList.add("show");
-      }
-    });
-    // live toggle
-    sideMenu.addEventListener("click", (e) => {
-      // links -> sluiten + router laten werken
-      const link = e.target.closest("a[data-link]");
-      if (link) { closeMenu(); return; }
+  // Hamburger (optioneel)
+  $('#menuBtn').addEventListener('click', () => {
+    $('#side').classList.toggle('open');
+  });
 
-      const btn = e.target.closest(".sub-toggle");
-      if (!btn) return;
+  // Startview uit hash
+  const start = (location.hash || '#dashboard').replace('#', '');
+  render(start);
 
-      const id = btn.getAttribute("aria-controls");
-      const panel = document.getElementById(id);
-      const willOpen = btn.getAttribute("aria-expanded") !== "true";
-
-      btn.setAttribute("aria-expanded", String(willOpen));
-      if (willOpen) {
-        panel.hidden = false;
-        requestAnimationFrame(() => panel.classList.add("show"));
-      } else {
-        panel.classList.remove("show");
-        setTimeout(() => { panel.hidden = true; }, 250);
-      }
-
-      const state = JSON.parse(sessionStorage.getItem(SUB_KEY) || "{}");
-      state[id] = willOpen;
-      sessionStorage.setItem(SUB_KEY, JSON.stringify(state));
-    });
-  } catch {/* ignore */}
-});
-
-/* ---------------- Screens ---------------- */
-async function renderDashboard(){
-  app.innerHTML = `
-    <h1>Dashboard</h1>
-    <section class="section">
-      <div class="sectionTitle">Snel zoeken</div>
-      <div class="searchbar">
-        <input id="q" class="input" type="search" placeholder="Paul, Sofie, Diva, Rocky, Puppycursus…" />
-        <button class="btn" id="go" type="button">Zoek</button>
-      </div>
-      <div class="status" id="msg">Typ een zoekterm en druk op Zoek.</div>
-    </section>
-    <div id="results"></div>
-  `;
-
-  const q = $("#q", app);
-  const go = $("#go", app);
-  const msg = $("#msg", app);
-  const results = $("#results", app);
-
-  async function run(){
-    const term = (q.value||"").trim();
-    if (!term){ msg.textContent = "Typ eerst een zoekterm."; results.innerHTML=""; return; }
-    msg.textContent = "Zoeken…";
-    results.innerHTML = "";
-
-    try{
-      // Back-end: /api/search moet { ok:true, results:{ customers, dogs, passes } } teruggeven.
-      const data = await fetchJSON(`/api/search?q=${encodeURIComponent(term)}`);
-      const r = data?.results || {};
-
-      if(!(r.customers?.length || r.dogs?.length || r.passes?.length)){
-        msg.textContent = `Geen resultaten voor “${term}”.`;
-        return;
-      }
-      msg.textContent = `Resultaten voor “${term}”`;
-
-      if (r.customers?.length){
-        const sec = section("Klanten");
-        pushCards(sec, r.customers.map(els.cardCustomer));
-        results.appendChild(sec);
-      }
-      if (r.dogs?.length){
-        const sec = section("Honden");
-        pushCards(sec, r.dogs.map(els.cardDog));
-        results.appendChild(sec);
-      }
-      if (r.passes?.length){
-        const sec = section("Strippenkaarten");
-        pushCards(sec, r.passes.map(els.cardPass));
-        results.appendChild(sec);
-      }
-    }catch(err){
-      console.error(err);
-      msg.textContent = "Zoeken mislukt. Controleer /api/search en server logs.";
-    }
-  }
-
-  go.addEventListener("click", run);
-  q.addEventListener("keydown", e => { if(e.key==="Enter"){ e.preventDefault(); run(); } });
+  // Laatst geladen
+  const now = new Date();
+  $('#loadedAt').textContent = now.toLocaleString();
 }
 
-async function renderCustomers(){
-  app.innerHTML = `
-    <h1>Klanten</h1>
-    <section class="section">
-      <div class="sectionTitle">Overzicht (demo)</div>
-      <div class="grid" id="custGrid"></div>
-    </section>
-  `;
-  try{
-    const data = await fetchJSON("/api/search?q=paul"); // demo: haal Paul via search
-    const cust = data?.results?.customers || [];
-    $("#custGrid", app).innerHTML = cust.map(els.cardCustomer).join("") || "<p class='status'>Geen klanten gevonden.</p>";
-  }catch{
-    $("#custGrid", app).innerHTML = "<p class='status'>Kon klanten niet laden.</p>";
-  }
-}
-async function renderCustomerNew(){
-  app.innerHTML = `
-    <h1>Nieuwe klant</h1>
-    <section class="section"><p class="status">Formulier volgt.</p></section>
-  `;
-}
-async function renderDogs(){
-  app.innerHTML = `
-    <h1>Honden</h1>
-    <section class="section">
-      <div class="sectionTitle">Overzicht (demo)</div>
-      <div class="grid" id="dogGrid"></div>
-    </section>
-  `;
-  try{
-    const data = await fetchJSON("/api/search?q=diva"); // demo
-    const dogs = data?.results?.dogs || [];
-    $("#dogGrid", app).innerHTML = dogs.map(els.cardDog).join("") || "<p class='status'>Geen honden gevonden.</p>";
-  }catch{
-    $("#dogGrid", app).innerHTML = "<p class='status'>Kon honden niet laden.</p>";
-  }
-}
-async function renderDogNew(){
-  app.innerHTML = `
-    <h1>Nieuwe hond</h1>
-    <section class="section"><p class="status">Formulier volgt.</p></section>
-  `;
-}
-async function renderPasses(){
-  app.innerHTML = `
-    <h1>Strippenkaarten</h1>
-    <section class="section">
-      <div class="sectionTitle">Overzicht (demo)</div>
-      <div class="grid" id="passGrid"></div>
-    </section>
-  `;
-  try{
-    const data = await fetchJSON("/api/search?q=puppy"); // demo
-    const passes = data?.results?.passes || [];
-    $("#passGrid", app).innerHTML = passes.map(els.cardPass).join("") || "<p class='status'>Geen strippenkaarten gevonden.</p>";
-  }catch{
-    $("#passGrid", app).innerHTML = "<p class='status'>Kon strippenkaarten niet laden.</p>";
-  }
-}
-async function renderLessons(){
-  app.innerHTML = `<h1>Lessen</h1><section class="section"><p class="status">Agenda en beheer volgen.</p></section>`;
-}
-async function renderLessonNew(){
-  app.innerHTML = `<h1>Nieuwe les</h1><section class="section"><p class="status">Formulier volgt.</p></section>`;
-}
-async function renderSettings(){
-  app.innerHTML = `<h1>Instellingen</h1><section class="section"><p class="status">Algemene instellingen volgen.</p></section>`;
-}
-async function renderBranding(){
-  app.innerHTML = `<h1>Logo & stijl</h1><section class="section"><p class="status">Branding-instellingen volgen.</p></section>`;
-}
-async function renderLocations(){
-  app.innerHTML = `<h1>Locaties</h1><section class="section"><p class="status">Locatiebeheer volgt.</p></section>`;
-}
-
-/* Init */
-render();
+document.addEventListener('DOMContentLoaded', initNav);
