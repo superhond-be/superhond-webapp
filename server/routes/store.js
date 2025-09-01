@@ -1,57 +1,39 @@
-// server/store.js
+// store.js
 
-// Simpele in-memory store
+// Geheugen-opslag (in-memory database)
 export const store = {
   customers: [],
   dogs: [],
   passes: []
 };
 
-// ----------------------
-// Customer functies
-// ----------------------
+// 👉 Functie: klant toevoegen
 export function addCustomer(customer) {
-  customer.id = store.customers.length + 1;
   store.customers.push(customer);
   return customer;
 }
 
-export function findCustomerById(id) {
-  return store.customers.find(c => c.id === id);
-}
-
-// ----------------------
-// Dog functies
-// ----------------------
+// 👉 Functie: hond toevoegen
 export function addDog(dog) {
-  dog.id = store.dogs.length + 1;
   store.dogs.push(dog);
   return dog;
 }
 
-export function findDogById(id) {
-  return store.dogs.find(d => d.id === id);
-}
-
-// ----------------------
-// Pass (strippenkaart) functies
-// ----------------------
+// 👉 Functie: strippenkaart toevoegen
 export function addPass(pass) {
-  pass.id = store.passes.length + 1;
-  pass.remaining = pass.remaining || 0; // standaard geen strippen
   store.passes.push(pass);
   return pass;
 }
 
-export function findPassById(id) {
-  return store.passes.find(p => p.id === id);
-}
-
+// 👉 Functie: strip gebruiken
 export function useStrip(passId) {
-  const pass = findPassById(passId);
-  if (pass && pass.remaining > 0) {
+  const pass = store.passes.find(p => p.id === passId);
+  if (!pass) throw new Error("Strippenkaart niet gevonden");
+
+  if (pass.remaining > 0) {
     pass.remaining -= 1;
-    return pass;
+  } else {
+    throw new Error("Geen strippen meer over");
   }
-  return null;
+  return pass;
 }
