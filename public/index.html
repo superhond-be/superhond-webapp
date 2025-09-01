@@ -1,44 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond.be – Admin Portaal</title>
-  <!-- Uniforme stijl -->
-  <link rel="stylesheet" href="/app.css?v=4" />
+  <link rel="stylesheet" href="/theme.css?v=1" />
+  <link rel="stylesheet" href="/app.css?v=1" />
 </head>
 <body>
-  <!-- Topbar -->
   <header class="topbar">
-    <button class="iconbtn" id="menuToggle">☰</button>
-    <h1>🐾 Superhond.be – Admin Portaal</h1>
+    <span class="paw">🐾</span>
+    <div class="brand">Superhond.be – Admin Portaal</div>
   </header>
 
-  <!-- Layout: sidebar + content -->
-  <div class="container">
-    <div class="layout">
-      <!-- Sidebar -->
-      <nav class="sidebar">
-        <header>Menu</header>
-        <ul>
-          <li><a href="#dashboard" data-link class="active">Dashboard</a></li>
-          <li><a href="#customers" data-link>Klanten</a></li>
-          <li><a href="#dogs" data-link>Honden</a></li>
-          <li><a href="#passes" data-link>Strippenkaarten</a></li>
-          <li><a href="#lessons" data-link>Lessen</a></li>
-          <li><a href="#settings" data-link>Instellingen</a></li>
-        </ul>
+  <div class="shell">
+    <aside class="sidebar">
+      <h4>Menu</h4>
+      <nav class="nav" id="nav">
+        <a href="#/dashboard" data-route="dashboard" class="active">Dashboard</a>
+        <a href="#/customers" data-route="customers">Klanten</a>
+        <a href="#/dogs" data-route="dogs">Honden</a>
+        <a href="#/passes" data-route="passes">Strippenkaarten</a>
+        <a href="#/lessons" data-route="lessons">Lessen</a>
+        <a href="#/settings" data-route="settings">Instellingen</a>
       </nav>
+    </aside>
 
-      <!-- Content -->
-      <main id="app" class="content">
-        <h2>Welkom bij Superhond</h2>
-        <p class="muted">Kies een optie in het menu hiernaast om te starten.</p>
-      </main>
-    </div>
+    <main class="main">
+      <div class="header">
+        <h1 id="title">Dashboard</h1>
+        <div class="actions">
+          <button class="btn outline" onclick="location.reload()">Herladen</button>
+        </div>
+      </div>
+
+      <section id="view" class="card">
+        <p>Welkom! Kies een item in het menu.</p>
+      </section>
+
+      <div class="footer mt16">Laatst geladen: <span id="ts"></span></div>
+    </main>
   </div>
 
-  <!-- Script -->
-  <script src="/app.js"></script>
+  <script>
+    // mini-router voor demo / uniforme navigatie
+    const title = document.getElementById('title');
+    const view  = document.getElementById('view');
+    const ts    = document.getElementById('ts');
+    const nav   = document.getElementById('nav');
+
+    const screens = {
+      dashboard: `
+        <div class="grid">
+          <div class="card"><div class="card-title">Snelstart</div>
+            <p>Gebruik het menu links om te navigeren. Dit is het uniforme Superhond-layout.</p>
+          </div>
+        </div>`,
+      customers: `
+        <div class="card">
+          <div class="card-title">Klanten zoeken</div>
+          <label>Zoek</label>
+          <input class="input" placeholder="Naam, e-mail of telefoon…" />
+          <div class="mt16">
+            <table class="table">
+              <thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th></tr></thead>
+              <tbody><tr><td>Paul Thijs</td><td>paul@example.com</td><td>0476 12 34 56</td></tr></tbody>
+            </table>
+          </div>
+        </div>`,
+      dogs: `
+        <div class="card">
+          <div class="card-title">Honden</div>
+          <div class="row">
+            <div class="col-6">
+              <label>Naam hond</label><input class="input" />
+            </div>
+            <div class="col-6">
+              <label>Ras</label><input class="input" />
+            </div>
+          </div>
+          <button class="btn primary mt16">Opslaan</button>
+        </div>`,
+      passes: `
+        <div class="card">
+          <div class="card-title">Strippenkaarten</div>
+          <p>Beheer strippen per hond. (UI placeholder – backend koppel je later.)</p>
+          <div class="alert">Nog geen echte data geladen.</div>
+        </div>`,
+      lessons: `
+        <div class="card">
+          <div class="card-title">Lessen</div>
+          <p>Plan lessen en registreer aanwezigheid.</p>
+          <button class="btn outline">Nieuwe les</button>
+        </div>`,
+      settings: `
+        <div class="card">
+          <div class="card-title">Instellingen</div>
+          <label>Organisatienaam</label><input class="input" value="Superhond.be" />
+          <button class="btn success mt16">Bewaar</button>
+        </div>`
+    };
+
+    function render(){
+      const hash = (location.hash || '#/dashboard').replace('#/','');
+      // active item in menu
+      [...nav.querySelectorAll('a')].forEach(a=>{
+        a.classList.toggle('active', a.dataset.route===hash);
+      });
+      title.textContent = {
+        dashboard:'Dashboard', customers:'Klanten', dogs:'Honden',
+        passes:'Strippenkaarten', lessons:'Lessen', settings:'Instellingen'
+      }[hash] || 'Dashboard';
+      view.innerHTML = screens[hash] || screens.dashboard;
+      ts.textContent = new Date().toLocaleString();
+    }
+    window.addEventListener('hashchange', render);
+    render();
+  </script>
 </body>
 </html>
