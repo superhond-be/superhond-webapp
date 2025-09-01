@@ -1,114 +1,128 @@
-// Helpers voor element-ophalen
-const $ = (sel) => document.querySelector(sel);
+// public/app.js (ES module)
+import { els } from "./components/cards.js";
 
-const elStatus   = $("#searchStatus");
-const elInput    = $("#searchBox");
-const elBtn      = $("#searchBtn");
-const secCust    = $("#secCustomers");
-const secDogs    = $("#secDogs");
-const secPass    = $("#secPasses");
-const cardsCust  = $("#cardsCustomers");
-const cardsDogs  = $("#cardsDogs");
-const cardsPass  = $("#cardsPasses");
+const $ = (s, r=document) => r.querySelector(s);
 
-// Kaart-templates
-function cardCustomer(c){
-  const init = (c.name || "?").trim().slice(0,1).toUpperCase();
-  return `
-    <div class="card">
-      <div class="card-head">
-        <div class="avatar customer">${init}</div>
-        <div>
-          <h3>${c.name || "Onbekende klant"}</h3>
-          <div class="meta">${c.email || ""}${c.email && c.phone ? " • " : ""}${c.phone || ""}</div>
-        </div>
-      </div>
-      ${c.address ? `<div class="kv"><b>Adres:</b> ${c.address}</div>` : ""}
-    </div>
-  `;
-}
+const app = $("#app");
 
-function cardDog(d){
-  const init = (d.name || "?").trim().slice(0,1).toUpperCase();
-  return `
-    <div class="card">
-      <div class="card-head">
-        <div class="avatar dog">${init}</div>
-        <div>
-          <h3>${d.name || "Hond"}</h3>
-          <div class="meta">${d.breed || "-"}${d.birthdate ? " • " + d.birthdate : ""}</div>
-        </div>
-      </div>
-      ${d.ownerId ? `<div class="kv"><b>Eigenaar ID:</b> ${d.ownerId}</div>` : ""}
-    </div>
-  `;
-}
+// --- mini router (client side) ---
+const routes = {
+  "/": renderDashboard,
+  "/customers": renderCustomers,
+  "/dogs": renderDogs,
+  "/passes": renderPasses,
+  "/lessons": renderLessons,
+  "/settings": renderSettings,
+};
 
-function cardPass(p){
-  const init = "SP";
-  return `
-    <div class="card">
-      <div class="card-head">
-        <div class="avatar pass">${init}</div>
-        <div>
-          <h3>${p.type || "Strippenkaart"}</h3>
-          <div class="meta">Hond ID: ${p.dogId ?? "-"}</div>
-        </div>
-      </div>
-      <div class="row">
-        <span class="badge">Totaal: ${p.total ?? "-"}</span>
-        <span class="badge">Resterend: ${p.remaining ?? "-"}</span>
-      </div>
-      ${p.validUntil ? `<div class="kv" style="margin-top:8px;"><b>Geldig tot:</b> ${p.validUntil}</div>` : ""}
-    </div>
-  `;
-}
-
-// Renderfunctie voor resultaten
-function renderResults(payload, q){
-  const r = payload?.results || {};
-  const customers = r.customers || [];
-  const dogs      = r.dogs || [];
-  const passes    = r.passes || [];
-
-  // status
-  const any = customers.length + dogs.length + passes.length > 0;
-  elStatus.textContent = any ? `Resultaten voor “${q}”` : `Geen resultaten voor “${q}”`;
-
-  // Secties tonen/verbergen
-  secCust.hidden = customers.length === 0;
-  secDogs.hidden = dogs.length === 0;
-  secPass.hidden = passes.length === 0;
-
-  // Kaarten vullen
-  cardsCust.innerHTML = customers.map(cardCustomer).join("");
-  cardsDogs.innerHTML = dogs.map(cardDog).join("");
-  cardsPass.innerHTML = passes.map(cardPass).join("");
-}
-
-// Zoeken
-async function performSearch(){
-  const q = (elInput?.value || "").trim();
-  if (!q) { elStatus.textContent = "Typ eerst een zoekterm."; return; }
-
-  elStatus.textContent = "Zoeken…";
-  secCust.hidden = secDogs.hidden = secPass.hidden = true;
-  cardsCust.innerHTML = cardsDogs.innerHTML = cardsPass.innerHTML = "";
-
-  try {
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || "Onbekende fout");
-    renderResults(data, q);
-  } catch (err) {
-    console.error(err);
-    elStatus.textContent = "Zoeken mislukt. Controleer /api/search en de server logs.";
-  }
-}
-
-// Events
-if (elBtn) elBtn.addEventListener("click", performSearch);
-if (elInput) elInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") { e.preventDefault(); performSearch(); }
+window.addEventListener("popstate", render);
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a) return;
+  e.preventDefault();
+  history.pushState(null, "", a.getAttribute("href"));
+  render();
 });
+
+async function render(){
+  const path = location.pathname;
+  const fn = routes[path] || routes["/"];
+  await fn();
+}
+
+// --- helpers ---
+async function fetchJSON(url){
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+function section(title){
+  const tmp = document.createElement("div");
+  tmp.innerHTML = els.section(title);
+  return tmp.firstElementChild;
+}
+function pushCards(container, cards){
+  const grid = container.querySelector('[data-slot="grid"]');
+  grid.innerHTML = cards.join("");
+}
+
+// --- screens ---
+async function renderDashboard(){
+  app.innerHTML = `
+    <h1>Dashboard</h1>
+    <div class="section">
+      <div class="sectionTitle">Snel zoeken</div>
+      <div class="searchbar">
+        <input id="q" class="input" type="search" placeholder="Paul, Sofie, Diva, Rocky, Puppycursus…" />
+        <button class="btn" id="go">Zoek</button>
+      </div>
+      <div class="status" id="msg">Typ een zoekterm en druk op Zoek.</div>
+    </div>
+    <div id="results"></div>
+  `;
+
+  const q = $("#q", app);
+  const go = $("#go", app);
+  const msg = $("#msg", app);
+  const results = $("#results", app);
+
+  async function run(){
+    const term = (q.value||"").trim();
+    if (!term){ msg.textContent = "Typ eerst een zoekterm."; results.innerHTML=""; return; }
+    msg.textContent = "Zoeken…";
+    results.innerHTML = "";
+
+    try{
+      const data = await fetchJSON(`/api/search?q=${encodeURIComponent(term)}`);
+      const r = data?.results || {};
+
+      if(!(r.customers?.length || r.dogs?.length || r.passes?.length)){
+        msg.textContent = `Geen resultaten voor “${term}”.`;
+        return;
+      }
+      msg.textContent = `Resultaten voor “${term}”`;
+
+      if (r.customers?.length){
+        const sec = section("Klanten");
+        pushCards(sec, r.customers.map(els.cardCustomer));
+        results.appendChild(sec);
+      }
+      if (r.dogs?.length){
+        const sec = section("Honden");
+        pushCards(sec, r.dogs.map(els.cardDog));
+        results.appendChild(sec);
+      }
+      if (r.passes?.length){
+        const sec = section("Strippenkaarten");
+        pushCards(sec, r.passes.map(els.cardPass));
+        results.appendChild(sec);
+      }
+    }catch(err){
+      console.error(err);
+      msg.textContent = "Zoeken mislukt. Controleer /api/search en logs.";
+    }
+  }
+
+  go.addEventListener("click", run);
+  q.addEventListener("keydown", e => { if(e.key==="Enter"){ e.preventDefault(); run(); } });
+}
+
+async function renderCustomers(){
+  app.innerHTML = `<h1>Klanten</h1><div class="status">In ontwikkeling – we tonen hier straks een lijst uit /api/customers.</div>`;
+}
+async function renderDogs(){
+  app.innerHTML = `<h1>Honden</h1><div class="status">In ontwikkeling – lijst uit /api/dogs.</div>`;
+}
+async function renderPasses(){
+  app.innerHTML = `<h1>Strippenkaarten</h1><div class="status">In ontwikkeling – lijst uit /api/passes.</div>`;
+}
+async function renderLessons(){
+  app.innerHTML = `<h1>Lessen</h1><div class="status">In ontwikkeling – agenda en beheer.</div>`;
+}
+async function renderSettings(){
+  app.innerHTML = `<h1>Instellingen</h1><div class="status">In ontwikkeling – trainingen, lestypes, thema’s, locaties.</div>`;
+}
+
+// start
+render();
