@@ -6,50 +6,34 @@ export const els = {
       <div class="grid" data-slot="grid"></div>
     </section>
   `,
-  cardCustomer: (c) => {
-    const init = (c.name||"?").trim().slice(0,1).toUpperCase();
-    return `
-      <article class="card">
-        <div class="cardHead">
-          <div class="avatar customer">${init}</div>
-          <div>
-            <h3>${c.name||"Onbekende klant"}</h3>
-            <div class="meta">${[c.email,c.phone].filter(Boolean).join(" • ")}</div>
-          </div>
-        </div>
-        ${c.address?`<div class="kv"><b>Adres:</b> ${c.address}</div>`:""}
-      </article>
-    `;
-  },
-  cardDog: (d) => {
-    const init = (d.name||"?").trim().slice(0,1).toUpperCase();
-    return `
-      <article class="card">
-        <div class="cardHead">
-          <div class="avatar dog">${init}</div>
-          <div>
-            <h3>${d.name||"Hond"}</h3>
-            <div class="meta">${[d.breed, d.birthdate].filter(Boolean).join(" • ")}</div>
-          </div>
-        </div>
-        ${d.ownerId?`<div class="kv"><b>Eigenaar ID:</b> ${d.ownerId}</div>`:""}
-      </article>
-    `;
-  },
+
+  cardCustomer: (c) => `
+    <article class="card">
+      <h3>${c.name || "Onbekende klant"}</h3>
+      <p><b>Email:</b> ${c.email || "-"}</p>
+      <p><b>Telefoon:</b> ${c.phone || "-"}</p>
+      ${c.address ? `<p><b>Adres:</b> ${c.address}</p>` : ""}
+    </article>
+  `,
+
+  cardDog: (d) => `
+    <article class="card">
+      <h3>${d.name || "Hond"}</h3>
+      <p><b>Ras:</b> ${d.breed || "-"}</p>
+      <p><b>Geboortedatum:</b> ${d.birthdate || "-"}</p>
+      ${d.ownerId ? `<p><b>Eigenaar ID:</b> ${d.ownerId}</p>` : ""}
+    </article>
+  `,
+
   cardPass: (p) => `
     <article class="card">
-      <div class="cardHead">
-        <div class="avatar pass">SP</div>
-        <div>
-          <h3>${p.type||"Strippenkaart"}</h3>
-          <div class="meta">Hond ID: ${p.dogId ?? "-"}</div>
-        </div>
-      </div>
+      <h3>${p.type || "Strippenkaart"}</h3>
       <div class="row">
         <span class="badge">Totaal: ${p.total ?? "-"}</span>
         <span class="badge">Resterend: ${p.remaining ?? "-"}</span>
       </div>
-      ${p.validUntil?`<div class="kv" style="margin-top:6px;"><b>Geldig tot:</b> ${p.validUntil}</div>`:""}
+      <p style="margin-top:6px;"><b>Hond ID:</b> ${p.dogId ?? "-"}</p>
+      ${p.validUntil ? `<p><b>Geldig tot:</b> ${p.validUntil}</p>` : ""}
     </article>
   `,
 };
