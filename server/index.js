@@ -2,7 +2,11 @@
  2 import cors from "cors";
  3 import path from "path";
  4 import { fileURLToPath } from "url";
- 5 
+ 
+import searchRoutes from "./routes/search.js";
+
+
+
  6 import customersRoutes from "./routes/customers.js";
  7 import dogsRoutes from "./routes/dogs.js";
  8 import passesRoutes from "./routes/passes.js";
@@ -21,6 +25,8 @@
 21 app.use(express.static(path.join(__dirname, "../public")));
 22 
 23 // Routes
+
+app.use("/api/search", searchRoutes);
 24 app.use("/api/customers", customersRoutes);
 25 app.use("/api/dogs", dogsRoutes);
 26 app.use("/api/passes", passesRoutes);
