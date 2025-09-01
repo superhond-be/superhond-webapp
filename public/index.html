@@ -2,27 +2,75 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond Beheerportaal</title>
-  <!-- Stylesheet met cache-buster -->
-  <link rel="stylesheet" href="app.css?v=3" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond.be – Admin Portaal</title>
+  <link rel="stylesheet" href="app.css?v=10" />
 </head>
 <body>
-  <!-- Navigatiebalk -->
-  <nav class="topnav">
-    <a data-link href="/">Dashboard</a>
-    <a data-link href="/customers">Klanten</a>
-    <a data-link href="/dogs">Honden</a>
-    <a data-link href="/passes">Strippenkaarten</a>
-    <a data-link href="/lessons">Lessen</a>
-    <a data-link href="/settings">Instellingen</a>
+
+  <!-- Sticky titelbalk -->
+  <header class="app-header">
+    <button class="menu-toggle" aria-label="Zijmenu openen">☰</button>
+    <h1>🐾 Superhond.be – Admin Portaal</h1>
+  </header>
+
+  <!-- Zijmenu met inklapbare submenu's -->
+  <nav id="sideMenu" class="side-menu" aria-label="Zijmenu">
+    <ul>
+      <li><a href="/" data-link>Dashboard</a></li>
+
+      <li class="has-sub">
+        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-customers">
+          Klanten <span class="caret">▸</span>
+        </button>
+        <ul id="sub-customers" class="submenu" hidden>
+          <li><a href="/customers" data-link>Overzicht klanten</a></li>
+          <li><a href="/customers/new" data-link>Nieuwe klant</a></li>
+        </ul>
+      </li>
+
+      <li class="has-sub">
+        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-dogs">
+          Honden <span class="caret">▸</span>
+        </button>
+        <ul id="sub-dogs" class="submenu" hidden>
+          <li><a href="/dogs" data-link>Overzicht honden</a></li>
+          <li><a href="/dogs/new" data-link>Nieuwe hond</a></li>
+        </ul>
+      </li>
+
+      <li class="has-sub">
+        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-lessons">
+          Lessen <span class="caret">▸</span>
+        </button>
+        <ul id="sub-lessons" class="submenu" hidden>
+          <li><a href="/lessons" data-link>Overzicht lessen</a></li>
+          <li><a href="/lessons/new" data-link>Nieuwe les</a></li>
+          <li><a href="/passes" data-link>Strippenkaarten</a></li>
+        </ul>
+      </li>
+
+      <li class="has-sub">
+        <button class="sub-toggle" aria-expanded="false" aria-controls="sub-settings">
+          Instellingen <span class="caret">▸</span>
+        </button>
+        <ul id="sub-settings" class="submenu" hidden>
+          <li><a href="/settings" data-link>Algemeen</a></li>
+          <li><a href="/settings/branding" data-link>Logo & stijl</a></li>
+          <li><a href="/settings/locations" data-link>Locaties</a></li>
+        </ul>
+      </li>
+    </ul>
   </nav>
 
-  <!-- Container voor dynamische inhoud -->
+  <!-- Overlay achter zijmenu -->
+  <div id="menuOverlay" class="menu-overlay" hidden></div>
+
+  <!-- Hoofdcontainer waar de router content in tekent -->
   <main id="app" class="container">
-    <!-- app.js rendert hier de actieve pagina -->
-    <h1>Welkom bij Superhond</h1>
-    <p>Kies een optie in het menu hierboven.</p>
+    <!-- app.js rendert hier het actieve scherm -->
   </main>
+
+  <script type="module" src="app.js?v=10"></script>
 </body>
 </html>
