@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Navigatie -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -17,107 +16,16 @@
     </ul>
   </nav>
 
-  <!-- Header -->
   <header><h1>Les Elling — Les instellingen</h1></header>
 
   <main>
-    <!-- 1) Les type -->
-    <section class="card" id="sect-type">
-      <h2>Les type</h2>
-      <form id="form-type">
-        <input type="hidden" name="id">
-        <label>Naam* <input name="naam" required></label>
-        <label>Beschrijving <textarea name="beschrijving"></textarea></label>
-        <label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bijv. 6"></label>
-        <label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bijv. 6"></label>
-        <label>Startdatum <input type="date" name="startdatum"></label>
-        <label>Maximum deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bijv. 10"></label>
-        <div>Les actief:
-          <label><input type="radio" name="actief" value="J" checked> Ja</label>
-          <label><input type="radio" name="actief" value="N"> Nee</label>
-        </div>
-        <div>Online zichtbaar:
-          <label><input type="radio" name="online" value="J"> Ja</label>
-          <label><input type="radio" name="online" value="N" checked> Nee</label>
-        </div>
-        <button type="submit" class="btn">Opslaan</button>
-        <button type="button" class="btn" id="reset-type">Nieuw</button>
-      </form>
-
-      <table id="table-type">
-        <thead>
-          <tr>
-            <th>Naam</th><th>Aantal</th><th>Geldig (m)</th>
-            <th>Start</th><th>Max</th><th>Actief</th><th>Online</th><th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <!-- 2) Les thema -->
-    <section class="card" id="sect-thema">
-      <h2>Les thema</h2>
-      <form id="form-thema">
-        <input type="hidden" name="id">
-        <label>Naam* <input name="naam" required></label>
-        <label>Beschrijving <textarea name="beschrijving"></textarea></label>
-        <button type="submit" class="btn">Opslaan</button>
-        <button type="button" class="btn" id="reset-thema">Nieuw</button>
-      </form>
-
-      <table id="table-thema">
-        <thead><tr><th>Naam</th><th>Beschrijving</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <!-- 3) Leslocatie -->
-    <section class="card" id="sect-loc">
-      <h2>Leslocatie</h2>
-      <form id="form-loc">
-        <input type="hidden" name="id">
-        <label>Naam* <input name="naam" required></label>
-        <label>Locatie (bv. Retie – Coach Sofie) <input name="locatie"></label>
-        <label>Adres <input name="adres" placeholder="Straat 1"></label>
-        <label>Postbus/plaats <input name="plaats" placeholder="Postcode + gemeente"></label>
-        <label>Beschrijving <textarea name="beschrijving"></textarea></label>
-        <div>
-          <button type="button" class="btn" id="map-btn">Bekijk locatie</button>
-        </div>
-        <button type="submit" class="btn">Opslaan</button>
-        <button type="button" class="btn" id="reset-loc">Nieuw</button>
-      </form>
-
-      <table id="table-loc">
-        <thead><tr><th>Naam</th><th>Adres</th><th>Plaats</th><th>Locatie</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <!-- 4) Les trainers -->
-    <section class="card" id="sect-trainer">
-      <h2>Les trainers</h2>
-      <form id="form-trainer">
-        <input type="hidden" name="id">
-        <label>Naam* <input name="naam" required></label>
-        <label>Functie <input name="functie" placeholder="Coach, Assistent, ..."></label>
-        <button type="submit" class="btn">Opslaan</button>
-        <button type="button" class="btn" id="reset-trainer">Nieuw</button>
-      </form>
-
-      <table id="table-trainer">
-        <thead><tr><th>Naam</th><th>Functie</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <pre id="output"></pre>
+    <!-- 4 secties: les type, thema, locatie, trainers -->
   </main>
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <script src="js/script.js"></script>
-  <script src="js/les-instellingen.js"></script>
+  <!-- let op: hoofdletter J -->
+  <script src="Js/script.js"></script>
+  <script src="Js/les-instellingen.js"></script>
 </body>
 </html>
