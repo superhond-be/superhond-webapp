@@ -1,5 +1,5 @@
-/* public/Js/lessen-instellingen.js — v0903h */
-console.log("les-instellingen JS geladen v0903h");
+/* public/Js/lessen-instellingen.js — v0903i */
+console.log("les-instellingen JS geladen v0903i");
 
 /* storage helpers */
 const store = {
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupEmailRecipients();
   setupEmailSettings();
   setupEmailSubtabs();
-  setupEmailAutomation(); // nieuw
+  setupEmailAutomation();
 });
 
 /* ========== 1) LESTYPE ========== */
@@ -28,7 +28,7 @@ function setupLestype(){
   document.getElementById("reset-type")?.addEventListener("click",()=>form.reset());
   if(!form||!tbody) return;
 
-  // opruimen oude velden
+  // migreer oude velden (actief/online) weg
   (function migrateOld(){
     const list=store.get(KEY); let c=false;
     list.forEach(r=>{ if("actief" in r){delete r.actief;c=true;} if("online" in r){delete r.online;c=true;} });
@@ -259,7 +259,7 @@ function setupEmailTemplates(){
   document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(document.getElementById(b.dataset.close))));
   [modalEmail,modalPreview].forEach(m=>m?.addEventListener("click",e=>{ if(e.target===m) closeModal(m); }));
 
-  // demo seed incl. dog_birthday
+  // demo seed incl. dog_birthday & class_reminder
   if(read().length===0){
     write([
       { id: uid(), naam:"Nieuwe booking", categorie:"Boeking",  taal:"nl",
@@ -276,6 +276,11 @@ function setupEmailTemplates(){
         beschrijving:"Proficiat met de verjaardag van de hond", trigger:"dog_birthday",
         onderwerp:"🎉 Proficiat met {{hond_naam}}’s verjaardag!",
         inhoud:"<p>Beste {{klant_naam}},</p><p>{{hond_naam}} is jarig op {{geboortedatum}} — van harte proficiat! 🎂</p><p>Een extra knuffel van het Superhond-team 🐾</p>"
+      },
+      { id: uid(), naam:"Lesherinnering (morgen)", categorie:"Training", taal:"nl",
+        beschrijving:"Herinnering voor de les (1-3 dagen op voorhand)", trigger:"class_reminder",
+        onderwerp:"Herinnering: {{les_naam}} op {{datum}} om {{starttijd}}",
+        inhoud:"<p>Beste {{klant_naam}},</p><p>Dit is een herinnering voor <b>{{les_naam}}</b> op {{datum}} om {{starttijd}} in {{locatie}}.</p><p>Tot dan!<br>Team Superhond</p>"
       }
     ]);
   }
@@ -311,7 +316,7 @@ function setupEmailTemplates(){
   }
   render();
 
-  btnNew?.addEventListener("click",()=>{ form.reset(); form.id.value=""; form.categorie.value="Boeking"; form.taal.value="nl"; document.getElementById("modal-email-title").textContent="Nieuw e-mailsjabloon"; modalEmail.classList.add("open"); });
+  btnNew?.addEventListener("click",()=>{ form.reset(); form.id.value=""; form.categorie.value="Boeking"; form.taal.value="nl"; document.getElementById("modal-email-title").textContent="Nieuw e-mailsjabloon"; openModal(modalEmail); });
 
   form?.addEventListener("submit",e=>{
     e.preventDefault();
@@ -320,7 +325,7 @@ function setupEmailTemplates(){
     const list=read();
     if(!data.id){ data.id=_uid(); list.push(data); }
     else { const i=list.findIndex(x=>x.id===data.id); if(i!==-1) list[i]=data; }
-    write(list); modalEmail.classList.remove("open"); render();
+    write(list); closeModal(modalEmail); render();
   });
 
   btnPreview?.addEventListener("click",()=>{
@@ -330,14 +335,14 @@ function setupEmailTemplates(){
       const html=renderTemplate(data.inhoud,sample);
       const subj=renderTemplate(data.onderwerp,sample);
       previewRender.innerHTML=`<div style="font-weight:600;margin-bottom:8px">Onderwerp:</div>${escapeHtml(subj)}<hr>${html}`;
-      modalPreview.classList.add("open");
+      openModal(modalPreview);
     }catch{ alert("Ongeldige JSON in voorbeeld-waarden."); }
   });
 
   groupsWrap.addEventListener("click",e=>{
     const btn=e.target.closest("button[data-act]"); if(!btn) return;
     const id=btn.dataset.id; const list=read(); const row=list.find(x=>x.id===id); if(!row) return;
-    if(btn.dataset.act==="edit"){ form.reset(); Object.entries(row).forEach(([k,v])=>{ if(form[k]!==undefined) form[k].value=v; }); document.getElementById("modal-email-title").textContent="Template bewerken"; modalEmail.classList.add("open"); }
+    if(btn.dataset.act==="edit"){ form.reset(); Object.entries(row).forEach(([k,v])=>{ if(form[k]!==undefined) form[k].value=v; }); document.getElementById("modal-email-title").textContent="Template bewerken"; openModal(modalEmail); }
     if(btn.dataset.act==="dup"){ const copy={...row,id:_uid(),naam:row.naam+" (kopie)"}; write([...list,copy]); render(); }
     if(btn.dataset.act==="prev"){
       previewData.value = previewData.value.trim() || '{"klant_naam":"Eva","hond_naam":"Bowie","datum":"ma 7 okt"}';
@@ -345,7 +350,7 @@ function setupEmailTemplates(){
       const html=renderTemplate(row.inhoud,s);
       const subj=renderTemplate(row.onderwerp,s);
       previewRender.innerHTML=`<div style="font-weight:600;margin-bottom:8px">Onderwerp:</div>${escapeHtml(subj)}<hr>${html}`;
-      modalPreview.classList.add("open");
+      openModal(modalPreview);
     }
     if(btn.dataset.act==="del"){ if(confirm(`Template “${row.naam}” verwijderen?`)){ write(list.filter(x=>x.id!==id)); render(); } }
   });
@@ -516,8 +521,9 @@ function setupEmailSubtabs(){
   });
 }
 
-/* ========== 5e) EMAIL — Automatisch (verjaardag hond) ========== */
+/* ========== 5e) EMAIL — Automatisch (verjaardag + lesherinnering) ========== */
 function setupEmailAutomation(){
+  /* --- Verjaardag hond --- */
   const tblBody = document.querySelector("#table-auto-bday tbody");
   const selWhen = document.getElementById("auto-bday-when");
   const btnScan = document.getElementById("auto-bday-scan");
@@ -552,7 +558,7 @@ function setupEmailAutomation(){
   }
 
   btnUseStorage?.addEventListener("click", (e)=>{ e.preventDefault(); loadFromStorage(); alert(`Ingelezen honden: ${dogsCache.length}`); });
-  btnUsePasted?.addEventListener("click",  (e)=>{ e.preventDefault(); loadFromTextarea(); alert(`Ingelezen honden (ingeplakt): ${dogsCache.length}`); });
+  btnUsePasted ?.addEventListener("click", (e)=>{ e.preventDefault(); loadFromTextarea(); alert(`Ingelezen honden (ingeplakt): ${dogsCache.length}`); });
 
   function findBirthdays(daysAhead){
     const today = new Date();
@@ -615,5 +621,92 @@ function setupEmailAutomation(){
     if (!dogsCache.length) loadFromStorage(); // probeer automatisch
     const items = findBirthdays(selWhen.value);
     renderRows(items);
+  });
+
+  /* --- Lesherinnering --- */
+  const tblClassBody = document.querySelector("#table-auto-class tbody");
+  const selClassWhen = document.getElementById("auto-class-when");
+  const btnClassScan = document.getElementById("auto-class-scan");
+  const taClasses    = document.getElementById("auto-classes-json");
+  const btnClassesUsePasted  = document.getElementById("auto-classes-use-pasted");
+  const btnClassesUseStorage = document.getElementById("auto-classes-use-storage");
+
+  let classCache = [];
+
+  function loadClassesFromStorage(){
+    let arr = JSON.parse(localStorage.getItem("classBookings")||"null")
+           || JSON.parse(localStorage.getItem("lessenBookings")||"null")
+           || [];
+    classCache = arr.map(x=>({
+      klant_naam: x.klant_naam || x.klant || x.owner_name || "",
+      email     : x.email || x.klant_email || "",
+      les_naam  : x.les_naam || x.lesson || x.name || "",
+      datum     : x.datum || x.date || "",
+      starttijd : x.starttijd || x.time || "",
+      locatie   : x.locatie || x.location || ""
+    })).filter(x => x.email && x.klant_naam && x.les_naam && x.datum);
+  }
+  function loadClassesFromTextarea(){
+    try{
+      const arr = JSON.parse(taClasses.value||"[]");
+      classCache = Array.isArray(arr) ? arr : [];
+    }catch{ alert("Ongeldige JSON bij lesboekingen."); }
+  }
+  function findClassesDaysAhead(daysAhead){
+    const today = new Date();
+    const target = new Date(today);
+    target.setDate(today.getDate() + Number(daysAhead||1));
+    const tm = target.getFullYear()+'-'+String(target.getMonth()+1).padStart(2,'0')+'-'+String(target.getDate()).padStart(2,'0');
+    return classCache.filter(x => String(x.datum).startsWith(tm));
+  }
+  function getClassReminderTemplate(){
+    const list = store.get("emailTemplates");
+    return list.find(t => t.trigger === "class_reminder");
+  }
+  function renderClassRows(items){
+    if(!tblClassBody) return;
+    if(!items.length){
+      tblClassBody.innerHTML = `<tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Geen lessen gevonden.</td></tr>`;
+      return;
+    }
+    const tpl = getClassReminderTemplate();
+    tblClassBody.innerHTML = items.map(it=>{
+      let mailBtn = `<span style="color:#999">Geen template met trigger <code>class_reminder</code></span>`;
+      if(tpl){
+        const subj = encodeURIComponent((tpl.onderwerp||"")
+          .replace(/\{\{\s*klant_naam\s*\}\}/g,it.klant_naam||"")
+          .replace(/\{\{\s*les_naam\s*\}\}/g,it.les_naam||"")
+          .replace(/\{\{\s*datum\s*\}\}/g,it.datum||"")
+          .replace(/\{\{\s*starttijd\s*\}\}/g,it.starttijd||"")
+          .replace(/\{\{\s*locatie\s*\}\}/g,it.locatie||"")
+        );
+        const bodyHtml = (tpl.inhoud||"")
+          .replace(/\{\{\s*klant_naam\s*\}\}/g,it.klant_naam||"")
+          .replace(/\{\{\s*les_naam\s*\}\}/g,it.les_naam||"")
+          .replace(/\{\{\s*datum\s*\}\}/g,it.datum||"")
+          .replace(/\{\{\s*starttijd\s*\}\}/g,it.starttijd||"")
+          .replace(/\{\{\s*locatie\s*\}\}/g,it.locatie||"");
+        const bodyTxt = bodyHtml.replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]+>/g,"");
+        mailBtn = `<a class="btn" href="mailto:${encodeURIComponent(it.email)}?subject=${subj}&body=${encodeURIComponent(bodyTxt)}">Maak e-mail</a>`;
+      }
+      return `<tr>
+        <td>${it.klant_naam||""}</td>
+        <td>${it.email||""}</td>
+        <td>${it.les_naam||""}</td>
+        <td>${it.datum||""}</td>
+        <td>${it.starttijd||""}</td>
+        <td>${it.locatie||""}</td>
+        <td>${mailBtn}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  btnClassesUseStorage?.addEventListener("click",(e)=>{ e.preventDefault(); loadClassesFromStorage(); alert(`Ingelezen boekingen: ${classCache.length}`); });
+  btnClassesUsePasted ?.addEventListener("click",(e)=>{ e.preventDefault(); loadClassesFromTextarea(); alert(`Ingelezen boekingen (ingeplakt): ${classCache.length}`); });
+  btnClassScan?.addEventListener("click",(e)=>{
+    e.preventDefault();
+    if(!classCache.length) loadClassesFromStorage(); // probeer opslag als cache leeg
+    const items = findClassesDaysAhead(selClassWhen.value);
+    renderClassRows(items);
   });
 }
