@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Les instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903a" />
+  <link rel="stylesheet" href="styles.css?v=0903b" />
   <style>
     .help{
       background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;
@@ -18,21 +18,19 @@
   </style>
 </head>
 <body>
-  <!-- Navigatie -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="instellingen.html">Instellingen</a></li>
-      <li><a class="active" href="les-instellingen.html">Les instellingen</a></li>
+      <li><a href="les-instellingen.html" class="active">Les instellingen</a></li>
     </ul>
   </nav>
 
   <header>
     <h1>Les instellingen
-      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903a</span>
+      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903b</span>
     </h1>
   </header>
 
@@ -49,9 +47,8 @@
     <section class="card" id="sect-type">
       <h2>Lestype</h2>
       <div class="help">
-        Maak hier je <b>lestypes</b> aan (bv. Puppy, Gevorderd…). Een lestype bepaalt
-        <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
-        <br><b>Let op:</b> de <u>startdatum</u> kies je later bij de inschrijving van de klant (niet hier).
+        Lestypes bepalen <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
+        <br><b>Let op:</b> <u>Startdatum</u> kies je later bij de inschrijving van de klant (niet hier).
       </div>
 
       <form id="form-type">
@@ -101,7 +98,7 @@
         <tbody>
           <tr class="placeholder">
             <td colspan="7" style="text-align:center;color:#777;">
-              Nog geen <strong>lestypes</strong> toegevoegd. Vul het formulier hierboven in en klik <em>Opslaan</em>.
+              Nog geen <strong>lestypes</strong>. Vul het formulier in en klik <em>Opslaan</em>.
             </td>
           </tr>
         </tbody>
@@ -111,7 +108,7 @@
     <!-- 2) LES THEMA -->
     <section class="card" id="sect-thema">
       <h2>Les thema</h2>
-      <div class="help">Voeg hier <b>thema’s</b> toe (bv. Socialisatie, Gehoorzaamheid). Dit zijn labels voor lessen.</div>
+      <div class="help">Thema’s zijn labels voor lessen (bv. Socialisatie, Gehoorzaamheid).</div>
 
       <form id="form-thema">
         <input type="hidden" name="id" />
@@ -194,7 +191,7 @@
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
   <!-- Scripts (map = 'Js' met hoofdletter J) + cache-bust -->
-  <script src="Js/script.js?v=0903a"></script>
-  <script src="Js/lessen-instellingen.js?v=0903a"></script>
+  <script src="Js/script.js?v=0903b"></script>
+  <script src="Js/lessen-instellingen.js?v=0903b"></script>
 </body>
 </html>
