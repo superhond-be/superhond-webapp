@@ -5,15 +5,18 @@
   <title>Superhond · Les instellingen</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .help {
-      background: #fff8d8;
-      border: 1px solid #f1cf5b;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin: 0 0 12px 0;
-      font-size: .92rem;
-      color: #553;
+    /* kleine helpkaders */
+    .help{
+      background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;
+      padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553;
     }
+    /* horizontale tabs (ankerlinks) */
+    .tabs{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
+    .tab-btn{
+      display:inline-block;background:#fff;border:1px solid #ddd;border-radius:8px;
+      padding:8px 14px;font-weight:600;color:#333;text-decoration:none;line-height:1.2
+    }
+    .tab-btn:hover{background:#ffd300;border-color:#ffd300;color:#222}
   </style>
 </head>
 <body>
@@ -30,6 +33,14 @@
 
   <header><h1>Les instellingen</h1></header>
 
+  <!-- Tabs: links → rechts, springen naar de secties -->
+  <div class="tabs">
+    <a class="tab-btn" href="#sect-type">Lestype</a>
+    <a class="tab-btn" href="#sect-thema">Les thema</a>
+    <a class="tab-btn" href="#sect-loc">Leslocatie</a>
+    <a class="tab-btn" href="#sect-trainer">Les trainers</a>
+  </div>
+
   <main>
     <!-- 1) LESTYPE -->
     <section class="card" id="sect-type">
@@ -37,7 +48,6 @@
       <div class="help">
         Maak hier je <b>lestypes</b> aan (bv. Puppy, Gevorderd…). Een lestype bepaalt
         <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
-        <br><b>Let op:</b> <u>Startdatum</u> hoort bij de inschrijving van de klant en wordt daar later gekozen.
       </div>
 
       <form id="form-type">
@@ -168,7 +178,7 @@
           <tr class="placeholder">
             <td colspan="5" style="text-align:center;color:#777;">
               Nog geen <strong>leslocaties</strong>. Vul het formulier in en klik <em>Opslaan</em>.
-              Gebruik het 📍-icoon in de lijst om het adres in Google Maps te bekijken.
+              Gebruik het 📍-icoon om het adres in Google Maps te bekijken.
             </td>
           </tr>
         </tbody>
@@ -211,8 +221,8 @@
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <!-- scripts -->
-  <script src="js/script.js"></script>
-  <script src="js/les-instellingen.js"></script>
+  <!-- Scripts: let op hoofdletter J -->
+  <script src="Js/script.js"></script>
+  <script src="Js/lessen-instellingen.js"></script>
 </body>
 </html>
