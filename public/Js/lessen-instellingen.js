@@ -1,5 +1,5 @@
-/* public/Js/lessen-instellingen.js — v0902d */
-console.log("les-instellingen JS geladen v0902d");
+/* public/Js/lessen-instellingen.js — v0903a */
+console.log("les-instellingen JS geladen v0903a");
 
 /* Helpers */
 const store = {
@@ -53,13 +53,13 @@ function setupLestype() {
     const data = Object.fromEntries(new FormData(form).entries());
 
     if (data.max_deelnemers && Number(data.max_deelnemers) < 1) {
-      showNotification?.("Max deelnemers moet minstens 1 zijn.", "error"); return;
+      alert("Max deelnemers moet minstens 1 zijn."); return;
     }
     if (data.aantal_lessen && Number(data.aantal_lessen) < 1) {
-      showNotification?.("Aantal lessen moet minstens 1 zijn.", "error"); return;
+      alert("Aantal lessen moet minstens 1 zijn."); return;
     }
     if (data.online === "J" && data.actief !== "J") {
-      showNotification?.("Online zichtbaar kan alleen als Les actief = Ja.", "error"); return;
+      alert("Online zichtbaar kan alleen als Les actief = Ja."); return;
     }
 
     const list = store.get(KEY);
@@ -71,7 +71,6 @@ function setupLestype() {
     store.set(KEY, list);
     form.reset();
     render();
-    showNotification?.("Lestype opgeslagen", "success");
   });
 
   tbody.addEventListener("click", e => {
@@ -85,13 +84,8 @@ function setupLestype() {
       Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
       if (row.actief) [...form.actief].forEach(r => r.checked = (r.value === row.actief));
       if (row.online) [...form.online].forEach(r => r.checked = (r.value === row.online));
-      showNotification?.("Lestype geladen voor bewerking", "info");
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Lestype verwijderd", "success");
-    }
+    if (delId) { store.set(KEY, list.filter(x => x.id !== delId)); render(); }
   });
 }
 
@@ -129,14 +123,10 @@ function setupThema() {
     const data = Object.fromEntries(new FormData(form).entries());
     const list = store.get(KEY);
     if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
+    else { const i = list.findIndex(x => x.id === data.id); if (i !== -1) list[i] = data; }
     store.set(KEY, list);
     form.reset();
     render();
-    showNotification?.("Les thema opgeslagen", "success");
   });
 
   tbody.addEventListener("click", e => {
@@ -148,17 +138,12 @@ function setupThema() {
     if (editId) {
       const row = list.find(x => x.id === editId); if (!row) return;
       Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
-      showNotification?.("Les thema geladen voor bewerking", "info");
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Les thema verwijderd", "success");
-    }
+    if (delId) { store.set(KEY, list.filter(x => x.id !== delId)); render(); }
   });
 }
 
-/* ========== 3) LESLOCATIE (Locatie, Adres, Plaats, Beschrijving + 📍) ========== */
+/* ========== 3) LESLOCATIE (Locatie/Adres/Plaats/Beschrijving + 📍) ========== */
 function setupLocatie() {
   const KEY = "lessonLocations";
   const form = document.getElementById("form-loc");
@@ -166,7 +151,7 @@ function setupLocatie() {
   document.getElementById("reset-loc")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
 
-  // Migratie van oude 'naam' -> 'locatie'
+  // Migratie: eventuele oude 'naam' -> 'locatie'
   (function migrateOld() {
     const list = store.get(KEY);
     let changed = false;
@@ -206,14 +191,10 @@ function setupLocatie() {
     const data = Object.fromEntries(new FormData(form).entries());
     const list = store.get(KEY);
     if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
+    else { const i = list.findIndex(x => x.id === data.id); if (i !== -1) list[i] = data; }
     store.set(KEY, list);
     form.reset();
     render();
-    showNotification?.("Leslocatie opgeslagen", "success");
   });
 
   tbody.addEventListener("click", e => {
@@ -228,19 +209,13 @@ function setupLocatie() {
       ["locatie","adres","plaats","beschrijving","id"].forEach(k => {
         if (form[k] !== undefined) form[k].value = row[k] ?? "";
       });
-      showNotification?.("Leslocatie geladen voor bewerking", "info");
     }
-
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Leslocatie verwijderd", "success");
-    }
+    if (delId) { store.set(KEY, list.filter(x => x.id !== delId)); render(); }
 
     if (viewId) {
       const row = list.find(x => x.id === viewId); if (!row) return;
       const q = encodeURIComponent(`${row.adres || ""} ${row.plaats || ""}`.trim());
-      if (!q) { showNotification?.("Geen adres/plaats beschikbaar om te bekijken.", "error"); return; }
+      if (!q) { alert("Geen adres/plaats beschikbaar."); return; }
       window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
     }
   });
@@ -280,14 +255,10 @@ function setupTrainer() {
     const data = Object.fromEntries(new FormData(form).entries());
     const list = store.get(KEY);
     if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
+    else { const i = list.findIndex(x => x.id === data.id); if (i !== -1) list[i] = data; }
     store.set(KEY, list);
     form.reset();
     render();
-    showNotification?.("Les trainer opgeslagen", "success");
   });
 
   tbody.addEventListener("click", e => {
@@ -299,12 +270,7 @@ function setupTrainer() {
     if (editId) {
       const row = list.find(x => x.id === editId); if (!row) return;
       Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
-      showNotification?.("Les trainer geladen voor bewerking", "info");
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Les trainer verwijderd", "success");
-    }
+    if (delId) { store.set(KEY, list.filter(x => x.id !== delId)); render(); }
   });
 }
