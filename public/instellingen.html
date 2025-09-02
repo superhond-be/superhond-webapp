@@ -3,60 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond · Instellingen</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Navigatie -->
+  <nav class="topnav">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="klanten.html">Klanten</a></li>
+      <li><a href="honden.html">Honden</a></li>
+      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+      <li><a href="instellingen.html" class="active">Instellingen</a></li>
+    </ul>
+  </nav>
+
+  <!-- Header -->
   <header>
-    <img src="img/logo.png" alt="Superhond logo" height="40">
     <h1>Instellingen</h1>
   </header>
 
+  <!-- Inhoud -->
   <main>
     <!-- Kaart Les & trainingen -->
     <section class="card">
       <h2>Les & trainingen</h2>
       <form id="training-form">
-        <label>
-          Benaming
+        <label>Benaming
           <input type="text" name="benaming" required>
         </label>
-        <label>
-          Beschrijving
+        <label>Beschrijving
           <textarea name="beschrijving"></textarea>
         </label>
-        <label>
-          Thema’s (tags, komma-gescheiden)
+        <label>Thema’s (tags, komma-gescheiden)
           <input type="text" name="themas">
         </label>
-        <label>
-          Thema omschrijving
+        <label>Thema omschrijving
           <input type="text" name="thema_omschrijving">
         </label>
-        <label>
-          Geldigheidsduur (maanden)
+        <label>Geldigheidsduur (maanden)
           <input type="number" name="geldigheid" min="1">
         </label>
 
-        <label>
-          Naam training
+        <label>Naam training
           <input type="text" name="naam" required>
         </label>
-        <label>
-          Aantal
+        <label>Aantal
           <input type="number" name="aantal" min="0" value="0">
         </label>
-        <label>
-          Max deelnemers
+        <label>Max deelnemers
           <input type="number" name="max" min="1">
         </label>
 
-        <div>
-          Actief:
+        <div>Actief:
           <label><input type="radio" name="actief" value="J" checked> Ja</label>
           <label><input type="radio" name="actief" value="N"> Nee</label>
         </div>
-        <div>
-          Online zichtbaar:
+        <div>Online zichtbaar:
           <label><input type="radio" name="online" value="J"> Ja</label>
           <label><input type="radio" name="online" value="N" checked> Nee</label>
         </div>
@@ -87,6 +89,10 @@
 
     <pre id="output"></pre>
   </main>
+
+  <footer>
+    &copy; 2025 Superhond.be – Admin Portaal
+  </footer>
 
   <script src="js/instellingen.js"></script>
 </body>
