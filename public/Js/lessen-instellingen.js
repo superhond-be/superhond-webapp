@@ -1,20 +1,13 @@
-/* public/Js/lessen-instellingen.js  — v0902c
-   - Lestype: formulier + tabel (zonder startdatum)
-   - Les thema: formulier + tabel
-   - Leslocatie: Locatie/Adres/Plaats/Beschrijving + 📍-knop
-   - Les trainers: formulier + tabel
-   - Opslag: localStorage
-*/
-console.log("les-instellingen JS geladen v0902c");
+/* public/Js/lessen-instellingen.js — v0902d */
+console.log("les-instellingen JS geladen v0902d");
 
-/* ===== Helpers ===== */
+/* Helpers */
 const store = {
   get: (k, f = []) => { try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch { return f; } },
   set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
 };
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-/* ===== Init ===== */
 document.addEventListener("DOMContentLoaded", () => {
   setupLestype();
   setupThema();
@@ -22,9 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupTrainer();
 });
 
-/* =======================================================================
-   1) LESTYPE — formulier + tabel (zonder startdatum)
-   ======================================================================= */
+/* ========== 1) LESTYPE ========== */
 function setupLestype() {
   const KEY = "lessonTypes";
   const form = document.getElementById("form-type");
@@ -104,9 +95,7 @@ function setupLestype() {
   });
 }
 
-/* =======================================================================
-   2) LES THEMA — formulier + tabel
-   ======================================================================= */
+/* ========== 2) LES THEMA ========== */
 function setupThema() {
   const KEY = "lessonThemes";
   const form = document.getElementById("form-thema");
@@ -169,9 +158,7 @@ function setupThema() {
   });
 }
 
-/* =======================================================================
-   3) LESLOCATIE — Locatie/Adres/Plaats/Beschrijving + 📍 bekijk
-   ======================================================================= */
+/* ========== 3) LESLOCATIE (Locatie, Adres, Plaats, Beschrijving + 📍) ========== */
 function setupLocatie() {
   const KEY = "lessonLocations";
   const form = document.getElementById("form-loc");
@@ -179,7 +166,7 @@ function setupLocatie() {
   document.getElementById("reset-loc")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
 
-  // Migratie: oude data met 'naam' => 'locatie'
+  // Migratie van oude 'naam' -> 'locatie'
   (function migrateOld() {
     const list = store.get(KEY);
     let changed = false;
@@ -259,9 +246,7 @@ function setupLocatie() {
   });
 }
 
-/* =======================================================================
-   4) LES TRAINERS — formulier + tabel
-   ======================================================================= */
+/* ========== 4) LES TRAINERS ========== */
 function setupTrainer() {
   const KEY = "lessonTrainers";
   const form = document.getElementById("form-trainer");
