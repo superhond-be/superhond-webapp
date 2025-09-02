@@ -3,17 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Les instellingen</title>
-
-  <!-- cache-bust zodat je altijd de nieuwste ziet -->
-  <link rel="stylesheet" href="styles.css?v=0902d" />
-
+  <link rel="stylesheet" href="styles.css?v=0903a" />
   <style>
-    /* kleine helpkaders */
     .help{
       background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;
       padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553;
     }
-    /* horizontale tabs (ankerlinks) */
     .tabs{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
     .tab-btn{
       display:inline-block;background:#fff;border:1px solid #ddd;border-radius:8px;
@@ -31,20 +26,17 @@
       <li><a href="honden.html">Honden</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
       <li><a href="instellingen.html">Instellingen</a></li>
-      <li><a href="les-instellingen.html" class="active">Les instellingen</a></li>
+      <li><a class="active" href="les-instellingen.html">Les instellingen</a></li>
     </ul>
   </nav>
 
   <header>
-    <h1>
-      Les instellingen
-      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">
-        v0902d
-      </span>
+    <h1>Les instellingen
+      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903a</span>
     </h1>
   </header>
 
-  <!-- Tabs: links → rechts, springen naar de secties; ALLES blijft zichtbaar -->
+  <!-- Tabs (ankerlinks) -->
   <div class="tabs">
     <a class="tab-btn" href="#sect-type">Lestype</a>
     <a class="tab-btn" href="#sect-thema">Les thema</a>
@@ -59,7 +51,7 @@
       <div class="help">
         Maak hier je <b>lestypes</b> aan (bv. Puppy, Gevorderd…). Een lestype bepaalt
         <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
-        <br><b>Let op:</b> <u>Startdatum</u> hoort bij de inschrijving van de klant en wordt daar later gekozen.
+        <br><b>Let op:</b> de <u>startdatum</u> kies je later bij de inschrijving van de klant (niet hier).
       </div>
 
       <form id="form-type">
@@ -119,16 +111,12 @@
     <!-- 2) LES THEMA -->
     <section class="card" id="sect-thema">
       <h2>Les thema</h2>
-      <div class="help">
-        Voeg hier <b>thema’s</b> toe (bv. Socialisatie, Gehoorzaamheid). Een thema is een label dat je later aan lessen kunt koppelen.
-      </div>
+      <div class="help">Voeg hier <b>thema’s</b> toe (bv. Socialisatie, Gehoorzaamheid). Dit zijn labels voor lessen.</div>
 
       <form id="form-thema">
         <input type="hidden" name="id" />
         <div class="row">
-          <div class="col">
-            <label>Naam* <input name="naam" placeholder="bv. Socialisatie" required /></label>
-          </div>
+          <div class="col"><label>Naam* <input name="naam" placeholder="bv. Socialisatie" required /></label></div>
         </div>
         <label>Beschrijving
           <textarea name="beschrijving" rows="2" placeholder="Waar gaat dit thema over?"></textarea>
@@ -140,11 +128,7 @@
       <table id="table-thema">
         <thead><tr><th>Naam</th><th>Beschrijving</th><th></th></tr></thead>
         <tbody>
-          <tr class="placeholder">
-            <td colspan="3" style="text-align:center;color:#777;">
-              Nog geen <strong>les thema’s</strong>. Voeg er één toe via het formulier hierboven.
-            </td>
-          </tr>
+          <tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les thema’s</strong>.</td></tr>
         </tbody>
       </table>
     </section>
@@ -153,46 +137,32 @@
     <section class="card" id="sect-loc">
       <h2>Leslocatie</h2>
       <div class="help">
-        Leg hier je <b>leslocaties</b> vast. <i>Locatie</i> is de naam/omschrijving die je publiek toont
-        (bv. “Retie — Coach Sofie”). Gebruik het 📍-icoon in de lijst om een adres in Google Maps te bekijken.
+        <i>Locatie</i> is de naam/omschrijving die je publiek toont (bv. “Retie — Coach Sofie”).
+        Gebruik het 📍-icoon in de lijst om het adres in Google Maps te bekijken.
       </div>
 
       <form id="form-loc">
         <input type="hidden" name="id" />
         <div class="row">
-          <div class="col">
-            <label>Locatie* <input name="locatie" placeholder="bv. Retie — Coach Sofie" required /></label>
-          </div>
+          <div class="col"><label>Locatie* <input name="locatie" placeholder="bv. Retie — Coach Sofie" required /></label></div>
         </div>
         <div class="row">
-          <div class="col">
-            <label>Adres <input name="adres" placeholder="Straat 1" /></label>
-          </div>
-          <div class="col">
-            <label>Postbus / Plaats <input name="plaats" placeholder="Postcode + gemeente" /></label>
-          </div>
+          <div class="col"><label>Adres <input name="adres" placeholder="Straat 1" /></label></div>
+          <div class="col"><label>Postbus / Plaats <input name="plaats" placeholder="Postcode + gemeente" /></label></div>
         </div>
         <label>Beschrijving
           <textarea name="beschrijving" rows="2" placeholder="Praktische info, parkeerplaats…"></textarea>
         </label>
-
         <button class="btn" type="submit">Opslaan</button>
         <button class="btn" type="button" id="reset-loc">Nieuw</button>
       </form>
 
       <table id="table-loc">
         <thead>
-          <tr>
-            <th>Locatie</th><th>Adres</th><th>Postbus / Plaats</th><th>Beschrijving</th><th></th>
-          </tr>
+          <tr><th>Locatie</th><th>Adres</th><th>Postbus / Plaats</th><th>Beschrijving</th><th></th></tr>
         </thead>
         <tbody>
-          <tr class="placeholder">
-            <td colspan="5" style="text-align:center;color:#777;">
-              Nog geen <strong>leslocaties</strong>. Vul het formulier in en klik <em>Opslaan</em>.
-              Gebruik het 📍-icoon om het adres in Google Maps te bekijken.
-            </td>
-          </tr>
+          <tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen <strong>leslocaties</strong>.</td></tr>
         </tbody>
       </table>
     </section>
@@ -200,19 +170,13 @@
     <!-- 4) LES TRAINERS -->
     <section class="card" id="sect-trainer">
       <h2>Les trainers</h2>
-      <div class="help">
-        Beheer hier je <b>trainers</b>. Zet een duidelijke <i>functie</i> (Coach, Assistent, …) zodat je later snel kunt filteren.
-      </div>
+      <div class="help">Beheer hier je <b>trainers</b>. Zet een duidelijke <i>functie</i> (Coach, Assistent, …).</div>
 
       <form id="form-trainer">
         <input type="hidden" name="id" />
         <div class="row">
-          <div class="col">
-            <label>Naam* <input name="naam" placeholder="bv. Sofie Janssens" required /></label>
-          </div>
-          <div class="col">
-            <label>Functie <input name="functie" placeholder="bv. Coach" /></label>
-          </div>
+          <div class="col"><label>Naam* <input name="naam" placeholder="bv. Sofie Janssens" required /></label></div>
+          <div class="col"><label>Functie <input name="functie" placeholder="bv. Coach" /></label></div>
         </div>
         <button class="btn" type="submit">Opslaan</button>
         <button class="btn" type="button" id="reset-trainer">Nieuw</button>
@@ -221,11 +185,7 @@
       <table id="table-trainer">
         <thead><tr><th>Naam</th><th>Functie</th><th></th></tr></thead>
         <tbody>
-          <tr class="placeholder">
-            <td colspan="3" style="text-align:center;color:#777;">
-              Nog geen <strong>les trainers</strong>. Voeg er één toe via het formulier.
-            </td>
-          </tr>
+          <tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les trainers</strong>.</td></tr>
         </tbody>
       </table>
     </section>
@@ -234,7 +194,7 @@
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
   <!-- Scripts (map = 'Js' met hoofdletter J) + cache-bust -->
-  <script src="Js/script.js?v=0902d"></script>
-  <script src="Js/lessen-instellingen.js?v=0902d"></script>
+  <script src="Js/script.js?v=0903a"></script>
+  <script src="Js/lessen-instellingen.js?v=0903a"></script>
 </body>
 </html>
