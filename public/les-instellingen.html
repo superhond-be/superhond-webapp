@@ -3,175 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Les instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903d" />
+  <link rel="stylesheet" href="styles.css?v=0903e" />
   <style>
     .help{background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553}
     .tabs{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
     .tab-btn{display:inline-block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 14px;font-weight:600;color:#333;text-decoration:none;line-height:1.2}
     .tab-btn:hover{background:#ffd300;border-color:#ffd300;color:#222}
-  </style>
-</head>
-<body>
-  <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html" class="active">Les instellingen</a></li>
-    </ul>
-  </nav>
 
-  <header>
-    <h1>Les instellingen
-      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903d</span>
-    </h1>
-  </header>
+    /* Email template kaarten */
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+    .card-mini{background:#fff;border:1px solid #eaeaea;border-radius:10px;padding:10px 12px}
+    .card-mini h4{margin:.1rem 0 .4rem;font-size:1rem}
+    .card-mini p{margin:0;color:#666;font-size:.9rem}
+    .card-mini .row-actions{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
 
-  <div class="tabs">
-    <a class="tab-btn" href="#sect-type">Lestype</a>
-    <a class="tab-btn" href="#sect-thema">Les thema</a>
-    <a class="tab-btn" href="#sect-loc">Leslocatie</a>
-    <a class="tab-btn" href="#sect-trainer">Les trainers</a>
-  </div>
-
-  <main>
-    <!-- 1) LESTYPE (zonder Actief/Online) -->
-    <section class="card" id="sect-type">
-      <h2>Lestype</h2>
-      <div class="help">
-        Lestypes bepalen <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
-        <br><b>Opgelet:</b> de <u>startdatum</u> kies je later bij de inschrijving van de klant.
-      </div>
-
-      <form id="form-type">
-        <input type="hidden" name="id" />
-        <div class="row">
-          <div class="col">
-            <label>Naam* <input name="naam" placeholder="bv. Puppy" required /></label>
-          </div>
-          <div class="col">
-            <label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bv. 6" /></label>
-          </div>
-          <div class="col">
-            <label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bv. 6" /></label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <label>Max deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bv. 10" /></label>
-          </div>
-        </div>
-        <label>Beschrijving
-          <textarea name="beschrijving" rows="2" placeholder="Korte omschrijving…"></textarea>
-        </label>
-        <button type="submit" class="btn">Opslaan</button>
-        <button type="button" class="btn" id="reset-type">Nieuw</button>
-      </form>
-
-      <table id="table-type">
-        <thead>
-          <tr>
-            <th>Naam</th><th>Aantal</th><th>Geldig (m)</th>
-            <th>Max</th><th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="placeholder">
-            <td colspan="5" style="text-align:center;color:#777;">
-              Nog geen <strong>lestypes</strong>. Vul het formulier in en klik <em>Opslaan</em>.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- 2) LES THEMA -->
-    <section class="card" id="sect-thema">
-      <h2>Les thema</h2>
-      <div class="help">Voeg hier <b>thema’s</b> toe (bv. Socialisatie, Gehoorzaamheid). Dit zijn labels voor lessen.</div>
-
-      <form id="form-thema">
-        <input type="hidden" name="id" />
-        <div class="row">
-          <div class="col"><label>Naam* <input name="naam" placeholder="bv. Socialisatie" required /></label></div>
-        </div>
-        <label>Beschrijving
-          <textarea name="beschrijving" rows="2" placeholder="Waar gaat dit thema over?"></textarea>
-        </label>
-        <button class="btn" type="submit">Opslaan</button>
-        <button class="btn" type="button" id="reset-thema">Nieuw</button>
-      </form>
-
-      <table id="table-thema">
-        <thead><tr><th>Naam</th><th>Beschrijving</th><th></th></tr></thead>
-        <tbody>
-          <tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les thema’s</strong>.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- 3) LESLOCATIE -->
-    <section class="card" id="sect-loc">
-      <h2>Leslocatie</h2>
-      <div class="help">
-        <i>Locatie</i> is de naam/omschrijving die je publiek toont (bv. “Retie — Coach Sofie”).
-        Gebruik het 📍-icoon om het adres in Google Maps te bekijken.
-      </div>
-
-      <form id="form-loc">
-        <input type="hidden" name="id" />
-        <div class="row">
-          <div class="col"><label>Locatie* <input name="locatie" placeholder="bv. Retie — Coach Sofie" required /></label></div>
-        </div>
-        <div class="row">
-          <div class="col"><label>Adres <input name="adres" placeholder="Straat 1" /></label></div>
-          <div class="col"><label>Postbus / Plaats <input name="plaats" placeholder="Postcode + gemeente" /></label></div>
-        </div>
-        <label>Beschrijving
-          <textarea name="beschrijving" rows="2" placeholder="Praktische info, parkeerplaats…"></textarea>
-        </label>
-        <button class="btn" type="submit">Opslaan</button>
-        <button class="btn" type="button" id="reset-loc">Nieuw</button>
-      </form>
-
-      <table id="table-loc">
-        <thead>
-          <tr><th>Locatie</th><th>Adres</th><th>Postbus / Plaats</th><th>Beschrijving</th><th></th></tr>
-        </thead>
-        <tbody>
-          <tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen <strong>leslocaties</strong>.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- 4) LES TRAINERS -->
-    <section class="card" id="sect-trainer">
-      <h2>Les trainers</h2>
-      <div class="help">Beheer hier je <b>trainers</b>. Zet een duidelijke <i>functie</i> (Coach, Assistent, …).</div>
-
-      <form id="form-trainer">
-        <input type="hidden" name="id" />
-        <div class="row">
-          <div class="col"><label>Naam* <input name="naam" placeholder="bv. Sofie Janssens" required /></label></div>
-          <div class="col"><label>Functie <input name="functie" placeholder="bv. Coach" /></label></div>
-        </div>
-        <button class="btn" type="submit">Opslaan</button>
-        <button class="btn" type="button" id="reset-trainer">Nieuw</button>
-      </form>
-
-      <table id="table-trainer">
-        <thead><tr><th>Naam</th><th>Functie</th><th></th></tr></thead>
-        <tbody>
-          <tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les trainers</strong>.</td></tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
-
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-
-  <script src="Js/script.js?v=0903d"></script>
-  <script src="Js/lessen-instellingen.js?v=0903d"></script>
-</body>
-</html>
+    /* modals */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
+    .modal.open{display:flex}
+    .modal-card{background:#fff;max-width:980px;width:100%;max-height:90vh;border-radius:10px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+    .modal-head{display:flex;justify-content:space-between;
