@@ -1,5 +1,5 @@
-/* public/Js/lessen-instellingen.js — v0903a */
-console.log("les-instellingen JS geladen v0903a");
+/* public/Js/lessen-instellingen.js — v0903c */
+console.log("les-instellingen JS geladen v0903c");
 
 /* Helpers */
 const store = {
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupTrainer();
 });
 
-/* ========== 1) LESTYPE ========== */
+/* ===== 1) LESTYPE ===== */
 function setupLestype() {
   const KEY = "lessonTypes";
   const form = document.getElementById("form-type");
@@ -27,7 +27,7 @@ function setupLestype() {
     const rows = store.get(KEY);
     if (!rows.length) {
       tbody.innerHTML = `<tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">
-        Nog geen <strong>lestypes</strong> toegevoegd. Vul het formulier hierboven in en klik <em>Opslaan</em>.
+        Nog geen <strong>lestypes</strong>. Vul het formulier in en klik <em>Opslaan</em>.
       </td></tr>`;
       return;
     }
@@ -52,15 +52,16 @@ function setupLestype() {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
 
+    // Basisvalidatie
     if (data.max_deelnemers && Number(data.max_deelnemers) < 1) {
       alert("Max deelnemers moet minstens 1 zijn."); return;
     }
     if (data.aantal_lessen && Number(data.aantal_lessen) < 1) {
       alert("Aantal lessen moet minstens 1 zijn."); return;
     }
-    if (data.online === "J" && data.actief !== "J") {
-      alert("Online zichtbaar kan alleen als Les actief = Ja."); return;
-    }
+    // >>> Belangrijk verschil:
+    // Online zichtbaar kan altijd (ook als actief = Nee).
+    // Actief bepaalt alleen of klanten kunnen inschrijven.
 
     const list = store.get(KEY);
     if (!data.id) { data.id = uid(); list.push(data); }
@@ -89,7 +90,7 @@ function setupLestype() {
   });
 }
 
-/* ========== 2) LES THEMA ========== */
+/* ===== 2) LES THEMA ===== */
 function setupThema() {
   const KEY = "lessonThemes";
   const form = document.getElementById("form-thema");
@@ -101,7 +102,7 @@ function setupThema() {
     const rows = store.get(KEY);
     if (!rows.length) {
       tbody.innerHTML = `<tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">
-        Nog geen <strong>les thema’s</strong>. Voeg er één toe via het formulier hierboven.
+        Nog geen <strong>les thema’s</strong>.
       </td></tr>`;
       return;
     }
@@ -143,7 +144,7 @@ function setupThema() {
   });
 }
 
-/* ========== 3) LESLOCATIE (Locatie/Adres/Plaats/Beschrijving + 📍) ========== */
+/* ===== 3) LESLOCATIE ===== */
 function setupLocatie() {
   const KEY = "lessonLocations";
   const form = document.getElementById("form-loc");
@@ -151,22 +152,11 @@ function setupLocatie() {
   document.getElementById("reset-loc")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
 
-  // Migratie: eventuele oude 'naam' -> 'locatie'
-  (function migrateOld() {
-    const list = store.get(KEY);
-    let changed = false;
-    list.forEach(row => {
-      if (!row.locatie && row.naam) { row.locatie = row.naam; delete row.naam; changed = true; }
-    });
-    if (changed) store.set(KEY, list);
-  })();
-
   const render = () => {
     const rows = store.get(KEY);
     if (!rows.length) {
       tbody.innerHTML = `<tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">
-        Nog geen <strong>leslocaties</strong>. Vul het formulier in en klik <em>Opslaan</em>.
-        Gebruik het 📍-icoon in de lijst om het adres in Google Maps te bekijken.
+        Nog geen <strong>leslocaties</strong>.
       </td></tr>`;
       return;
     }
@@ -211,7 +201,6 @@ function setupLocatie() {
       });
     }
     if (delId) { store.set(KEY, list.filter(x => x.id !== delId)); render(); }
-
     if (viewId) {
       const row = list.find(x => x.id === viewId); if (!row) return;
       const q = encodeURIComponent(`${row.adres || ""} ${row.plaats || ""}`.trim());
@@ -221,7 +210,7 @@ function setupLocatie() {
   });
 }
 
-/* ========== 4) LES TRAINERS ========== */
+/* ===== 4) LES TRAINERS ===== */
 function setupTrainer() {
   const KEY = "lessonTrainers";
   const form = document.getElementById("form-trainer");
@@ -233,7 +222,7 @@ function setupTrainer() {
     const rows = store.get(KEY);
     if (!rows.length) {
       tbody.innerHTML = `<tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">
-        Nog geen <strong>les trainers</strong>. Voeg er één toe via het formulier.
+        Nog geen <strong>les trainers</strong>.
       </td></tr>`;
       return;
     }
