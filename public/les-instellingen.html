@@ -1,31 +1,51 @@
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Superhond · Les instellingen</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="instellingen.html">Instellingen</a></li>
-    </ul>
-  </nav>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="tab-type">Lestype</button>
+  <button class="tab-btn" data-tab="tab-thema">Les thema</button>
+  <button class="tab-btn" data-tab="tab-loc">Leslocatie</button>
+  <button class="tab-btn" data-tab="tab-trainer">Les trainers</button>
+</div>
 
-  <header><h1>Les Elling — Les instellingen</h1></header>
+<!-- ========== TAB 1: LESTYPE (zonder tabel & zonder startdatum) ========== -->
+<div class="tab-panel active" id="tab-type">
+  <p style="color:#666;margin-bottom:10px;">
+    Maak hier je <strong>lestypes</strong> aan. Een lestype bepaalt o.a. aantal lessen, geldigheidsduur en limiet.
+    <br>Let op: <em>Startdatum</em> hoort bij de inschrijving van de klant en komt later bij de klant-samenstelling.
+  </p>
 
-  <main>
-    <!-- 4 secties: les type, thema, locatie, trainers -->
-  </main>
-
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-
-  <!-- let op: hoofdletter J -->
-  <script src="Js/script.js"></script>
-  <script src="Js/les-instellingen.js"></script>
-</body>
-</html>
+  <form id="form-type">
+    <input type="hidden" name="id">
+    <div class="row">
+      <div class="col">
+        <label>Naam* <input name="naam" required></label>
+      </div>
+      <div class="col">
+        <label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bijv. 6"></label>
+      </div>
+      <div class="col">
+        <label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bijv. 6"></label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label>Max deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bijv. 10"></label>
+      </div>
+    </div>
+    <label>Beschrijving
+      <textarea name="beschrijving" rows="2" placeholder="Korte omschrijving..."></textarea>
+    </label>
+    <div class="row">
+      <div class="col">
+        Les actief:
+        <label><input type="radio" name="actief" value="J" checked> Ja</label>
+        <label><input type="radio" name="actief" value="N"> Nee</label>
+      </div>
+      <div class="col">
+        Online zichtbaar:
+        <label><input type="radio" name="online" value="J"> Ja</label>
+        <label><input type="radio" name="online" value="N" checked> Nee</label>
+      </div>
+    </div>
+    <button type="submit" class="btn">Opslaan</button>
+    <button type="button" class="btn" id="reset-type">Nieuw</button>
+  </form>
+</div>
