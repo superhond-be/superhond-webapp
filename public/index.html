@@ -2,109 +2,55 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Superhond · Instellingen</title>
+  <title>Superhond.be – Admin Portaal</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <!-- Navigatie -->
   <nav class="topnav">
     <ul>
-      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="index.html" class="active">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="instellingen.html" class="active">Instellingen</a></li>
+      <li><a href="instellingen.html">Instellingen</a></li>
     </ul>
   </nav>
 
   <!-- Header -->
   <header>
-    <h1>Instellingen</h1>
+    <h1>Superhond.be – Admin Portaal</h1>
   </header>
 
-  <!-- Inhoud -->
+  <!-- Dashboard inhoud -->
   <main>
-    <!-- Kaart Les & trainingen -->
     <section class="card">
-      <h2>Les & trainingen</h2>
-      <form id="training-form">
-        <label>
-          Benaming
-          <input type="text" name="benaming" required>
-        </label>
-        <label>
-          Beschrijving
-          <textarea name="beschrijving"></textarea>
-        </label>
-        <label>
-          Thema’s (tags, komma-gescheiden)
-          <input type="text" name="themas">
-        </label>
-        <label>
-          Thema omschrijving
-          <input type="text" name="thema_omschrijving">
-        </label>
-        <label>
-          Geldigheidsduur (maanden)
-          <input type="number" name="geldigheid" min="1">
-        </label>
-
-        <label>
-          Naam training
-          <input type="text" name="naam" required>
-        </label>
-        <label>
-          Aantal
-          <input type="number" name="aantal" min="0" value="0">
-        </label>
-        <label>
-          Max deelnemers
-          <input type="number" name="max" min="1">
-        </label>
-
-        <div>
-          Actief:
-          <label><input type="radio" name="actief" value="J" checked> Ja</label>
-          <label><input type="radio" name="actief" value="N"> Nee</label>
+      <h2>Dashboard</h2>
+      <div class="row">
+        <div class="col">
+          <h3>Vandaag</h3>
+          <ul>
+            <li>Geplande lessen: <strong>3</strong></li>
+            <li>Ingeschreven honden: <strong>22</strong></li>
+            <li>No-shows vorige week: <strong>2</strong></li>
+          </ul>
         </div>
-        <div>
-          Online zichtbaar:
-          <label><input type="radio" name="online" value="J"> Ja</label>
-          <label><input type="radio" name="online" value="N" checked> Nee</label>
+        <div class="col">
+          <h3>Snelkoppelingen</h3>
+          <div class="quicklinks">
+            <a href="instellingen.html" class="btn">Les & trainingen beheren</a>
+            <a href="klanten.html" class="btn">Klant zoeken</a>
+            <a href="strippenkaarten.html" class="btn">Strippenkaarten</a>
+          </div>
         </div>
-
-        <button type="submit">Opslaan</button>
-      </form>
+      </div>
     </section>
-
-    <!-- Kaart Registratie -->
-    <section class="card">
-      <h2>Registratie</h2>
-      <form id="registration-form">
-        <h3>Klant</h3>
-        <label><input type="checkbox" name="klant_naam" checked> Naam verplicht</label><br>
-        <label><input type="checkbox" name="klant_adres"> Adres verplicht</label><br>
-        <label><input type="checkbox" name="klant_email" checked> E-mail verplicht</label><br>
-        <label><input type="checkbox" name="klant_tel"> Telefoon verplicht</label>
-
-        <h3>Hond</h3>
-        <label><input type="checkbox" name="hond_naam" checked> Naam verplicht</label><br>
-        <label><input type="checkbox" name="hond_ras"> Ras verplicht</label><br>
-        <label><input type="checkbox" name="hond_geboortedatum"> Geboortedatum verplicht</label><br>
-        <label><input type="checkbox" name="hond_chip"> Chipnummer verplicht</label>
-
-        <button type="submit">Opslaan</button>
-      </form>
-    </section>
-
-    <pre id="output"></pre>
   </main>
 
-  <!-- Footer -->
   <footer>
     &copy; 2025 Superhond.be – Admin Portaal
   </footer>
 
-  <script src="js/instellingen.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
