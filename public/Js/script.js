@@ -1,7 +1,10 @@
-// Basis script voor Superhond.be Admin Portaal
+// ===== DEBUG melding om te controleren of script.js geladen wordt =====
+console.log("✅ script.js is geladen (versie 2025-09-02)");
+showNotification?.("✅ script.js geladen (2025-09-02)", "success");
+
+// ===== Active tab highlight =====
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Active tab highlight (fallback als 'active' niet handmatig in HTML staat)
-  const path = window.location.pathname.split("/").pop(); // bv. 'index.html'
+  const path = window.location.pathname.split("/").pop();
   document.querySelectorAll(".topnav a").forEach(link => {
     const href = link.getAttribute("href");
     if (href === path) {
@@ -10,23 +13,23 @@ document.addEventListener("DOMContentLoaded", () => {
       link.classList.remove("active");
     }
   });
-
-  // 2. Demo notificatie functie
-  window.showNotification = function (msg, type = "info") {
-    // type: info, success, error
-    const note = document.createElement("div");
-    note.className = "notification " + type;
-    note.textContent = msg;
-    document.body.appendChild(note);
-
-    setTimeout(() => {
-      note.classList.add("show");
-    }, 50);
-
-    // auto verwijderen
-    setTimeout(() => {
-      note.classList.remove("show");
-      setTimeout(() => note.remove(), 500);
-    }, 3000);
-  };
 });
+
+// ===== Notificatie functie =====
+window.showNotification = function (msg, type = "info") {
+  const note = document.createElement("div");
+  note.className = "notification " + type;
+  note.textContent = msg;
+  document.body.appendChild(note);
+
+  // zichtbaar maken
+  setTimeout(() => {
+    note.classList.add("show");
+  }, 50);
+
+  // automatisch verwijderen
+  setTimeout(() => {
+    note.classList.remove("show");
+    setTimeout(() => note.remove(), 500);
+  }, 3000);
+};
