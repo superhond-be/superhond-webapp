@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond · Les instellingen</title>
-  <link rel="stylesheet" href="styles.css">
+  <!-- cache-bust -->
+  <link rel="stylesheet" href="styles.css?v=0902c">
   <style>
     /* kleine helpkaders */
     .help{
@@ -31,7 +32,13 @@
     </ul>
   </nav>
 
-  <header><h1>Les instellingen</h1></header>
+  <header>
+    <h1>Les instellingen
+      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">
+        v0902c
+      </span>
+    </h1>
+  </header>
 
   <!-- Tabs: links → rechts, springen naar de secties -->
   <div class="tabs">
@@ -48,6 +55,7 @@
       <div class="help">
         Maak hier je <b>lestypes</b> aan (bv. Puppy, Gevorderd…). Een lestype bepaalt
         <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
+        <br><b>Let op:</b> <u>Startdatum</u> hoort bij de inschrijving van de klant en wordt daar later gekozen.
       </div>
 
       <form id="form-type">
@@ -221,8 +229,8 @@
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <!-- Scripts: let op hoofdletter J -->
-  <script src="Js/script.js"></script>
-  <script src="Js/lessen-instellingen.js"></script>
+  <!-- Scripts (let op hoofdletter J en cache-bust) -->
+  <script src="Js/script.js?v=0902c"></script>
+  <script src="Js/lessen-instellingen.js?v=0902c"></script>
 </body>
 </html>
