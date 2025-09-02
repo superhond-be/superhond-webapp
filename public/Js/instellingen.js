@@ -22,16 +22,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const aantal = parseInt(data.aantal || 0, 10);
     const max = parseInt(data.max || 0, 10);
     if (data.max && aantal > max) {
-      alert("Aantal mag niet groter zijn dan Max deelnemers.");
+      showNotification("Aantal mag niet groter zijn dan Max deelnemers.", "error");
       return;
     }
     if (data.online === "J" && data.actief !== "J") {
-      alert("Online zichtbaar kan alleen als Actief = Ja.");
+      showNotification("Online zichtbaar kan alleen als Actief = Ja.", "error");
       return;
     }
 
     localStorage.setItem("trainingSettings", JSON.stringify(data));
     output.textContent = "Training opgeslagen:\n" + JSON.stringify(data, null, 2);
+    showNotification("Training-instellingen opgeslagen", "success");
   });
 
   // --- Logica Registratie ---
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     localStorage.setItem("registrationSettings", JSON.stringify(data));
     output.textContent = "Registratie opgeslagen:\n" + JSON.stringify(data, null, 2);
+    showNotification("Registratie-instellingen opgeslagen", "success");
   });
 
   // --- Data laden uit localStorage ---
