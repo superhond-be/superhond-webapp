@@ -1,17 +1,15 @@
-/* public/js/les-instellingen.js
-   - Lestype: formulier + tabel (geen startdatum)
+/* public/Js/lessen-instellingen.js  — v0902c
+   - Lestype: formulier + tabel (zonder startdatum)
    - Les thema: formulier + tabel
-   - Leslocatie: formulier + tabel (kolommen: Locatie, Adres, Postbus/Plaats, Beschrijving) + 📍 Bekijk locatie
+   - Leslocatie: Locatie/Adres/Plaats/Beschrijving + 📍-knop
    - Les trainers: formulier + tabel
    - Opslag: localStorage
 */
+console.log("les-instellingen JS geladen v0902c");
 
 /* ===== Helpers ===== */
 const store = {
-  get: (k, f = []) => {
-    try { return JSON.parse(localStorage.getItem(k)) ?? f; }
-    catch { return f; }
-  },
+  get: (k, f = []) => { try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch { return f; } },
   set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
 };
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -31,11 +29,8 @@ function setupLestype() {
   const KEY = "lessonTypes";
   const form = document.getElementById("form-type");
   const tbody = document.querySelector("#table-type tbody");
-  const resetBtn = document.getElementById("reset-type");
-
+  document.getElementById("reset-type")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
-
-  resetBtn?.addEventListener("click", () => form.reset());
 
   const render = () => {
     const rows = store.get(KEY);
@@ -66,7 +61,6 @@ function setupLestype() {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
 
-    // Validaties
     if (data.max_deelnemers && Number(data.max_deelnemers) < 1) {
       showNotification?.("Max deelnemers moet minstens 1 zijn.", "error"); return;
     }
@@ -90,18 +84,14 @@ function setupLestype() {
   });
 
   tbody.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
+    const btn = e.target.closest("button"); if (!btn) return;
     const list = store.get(KEY);
     const editId = btn.getAttribute("data-edit");
     const delId  = btn.getAttribute("data-del");
 
     if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
+      const row = list.find(x => x.id === editId); if (!row) return;
       Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
-      // radio's apart zetten:
       if (row.actief) [...form.actief].forEach(r => r.checked = (r.value === row.actief));
       if (row.online) [...form.online].forEach(r => r.checked = (r.value === row.online));
       showNotification?.("Lestype geladen voor bewerking", "info");
@@ -121,7 +111,7 @@ function setupThema() {
   const KEY = "lessonThemes";
   const form = document.getElementById("form-thema");
   const tbody = document.querySelector("#table-thema tbody");
-  const resetBtn = document.getElementById("reset-thema");
+  document.getElementById("reset-thema")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
 
   const render = () => {
@@ -145,8 +135,6 @@ function setupThema() {
   };
   render();
 
-  resetBtn?.addEventListener("click", () => form.reset());
-
   form.addEventListener("submit", e => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
@@ -163,16 +151,13 @@ function setupThema() {
   });
 
   tbody.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
+    const btn = e.target.closest("button"); if (!btn) return;
     const list = store.get(KEY);
     const editId = btn.getAttribute("data-edit");
     const delId  = btn.getAttribute("data-del");
 
     if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
+      const row = list.find(x => x.id === editId); if (!row) return;
       Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
       showNotification?.("Les thema geladen voor bewerking", "info");
     }
@@ -185,14 +170,13 @@ function setupThema() {
 }
 
 /* =======================================================================
-   3) LESLOCATIE — formulier + tabel + 📍 Bekijk locatie
-      (kolommen: Locatie, Adres, Postbus/Plaats, Beschrijving)
+   3) LESLOCATIE — Locatie/Adres/Plaats/Beschrijving + 📍 bekijk
    ======================================================================= */
 function setupLocatie() {
   const KEY = "lessonLocations";
   const form = document.getElementById("form-loc");
   const tbody = document.querySelector("#table-loc tbody");
-  const resetBtn = document.getElementById("reset-loc");
+  document.getElementById("reset-loc")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
 
   // Migratie: oude data met 'naam' => 'locatie'
@@ -230,8 +214,6 @@ function setupLocatie() {
   };
   render();
 
-  resetBtn?.addEventListener("click", () => form.reset());
-
   form.addEventListener("submit", e => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
@@ -248,17 +230,14 @@ function setupLocatie() {
   });
 
   tbody.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
+    const btn = e.target.closest("button"); if (!btn) return;
     const list = store.get(KEY);
     const editId = btn.getAttribute("data-edit");
     const delId  = btn.getAttribute("data-del");
     const viewId = btn.getAttribute("data-view");
 
     if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
+      const row = list.find(x => x.id === editId); if (!row) return;
       ["locatie","adres","plaats","beschrijving","id"].forEach(k => {
         if (form[k] !== undefined) form[k].value = row[k] ?? "";
       });
@@ -272,15 +251,9 @@ function setupLocatie() {
     }
 
     if (viewId) {
-      const row = list.find(x => x.id === viewId);
-      if (!row) return;
-      const adres = row.adres || "";
-      const plaats = row.plaats || "";
-      const q = encodeURIComponent(`${adres} ${plaats}`.trim());
-      if (!q) {
-        showNotification?.("Geen adres/plaats beschikbaar om te bekijken.", "error");
-        return;
-      }
+      const row = list.find(x => x.id === viewId); if (!row) return;
+      const q = encodeURIComponent(`${row.adres || ""} ${row.plaats || ""}`.trim());
+      if (!q) { showNotification?.("Geen adres/plaats beschikbaar om te bekijken.", "error"); return; }
       window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
     }
   });
@@ -293,7 +266,7 @@ function setupTrainer() {
   const KEY = "lessonTrainers";
   const form = document.getElementById("form-trainer");
   const tbody = document.querySelector("#table-trainer tbody");
-  const resetBtn = document.getElementById("reset-trainer");
+  document.getElementById("reset-trainer")?.addEventListener("click", () => form.reset());
   if (!form || !tbody) return;
 
   const render = () => {
@@ -317,8 +290,6 @@ function setupTrainer() {
   };
   render();
 
-  resetBtn?.addEventListener("click", () => form.reset());
-
   form.addEventListener("submit", e => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
@@ -335,16 +306,13 @@ function setupTrainer() {
   });
 
   tbody.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
+    const btn = e.target.closest("button"); if (!btn) return;
     const list = store.get(KEY);
     const editId = btn.getAttribute("data-edit");
     const delId  = btn.getAttribute("data-del");
 
     if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
+      const row = list.find(x => x.id === editId); if (!row) return;
       Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
       showNotification?.("Les trainer geladen voor bewerking", "info");
     }
