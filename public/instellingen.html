@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Superhond · Instellingen</title>
+  <title>Superhond · Lessen</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,29 +16,71 @@
     </ul>
   </nav>
 
-  <header><h1>Instellingen</h1></header>
+  <header><h1>Lessen</h1></header>
 
   <main>
+    <!-- Kaart Lessen -->
     <section class="card">
-      <h2>Les & trainingen</h2>
+      <h2>Lessen</h2>
       <form id="training-form">
-        <!-- velden zoals eerder -->
-      </form>
-    </section>
+        <label>Benaming
+          <input type="text" name="benaming" required>
+        </label>
+        <label>Beschrijving
+          <textarea name="beschrijving"></textarea>
+        </label>
+        <label>Thema’s (tags, komma-gescheiden)
+          <input type="text" name="themas">
+        </label>
+        <label>Thema omschrijving
+          <input type="text" name="thema_omschrijving">
+        </label>
+        <label>Geldigheidsduur (maanden)
+          <input type="number" name="geldigheid" min="1">
+        </label>
 
-    <section class="card">
-      <h2>Registratie</h2>
-      <form id="registration-form">
-        <!-- velden zoals eerder -->
-      </form>
-    </section>
+        <label>Naam training
+          <input type="text" name="naam" required>
+        </label>
+        <label>Aantal
+          <input type="number" name="aantal" min="0" value="0">
+        </label>
+        <label>Max deelnemers
+          <input type="number" name="max" min="1">
+        </label>
 
-    <pre id="output"></pre>
+        <div>Actief:
+          <label><input type="radio" name="actief" value="J" checked> Ja</label>
+          <label><input type="radio" name="actief" value="N"> Nee</label>
+        </div>
+        <div>Online zichtbaar:
+          <label><input type="radio" name="online" value="J"> Ja</label>
+          <label><input type="radio" name="online" value="N" checked> Nee</label>
+        </div>
+
+        <button type="submit">Opslaan</button>
+      </form>
+
+      <table id="lessen-tabel">
+        <thead>
+          <tr>
+            <th>Benaming</th><th>Beschrijving</th><th>Thema’s</th>
+            <th>Geldigheid</th><th>Start</th><th>Max</th><th>Actief</th><th>Online</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="placeholder"><td colspan="8" style="text-align:center;color:#777;">
+            Nog geen lessen toegevoegd. Vul hierboven het formulier in om een les aan te maken.
+          </td></tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
   <!-- let op: hoofdletter J -->
+  <script src="Js/script.js"></script>
   <script src="Js/instellingen.js"></script>
 </body>
 </html>
