@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Superhond · Les instellingen</title>
-  <!-- cache-bust -->
-  <link rel="stylesheet" href="styles.css?v=0902c">
+
+  <!-- cache-bust zodat je altijd de nieuwste ziet -->
+  <link rel="stylesheet" href="styles.css?v=0902d" />
+
   <style>
     /* kleine helpkaders */
     .help{
@@ -29,18 +31,20 @@
       <li><a href="honden.html">Honden</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
       <li><a href="instellingen.html">Instellingen</a></li>
+      <li><a href="les-instellingen.html" class="active">Les instellingen</a></li>
     </ul>
   </nav>
 
   <header>
-    <h1>Les instellingen
+    <h1>
+      Les instellingen
       <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">
-        v0902c
+        v0902d
       </span>
     </h1>
   </header>
 
-  <!-- Tabs: links → rechts, springen naar de secties -->
+  <!-- Tabs: links → rechts, springen naar de secties; ALLES blijft zichtbaar -->
   <div class="tabs">
     <a class="tab-btn" href="#sect-type">Lestype</a>
     <a class="tab-btn" href="#sect-thema">Les thema</a>
@@ -59,21 +63,21 @@
       </div>
 
       <form id="form-type">
-        <input type="hidden" name="id">
+        <input type="hidden" name="id" />
         <div class="row">
           <div class="col">
-            <label>Naam* <input name="naam" placeholder="bv. Puppy" required></label>
+            <label>Naam* <input name="naam" placeholder="bv. Puppy" required /></label>
           </div>
           <div class="col">
-            <label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bv. 6"></label>
+            <label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bv. 6" /></label>
           </div>
           <div class="col">
-            <label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bv. 6"></label>
+            <label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bv. 6" /></label>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <label>Max deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bv. 10"></label>
+            <label>Max deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bv. 10" /></label>
           </div>
         </div>
         <label>Beschrijving
@@ -82,13 +86,13 @@
         <div class="row">
           <div class="col">
             Les actief:
-            <label><input type="radio" name="actief" value="J" checked> Ja</label>
-            <label><input type="radio" name="actief" value="N"> Nee</label>
+            <label><input type="radio" name="actief" value="J" checked /> Ja</label>
+            <label><input type="radio" name="actief" value="N" /> Nee</label>
           </div>
           <div class="col">
             Online zichtbaar:
-            <label><input type="radio" name="online" value="J"> Ja</label>
-            <label><input type="radio" name="online" value="N" checked> Nee</label>
+            <label><input type="radio" name="online" value="J" /> Ja</label>
+            <label><input type="radio" name="online" value="N" checked /> Nee</label>
           </div>
         </div>
         <button type="submit" class="btn">Opslaan</button>
@@ -120,10 +124,10 @@
       </div>
 
       <form id="form-thema">
-        <input type="hidden" name="id">
+        <input type="hidden" name="id" />
         <div class="row">
           <div class="col">
-            <label>Naam* <input name="naam" placeholder="bv. Socialisatie" required></label>
+            <label>Naam* <input name="naam" placeholder="bv. Socialisatie" required /></label>
           </div>
         </div>
         <label>Beschrijving
@@ -154,18 +158,18 @@
       </div>
 
       <form id="form-loc">
-        <input type="hidden" name="id">
+        <input type="hidden" name="id" />
         <div class="row">
           <div class="col">
-            <label>Locatie* <input name="locatie" placeholder="bv. Retie — Coach Sofie" required></label>
+            <label>Locatie* <input name="locatie" placeholder="bv. Retie — Coach Sofie" required /></label>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <label>Adres <input name="adres" placeholder="Straat 1"></label>
+            <label>Adres <input name="adres" placeholder="Straat 1" /></label>
           </div>
           <div class="col">
-            <label>Postbus / Plaats <input name="plaats" placeholder="Postcode + gemeente"></label>
+            <label>Postbus / Plaats <input name="plaats" placeholder="Postcode + gemeente" /></label>
           </div>
         </div>
         <label>Beschrijving
@@ -201,13 +205,13 @@
       </div>
 
       <form id="form-trainer">
-        <input type="hidden" name="id">
+        <input type="hidden" name="id" />
         <div class="row">
           <div class="col">
-            <label>Naam* <input name="naam" placeholder="bv. Sofie Janssens" required></label>
+            <label>Naam* <input name="naam" placeholder="bv. Sofie Janssens" required /></label>
           </div>
           <div class="col">
-            <label>Functie <input name="functie" placeholder="bv. Coach"></label>
+            <label>Functie <input name="functie" placeholder="bv. Coach" /></label>
           </div>
         </div>
         <button class="btn" type="submit">Opslaan</button>
@@ -229,8 +233,8 @@
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <!-- Scripts (let op hoofdletter J en cache-bust) -->
-  <script src="Js/script.js?v=0902c"></script>
-  <script src="Js/lessen-instellingen.js?v=0902c"></script>
+  <!-- Scripts (map = 'Js' met hoofdletter J) + cache-bust -->
+  <script src="Js/script.js?v=0902d"></script>
+  <script src="Js/lessen-instellingen.js?v=0902d"></script>
 </body>
 </html>
