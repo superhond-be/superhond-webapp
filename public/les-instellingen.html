@@ -3,17 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Les instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903b" />
+  <link rel="stylesheet" href="styles.css?v=0903d" />
   <style>
-    .help{
-      background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;
-      padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553;
-    }
+    .help{background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553}
     .tabs{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
-    .tab-btn{
-      display:inline-block;background:#fff;border:1px solid #ddd;border-radius:8px;
-      padding:8px 14px;font-weight:600;color:#333;text-decoration:none;line-height:1.2
-    }
+    .tab-btn{display:inline-block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 14px;font-weight:600;color:#333;text-decoration:none;line-height:1.2}
     .tab-btn:hover{background:#ffd300;border-color:#ffd300;color:#222}
   </style>
 </head>
@@ -30,11 +24,10 @@
 
   <header>
     <h1>Les instellingen
-      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903b</span>
+      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903d</span>
     </h1>
   </header>
 
-  <!-- Tabs (ankerlinks) -->
   <div class="tabs">
     <a class="tab-btn" href="#sect-type">Lestype</a>
     <a class="tab-btn" href="#sect-thema">Les thema</a>
@@ -43,12 +36,12 @@
   </div>
 
   <main>
-    <!-- 1) LESTYPE -->
+    <!-- 1) LESTYPE (zonder Actief/Online) -->
     <section class="card" id="sect-type">
       <h2>Lestype</h2>
       <div class="help">
         Lestypes bepalen <i>aantal lessen</i>, <i>geldigheidsduur</i> en <i>max. deelnemers</i>.
-        <br><b>Let op:</b> <u>Startdatum</u> kies je later bij de inschrijving van de klant (niet hier).
+        <br><b>Opgelet:</b> de <u>startdatum</u> kies je later bij de inschrijving van de klant.
       </div>
 
       <form id="form-type">
@@ -72,18 +65,6 @@
         <label>Beschrijving
           <textarea name="beschrijving" rows="2" placeholder="Korte omschrijving…"></textarea>
         </label>
-        <div class="row">
-          <div class="col">
-            Les actief:
-            <label><input type="radio" name="actief" value="J" checked /> Ja</label>
-            <label><input type="radio" name="actief" value="N" /> Nee</label>
-          </div>
-          <div class="col">
-            Online zichtbaar:
-            <label><input type="radio" name="online" value="J" /> Ja</label>
-            <label><input type="radio" name="online" value="N" checked /> Nee</label>
-          </div>
-        </div>
         <button type="submit" class="btn">Opslaan</button>
         <button type="button" class="btn" id="reset-type">Nieuw</button>
       </form>
@@ -92,12 +73,12 @@
         <thead>
           <tr>
             <th>Naam</th><th>Aantal</th><th>Geldig (m)</th>
-            <th>Max</th><th>Actief</th><th>Online</th><th></th>
+            <th>Max</th><th></th>
           </tr>
         </thead>
         <tbody>
           <tr class="placeholder">
-            <td colspan="7" style="text-align:center;color:#777;">
+            <td colspan="5" style="text-align:center;color:#777;">
               Nog geen <strong>lestypes</strong>. Vul het formulier in en klik <em>Opslaan</em>.
             </td>
           </tr>
@@ -108,7 +89,7 @@
     <!-- 2) LES THEMA -->
     <section class="card" id="sect-thema">
       <h2>Les thema</h2>
-      <div class="help">Thema’s zijn labels voor lessen (bv. Socialisatie, Gehoorzaamheid).</div>
+      <div class="help">Voeg hier <b>thema’s</b> toe (bv. Socialisatie, Gehoorzaamheid). Dit zijn labels voor lessen.</div>
 
       <form id="form-thema">
         <input type="hidden" name="id" />
@@ -135,7 +116,7 @@
       <h2>Leslocatie</h2>
       <div class="help">
         <i>Locatie</i> is de naam/omschrijving die je publiek toont (bv. “Retie — Coach Sofie”).
-        Gebruik het 📍-icoon in de lijst om het adres in Google Maps te bekijken.
+        Gebruik het 📍-icoon om het adres in Google Maps te bekijken.
       </div>
 
       <form id="form-loc">
@@ -190,8 +171,7 @@
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <!-- Scripts (map = 'Js' met hoofdletter J) + cache-bust -->
-  <script src="Js/script.js?v=0903b"></script>
-  <script src="Js/lessen-instellingen.js?v=0903b"></script>
+  <script src="Js/script.js?v=0903d"></script>
+  <script src="Js/lessen-instellingen.js?v=0903d"></script>
 </body>
 </html>
