@@ -3,7 +3,6 @@ console.log("les-instellingen.js geladen v0903k");
 
 // ---- helpers ---------------------------------------------------
 const $ = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
 async function j(url) {
   const r = await fetch(url, { headers: { "cache-control": "no-cache" } });
@@ -57,6 +56,21 @@ function renderLestypes() {
       </td>
     </tr>
   `).join("");
+
+  // koppel events elke render
+  $("#tbl-lestypes tbody").onclick = (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const tr = e.target.closest("tr");
+    const id = tr?.dataset.id;
+    if (!id) return;
+
+    if (btn.classList.contains("edit")) {
+      const row = LESTYPES.find(x => x.id === id);
+      if (row) fillForm(row);
+    }
+    if (btn.classList.contains("delete")) onDeleteLestype(id);
+  };
 }
 
 async function loadLestypes() {
@@ -123,7 +137,11 @@ async function onDeleteLestype(id) {
   }
 }
 
-// Exporteer / Import
+// Form actions
+$("#form-lestype")?.addEventListener("submit", onSubmitLestype);
+$("#lt-nieuw")?.addEventListener("click", clearForm);
+
+// Export / Import
 $("#lt-export")?.addEventListener("click", () => {
   download("les-types-export.json", JSON.stringify(LESTYPES, null, 2));
 });
@@ -134,7 +152,6 @@ $("#lt-file")?.addEventListener("change", async (e) => {
   const text = await file.text();
   const arr = JSON.parse(text);
   if (!Array.isArray(arr)) return alert("Onverwacht bestand");
-  // naive import: POST alles
   for (const row of arr) {
     const { id, ...rest } = row;
     const created = await jSend("/api/les-types", "POST", rest);
@@ -144,27 +161,7 @@ $("#lt-file")?.addEventListener("change", async (e) => {
   alert("Geïmporteerd.");
 });
 
-// Tabel click handlers
-$("#tbl-lestypes tbody")?.addEventListener("click", (e) => {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-  const tr = e.target.closest("tr");
-  const id = tr?.dataset.id;
-  if (!id) return;
-
-  if (btn.classList.contains("edit")) {
-    const row = LESTYPES.find(x => x.id === id);
-    if (row) fillForm(row);
-  }
-  if (btn.classList.contains("delete")) onDeleteLestype(id);
-});
-
-// Form actions
-$("#form-lestype")?.addEventListener("submit", onSubmitLestype);
-$("#lt-nieuw")?.addEventListener("click", clearForm);
-
 // ---- Eenmalige migratie uit localStorage -----------------------
-// Als je vroeger lokaal bewaarde: haal ze op en bied 'Herstellen' aan.
 (function restoreOldLestypesOnce() {
   try {
     const OLD_KEYS = [
@@ -191,7 +188,7 @@ $("#lt-nieuw")?.addEventListener("click", clearForm);
     }
     if (!found) return;
 
-    const host = $("#sect-lestype .card") || document.body;
+    const host = document.querySelector("#sect-lestype .card") || document.body;
     const wrap = document.createElement("div");
     wrap.style.cssText = "background:#e8f6ff;border:1px solid #9ed4ff;border-radius:8px;padding:10px;margin:8px 0;";
     wrap.innerHTML = `
@@ -200,7 +197,7 @@ $("#lt-nieuw")?.addEventListener("click", clearForm);
       <span style="color:#666;margin-left:6px">(eenmalig)</span>`;
     host.prepend(wrap);
 
-    $("#btn-restore-lestypes").addEventListener("click", async () => {
+    document.getElementById("btn-restore-lestypes").addEventListener("click", async () => {
       try {
         for (const row of found) {
           const { id, ...rest } = row;
