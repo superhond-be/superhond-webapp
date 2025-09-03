@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Instellingen</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable" />
+  <link rel="stylesheet" href="app.css?v=v0903stable2" />
   <script src="app.js" defer></script>
 
-  <!-- Kleine scroll-fix zodat panels altijd scrolbaar blijven -->
+  <!-- Mini scroll-fix zodat panels altijd scrolbaar blijven -->
   <style>
     html, body { height: auto; overflow: auto !important; }
     main { overflow: visible !important; }
@@ -65,4 +65,225 @@
         <div class="form-item">
           <label>Beschrijving</label>
           <textarea rows="3" placeholder="Korte omschrijving van dit lestype..."></textarea>
-        </div
+        </div>
+        <div class="form-item">
+          <label>Aantal lessen</label>
+          <input type="number" min="1" placeholder="bv. 8">
+        </div>
+        <div class="form-item">
+          <label>Lesduur (min.)</label>
+          <input type="number" min="10" step="5" placeholder="bv. 60">
+        </div>
+        <div class="form-item">
+          <label>Geldigheid (maanden)</label>
+          <input type="number" min="1" placeholder="bv. 6">
+        </div>
+        <div class="form-item">
+          <label>Max. deelnemers</label>
+          <input type="number" min="1" placeholder="bv. 10">
+        </div>
+      </form>
+
+      <h3 style="margin-top:10px;">Bestaande lestypes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Naam</th><th>Beschrijving</th><th>Aantal</th><th>Lesduur</th><th>Geldigheid</th><th>Max</th><th>Acties</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Puppy Start</td><td>Socialisatie voor pups</td><td>8</td><td>60 min</td><td>6 mnd</td><td>10</td>
+            <td class="t-actions">
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== THEMA ===== -->
+    <section id="tab-thema" class="tab-panel">
+      <div class="panel-head">
+        <h2>Les thema</h2>
+        <div class="panel-actions">
+          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuw thema</button>
+          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+        </div>
+      </div>
+
+      <form class="form-grid">
+        <div class="form-item">
+          <label>Naam</label>
+          <input type="text" placeholder="bv. Socialisatie">
+        </div>
+        <div class="form-item">
+          <label>Omschrijving</label>
+          <textarea rows="3" placeholder="Wat houdt dit thema in?"></textarea>
+        </div>
+      </form>
+
+      <h3 style="margin-top:10px;">Bestaande thema’s</h3>
+      <table>
+        <thead><tr><th>Naam</th><th>Omschrijving</th><th>Acties</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Socialisatie</td><td>Interacties met honden & mensen</td>
+            <td class="t-actions">
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== LOCATIES ===== -->
+    <section id="tab-locaties" class="tab-panel">
+      <div class="panel-head">
+        <h2>Leslocatie</h2>
+        <div class="panel-actions">
+          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe locatie</button>
+          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+        </div>
+      </div>
+
+      <form class="form-grid">
+        <div class="form-item">
+          <label>Locatie</label>
+          <input type="text" placeholder="bv. Retie – terrein A">
+        </div>
+        <div class="form-item">
+          <label>Adres</label>
+          <input type="text" placeholder="Straat + nr">
+        </div>
+        <div class="form-item">
+          <label>Postbus / Plaats</label>
+          <input type="text" placeholder="Postcode en gemeente">
+        </div>
+        <div class="form-item">
+          <label>Beschrijving</label>
+          <textarea rows="3" placeholder="Bv. Parking achteraan, poort rechts..."></textarea>
+        </div>
+      </form>
+
+      <h3 style="margin-top:10px;">Bestaande locaties</h3>
+      <table>
+        <thead><tr><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Acties</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Retie – terrein A</td><td>Stationsstraat 12</td><td>2470 Retie</td>
+            <td class="t-actions">
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== TRAINERS ===== -->
+    <section id="tab-trainers" class="tab-panel">
+      <div class="panel-head">
+        <h2>Les trainers</h2>
+        <div class="panel-actions">
+          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe trainer</button>
+          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+        </div>
+      </div>
+
+      <form class="form-grid">
+        <div class="form-item">
+          <label>Naam</label>
+          <input type="text" placeholder="bv. Sofie Janssens">
+        </div>
+        <div class="form-item">
+          <label>Functie</label>
+          <input type="text" placeholder="bv. Hoofdtrainer / Assistent">
+        </div>
+      </form>
+
+      <h3 style="margin-top:10px;">Trainers</h3>
+      <table>
+        <thead><tr><th>Naam</th><th>Functie</th><th>Acties</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Sofie Janssens</td><td>Hoofdtrainer</td>
+            <td class="t-actions">
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== E-MAILS ===== -->
+    <section id="tab-emails" class="tab-panel">
+      <div class="panel-head">
+        <h2>E-mails</h2>
+        <div class="panel-actions">
+          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe template</button>
+          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+        </div>
+      </div>
+
+      <form class="form-grid">
+        <div class="form-item">
+          <label>Naam template</label>
+          <input type="text" placeholder="bv. Verjaardag hond">
+        </div>
+        <div class="form-item">
+          <label>Onderwerp</label>
+          <input type="text" placeholder="bv. Proficiat met de verjaardag van {{hond_naam}}!">
+        </div>
+        <div class="form-item">
+          <label>Inhoud</label>
+          <textarea rows="6" placeholder="Beste {{klant_voornaam}},&#10;&#10;..."></textarea>
+        </div>
+      </form>
+
+      <h3 style="margin-top:10px;">Templates</h3>
+      <table>
+        <thead><tr><th>Naam</th><th>Onderwerp</th><th>Acties</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Verjaardag hond</td><td>Proficiat met de verjaardag van {{hond_naam}}!</td>
+            <td class="t-actions">
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+            </td>
+          </tr>
+          <tr>
+            <td>Lesherinnering</td><td>Herinnering: les {{les_naam}} op {{les_datum}}</td>
+            <td class="t-actions">
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+              <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <div class="version-tag">assets v0903stable2</div>
+  <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
+
+  <!-- Tab-wissel -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const id = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+          const panel = document.getElementById(id);
+          if (panel) { panel.classList.add('active'); panel.scrollIntoView({behavior:'smooth', block:'start'}); }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
