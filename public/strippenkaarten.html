@@ -1,10 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond · Strippenkaarten</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <meta charset="UTF-8">
+  <title>Superhond.be – Strippenkaarten</title>
+  <link rel="stylesheet" href="styles.css?v=0903s">
 </head>
 <body>
   <nav class="topnav">
@@ -14,20 +13,43 @@
       <li><a href="honden.html">Honden</a></li>
       <li><a href="lessen.html">Lessen beheren</a></li>
       <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html" class="active">Strippenkaarten</a></li>
+      <li><a class="active" href="strippenkaarten.html">Strippenkaarten</a></li>
       <li><a href="les-instellingen.html">Instellingen</a></li>
     </ul>
   </nav>
 
-  <header class="page-header">
-    <h1>Strippenkaarten <span class="page-badge">v0903k</span></h1>
-  </header>
-
   <main>
-    <section class="card"><div id="strip-root">—</div></section>
+    <h1>Strippenkaarten <span class="page-badge">v0903s</span></h1>
+
+    <section class="tab-panel">
+      <h2>Nieuwe kaart</h2>
+      <form id="kaart-new" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <label>Naam <input type="text" name="naam" placeholder="bv. 10-rittenkaart" required></label>
+        <label>Aantal strippen <input type="number" name="aantal" placeholder="bv. 10"></label>
+        <label>Geldigheid (maanden) <input type="number" name="geldigheid" placeholder="bv. 6"></label>
+        <label>Opmerking <input type="text" name="opm" placeholder="optioneel"></label>
+        <div style="grid-column:1/-1;display:flex;gap:8px">
+          <button class="btn" type="submit">Opslaan</button>
+          <button class="btn" type="reset">Leeg</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="tab-panel">
+      <h2>Beschikbare kaarten</h2>
+      <table id="tbl-kaarten">
+        <thead>
+          <tr><th>Naam</th><th>Strippen</th><th>Geldig (m)</th><th>Opmerking</th><th>Acties</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" class="muted">Nog geen strippenkaarten.</td></tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-  <script src="Js/script.js?v=0903k"></script>
+  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
+
+  <script src="Js/strippenkaarten.js?v=0903s"></script>
 </body>
 </html>
