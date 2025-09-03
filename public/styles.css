@@ -154,3 +154,50 @@ th {
 .dev-banner {
   display: none !important;
 }
+
+/* ===== Buttons & Icons (globaal) ===== */
+:root{
+  --btn-radius: 10px;
+  --c-primary: #0d6efd;
+  --c-primary-h: #0b5ed7;
+  --c-success: #198754;
+  --c-success-h:#157347;
+  --c-danger:  #d9534f;
+  --c-danger-h:#c9302c;
+  --c-ghost:   #eef1f4;
+}
+
+.btn, .btn-icon{
+  display:inline-flex; align-items:center; gap:8px;
+  border:0; border-radius:var(--btn-radius);
+  font-weight:700; line-height:1; cursor:pointer;
+  text-decoration:none; user-select:none;
+}
+
+.btn{ padding:10px 14px; }
+.btn-icon{ padding:8px; border-radius:8px; background:var(--c-ghost); }
+.btn-icon svg, .btn svg{ width:18px; height:18px; fill:currentColor; }
+
+.btn--primary{ background:var(--c-primary); color:#fff; }
+.btn--primary:hover{ background:var(--c-primary-h); }
+
+.btn--success{ background:var(--c-success); color:#fff; }
+.btn--success:hover{ background:var(--c-success-h); }
+
+.btn--danger{ background:var(--c-danger); color:#fff; }
+.btn--danger:hover{ background:var(--c-danger-h); }
+
+.btn--ghost{ background:var(--c-ghost); color:#111; }
+.btn--ghost:hover{ filter:brightness(0.97); }
+
+.btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+
+/* Zoekbalk */
+.searchbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.searchbar input[type="search"]{
+  flex:1; min-width:240px; padding:10px 12px; border:1px solid #ccd; border-radius:10px;
+}
+
+/* Actieknoppen in tabellen netjes uitlijnen */
+td .btn-icon + .btn-icon{ margin-left:6px; }
+
