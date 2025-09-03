@@ -528,5 +528,9 @@ function setupTrainer() {
   outline: 2px solid #333;
   outline-offset: 2px;
 }
-
+        
+/* fallback verbergen van bekende banners */
+#style-debug, .env-banner, .debug-banner, .style-banner, .dev-banner {
+  display: none !important;
+}
 
