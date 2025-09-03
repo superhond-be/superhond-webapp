@@ -1,4 +1,4 @@
-/* Algemene body instellingen */
+/* ===== Algemene body instellingen ===== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -6,7 +6,7 @@ body {
   color: #000;
 }
 
-/* Navigatie bovenaan */
+/* ===== Navigatie bovenaan ===== */
 .topnav {
   background-color: #f1c40f; /* geel */
   padding: 10px;
@@ -34,7 +34,7 @@ body {
   text-decoration: underline;
 }
 
-/* Dashboard titel */
+/* ===== Dashboard titel ===== */
 main h1 {
   background-color: #f1c40f;
   padding: 10px;
@@ -42,7 +42,7 @@ main h1 {
   border-radius: 5px;
 }
 
-/* Container voor inhoud */
+/* ===== Container voor inhoud ===== */
 main {
   padding: 20px;
 }
