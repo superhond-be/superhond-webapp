@@ -53,3 +53,21 @@ h2{ margin:0 0 8px; }
   font-size:12px; box-shadow:0 1px 2px rgba(0,0,0,.15);
   z-index:9999;
 }
+/* Titelbalk compact en modern */
+.page-title-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.page-title {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffcc00, #ffd633);
+  padding: 10px 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #222;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  letter-spacing: 0.5px;
+}
+
