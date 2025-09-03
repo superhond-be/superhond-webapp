@@ -1,14 +1,14 @@
-/* ===== Algemene body instellingen ===== */
+/* ===== Algemene stijl ===== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #fff;
+  background: #fff;
   color: #000;
 }
 
 /* ===== Navigatie bovenaan ===== */
 .topnav {
-  background-color: #f1c40f; /* geel */
+  background-color: #FFD700; /* geel */
   padding: 10px;
 }
 
@@ -17,16 +17,16 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: flex-start;
+  gap: 20px;
 }
 
 .topnav li {
-  margin-right: 20px;
+  margin: 0;
 }
 
 .topnav a {
   text-decoration: none;
-  color: #000;
+  color: #000;   /* zwarte tekst */
   font-weight: bold;
 }
 
@@ -34,15 +34,25 @@ body {
   text-decoration: underline;
 }
 
-/* ===== Dashboard titel ===== */
-main h1 {
-  background-color: #f1c40f;
-  padding: 10px;
-  display: inline-block;
-  border-radius: 5px;
+/* ===== Titels ===== */
+h1 {
+  margin: 20px;
+  font-size: 1.8em;
 }
 
-/* ===== Container voor inhoud ===== */
+/* ===== Content ===== */
 main {
   padding: 20px;
+}
+
+/* ===== Footer / versie ===== */
+footer .version {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: #28a745; /* groen */
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
 }
