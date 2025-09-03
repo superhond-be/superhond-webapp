@@ -1,10 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond · Lessen beheren</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <meta charset="UTF-8">
+  <title>Superhond.be – Lessen beheren</title>
+  <link rel="stylesheet" href="styles.css?v=0903s">
 </head>
 <body>
   <nav class="topnav">
@@ -12,49 +11,47 @@
       <li><a href="index.html">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html" class="active">Lessen beheren</a></li>
+      <li><a class="active" href="lessen.html">Lessen beheren</a></li>
       <li><a href="boekingen.html">Boekingen</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
       <li><a href="les-instellingen.html">Instellingen</a></li>
     </ul>
   </nav>
 
-  <header class="page-header">
-    <h1>Lessenoverzicht <span class="page-badge">v0903k</span></h1>
-  </header>
-
   <main>
-    <section class="card">
-      <div class="help">
-        Overzicht van alle lessen. Cap. = bezet/capaciteit, Vrij = capaciteit – bezet.
-      </div>
+    <h1>Lessen beheren <span class="page-badge">v0903s</span></h1>
 
-      <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <div class="col"><button id="btn-new" class="btn">+ Nieuwe les</button></div>
-        <div class="col" style="min-width:220px"><label>Zoek <input id="q" placeholder="naam, type, locatie, trainer…"></label></div>
-        <div class="col"><label>Status
-          <select id="status"><option value="">Alle</option><option value="actief">Actief</option><option value="vol">Vol</option><option value="geannuleerd">Geannuleerd</option></select>
-        </label></div>
-        <div class="col"><label>Trainer <select id="trainer-filter"><option value="">Alle</option></select></label></div>
-        <div class="col"><label>Locatie <select id="loc-filter"><option value="">Alle</option></select></label></div>
-        <div class="col"><button id="export" class="btn">Export CSV</button></div>
-      </div>
+    <section class="tab-panel">
+      <h2>Nieuwe les plannen</h2>
+      <form id="les-new" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <label>Naam <input type="text" name="naam" placeholder="bv. Puppy – ma 10:00" required></label>
+        <label>Trainer <input type="text" name="trainer" placeholder="bv. Coach Sofie"></label>
+        <label>Locatie <input type="text" name="locatie" placeholder="bv. Retie"></label>
+        <label>Start <input type="datetime-local" name="start"></label>
+        <label>Capaciteit <input type="number" name="capaciteit" placeholder="bv. 10"></label>
+        <label>Beschrijving <input type="text" name="beschrijving" placeholder="kort…"></label>
+        <div style="grid-column:1/-1;display:flex;gap:8px">
+          <button class="btn" type="submit">Opslaan</button>
+          <button class="btn" type="reset">Leeg</button>
+        </div>
+      </form>
+    </section>
 
-      <table id="tbl-lessen" style="margin-top:10px">
+    <section class="tab-panel">
+      <h2>Geplande lessen</h2>
+      <table id="tbl-lessen">
         <thead>
-          <tr><th>Naam</th><th>Type</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Cap.</th><th>Vrij</th><th>Status</th><th></th></tr>
+          <tr><th>Naam</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Cap.</th><th>Bezet</th><th>Acties</th></tr>
         </thead>
         <tbody>
-          <tr class="placeholder"><td colspan="9" style="text-align:center;color:#777;">Laden…</td></tr>
+          <tr><td colspan="7" class="muted">Nog geen lessen gepland.</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
+  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
 
-  <!-- Modal (ongewijzigd; je bestaande modal blijft) -->
-  <script src="Js/script.js?v=0903k"></script>
-  <script src="Js/lessen.js?v=0903k"></script>
+  <script src="Js/lessen.js?v=0903s"></script>
 </body>
 </html>
