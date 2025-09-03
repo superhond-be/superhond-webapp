@@ -2,133 +2,50 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Superhond.be – Admin instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903r">
+  <title>Superhond.be – Instellingen</title>
+  <link rel="stylesheet" href="styles.css?v=0903t">
 </head>
-<body>
-  <!-- Gele hoofdnavigatie -->
+<body class="page-settings">
   <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a class="active" href="les-instellingen.html">Instellingen</a></li>
-    </ul>
+    <a href="index.html">Dashboard</a>
+    <a href="klanten.html">Klanten</a>
+    <a href="honden.html">Honden</a>
+    <a href="lessen.html">Lessen beheren</a>
+    <a href="boekingen.html">Boekingen</a>
+    <a href="strippenkaarten.html">Strippenkaarten</a>
+    <a href="les-instellingen.html" class="active">Instellingen</a>
   </nav>
 
   <main>
-    <h1>Superhond.be – Admin instellingen <span class="page-badge">v0903r</span></h1>
+    <h1>Superhond.be – Admin instellingen</h1>
 
-    <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-button active" data-tab="tab-lestype">Lestype</button>
-      <button class="tab-button" data-tab="tab-les-thema">Les thema</button>
-      <button class="tab-button" data-tab="tab-leslocatie">Leslocatie</button>
-      <button class="tab-button" data-tab="tab-les-trainers">Les trainers</button>
-      <button class="tab-button" data-tab="tab-emails">E-mails</button>
+      <button class="tab-button active">Lestype</button>
+      <button class="tab-button">Les thema</button>
+      <button class="tab-button">Leslocatie</button>
+      <button class="tab-button">Les trainers</button>
+      <button class="tab-button">E-mails</button>
     </div>
 
-    <!-- Tab inhoud -->
-    <section id="tab-lestype" class="tab-panel active">
+    <section>
       <h2>Lestype</h2>
-      <p class="hint">Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers.</p>
-
-      <form id="form-lestype">
-        <label>Naam* <input type="text" name="naam" placeholder="bv. Puppy" required></label>
-        <label>Aantal lessen <input type="number" name="aantal" placeholder="bv. 6"></label>
-        <label>Lesduur (minuten) <input type="number" name="lesduur" placeholder="bv. 60"></label>
-        <label>Geldigheidsduur (maanden) <input type="number" name="geldigheid" placeholder="bv. 6"></label>
-        <label>Max deelnemers <input type="number" name="max" placeholder="bv. 10"></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-
-        <div class="form-buttons">
-          <button type="submit">Opslaan</button>
-          <button type="reset">Nieuw</button>
+      <form>
+        <label>Naam* <input type="text" placeholder="bv. Puppy"></label>
+        <label>Aantal lessen <input type="number" placeholder="bv. 6"></label>
+        <label>Lesduur (minuten) <input type="number" placeholder="bv. 60"></label>
+        <label>Geldigheidsduur (maanden) <input type="number" placeholder="bv. 6"></label>
+        <label>Max deelnemers <input type="number" placeholder="bv. 10"></label>
+        <label>Beschrijving <textarea placeholder="Korte omschrijving..."></textarea></label>
+        <div class="form-actions">
+          <button type="submit">💾 Opslaan</button>
+          <button type="reset">➕ Nieuw</button>
         </div>
       </form>
-
-      <table id="tbl-lestypes">
-        <thead>
-          <tr>
-            <th>Naam</th><th>Aantal</th><th>Lesduur (min)</th><th>Geldig (m)</th><th>Max</th><th>Beschrijving</th><th>Acties</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="7" class="muted">Nog geen lestypes toegevoegd.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section id="tab-les-thema" class="tab-panel">
-      <h2>Les thema</h2>
-      <form id="form-lesthema">
-        <label>Naam* <input type="text" name="naam" placeholder="bv. Gehoorzaamheid" required></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-        <div class="form-buttons">
-          <button type="submit">Opslaan</button>
-          <button type="reset">Nieuw</button>
-        </div>
-      </form>
-      <table id="tbl-lesthema">
-        <thead><tr><th>Naam</th><th>Beschrijving</th><th>Acties</th></tr></thead>
-        <tbody><tr><td colspan="3" class="muted">Nog geen thema’s toegevoegd.</td></tr></tbody>
-      </table>
-    </section>
-
-    <section id="tab-leslocatie" class="tab-panel">
-      <h2>Leslocatie</h2>
-      <form id="form-leslocatie">
-        <label>Locatie <input type="text" name="locatie" placeholder="bv. Retie" required></label>
-        <label>Adres <input type="text" name="adres" placeholder="Straat en nr."></label>
-        <label>Postbus / plaats <input type="text" name="plaats" placeholder="bv. 2470 Retie"></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-        <div class="form-buttons">
-          <button type="submit">Opslaan</button>
-          <button type="reset">Nieuw</button>
-        </div>
-      </form>
-      <table id="tbl-leslocatie">
-        <thead><tr><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Beschrijving</th><th>Acties</th></tr></thead>
-        <tbody><tr><td colspan="5" class="muted">Nog geen locaties toegevoegd.</td></tr></tbody>
-      </table>
-    </section>
-
-    <section id="tab-les-trainers" class="tab-panel">
-      <h2>Les trainers</h2>
-      <form id="form-lestrainers">
-        <label>Naam <input type="text" name="naam" placeholder="Trainernaam"></label>
-        <label>Functie <input type="text" name="functie" placeholder="bv. Hoofdtrainer"></label>
-        <div class="form-buttons">
-          <button type="submit">Opslaan</button>
-          <button type="reset">Nieuw</button>
-        </div>
-      </form>
-      <table id="tbl-lestrainers">
-        <thead><tr><th>Naam</th><th>Functie</th><th>Acties</th></tr></thead>
-        <tbody><tr><td colspan="3" class="muted">Nog geen trainers toegevoegd.</td></tr></tbody>
-      </table>
-    </section>
-
-    <section id="tab-emails" class="tab-panel">
-      <h2>E-mails</h2>
-      <p class="hint">Hier beheer je e-mailtemplates (bijv. bevestigingen, herinneringen).</p>
-      <table id="tbl-emails">
-        <thead><tr><th>Naam</th><th>Categorie</th><th>Onderwerp</th><th>Acties</th></tr></thead>
-        <tbody><tr><td colspan="4" class="muted">Nog geen e-mails toegevoegd.</td></tr></tbody>
-      </table>
     </section>
   </main>
 
-  <!-- Groen labeltje rechtsonder -->
-  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;
-              padding:4px 8px;border-radius:6px;z-index:9999">
-    assets v0903r
-  </div>
-
-  <!-- Alleen logica voor tabs/instellingen -->
-  <script src="Js/lessen-instellingen.js?v=0903r"></script>
+  <footer>
+    <span class="debug-label">assets v0903t</span>
+  </footer>
 </body>
 </html>
