@@ -123,3 +123,14 @@ th { background: #f4f4f4; font-weight: 700; }
 /* Icoon vóór de tekst (optioneel) */
 .btn i { margin-right: 6px; }
 
+
+/* SVG-iconen */
+.icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  fill: currentColor;     /* neemt de kleur van de tekst over */
+  margin-right: 4px;      /* ruimte naast tekst */
+}
+.btn--sm .icon { width: 14px; height: 14px; }
+
