@@ -3,10 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superhond.be – Dashboard</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable">
+  <title>Superhond.be Dashboard</title>
+
+  <!-- Hoofd CSS -->
+  <link rel="stylesheet" href="app.css">
 </head>
-<body class="page-dashboard">
-  <!-- inhoud van dashboard -->
+<body>
+  <!-- Navigatiebalk -->
+  <nav class="topnav">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="klanten.html">Klanten</a></li>
+      <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html">Lessen beheren</a></li>
+      <li><a href="boekingen.html">Boekingen</a></li>
+      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+      <li><a href="instellingen.html">Instellingen</a></li>
+    </ul>
+  </nav>
+
+  <!-- Dashboard content -->
+  <main class="dashboard">
+    <h1>Superhond.be – Dashboard</h1>
+    <p>Welkom terug!</p>
+    <p>Hier zie je een overzicht van klanten, honden, lessen en boekingen.</p>
+
+    <!-- Container voor dynamische inhoud -->
+    <div id="dashboard-content"></div>
+  </main>
+
+  <!-- Hoofd JavaScript -->
+  <script src="app.js"></script>
 </body>
 </html>
