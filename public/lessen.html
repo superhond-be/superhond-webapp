@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Superhond · Lessen beheren</title>
+  <link rel="stylesheet" href="styles.css?v=0903k" />
+</head>
+<body>
+  <nav class="topnav">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="klanten.html">Klanten</a></li>
+      <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html" class="active">Lessen beheren</a></li>
+      <li><a href="boekingen.html">Boekingen</a></li>
+      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+      <li><a href="les-instellingen.html">Instellingen</a></li>
+    </ul>
+  </nav>
+
+  <header class="page-header">
+    <div class="page-bread">Lessen beheren</div>
+    <h1>Lessenoverzicht
+      <span class="page-badge">Superhond.be – Admin</span>
+    </h1>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="help">
+        Placeholder-pagina. Hier komt later het plannen en beheren van reeksen/losse lessen.
+        Gebruik ondertussen <a href="les-instellingen.html">Instellingen</a> om types/locaties/trainers te beheren.
+      </div>
+
+      <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div class="col"><button class="btn">+ Nieuwe les</button></div>
+        <div class="col"><label>Zoek <input placeholder="bv. Puppy, dinsdag, Retie"></label></div>
+        <div class="col">
+          <label>Filter status
+            <select>
+              <option>Alle</option><option>Actief</option><option>Vol</option><option>Geannuleerd</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <table style="margin-top:10px">
+        <thead><tr><th>Naam</th><th>Type</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Capaciteit</th><th></th></tr></thead>
+        <tbody>
+          <tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen lessen gepland.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
+  <script src="Js/script.js?v=0903k"></script>
+</body>
+</html>
