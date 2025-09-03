@@ -1,46 +1,43 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Superhond.be – Dashboard</title>
-  <link rel="stylesheet" href="styles.css?v=0903t">
-</head>
-<body class="page-dashboard">
-  <nav class="topnav">
-    <a href="index.html" class="active">Dashboard</a>
-    <a href="klanten.html">Klanten</a>
-    <a href="honden.html">Honden</a>
-    <a href="lessen.html">Lessen beheren</a>
-    <a href="boekingen.html">Boekingen</a>
-    <a href="strippenkaarten.html">Strippenkaarten</a>
-    <a href="les-instellingen.html">Instellingen</a>
-  </nav>
-
-  <main>
-    <h1>Superhond.be – Dashboard</h1>
-
-    <section class="cards">
-      <div class="card">Klanten<br><strong>2</strong> totaal</div>
-      <div class="card">Honden<br><strong>2</strong> totaal</div>
-      <div class="card">Lessen (actief)<br><strong>1</strong> actieve lessen</div>
-    </section>
-
-    <section>
-      <h2>Eerstvolgende lessen</h2>
-      <table>
-        <thead>
-          <tr><th>Les</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Cap.</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Puppy Basis</td><td>—</td><td>—</td><td>2025-09-15 20:00</td><td>4/10</td></tr>
-          <tr><td>Agility Gevorderd</td><td>—</td><td>—</td><td>2025-09-20 16:00</td><td>8/8</td></tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
-
-  <footer>
-    <span class="debug-label">assets v0903t</span>
-  </footer>
-</body>
-</html>
+  1 <!DOCTYPE html>
+  2 <html lang="nl">
+  3 <head>
+  4   <meta charset="UTF-8">
+  5   <title>Superhond.be – Dashboard</title>
+  6   <!-- BASIS stylesheet (voor alle pagina's) -->
+  7   <link rel="stylesheet" href="styles.css?v=0903pretty">
+  8 </head>
+  9 <body class="page-dashboard">
+ 10   <!-- Iconen sprite -->
+ 11   <object type="image/svg+xml" data="img/icons.svg" style="display:none"></object>
+ 12 
+ 13   <!-- Navigatie -->
+ 14   <nav class="topnav">
+ 15     <ul>
+ 16       <li><a class="active" href="index.html">Dashboard</a></li>
+ 17       <li><a href="klanten.html">Klanten</a></li>
+ 18       <li><a href="honden.html">Honden</a></li>
+ 19       <li><a href="lessen.html">Lessen beheren</a></li>
+ 20       <li><a href="boekingen.html">Boekingen</a></li>
+ 21       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+ 22       <li><a href="les-instellingen.html">Instellingen</a></li>
+ 23     </ul>
+ 24   </nav>
+ 25 
+ 26   <main>
+ 27     <!-- Gele titelbalk -->
+ 28     <h1>Superhond.be – Dashboard</h1>
+ 29 
+ 30     <!-- Voorbeeld inhoud -->
+ 31     <div class="card">
+ 32       <h2>Welkom terug!</h2>
+ 33       <p>Hier zie je een overzicht van klanten, honden, lessen en boekingen.</p>
+ 34     </div>
+ 35   </main>
+ 36 
+ 37   <!-- Groen debuglabel rechtsonder -->
+ 38   <div class="debug-label">assets v0903pretty</div>
+ 39 
+ 40   <!-- Scripts -->
+ 41   <script src="Js/dashboard.js?v=0903pretty"></script>
+ 42 </body>
+ 43 </html>
