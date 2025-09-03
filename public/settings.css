@@ -1,0 +1,114 @@
+/* settings.css – extra opmaak enkel voor de Instellingen pagina */
+
+/* Tabs geel met zwarte tekst */
+.page-settings .tabs .tab-button {
+  background: #fdd835;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.page-settings .tabs .tab-button:hover {
+  background: #ffd633;
+}
+
+.page-settings .tabs .tab-button.active {
+  background: #ffeb3b;
+  border-bottom: 2px solid #000;
+}
+
+/* Panel netjes wit met afgeronde hoeken */
+.page-settings .tab-panel {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+/* Formulieren opmaak */
+.page-settings form label {
+  display: block;
+  margin: 8px 0 4px;
+  font-weight: bold;
+}
+
+.page-settings form input,
+.page-settings form textarea,
+.page-settings form select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* Knoppen binnen Instellingen */
+.page-settings button,
+.page-settings .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.page-settings .btn-primary {
+  background: #007bff;
+  color: #fff;
+}
+.page-settings .btn-primary:hover { background: #0069d9; }
+
+.page-settings .btn-success {
+  background: #28a745;
+  color: #fff;
+}
+.page-settings .btn-success:hover { background: #218838; }
+
+.page-settings .btn-danger {
+  background: #dc3545;
+  color: #fff;
+}
+.page-settings .btn-danger:hover { background: #c82333; }
+
+/* Tabellen in Instellingen */
+.page-settings table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.page-settings th,
+.page-settings td {
+  border: 1px solid #eee;
+  padding: 8px;
+  text-align: left;
+}
+.page-settings th {
+  background: #f7f7f7;
+}
+
+/* Groen debug-label altijd rechtsonder */
+.debug-label {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  background: #28a745;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  z-index: 9999;
+  font-size: 12px;
+  line-height: 1.2;
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
