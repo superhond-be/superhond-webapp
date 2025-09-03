@@ -509,7 +509,24 @@ function setupTrainer() {
 .env-banner,
 #style-debug {
   display: none !important;
+  
 }
-        
+        /* Gele tabknoppen met zwarte tekst */
+.tabbar .tab-btn{
+  background: #ffe048;     /* warme gele tint (zelfde gevoel als topbalk) */
+  color: #111;             /* zwarte/erg donkere tekst */
+  border: 1px solid #c9a300;
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.tabbar .tab-btn:hover{
+  background: #ffd21a;
+}
+.tabbar .tab-btn:focus{
+  outline: 2px solid #333;
+  outline-offset: 2px;
+}
 
 
