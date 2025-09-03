@@ -1,1 +1,3 @@
-
+git add server/assets/logo.png
+git commit -m "Voeg Superhond logo toe"
+git push
