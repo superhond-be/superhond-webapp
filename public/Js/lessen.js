@@ -1,5 +1,5 @@
-/* public/Js/lessen.js v0903p */
-console.log("lessen.js geladen v0903p");
+/* public/Js/lessen.js v0903q (duplicate + CRUD) */
+console.log("lessen.js geladen v0903q");
 
 const $ = s => document.querySelector(s);
 
@@ -28,9 +28,7 @@ function fmtDateTime(iso){
   return d.toLocaleString(undefined, { weekday:"short", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" });
 }
 function toIsoLocal(dtLocal){
-  // dtLocal = "YYYY-MM-DDTHH:mm"
   if(!dtLocal) return null;
-  // neem locale zonetijd aan en maak ISO string
   const d = new Date(dtLocal);
   if(isNaN(d)) return null;
   return d.toISOString();
@@ -92,6 +90,7 @@ function render(){
       <td>${badge(r.status)}</td>
       <td class="t-actions">
         <button class="icon-btn edit" title="Bewerken">✏️</button>
+        <button class="icon-btn duplicate" title="Dupliceer">🔁</button>
         <button class="icon-btn delete" title="Verwijderen">🗑️</button>
       </td>
     </tr>
@@ -101,10 +100,8 @@ function render(){
 function fillFilters(){
   const trSel = $("#trainer-filter");
   const lcSel = $("#loc-filter");
-  // reset
   trSel.innerHTML = `<option value="">Alle</option>`;
   lcSel.innerHTML = `<option value="">Alle</option>`;
-  // vul
   [...new Set(ENRICHED.map(d=>d.trainerNaam).filter(Boolean))].sort()
     .forEach(n => trSel.insertAdjacentHTML("beforeend", `<option>${n}</option>`));
   [...new Set(ENRICHED.map(d=>d.locatieNaam).filter(Boolean))].sort()
@@ -115,8 +112,8 @@ function exportCSV(){
   const headers = [
     {key:"naam", label:"Naam"},
     {key:"type", label:"Type"},
-    {key:"trainerNaam", label:"Trainer"},
-    {key:"locatieNaam", label:"Locatie"},
+    {key:"trainer_id", label:"Trainer ID"},
+    {key:"locatie_id", label:"Locatie ID"},
     {key:"start", label:"Start (ISO)"},
     {key:"capaciteit", label:"Capaciteit"},
     {key:"bezet", label:"Bezet"},
@@ -223,13 +220,23 @@ function onEdit(id){
   openModal();
 }
 
+function onDuplicate(id){
+  const row = DATA.lessen.find(x=>x.id===id);
+  if(!row) return;
+  $("#modal-title").textContent = "Dupliceer les";
+  const form = $("#form-les"); form.reset(); form.id.value = ""; // lege id → POST
+  const copy = { ...row, naam: `${row.naam} (kopie)` };
+  populateModal({selectedTrainer: copy.trainer_id, selectedLoc: copy.locatie_id, row: copy});
+  openModal();
+}
+
 /* init */
 (async function(){
   const tbody = document.querySelector("#tbl-lessen tbody");
   try{
     await loadAll();
 
-    // events
+    // filters
     ["#q","#status","#trainer-filter","#loc-filter"].forEach(sel=>{
       $(sel).addEventListener("input", render);
       $(sel).addEventListener("change", render);
@@ -239,11 +246,12 @@ function onEdit(id){
     $("[data-close='modal-les']").addEventListener("click", closeModal);
     $("#form-les").addEventListener("submit", onSubmit);
 
-    // table actions
+    // acties in tabel
     tbody.addEventListener("click",(e)=>{
       const btn = e.target.closest("button"); if(!btn) return;
       const id = e.target.closest("tr")?.dataset?.id;
       if(btn.classList.contains("edit")) onEdit(id);
+      if(btn.classList.contains("duplicate")) onDuplicate(id);
       if(btn.classList.contains("delete")) onDelete(id);
     });
 
