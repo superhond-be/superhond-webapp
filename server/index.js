@@ -1,5 +1,5 @@
 // server/index.js
-// Superhond.be Admin backend (Express + JSON files)
+// Superhond.be Admin backend (Express + JSON files) — SAFE IO
 
 const express = require("express");
 const path = require("path");
@@ -15,25 +15,49 @@ app.use(express.json());
 // Public map serveren
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// Helpers voor JSON-db
-const dbPath = (file) => path.join(__dirname, "db", file);
+// ---------- FS helpers (SAFE) ----------
+const DB_DIR = path.join(__dirname, "db");
 
+// Zorg dat de DB-map bestaat
+function ensureDbDir() {
+  try {
+    if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
+  } catch (e) {
+    console.error("Kan DB-map niet maken:", e.message);
+  }
+}
+ensureDbDir();
+
+const dbPath = (file) => path.join(DB_DIR, file);
+
+// Lezen met fallbacks (retourneert altijd [] bij problemen)
 function readDB(file) {
   try {
-    return JSON.parse(fs.readFileSync(dbPath(file), "utf8"));
-  } catch {
+    ensureDbDir();
+    const p = dbPath(file);
+    if (!fs.existsSync(p)) return [];
+    const raw = fs.readFileSync(p, "utf8");
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn(`Waarschuwing: kon ${file} niet lezen/parsen → [] (${e.message})`);
     return [];
   }
 }
 
+// Schrijven (maakt bestand aan als het nog niet bestond)
 function writeDB(file, data) {
-  fs.writeFileSync(dbPath(file), JSON.stringify(data, null, 2));
+  try {
+    ensureDbDir();
+    fs.writeFileSync(dbPath(file), JSON.stringify(data, null, 2), "utf8");
+  } catch (e) {
+    console.error(`Fout bij schrijven ${file}:`, e.message);
+  }
 }
 
 // -------- API endpoints -------- //
 
 // Health check
-app.get("/api/health", (req, res) => {
+app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "superhond-webapp" });
 });
 
@@ -83,9 +107,7 @@ const emailFile = "email-templates.json";
 const emailBase = "/api/email-templates";
 
 // GET all
-app.get(emailBase, (_req, res) => {
-  res.json(readDB(emailFile));
-});
+app.get(emailBase, (_req, res) => res.json(readDB(emailFile)));
 
 // POST new
 app.post(emailBase, (req, res) => {
@@ -118,7 +140,7 @@ app.delete(`${emailBase}/:id`, (req, res) => {
 });
 
 // ---------- Fallback naar frontend ---------- //
-app.get("*", (req, res) => {
+app.get("*", (_req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 
