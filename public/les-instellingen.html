@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond.be – Admin instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903l">
+  <link rel="stylesheet" href="styles.css?v=0903n">
 </head>
 <body>
   <!-- Gele hoofdnavigatie -->
@@ -21,10 +21,10 @@
 
   <main>
     <h1>Superhond.be – Admin instellingen 
-      <span class="page-badge">v0903l</span>
+      <span class="page-badge">v0903n</span>
     </h1>
 
-    <!-- Tabbar met vijf knoppen -->
+    <!-- Tabbar -->
     <div class="tabbar">
       <a class="tab-btn" href="#sect-lestype">Lestype</a>
       <a class="tab-btn" href="#sect-lesthema">Les thema</a>
@@ -33,72 +33,42 @@
       <a class="tab-btn" href="#sect-email">E-mails</a>
     </div>
 
-    <!-- Secties -->
+    <!-- Secties (voorbeeld) -->
     <section id="sect-lestype" class="tab-panel">
       <h2>Lestype</h2>
-      <p class="hint">
-        Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers.  
-        <b>Opgelet:</b> de startdatum kies je later bij inschrijving van de klant.
-      </p>
-
-      <form id="form-lestype">
-        <label>Naam* <input type="text" name="naam" placeholder="bv. Puppy"></label>
-        <label>Aantal lessen <input type="number" name="aantal" placeholder="bv. 6"></label>
-        <label>Lesduur (minuten) <input type="number" name="lesduur" placeholder="bv. 60"></label>
-        <label>Geldigheidsduur (maanden) <input type="number" name="geldigheid" placeholder="bv. 6"></label>
-        <label>Max deelnemers <input type="number" name="max" placeholder="bv. 10"></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-
-        <div class="form-buttons">
-          <button type="submit" class="btn">Opslaan</button>
-          <button type="reset" class="btn">Nieuw</button>
-          <button type="button" class="btn" id="lt-export">Export JSON</button>
-          <button type="button" class="btn" id="lt-import">Import JSON</button>
-          <input type="file" id="lt-file" accept="application/json" style="display:none">
-        </div>
-      </form>
-
-      <table id="table-lestype">
-        <thead>
-          <tr>
-            <th>Naam</th>
-            <th>Aantal</th>
-            <th>Lesduur (min)</th>
-            <th>Geldig (m)</th>
-            <th>Max</th>
-            <th>Beschrijving</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="6">Nog geen lestypes toegevoegd.</td></tr>
-        </tbody>
-      </table>
+      <p class="hint">Hier beheer je alle lestypes…</p>
     </section>
 
     <section id="sect-lesthema" class="tab-panel">
       <h2>Les thema</h2>
-      <p class="hint">Voeg thema’s toe met naam en beschrijving.</p>
+      <p class="hint">Hier komen de thema’s…</p>
     </section>
 
     <section id="sect-leslocatie" class="tab-panel">
       <h2>Leslocatie</h2>
-      <p class="hint">Geef locatie, adres, postbus/plaats en beschrijving in.</p>
+      <p class="hint">Hier beheer je de locaties…</p>
     </section>
 
     <section id="sect-lestrainers" class="tab-panel">
       <h2>Les trainers</h2>
-      <p class="hint">Voeg trainers toe met naam en functie.</p>
+      <p class="hint">Hier beheer je de trainers…</p>
     </section>
 
     <section id="sect-email" class="tab-panel">
       <h2>E-mails</h2>
-      <p class="hint">Beheer je e-mail templates, ontvangers en instellingen.</p>
+      <p class="hint">Hier beheer je de e-mailtemplates…</p>
     </section>
   </main>
 
+  <!-- Groen labeltje rechtsonder -->
+  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;
+              padding:4px 8px;border-radius:6px;z-index:9999">
+    assets v0903n
+  </div>
+
   <!-- Scripts -->
-  <script src="Js/les-instellingen.js?v=0903l"></script>
-  <script src="Js/email-templates.js?v=0903l"></script>
-  <script src="Js/cleanup-banner.js?v=0903l"></script>
+  <script src="Js/les-instellingen.js?v=0903n"></script>
+  <script src="Js/email-templates.js?v=0903n"></script>
+  <script src="Js/cleanup-banner.js?v=0903n"></script>
 </body>
 </html>
