@@ -1,5 +1,5 @@
-/* public/Js/boekingen.js v0903n */
-console.log("boekingen.js geladen v0903n");
+/* public/Js/boekingen.js v0903r (live vrije plaatsen + statusblok) */
+console.log("boekingen.js geladen v0903r");
 
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -15,9 +15,9 @@ async function jSend(url, method, body){
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify(body||{})
   });
-  if(!r.ok) {
+  if(!r.ok){
     let msg = r.statusText;
-    try { const e = await r.json(); msg = e.error || msg; } catch {}
+    try{ const e = await r.json(); msg = e.error || msg; }catch{}
     throw new Error(`${method} ${url} → ${r.status} ${msg}`);
   }
   return r.json();
@@ -71,7 +71,7 @@ function clearSelect(sel){ while(sel.options.length) sel.remove(0); }
     DATA = {boekingen, lessen, klanten, honden};
     rebuild();
 
-    // filters
+    // filters vullen
     const selLes = $("#les-filter");
     clearSelect(selLes);
     selLes.insertAdjacentHTML("beforeend", `<option value="">Alle</option>`);
@@ -103,6 +103,9 @@ function clearSelect(sel){ while(sel.options.length) sel.remove(0); }
     // form submit
     $("#form-bk").addEventListener("submit", onSubmit);
 
+    // live: check vrije plaatsen bij les-selectie
+    $("#f-les").addEventListener("change", updateCapacityInfo);
+
     render();
   }catch(err){
     console.error(err);
@@ -112,13 +115,12 @@ function clearSelect(sel){ while(sel.options.length) sel.remove(0); }
 
 /* ------- data transform & render ------- */
 function rebuild(){
-  const lesById  = byId(DATA.lessons || DATA.lessen || DATA.lessens || DATA.lessen);
-  const _lesById = byId(DATA.lessen);
+  const lesById  = byId(DATA.lessen);
   const klantById= byId(DATA.klanten);
   const hondById = byId(DATA.honden);
 
   ENRICHED = DATA.boekingen.map(b=>{
-    const les = _lesById[b.les_id] || {};
+    const les = lesById[b.les_id] || {};
     const kl  = klantById[b.klant_id] || {};
     const hd  = hondById[b.hond_id] || {};
     const dt  = les.start || b.datum || null;
@@ -215,7 +217,7 @@ function populateSelects({selectedKlant, selectedHond, selectedLes, selectedStat
     .forEach(k => selKlant.insertAdjacentHTML("beforeend",
       `<option value="${k.id}" ${k.id===selectedKlant?"selected":""}>${k.naam}</option>`));
 
-  // Honden (gefilterd op klant indien meegegeven)
+  // Honden
   const honden = selectedKlant ? DATA.honden.filter(h=>h.klant_id===selectedKlant) : DATA.honden;
   honden
     .slice().sort((a,b)=>a.hond_naam.localeCompare(b.hond_naam))
@@ -240,6 +242,55 @@ function populateSelects({selectedKlant, selectedHond, selectedLes, selectedStat
       selectedStatus: selSt.value
     });
   };
+
+  // update capaciteit info direct
+  updateCapacityInfo();
+}
+
+/* ------- vrije plaatsen info ------- */
+function updateCapacityInfo(){
+  const selLes = $("#f-les");
+  const infoBoxId = "cap-info";
+  let infoBox = document.getElementById(infoBoxId);
+  if(!infoBox){
+    infoBox = document.createElement("div");
+    infoBox.id = infoBoxId;
+    infoBox.style.margin = "8px 0";
+    infoBox.style.fontSize = "0.9rem";
+    $("#form-bk").insertBefore(infoBox, $("#form-bk").firstChild);
+  }
+
+  const lesId = selLes.value;
+  const les = DATA.lessen.find(l=>l.id===lesId);
+  const selSt = $("#f-status");
+
+  if(les){
+    const cap = Number(les.capaciteit||0);
+    const bez = Number(les.bezet||0);
+    if(cap>0){
+      const vrij = cap - bez;
+      if(vrij>0){
+        infoBox.textContent = `ℹ️ Vrije plaatsen: ${vrij} (van ${cap})`;
+        infoBox.style.color = "#185b00";
+        // status weer activeren
+        [...selSt.options].forEach(o=>o.disabled=false);
+      }else{
+        infoBox.textContent = `⚠️ Les is vol (${bez}/${cap}). Alleen wachtlijst of geannuleerd mogelijk.`;
+        infoBox.style.color = "#b00";
+        // blokkeer 'bevestigd'
+        [...selSt.options].forEach(o=>{
+          if(o.value==="bevestigd") o.disabled=true;
+        });
+        if(selSt.value==="bevestigd") selSt.value="wachtlijst";
+      }
+    }else{
+      infoBox.textContent = "ℹ️ Onbeperkte capaciteit";
+      infoBox.style.color = "#444";
+      [...selSt.options].forEach(o=>o.disabled=false);
+    }
+  }else{
+    infoBox.textContent = "";
+  }
 }
 
 /* ------- acties ------- */
@@ -269,10 +320,9 @@ function onEdit(id){
 async function onDelete(id){
   const row = DATA.boekingen.find(b=>b.id===id);
   if(!row) return;
-  if(!confirm(`Boeking van ${id} verwijderen?`)) return;
+  if(!confirm(`Boeking verwijderen?`)) return;
   try{
     await jSend(`/api/boekingen/${encodeURIComponent(id)}`, "DELETE");
-    // lokaal updaten
     DATA.boekingen = DATA.boekingen.filter(b=>b.id!==id);
     rebuild(); render();
   }catch(err){
@@ -284,7 +334,6 @@ async function onSubmit(e){
   e.preventDefault();
   const form = e.currentTarget;
   const payload = Object.fromEntries(new FormData(form).entries());
-  // normaliseer types
   const body = {
     klant_id: payload.klant_id,
     hond_id: payload.hond_id,
@@ -295,11 +344,9 @@ async function onSubmit(e){
 
   try{
     if(!payload.id){
-      // CREATE
       const created = await jSend("/api/boekingen", "POST", body);
       DATA.boekingen.push(created);
     }else{
-      // UPDATE
       const updated = await jSend(`/api/boekingen/${encodeURIComponent(payload.id)}`, "PUT", body);
       const idx = DATA.boekingen.findIndex(b=>b.id===payload.id);
       if(idx!==-1) DATA.boekingen[idx] = updated;
