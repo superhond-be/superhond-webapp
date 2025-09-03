@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Boekingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <link rel="stylesheet" href="styles.css?v=0903m" />
+  <style>
+    .status-badge{border-radius:999px;padding:2px 8px;font-size:.85rem;font-weight:700;display:inline-block}
+    .st-bevestigd{background:#e6ffcc;border:1px solid #97d36b;color:#185b00}
+    .st-wachtlijst{background:#fff0cc;border:1px solid #f2c46e;color:#7a4d00}
+    .st-geannuleerd{background:#f1f1f1;border:1px solid #d0d0d0;color:#666}
+    .mono{font-family:ui-monospace,Menlo,monospace}
+  </style>
 </head>
 <body>
   <nav class="topnav">
@@ -28,33 +35,50 @@
   <main>
     <section class="card">
       <div class="help">
-        Placeholder-pagina. Hier komt later zoeken/filtreren/export van boekingen.
-        Tip: in <b>E-mail → Automatisch</b> op <a href="les-instellingen.html#sect-email">Instellingen</a> kun je nu al
-        <i>Lesherinneringen</i> genereren vanuit localStorage/ingevulde JSON.
+        Dit overzicht leest live uit <span class="mono">/api/boekingen</span> en verrijkt met
+        <span class="mono">/api/lessen</span>, <span class="mono">/api/klanten</span> en <span class="mono">/api/honden</span>.
       </div>
 
       <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <div class="col" style="min-width:220px"><label>Zoek <input placeholder="klant, hond, les…"></label></div>
+        <div class="col" style="min-width:220px"><label>Zoek <input id="q" placeholder="klant, hond, les…"></label></div>
         <div class="col">
           <label>Status
-            <select>
-              <option>Alle</option><option>Bevestigd</option><option>Wachtlijst</option><option>Geannuleerd</option>
+            <select id="status">
+              <option value="">Alle</option>
+              <option value="bevestigd">Bevestigd</option>
+              <option value="wachtlijst">Wachtlijst</option>
+              <option value="geannuleerd">Geannuleerd</option>
             </select>
           </label>
         </div>
-        <div class="col"><button class="btn">Export CSV</button></div>
+        <div class="col">
+          <label>Vanaf <input type="date" id="from"></label>
+        </div>
+        <div class="col">
+          <label>Tot <input type="date" id="to"></label>
+        </div>
+        <div class="col">
+          <label>Les
+            <select id="les-filter"><option value="">Alle</option></select>
+          </label>
+        </div>
+        <div class="col"><button id="export" class="btn">Export CSV</button></div>
       </div>
 
-      <table style="margin-top:10px">
-        <thead><tr><th>Klant</th><th>Hond</th><th>Les</th><th>Datum</th><th>Tijd</th><th>Status</th><th></th></tr></thead>
+      <table id="tbl-boeking" style="margin-top:10px">
+        <thead>
+          <tr><th>Klant</th><th>Hond</th><th>Les</th><th>Datum</th><th>Tijd</th><th>Status</th><th></th></tr>
+        </thead>
         <tbody>
-          <tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen boekingen.</td></tr>
+          <tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Laden…</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-  <script src="Js/script.js?v=0903k"></script>
+
+  <script src="Js/script.js?v=0903m"></script>
+  <script src="Js/boekingen.js?v=0903m"></script>
 </body>
 </html>
