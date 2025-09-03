@@ -1,11 +1,25 @@
-/* public/Js/boekingen.js v0903m */
-console.log("boekingen.js geladen v0903m");
+/* public/Js/boekingen.js v0903n */
+console.log("boekingen.js geladen v0903n");
 
-const $ = s => document.querySelector(s);
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
 async function j(url){
   const r = await fetch(url, {headers:{'cache-control':'no-cache'}});
   if(!r.ok) throw new Error(`${url} → ${r.status}`);
+  return r.json();
+}
+async function jSend(url, method, body){
+  const r = await fetch(url, {
+    method,
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(body||{})
+  });
+  if(!r.ok) {
+    let msg = r.statusText;
+    try { const e = await r.json(); msg = e.error || msg; } catch {}
+    throw new Error(`${method} ${url} → ${r.status} ${msg}`);
+  }
   return r.json();
 }
 function badge(st){
@@ -32,109 +46,267 @@ function toCSV(rows, headers){
   return head+"\n"+body;
 }
 
+/* ------- state ------- */
+let DATA = {
+  boekingen: [],
+  lessen: [],
+  klanten: [],
+  honden: []
+};
+let ENRICHED = []; // verrijkte rijen voor render
+const byId = (arr) => Object.fromEntries(arr.map(x=>[x.id,x]));
+
+/* ------- modal helpers ------- */
+function openModal(id){ $(id).classList.add("open"); }
+function closeModal(id){ $(id).classList.remove("open"); }
+function clearSelect(sel){ while(sel.options.length) sel.remove(0); }
+
+/* ------- init ------- */
 (async function init(){
-  const tbody = document.querySelector("#tbl-boeking tbody");
+  const tbody = $("#tbl-boeking tbody");
   try{
     const [boekingen, lessen, klanten, honden] = await Promise.all([
       j("/api/boekingen"), j("/api/lessen"), j("/api/klanten"), j("/api/honden")
     ]);
+    DATA = {boekingen, lessen, klanten, honden};
+    rebuild();
 
-    const lesById = Object.fromEntries(lessen.map(l=>[l.id,l]));
-    const klantById = Object.fromEntries(klanten.map(k=>[k.id,k]));
-    const hondById = Object.fromEntries(honden.map(h=>[h.id,h]));
-
-    const rows = boekingen.map(b=>{
-      const les = lesById[b.les_id] || {};
-      const kl  = klantById[b.klant_id] || {};
-      const hd  = hondById[b.hond_id] || {};
-      const dt  = les.start || b.datum || null;
-      return {
-        ...b,
-        klantNaam: kl.naam || "",
-        hondNaam : hd.hond_naam || "",
-        lesNaam  : les.naam || "",
-        iso      : dt,
-        datum    : fmtDate(dt),
-        tijd     : fmtTime(dt),
-        status   : b.status || "bevestigd"
-      };
-    });
-
-    // Les-filter vullen
+    // filters
     const selLes = $("#les-filter");
-    [...new Set(rows.map(r=>r.lesNaam).filter(Boolean))].sort()
+    clearSelect(selLes);
+    selLes.insertAdjacentHTML("beforeend", `<option value="">Alle</option>`);
+    [...new Set(ENRICHED.map(r=>r.lesNaam).filter(Boolean))].sort()
       .forEach(n => selLes.insertAdjacentHTML("beforeend", `<option>${n}</option>`));
 
-    function inRange(iso, from, to){
-      if(!iso) return true;
-      const t = new Date(iso).setHours(0,0,0,0);
-      if(from && t < new Date(from).setHours(0,0,0,0)) return false;
-      if(to   && t > new Date(to  ).setHours(23,59,59,999)) return false;
-      return true;
-    }
-
-    function render(){
-      const q = ($("#q").value||"").toLowerCase();
-      const st= ($("#status").value||"").toLowerCase();
-      const lf= selLes.value;
-      const from=$("#from").value;
-      const to  =$("#to").value;
-
-      const filtered = rows.filter(r=>{
-        const mq = !q || [r.klantNaam,r.hondNaam,r.lesNaam].some(v=>(v||"").toLowerCase().includes(q));
-        const ms = !st || (r.status||"").toLowerCase()===st;
-        const ml = !lf || r.lesNaam===lf;
-        const md = inRange(r.iso, from, to);
-        return mq && ms && ml && md;
-      });
-
-      if(!filtered.length){
-        tbody.innerHTML = `<tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Geen boekingen gevonden.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(r=>`
-        <tr>
-          <td>${r.klantNaam}</td>
-          <td>${r.hondNaam}</td>
-          <td>${r.lesNaam}</td>
-          <td>${r.datum}</td>
-          <td>${r.tijd}</td>
-          <td>${badge(r.status)}</td>
-          <td class="t-actions">
-            <button class="icon-btn" title="Bewerken">✏️</button>
-            <button class="icon-btn delete" title="Verwijderen">🗑️</button>
-          </td>
-        </tr>
-      `).join("");
-    }
-    render();
-
+    // events
     ["#q","#status","#from","#to","#les-filter"].forEach(sel=>{
       $(sel).addEventListener("input", render);
       $(sel).addEventListener("change", render);
     });
 
-    $("#export").addEventListener("click", ()=>{
-      const headers = [
-        {key:"klantNaam", label:"Klant"},
-        {key:"hondNaam",  label:"Hond"},
-        {key:"lesNaam",   label:"Les"},
-        {key:"datum",     label:"Datum"},
-        {key:"tijd",      label:"Tijd"},
-        {key:"status",    label:"Status"}
-      ];
-      const csv = toCSV(rows, headers);
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "boekingen.csv";
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
+    $("#export").addEventListener("click", exportCSV);
+    $("#btn-new").addEventListener("click", onNew);
+
+    // table click (edit/delete)
+    tbody.addEventListener("click", (e)=>{
+      const btn = e.target.closest("button");
+      if(!btn) return;
+      const tr = e.target.closest("tr");
+      const id = tr?.dataset?.id;
+      if(btn.classList.contains("edit")) onEdit(id);
+      if(btn.classList.contains("delete")) onDelete(id);
     });
 
+    // modal close
+    $("[data-close='modal-bk']").addEventListener("click", ()=>closeModal("#modal-bk"));
+
+    // form submit
+    $("#form-bk").addEventListener("submit", onSubmit);
+
+    render();
   }catch(err){
     console.error(err);
     tbody.innerHTML = `<tr class="placeholder"><td colspan="7" style="text-align:center;color:#b00;">Kan data niet laden (${err.message}).</td></tr>`;
   }
 })();
+
+/* ------- data transform & render ------- */
+function rebuild(){
+  const lesById  = byId(DATA.lessons || DATA.lessen || DATA.lessens || DATA.lessen);
+  const _lesById = byId(DATA.lessen);
+  const klantById= byId(DATA.klanten);
+  const hondById = byId(DATA.honden);
+
+  ENRICHED = DATA.boekingen.map(b=>{
+    const les = _lesById[b.les_id] || {};
+    const kl  = klantById[b.klant_id] || {};
+    const hd  = hondById[b.hond_id] || {};
+    const dt  = les.start || b.datum || null;
+    return {
+      ...b,
+      klantNaam: kl.naam || "",
+      hondNaam : hd.hond_naam || "",
+      lesNaam  : les.naam || "",
+      iso      : dt,
+      datum    : fmtDate(dt),
+      tijd     : fmtTime(dt),
+      status   : b.status || "bevestigd"
+    };
+  });
+}
+
+function render(){
+  const tbody = $("#tbl-boeking tbody");
+  const q = ($("#q").value||"").toLowerCase();
+  const st= ($("#status").value||"").toLowerCase();
+  const lf= $("#les-filter").value;
+  const from=$("#from").value;
+  const to  =$("#to").value;
+
+  function inRange(iso, from, to){
+    if(!iso) return true;
+    const t = new Date(iso).setHours(0,0,0,0);
+    if(from && t < new Date(from).setHours(0,0,0,0)) return false;
+    if(to   && t > new Date(to  ).setHours(23,59,59,999)) return false;
+    return true;
+  }
+
+  const filtered = ENRICHED.filter(r=>{
+    const mq = !q || [r.klantNaam,r.hondNaam,r.lesNaam].some(v=>(v||"").toLowerCase().includes(q));
+    const ms = !st || (r.status||"").toLowerCase()===st;
+    const ml = !lf || r.lesNaam===lf;
+    const md = inRange(r.iso, from, to);
+    return mq && ms && ml && md;
+  });
+
+  if(!filtered.length){
+    tbody.innerHTML = `<tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Geen boekingen gevonden.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(r=>`
+    <tr data-id="${r.id}">
+      <td>${r.klantNaam}</td>
+      <td>${r.hondNaam}</td>
+      <td>${r.lesNaam}</td>
+      <td>${r.datum}</td>
+      <td>${r.tijd}</td>
+      <td>${badge(r.status)}</td>
+      <td class="t-actions">
+        <button class="icon-btn edit" title="Bewerken">✏️</button>
+        <button class="icon-btn delete" title="Verwijderen">🗑️</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function exportCSV(){
+  const headers = [
+    {key:"klantNaam", label:"Klant"},
+    {key:"hondNaam",  label:"Hond"},
+    {key:"lesNaam",   label:"Les"},
+    {key:"datum",     label:"Datum"},
+    {key:"tijd",      label:"Tijd"},
+    {key:"status",    label:"Status"}
+  ];
+  const csv = toCSV(ENRICHED, headers);
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "boekingen.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ------- modal: vullen/selects ------- */
+function populateSelects({selectedKlant, selectedHond, selectedLes, selectedStatus="bevestigd"}) {
+  const selKlant = $("#f-klant");
+  const selHond  = $("#f-hond");
+  const selLes   = $("#f-les");
+  const selSt    = $("#f-status");
+
+  clearSelect(selKlant);
+  clearSelect(selHond);
+  clearSelect(selLes);
+
+  // Klanten
+  DATA.klanten
+    .slice().sort((a,b)=>a.naam.localeCompare(b.naam))
+    .forEach(k => selKlant.insertAdjacentHTML("beforeend",
+      `<option value="${k.id}" ${k.id===selectedKlant?"selected":""}>${k.naam}</option>`));
+
+  // Honden (gefilterd op klant indien meegegeven)
+  const honden = selectedKlant ? DATA.honden.filter(h=>h.klant_id===selectedKlant) : DATA.honden;
+  honden
+    .slice().sort((a,b)=>a.hond_naam.localeCompare(b.hond_naam))
+    .forEach(h => selHond.insertAdjacentHTML("beforeend",
+      `<option value="${h.id}" ${h.id===selectedHond?"selected":""}>${h.hond_naam}</option>`));
+
+  // Lessen
+  DATA.lessen
+    .slice().sort((a,b)=>a.naam.localeCompare(b.naam))
+    .forEach(l => selLes.insertAdjacentHTML("beforeend",
+      `<option value="${l.id}" ${l.id===selectedLes?"selected":""}>${l.naam}</option>`));
+
+  // Status
+  selSt.value = selectedStatus;
+
+  // Als klant wijzigt → honden filteren
+  selKlant.onchange = () => {
+    populateSelects({
+      selectedKlant: selKlant.value,
+      selectedHond: null,
+      selectedLes: selLes.value,
+      selectedStatus: selSt.value
+    });
+  };
+}
+
+/* ------- acties ------- */
+function onNew(){
+  $("#modal-title").textContent = "Nieuwe boeking";
+  $("#form-bk").reset();
+  $("#form-bk").id.value = "";
+  populateSelects({ selectedKlant: DATA.klanten[0]?.id || null, selectedHond: null, selectedLes: DATA.lessen[0]?.id || null });
+  openModal("#modal-bk");
+}
+
+function onEdit(id){
+  const row = DATA.boekingen.find(b=>b.id===id);
+  if(!row) return;
+  $("#modal-title").textContent = "Boeking bewerken";
+  $("#form-bk").id.value = row.id;
+  populateSelects({
+    selectedKlant: row.klant_id,
+    selectedHond : row.hond_id,
+    selectedLes  : row.les_id,
+    selectedStatus: row.status || "bevestigd"
+  });
+  $("#f-datum").value = row.datum || "";
+  openModal("#modal-bk");
+}
+
+async function onDelete(id){
+  const row = DATA.boekingen.find(b=>b.id===id);
+  if(!row) return;
+  if(!confirm(`Boeking van ${id} verwijderen?`)) return;
+  try{
+    await jSend(`/api/boekingen/${encodeURIComponent(id)}`, "DELETE");
+    // lokaal updaten
+    DATA.boekingen = DATA.boekingen.filter(b=>b.id!==id);
+    rebuild(); render();
+  }catch(err){
+    alert("Verwijderen mislukt: "+err.message);
+  }
+}
+
+async function onSubmit(e){
+  e.preventDefault();
+  const form = e.currentTarget;
+  const payload = Object.fromEntries(new FormData(form).entries());
+  // normaliseer types
+  const body = {
+    klant_id: payload.klant_id,
+    hond_id: payload.hond_id,
+    les_id: payload.les_id,
+    status: payload.status || "bevestigd",
+    datum : payload.datum || null
+  };
+
+  try{
+    if(!payload.id){
+      // CREATE
+      const created = await jSend("/api/boekingen", "POST", body);
+      DATA.boekingen.push(created);
+    }else{
+      // UPDATE
+      const updated = await jSend(`/api/boekingen/${encodeURIComponent(payload.id)}`, "PUT", body);
+      const idx = DATA.boekingen.findIndex(b=>b.id===payload.id);
+      if(idx!==-1) DATA.boekingen[idx] = updated;
+    }
+    closeModal("#modal-bk");
+    rebuild(); render();
+  }catch(err){
+    alert("Opslaan mislukt: "+err.message);
+  }
+}
