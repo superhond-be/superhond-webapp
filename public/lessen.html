@@ -2,13 +2,12 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Lessen beheren</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable" />
+  <link rel="stylesheet" href="app.css?v=v0903clean" />
   <script src="app.js" defer></script>
 </head>
 <body>
-
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -21,34 +20,30 @@
     </ul>
   </nav>
 
-  <div style="text-align:center; margin-top:20px;">
+  <div class="page-title-wrap">
     <div class="page-title"><span class="paw">🐾</span> Superhond.be – Admin <span class="paw">🐾</span></div>
   </div>
 
   <main>
     <h2>Overzicht lessen</h2>
+    <p>
+      <button class="btn btn--dark">Nieuwe les</button>
+      <button class="btn btn--primary">Opslaan</button>
+    </p>
     <table>
       <thead><tr><th>Lesnaam</th><th>Thema</th><th>Trainer</th><th>Startdatum</th><th>Acties</th></tr></thead>
       <tbody>
         <tr>
           <td>Puppy Start</td><td>Socialisatie</td><td>Sofie</td><td>01/10/2025</td>
-          <td>
-            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
-            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
-          </td>
-        </tr>
-        <tr>
-          <td>Gehoorzaamheid</td><td>Basis</td><td>Tom</td><td>15/10/2025</td>
-          <td>
-            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
-            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+          <td class="t-actions">
+            <button class="btn btn--ghost btn--sm">Bewerken</button>
+            <button class="btn btn--ghost btn--sm">Verwijderen</button>
           </td>
         </tr>
       </tbody>
     </table>
   </main>
 
-  <div class="version-tag">assets v0903stable</div>
-  <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
+  <div class="version-tag">assets v0903clean</div>
 </body>
 </html>
