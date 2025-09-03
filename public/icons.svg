@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- Bewerk icoon -->
+  <symbol id="icon-edit" viewBox="0 0 24 24">
+    <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zM20.71 
+             7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 
+             1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
+  </symbol>
+
+  <!-- Verwijder icoon -->
+  <symbol id="icon-delete" viewBox="0 0 24 24">
+    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 
+             0 2-.9 2-2V7H6v12zm3.46-9.12 
+             1.41-1.41L12 10.59l1.12-1.12 
+             1.41 1.41L13.41 12l1.12 1.12-1.41 
+             1.41L12 13.41l-1.12 1.12-1.41-1.41L10.59 
+             12l-1.13-1.12zM15.5 4l-1-1h-5l-1 
+             1H5v2h14V4z"/>
+  </symbol>
+
+  <!-- Zoek icoon -->
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <path d="M15.5 14h-.79l-.28-.27A6.471 
+             6.471 0 0 0 16 9.5 6.5 
+             6.5 0 1 0 9.5 16c1.61 0 3.09-.59 
+             4.23-1.57l.27.28v.79l5 
+             4.99L20.49 19l-4.99-5zM9.5 
+             14C7.01 14 5 11.99 5 9.5S7.01 
+             5 9.5 5 14 7.01 14 9.5 
+             11.99 14 9.5 14z"/>
+  </symbol>
+
+  <!-- Opslaan icoon -->
+  <symbol id="icon-save" viewBox="0 0 24 24">
+    <path d="M17 3H5c-1.1 0-2 .9-2 
+             2v14c0 1.1.9 2 2 2h14c1.1 
+             0 2-.9 2-2V7l-4-4zm-5 
+             16c-1.66 0-3-1.34-3-3s1.34-3 
+             3-3 3 1.34 3 3-1.34 3-3 
+             3zm3-10H5V5h10v4z"/>
+  </symbol>
+
+  <!-- Plus icoon -->
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+  </symbol>
+</svg>
