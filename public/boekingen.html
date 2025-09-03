@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Superhond · Boekingen</title>
+  <link rel="stylesheet" href="styles.css?v=0903k" />
+</head>
+<body>
+  <nav class="topnav">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="klanten.html">Klanten</a></li>
+      <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html">Lessen beheren</a></li>
+      <li><a href="boekingen.html" class="active">Boekingen</a></li>
+      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+      <li><a href="les-instellingen.html">Instellingen</a></li>
+    </ul>
+  </nav>
+
+  <header class="page-header">
+    <div class="page-bread">Boekingen</div>
+    <h1>Boekingen
+      <span class="page-badge">Superhond.be – Admin</span>
+    </h1>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="help">
+        Placeholder-pagina. Hier komt later zoeken/filtreren/export van boekingen.
+        Tip: in <b>E-mail → Automatisch</b> op <a href="les-instellingen.html#sect-email">Instellingen</a> kun je nu al
+        <i>Lesherinneringen</i> genereren vanuit localStorage/ingevulde JSON.
+      </div>
+
+      <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div class="col" style="min-width:220px"><label>Zoek <input placeholder="klant, hond, les…"></label></div>
+        <div class="col">
+          <label>Status
+            <select>
+              <option>Alle</option><option>Bevestigd</option><option>Wachtlijst</option><option>Geannuleerd</option>
+            </select>
+          </label>
+        </div>
+        <div class="col"><button class="btn">Export CSV</button></div>
+      </div>
+
+      <table style="margin-top:10px">
+        <thead><tr><th>Klant</th><th>Hond</th><th>Les</th><th>Datum</th><th>Tijd</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen boekingen.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
+  <script src="Js/script.js?v=0903k"></script>
+</body>
+</html>
