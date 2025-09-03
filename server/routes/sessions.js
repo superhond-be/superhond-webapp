@@ -1,49 +1,56 @@
-import express from "express";
-import { CLASSES } from "./classes.js";
+const express = require('express');
+const { readJSON, writeJSON, uid } = require('../helpers');
+const { render } = require('../tpl');
+const { sendMail, logoAttachment } = require('../mailer');
 const router = express.Router();
-// server/routes/sessions.js
-import express from "express";
-const router = express.Router();
 
-router.get("/", (_req, res) => res.json([]));
+router.get('/', (_req,res)=> res.json(readJSON('sessions.json', [])) );
 
-export default router;
-/** In-memory sessions (lessen-momenten) */
-let SESSIONS = [
-  // voorbeeld:
-  // { id: 1, classId: 1, date: "2025-09-07", time: "09:00", capacity: 12, note: "" }
-];
-let NEXT_ID = 1;
-
-// lijst (filters: ?classId= & ?date=YYYY-MM-DD)
-router.get("/", (req, res) => {
-  let list = SESSIONS.slice();
-  const { classId, date } = req.query || {};
-  if (classId) list = list.filter(s => s.classId === Number(classId));
-  if (date)    list = list.filter(s => s.date === String(date));
-  res.json(list);
-});
-
-// toevoegen
-router.post("/", (req, res) => {
-  const { classId, date, time, capacity = null, note = "" } = req.body || {};
-  if (!classId) return res.status(400).json({ error: "classId is verplicht" });
-  if (!date) return res.status(400).json({ error: "Datum is verplicht (YYYY-MM-DD)" });
-  if (!time) return res.status(400).json({ error: "Tijd is verplicht (HH:MM)" });
-
-  const klas = CLASSES.find(c => c.id === Number(classId));
-  if (!klas) return res.status(404).json({ error: "Klas niet gevonden" });
-
-  const item = {
-    id: NEXT_ID++,
-    classId: Number(classId),
-    date: String(date),
-    time: String(time),
-    capacity: capacity != null ? Number(capacity) : null,
-    note: String(note || "")
-  };
-  SESSIONS.push(item);
+router.post('/', (req,res)=>{
+  const list = readJSON('sessions.json', []);
+  const item = { id: uid(), geannuleerd:false, ...req.body };
+  list.push(item); writeJSON('sessions.json', list);
   res.status(201).json(item);
 });
 
-export default router;
+router.put('/:id', async (req,res)=>{
+  const sessions = readJSON('sessions.json', []);
+  const i = sessions.findIndex(s => s.id === req.params.id);
+  if (i === -1) return res.status(404).json({error:'Not found'});
+
+  sessions[i] = { ...sessions[i], ...req.body };
+  writeJSON('sessions.json', sessions);
+  const updated = sessions[i];
+
+  // Bij annuleren → mail iedereen (aangemeld + wachtlijst)
+  if (req.body.geannuleerd === true){
+    const enrollments = readJSON('enrollments.json', []);
+    const courses = readJSON('courses.json', []);
+    const course = courses.find(c => c.id === updated.sjabloon_id);
+    const payloadBase = {
+      lesNaam: course?.naam||'Les',
+      datum: updated.datum, tijd: updated.tijd,
+      locatie: course?.locatie_naam||'-', trainer: course?.trainer_naam||'-', manage_url:'#'
+    };
+    const targets = enrollments.filter(e => e.sessie_id === updated.id && (e.status==='aangemeld' || e.status==='wachtlijst'));
+    for (const e of targets){
+      const payload = { ...payloadBase, naam: e.naam };
+      const html = render('session-cancelled.html', payload);
+      const text = render('session-cancelled.txt',  payload);
+      try {
+        await sendMail({ to: e.email, subject: 'Sessie geannuleerd', text, html,
+          attachments:[logoAttachment()].filter(Boolean) });
+      } catch(err){ console.error('MAIL session-cancel failed for', e.email, err?.message); }
+    }
+  }
+
+  res.json(updated);
+});
+
+router.delete('/:id', (req,res)=>{
+  const out = readJSON('sessions.json', []).filter(x => x.id !== req.params.id);
+  writeJSON('sessions.json', out);
+  res.json({ ok:true });
+});
+
+module.exports = router;
