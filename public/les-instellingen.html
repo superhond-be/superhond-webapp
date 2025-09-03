@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903h" />
+  <link rel="stylesheet" href="styles.css?v=0903j" />
   <style>
     .help{background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553}
     .tabs{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
@@ -11,7 +11,16 @@
     .tab-btn:hover{background:#ffd300;border-color:#ffd300;color:#222}
     .kbd{font-family:ui-monospace,Menlo,monospace;background:#f6f6f6;border:1px solid #ddd;border-radius:6px;padding:2px 6px}
 
-    /* email: kaarten en subtabs */
+    /* header-breadcrumb + badge */
+    .page-header{margin-bottom:8px}
+    .page-bread{
+      background:#ffd300;color:#222;font-weight:700;border-radius:8px;padding:6px 10px;display:inline-block;margin:0 0 8px 0;
+    }
+    .page-badge{
+      font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;font-weight:600;color:#222;
+    }
+
+    /* email UI */
     .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
     .card-mini{background:#fff;border:1px solid #eaeaea;border-radius:10px;padding:10px 12px}
     .card-mini h4{margin:.1rem 0 .4rem;font-size:1rem}
@@ -36,14 +45,17 @@
       <li><a href="index.html">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html">Lessen beheren</a></li>
+      <li><a href="boekingen.html">Boekingen</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
       <li><a href="les-instellingen.html" class="active">Instellingen</a></li>
     </ul>
   </nav>
 
-  <header>
+  <header class="page-header">
+    <div class="page-bread">Instellingen</div>
     <h1>Les instellingen
-      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903h</span>
+      <span class="page-badge">Superhond.be – Admin instellingen</span>
     </h1>
   </header>
 
@@ -66,6 +78,7 @@
         <div class="row">
           <div class="col"><label>Naam* <input name="naam" required placeholder="bv. Puppy"/></label></div>
           <div class="col"><label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bv. 6"/></label></div>
+          <div class="col"><label>Lesduur (minuten) <input type="number" name="lesduur_min" min="1" placeholder="bv. 60"/></label></div>
           <div class="col"><label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bv. 6"/></label></div>
         </div>
         <div class="row"><div class="col"><label>Max deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bv. 10"/></label></div></div>
@@ -73,8 +86,8 @@
         <button type="submit" class="btn">Opslaan</button><button type="button" class="btn" id="reset-type">Nieuw</button>
       </form>
       <table id="table-type">
-        <thead><tr><th>Naam</th><th>Aantal</th><th>Geldig (m)</th><th>Max</th><th></th></tr></thead>
-        <tbody><tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen <strong>lestypes</strong>.</td></tr></tbody>
+        <thead><tr><th>Naam</th><th>Aantal</th><th>Duur (min)</th><th>Geldig (m)</th><th>Max</th><th></th></tr></thead>
+        <tbody><tr class="placeholder"><td colspan="6" style="text-align:center;color:#777;">Nog geen <strong>lestypes</strong>.</td></tr></tbody>
       </table>
     </section>
 
@@ -214,64 +227,13 @@
       <!-- Automatisch -->
       <div id="email-tab-automation" class="email-tab" style="display:none">
         <div class="help">
-          Genereer lijsten en maak e-mails met de juiste template. <b>Verjaardag hond</b>
-          gebruikt de template met trigger <span class="kbd">dog_birthday</span>.
-          Placeholders: <span class="kbd">{{klant_naam}}</span>, <span class="kbd">{{hond_naam}}</span>, <span class="kbd">{{geboortedatum}}</span>.
+          <b>Verjaardag hond</b> gebruikt de template <span class="kbd">dog_birthday</span>.
         </div>
-<hr style="margin:18px 0">
 
-<h3>Lesherinnering</h3>
-<div class="help">
-  Zoekt geplande (of ingeplakte) boekingen en maakt per item een e-mail met de template
-  met trigger <span class="kbd">class_reminder</span>.<br>
-  Placeholders: <span class="kbd">{{klant_naam}}</span>, <span class="kbd">{{les_naam}}</span>,
-  <span class="kbd">{{datum}}</span>, <span class="kbd">{{starttijd}}</span>, <span class="kbd">{{locatie}}</span>.
-</div>
-
-<details>
-  <summary><b>Data-bron lesboekingen</b> (klik)</summary>
-  <p>We zoeken boekingen in <span class="kbd">localStorage["classBookings"]</span> of <span class="kbd">localStorage["lessenBookings"]</span>.</p>
-  <p>Structuur per item (minimaal):</p>
-  <pre class="kbd" style="display:block;white-space:pre-wrap;padding:8px">
-{ "klant_naam":"Eva", "email":"eva@example.com",
-  "les_naam":"Puppy Basis", "datum":"2025-09-10", "starttijd":"18:30", "locatie":"Retie — Coach Sofie" }
-  </pre>
-  <p>Geen data? Plak JSON hieronder en klik “Gebruik ingeplakte boekingen”.</p>
-  <textarea id="auto-classes-json" rows="6" style="width:100%;font-family:ui-monospace" placeholder='[
-  {"klant_naam":"Eva","email":"eva@example.com","les_naam":"Puppy Basis","datum":"2025-09-10","starttijd":"18:30","locatie":"Retie — Coach Sofie"},
-  {"klant_naam":"Tom","email":"tom@example.com","les_naam":"Socialisatie","datum":"2025-09-11","starttijd":"19:00","locatie":"Turnhout"}
-]'></textarea>
-  <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
-    <button class="btn" id="auto-classes-use-pasted">Gebruik ingeplakte boekingen</button>
-    <button class="btn" id="auto-classes-use-storage">Gebruik boekingen uit localStorage</button>
-  </div>
-</details>
-
-<div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:8px">
-  <div class="col">
-    <label>Wanneer
-      <select id="auto-class-when">
-        <option value="1">Morgen</option>
-        <option value="2">Overmorgen</option>
-        <option value="3">Binnen 3 dagen</option>
-      </select>
-    </label>
-  </div>
-  <div class="col"><button class="btn" id="auto-class-scan">Zoek lessen</button></div>
-</div>
-
-<table id="table-auto-class" style="margin-top:10px">
-  <thead><tr><th>Klant</th><th>E-mail</th><th>Les</th><th>Datum</th><th>Tijd</th><th>Locatie</th><th></th></tr></thead>
-  <tbody><tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen resultaten.</td></tr></tbody>
-</table>
         <details>
-          <summary><b>Data-bron</b> (klik)</summary>
-          <p>We lezen honden uit <span class="kbd">localStorage["dogs"]</span> of <span class="kbd">localStorage["honden"]</span>
-            (array met velden: <span class="kbd">hond_naam</span>, <span class="kbd">geboortedatum</span> = YYYY-MM-DD, <span class="kbd">klant_naam</span>, <span class="kbd">email</span>).</p>
-          <p>Geen data? Plak hieronder JSON en klik “Gebruik ingeplakte data”.</p>
+          <summary><b>Data-bron honden</b> (klik)</summary>
           <textarea id="auto-dogs-json" rows="6" style="width:100%;font-family:ui-monospace" placeholder='[
-  {"hond_naam":"Bowie","geboortedatum":"2020-09-03","klant_naam":"Eva","email":"eva@example.com"},
-  {"hond_naam":"Nala","geboortedatum":"2019-09-04","klant_naam":"Tom","email":"tom@example.com"}
+  {"hond_naam":"Bowie","geboortedatum":"2020-09-03","klant_naam":"Eva","email":"eva@example.com"}
 ]'></textarea>
           <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
             <button class="btn" id="auto-use-pasted">Gebruik ingeplakte data</button>
@@ -296,11 +258,47 @@
           <thead><tr><th>Hond</th><th>Geboortedatum</th><th>Klant</th><th>E-mail</th><th></th></tr></thead>
           <tbody><tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen resultaten.</td></tr></tbody>
         </table>
+
+        <hr style="margin:18px 0">
+
+        <h3>Lesherinnering</h3>
+        <div class="help">
+          Gebruikt template <span class="kbd">class_reminder</span>.
+        </div>
+
+        <details>
+          <summary><b>Data-bron lesboekingen</b> (klik)</summary>
+          <textarea id="auto-classes-json" rows="6" style="width:100%;font-family:ui-monospace" placeholder='[
+  {"klant_naam":"Eva","email":"eva@example.com","les_naam":"Puppy Basis","datum":"2025-09-10","starttijd":"18:30","locatie":"Retie — Coach Sofie"}
+]'></textarea>
+          <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
+            <button class="btn" id="auto-classes-use-pasted">Gebruik ingeplakte boekingen</button>
+            <button class="btn" id="auto-classes-use-storage">Gebruik boekingen uit localStorage</button>
+          </div>
+        </details>
+
+        <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:8px">
+          <div class="col">
+            <label>Wanneer
+              <select id="auto-class-when">
+                <option value="1">Morgen</option>
+                <option value="2">Overmorgen</option>
+                <option value="3">Binnen 3 dagen</option>
+              </select>
+            </label>
+          </div>
+          <div class="col"><button class="btn" id="auto-class-scan">Zoek lessen</button></div>
+        </div>
+
+        <table id="table-auto-class" style="margin-top:10px">
+          <thead><tr><th>Klant</th><th>E-mail</th><th>Les</th><th>Datum</th><th>Tijd</th><th>Locatie</th><th></th></tr></thead>
+          <tbody><tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen resultaten.</td></tr></tbody>
+        </table>
       </div>
     </section>
   </main>
 
-  <!-- Modal: Template bewerken/nieuw -->
+  <!-- Modals (ongewijzigd) -->
   <div class="modal" id="modal-email">
     <div class="modal-card">
       <div class="modal-head">
@@ -320,7 +318,6 @@
               <select name="taal">
                 <option value="nl">Nederlands</option><option value="en">Engels</option><option value="fr">Frans</option>
               </select></label></div>
-            <!-- ✅ Trigger -->
             <div class="col"><label>Trigger
               <select name="trigger">
                 <option value="">(geen)</option>
@@ -339,3 +336,37 @@
             <input name="onderwerp" required placeholder="bv. Bevestiging: {{les_naam}} op {{datum}}"/></label></div></div>
           <label>Inhoud (HTML toegestaan)*
             <textarea name="inhoud" rows="10" required placeholder="Beste {{klant_naam}},&#10;&#10>..."></textarea>
+          </label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn" type="submit">Opslaan</button>
+            <button class="btn" type="button" id="email-preview">Voorbeeld</button>
+            <button class="btn" type="button" data-close="modal-email">Annuleer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-preview">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Voorbeeld e-mail</h3>
+        <button class="close-x" data-close="modal-preview">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:10px">
+          <label>Voorbeeld-waarden (JSON)
+            <textarea id="preview-data" rows="6" style="width:100%;font-family:ui-monospace" placeholder='{"klant_naam":"Eva","hond_naam":"Bowie","datum":"ma 7 okt"}'></textarea>
+          </label>
+        </div>
+        <div id="preview-render" style="border:1px solid #eee;border-radius:8px;padding:12px"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
+
+  <script src="Js/script.js?v=0903j"></script>
+  <script src="Js/lessen-instellingen.js?v=0903j"></script>
+</body>
+</html>
