@@ -3,53 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond.be – Strippenkaarten</title>
-  <link rel="stylesheet" href="styles.css?v=0903s">
+  <link rel="stylesheet" href="styles.css?v=0903t">
 </head>
-<body>
+<body class="page-strippenkaarten">
   <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a class="active" href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html">Instellingen</a></li>
-    </ul>
+    <a href="index.html">Dashboard</a>
+    <a href="klanten.html">Klanten</a>
+    <a href="honden.html">Honden</a>
+    <a href="lessen.html">Lessen beheren</a>
+    <a href="boekingen.html">Boekingen</a>
+    <a href="strippenkaarten.html" class="active">Strippenkaarten</a>
+    <a href="les-instellingen.html">Instellingen</a>
   </nav>
 
   <main>
-    <h1>Strippenkaarten <span class="page-badge">v0903s</span></h1>
+    <h1>Superhond.be – Strippenkaarten</h1>
 
-    <section class="tab-panel">
-      <h2>Nieuwe kaart</h2>
-      <form id="kaart-new" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <label>Naam <input type="text" name="naam" placeholder="bv. 10-rittenkaart" required></label>
-        <label>Aantal strippen <input type="number" name="aantal" placeholder="bv. 10"></label>
-        <label>Geldigheid (maanden) <input type="number" name="geldigheid" placeholder="bv. 6"></label>
-        <label>Opmerking <input type="text" name="opm" placeholder="optioneel"></label>
-        <div style="grid-column:1/-1;display:flex;gap:8px">
-          <button class="btn" type="submit">Opslaan</button>
-          <button class="btn" type="reset">Leeg</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="tab-panel">
-      <h2>Beschikbare kaarten</h2>
-      <table id="tbl-kaarten">
+    <section>
+      <h2>Overzicht strippenkaarten</h2>
+      <table>
         <thead>
-          <tr><th>Naam</th><th>Strippen</th><th>Geldig (m)</th><th>Opmerking</th><th>Acties</th></tr>
+          <tr><th>Naam</th><th>Aantal</th><th>Prijs</th><th>Acties</th></tr>
         </thead>
         <tbody>
-          <tr><td colspan="5" class="muted">Nog geen strippenkaarten.</td></tr>
+          <tr><td>—</td><td>—</td><td>—</td><td>✏️ ❌</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
-  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
-
-  <script src="Js/strippenkaarten.js?v=0903s"></script>
+  <footer>
+    <span class="debug-label">assets v0903t</span>
+  </footer>
 </body>
 </html>
