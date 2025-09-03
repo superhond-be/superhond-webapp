@@ -2,9 +2,9 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Honden</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable" />
+  <link rel="stylesheet" href="app.css?v=v0903stable"/>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -27,9 +27,37 @@
 
   <main>
     <h2>Overzicht honden</h2>
-    <p>Hier beheer je alle honden van je klanten.</p>
+    <p>
+      <button class="btn btn--dark">
+        <svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe hond
+      </button>
+      <button class="btn btn--ghost btn--sm">
+        <svg class="icon"><use href="icons.svg#icon-search"></use></svg> Zoeken
+      </button>
+    </p>
+
+    <table>
+      <thead><tr><th>Naam</th><th>Ras</th><th>Geboortedatum</th><th>Eigenaar</th><th>Acties</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Otje</td><td>Border Collie</td><td>12/03/2022</td><td>Jan Peeters</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+          </td>
+        </tr>
+        <tr>
+          <td>Molly</td><td>Labrador</td><td>08/11/2021</td><td>Eva Janssens</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </main>
 
   <div class="version-tag">assets v0903stable</div>
+  <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
 </body>
 </html>
