@@ -1,4 +1,4 @@
 [
-  { "id": "lc_001", "locatie": "Retie — Coach Sofie", "adres": "Dorpstraat 1", "plaats": "2470 Retie" },
-  { "id": "lc_002", "locatie": "Turnhout — Hal B",     "adres": "Parklaan 5", "plaats": "2300 Turnhout" }
+  { "id": "loc_001", "locatie": "Retie Hondenschool", "adres": "Kinschotseweg 1A, 2470 Retie" },
+  { "id": "loc_002", "locatie": "Turnhout Agility Park", "adres": "Parklaan 12, 2300 Turnhout" }
 ]
