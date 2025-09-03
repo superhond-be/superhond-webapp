@@ -1,0 +1,4 @@
+[
+  { "id": "hd_001", "klant_id": "kl_001", "hond_naam": "Bowie", "geboortedatum": "2020-09-03", "ras": "Border Collie" },
+  { "id": "hd_002", "klant_id": "kl_002", "hond_naam": "Nala",  "geboortedatum": "2019-09-04", "ras": "Labrador" }
+]
