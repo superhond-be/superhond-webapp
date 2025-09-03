@@ -3,100 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond.be – Dashboard</title>
-  <link rel="stylesheet" href="styles.css?v=0903r">
-  <style>
-    /* Dashboard specifieke layout */
-    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0}
-    .kpi{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px}
-    .kpi h3{margin:0 0 6px 0;font-size:14px;color:#555}
-    .kpi .big{font-size:28px;font-weight:700}
-    .cards{display:grid;grid-template-columns:1fr;gap:12px}
-    @media (min-width: 900px){ .cards{grid-template-columns:1fr 1fr} }
-    .card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #eee;vertical-align:top}
-    th{background:#f7f7f7;text-align:left}
-    .muted{color:#777}
-  </style>
+  <link rel="stylesheet" href="styles.css?v=0903t">
 </head>
-<body>
-  <!-- Gele hoofdnavigatie -->
+<body class="page-dashboard">
   <nav class="topnav">
-    <ul>
-      <li><a class="active" href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html">Instellingen</a></li>
-    </ul>
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="klanten.html">Klanten</a>
+    <a href="honden.html">Honden</a>
+    <a href="lessen.html">Lessen beheren</a>
+    <a href="boekingen.html">Boekingen</a>
+    <a href="strippenkaarten.html">Strippenkaarten</a>
+    <a href="les-instellingen.html">Instellingen</a>
   </nav>
 
   <main>
-    <h1>Superhond.be – Dashboard <span class="page-badge">v0903r</span></h1>
+    <h1>Superhond.be – Dashboard</h1>
 
-    <!-- KPI tegels -->
-    <section class="kpi-grid" id="kpis">
-      <div class="kpi">
-        <h3>Klanten</h3>
-        <div class="big" id="kpi-klanten">–</div>
-        <div class="muted">totaal</div>
-      </div>
-      <div class="kpi">
-        <h3>Honden</h3>
-        <div class="big" id="kpi-honden">–</div>
-        <div class="muted">totaal</div>
-      </div>
-      <div class="kpi">
-        <h3>Lessen (actief)</h3>
-        <div class="big" id="kpi-lessen">–</div>
-        <div class="muted">actieve lessen</div>
-      </div>
-      <div class="kpi">
-        <h3>Boekingen (7d)</h3>
-        <div class="big" id="kpi-boekingen">–</div>
-        <div class="muted">komende 7 dagen</div>
-      </div>
+    <section class="cards">
+      <div class="card">Klanten<br><strong>2</strong> totaal</div>
+      <div class="card">Honden<br><strong>2</strong> totaal</div>
+      <div class="card">Lessen (actief)<br><strong>1</strong> actieve lessen</div>
     </section>
 
-    <!-- Overzichten -->
-    <section class="cards">
-      <div class="card">
-        <h2>Eerstvolgende lessen</h2>
-        <p class="muted" id="nextlessen-sub">Binnenkort</p>
-        <table id="tbl-nextlessen">
-          <thead>
-            <tr><th>Les</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Cap.</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="muted" colspan="5">Laden…</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <h2>Laatste boekingen</h2>
-        <p class="muted" id="recentbook-sub">Recent aangemaakt</p>
-        <table id="tbl-recentbook">
-          <thead>
-            <tr><th>Klant</th><th>Hond</th><th>Les</th><th>Datum</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="muted" colspan="5">Laden…</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <section>
+      <h2>Eerstvolgende lessen</h2>
+      <table>
+        <thead>
+          <tr><th>Les</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Cap.</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Puppy Basis</td><td>—</td><td>—</td><td>2025-09-15 20:00</td><td>4/10</td></tr>
+          <tr><td>Agility Gevorderd</td><td>—</td><td>—</td><td>2025-09-20 16:00</td><td>8/8</td></tr>
+        </tbody>
+      </table>
     </section>
   </main>
 
-  <!-- Groen labeltje rechtsonder -->
-  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;
-              padding:4px 8px;border-radius:6px;z-index:9999">
-    assets v0903r
-  </div>
-
-  <!-- Alleen dashboard script, geen cleanup meer -->
-  <script src="Js/dashboard.js?v=0903p"></script>
+  <footer>
+    <span class="debug-label">assets v0903t</span>
+  </footer>
 </body>
 </html>
