@@ -3,53 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond.be – Boekingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903s">
+  <link rel="stylesheet" href="styles.css?v=0903t">
 </head>
-<body>
+<body class="page-boekingen">
   <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a class="active" href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html">Instellingen</a></li>
-    </ul>
+    <a href="index.html">Dashboard</a>
+    <a href="klanten.html">Klanten</a>
+    <a href="honden.html">Honden</a>
+    <a href="lessen.html">Lessen beheren</a>
+    <a href="boekingen.html" class="active">Boekingen</a>
+    <a href="strippenkaarten.html">Strippenkaarten</a>
+    <a href="les-instellingen.html">Instellingen</a>
   </nav>
 
   <main>
-    <h1>Boekingen <span class="page-badge">v0903s</span></h1>
+    <h1>Superhond.be – Boekingen</h1>
 
-    <section class="tab-panel">
-      <h2>Zoeken & filter</h2>
-      <form id="book-search" style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="search" id="q" placeholder="Zoek op klant/hond/les…" style="flex:1">
-        <select id="filter-status">
-          <option value="">Status (alle)</option>
-          <option value="bevestigd">Bevestigd</option>
-          <option value="geannuleerd">Geannuleerd</option>
-          <option value="optie">Optie</option>
-        </select>
-        <button class="btn" type="submit">Zoeken</button>
-      </form>
-    </section>
-
-    <section class="tab-panel">
-      <h2>Resultaten</h2>
-      <table id="tbl-book">
+    <section>
+      <h2>Overzicht boekingen</h2>
+      <table>
         <thead>
-          <tr><th>Datum</th><th>Klant</th><th>Hond</th><th>Les</th><th>Status</th><th>Acties</th></tr>
+          <tr><th>Klant</th><th>Hond</th><th>Les</th><th>Datum</th><th>Acties</th></tr>
         </thead>
         <tbody>
-          <tr><td colspan="6" class="muted">Nog geen boekingen geladen.</td></tr>
+          <tr><td>—</td><td>—</td><td>—</td><td>—</td><td>✏️ ❌</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
-  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
-
-  <script src="Js/boekingen.js?v=0903s"></script>
+  <footer>
+    <span class="debug-label">assets v0903t</span>
+  </footer>
 </body>
 </html>
