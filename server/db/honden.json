@@ -1,4 +1,4 @@
 [
-  { "id": "hd_001", "klant_id": "kl_001", "hond_naam": "Rex", "ras": "Labrador" },
-  { "id": "hd_002", "klant_id": "kl_002", "hond_naam": "Bella", "ras": "Border Collie" }
+  { "id": "tr_001", "naam": "Sofie Thijs", "functie": "Puppycoach" },
+  { "id": "tr_002", "naam": "Tom Vermeulen", "functie": "Agility trainer" }
 ]
