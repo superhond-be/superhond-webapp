@@ -504,6 +504,12 @@ function setupTrainer() {
 .icon-btn.edit{border-color:#98c1ff}
 .icon-btn.delete{border-color:#ffc0c0}
 .icon-btn.view{border-color:#ffd08a}
+
+        /* kill old debug banner for good */
+.env-banner,
+#style-debug {
+  display: none !important;
+}
         
 
 
