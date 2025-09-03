@@ -2,9 +2,9 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Instellingen</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable" />
+  <link rel="stylesheet" href="app.css?v=v0903stable"/>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -27,22 +27,44 @@
 
   <main>
     <h2>Beheer instellingen</h2>
-    <p>Hier configureer je lestypes, thema’s, locaties, trainers en e-mailtemplates.</p>
-
     <table>
-      <thead>
-        <tr><th>Onderdeel</th><th>Beschrijving</th></tr>
-      </thead>
+      <thead><tr><th>Onderdeel</th><th>Beschrijving</th><th>Acties</th></tr></thead>
       <tbody>
-        <tr><td>Lestypes</td><td>Naam, aantal lessen, lesduur, geldigheid (mnd), max deelnemers.</td></tr>
-        <tr><td>Les thema</td><td>Naam en omschrijving.</td></tr>
-        <tr><td>Leslocatie</td><td>Locatie, adres, postbus/plaats, omschrijving.</td></tr>
-        <tr><td>Les trainers</td><td>Naam en functie.</td></tr>
-        <tr><td>E-mails</td><td>Templates voor bevestigingen, herinneringen, verjaardagen, …</td></tr>
+        <tr>
+          <td>Lestypes</td><td>Naam, aantal lessen, lesduur, geldigheid, max. deelnemers</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+          </td>
+        </tr>
+        <tr>
+          <td>Les thema</td><td>Naam en omschrijving</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+          </td>
+        </tr>
+        <tr>
+          <td>Leslocatie</td><td>Locatie, adres, postbus/plaats, omschrijving</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+          </td>
+        </tr>
+        <tr>
+          <td>Les trainers</td><td>Naam en functie</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+          </td>
+        </tr>
+        <tr>
+          <td>E-mails</td><td>Templates voor bevestigingen, herinneringen, verjaardagen…</td>
+          <td>
+            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </main>
 
   <div class="version-tag">assets v0903stable</div>
+  <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
 </body>
 </html>
