@@ -1,16 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond · Klanten</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <meta charset="UTF-8">
+  <title>Superhond.be – Klanten</title>
+  <link rel="stylesheet" href="styles.css?v=0903s">
 </head>
 <body>
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html" class="active">Klanten</a></li>
+      <li><a class="active" href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
       <li><a href="lessen.html">Lessen beheren</a></li>
       <li><a href="boekingen.html">Boekingen</a></li>
@@ -19,15 +18,33 @@
     </ul>
   </nav>
 
-  <header class="page-header">
-    <h1>Klanten <span class="page-badge">v0903k</span></h1>
-  </header>
-
   <main>
-    <section class="card"><div id="klanten-root">—</div></section>
+    <h1>Klanten <span class="page-badge">v0903s</span></h1>
+
+    <section class="tab-panel">
+      <h2>Zoeken & acties</h2>
+      <form id="klanten-search" style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="search" id="q" placeholder="Zoek op naam, e-mail of telefoon…" style="flex:1">
+        <button class="btn" type="submit">Zoeken</button>
+        <button class="btn" type="button" id="btn-new">+ Nieuwe klant</button>
+      </form>
+    </section>
+
+    <section class="tab-panel">
+      <h2>Resultaten</h2>
+      <table id="tbl-klanten">
+        <thead>
+          <tr><th>Naam</th><th>E-mail</th><th>Tel</th><th>Honden</th><th>Acties</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" class="muted">Nog geen klanten geladen.</td></tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-  <script src="Js/klanten.js?v=0903k"></script>
+  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
+
+  <script src="Js/klanten.js?v=0903s"></script>
 </body>
 </html>
