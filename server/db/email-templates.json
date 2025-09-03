@@ -1,0 +1,22 @@
+[
+  {
+    "id": "tpl_001",
+    "naam": "Verjaardag hond",
+    "categorie": "Klant",
+    "taal": "nl",
+    "beschrijving": "Proficiat met de verjaardag van de hond",
+    "trigger": "dog_birthday",
+    "onderwerp": "🎉 Proficiat met {{hond_naam}}’s verjaardag!",
+    "inhoud": "<p>Beste {{klant_naam}},</p><p>{{hond_naam}} is jarig op {{geboortedatum}} — van harte proficiat!</p>"
+  },
+  {
+    "id": "tpl_002",
+    "naam": "Lesherinnering (morgen)",
+    "categorie": "Training",
+    "taal": "nl",
+    "beschrijving": "Herinnering voor de les",
+    "trigger": "class_reminder",
+    "onderwerp": "Herinnering: {{les_naam}} op {{datum}} om {{starttijd}}",
+    "inhoud": "<p>Beste {{klant_naam}},</p><p>Tot morgen voor <b>{{les_naam}}</b> om {{starttijd}} in {{locatie}}.</p>"
+  }
+]
