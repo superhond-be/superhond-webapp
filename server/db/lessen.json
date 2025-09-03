@@ -1,0 +1,24 @@
+[
+  {
+    "id": "ls_001",
+    "naam": "Puppy Basis",
+    "type": "Puppy",
+    "trainer_id": "tr_001",
+    "locatie_id": "lc_001",
+    "start": "2025-09-15T18:30:00",
+    "capaciteit": 10,
+    "bezet": 7,
+    "status": "actief"
+  },
+  {
+    "id": "ls_002",
+    "naam": "Socialisatie",
+    "type": "Socialisatie",
+    "trainer_id": "tr_002",
+    "locatie_id": "lc_002",
+    "start": "2025-09-17T19:00:00",
+    "capaciteit": 8,
+    "bezet": 5,
+    "status": "actief"
+  }
+]
