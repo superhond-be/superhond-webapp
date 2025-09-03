@@ -4,16 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Instellingen</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable2" />
+  <link rel="stylesheet" href="app.css?v=v0903clean" />
   <script src="app.js" defer></script>
-
-  <!-- Mini scroll-fix zodat panels altijd scrolbaar blijven -->
-  <style>
-    html, body { height: auto; overflow: auto !important; }
-    main { overflow: visible !important; }
-    .tab-panel { display: none; overflow: visible; }
-    .tab-panel.active { display: block; }
-  </style>
 </head>
 <body class="page-settings">
 
@@ -31,14 +23,14 @@
   </nav>
 
   <!-- Centrale gele titelbalk -->
-  <div style="text-align:center; margin-top:20px;">
+  <div class="page-title-wrap">
     <div class="page-title">
       <span class="paw">🐾</span> Superhond.be – Admin <span class="paw">🐾</span>
     </div>
   </div>
 
   <main>
-    <!-- TAB knoppen -->
+    <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn active" data-tab="tab-lestypes">Lestypes</button>
       <button class="tab-btn" data-tab="tab-thema">Les thema</button>
@@ -52,8 +44,12 @@
       <div class="panel-head">
         <h2>Lestypes</h2>
         <div class="panel-actions">
-          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuw lestype</button>
-          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+          <button class="btn btn--dark">
+            <svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuw lestype
+          </button>
+          <button class="btn btn--primary">
+            <svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan
+          </button>
         </div>
       </div>
 
@@ -108,8 +104,12 @@
       <div class="panel-head">
         <h2>Les thema</h2>
         <div class="panel-actions">
-          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuw thema</button>
-          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+          <button class="btn btn--dark">
+            <svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuw thema
+          </button>
+          <button class="btn btn--primary">
+            <svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan
+          </button>
         </div>
       </div>
 
@@ -144,8 +144,12 @@
       <div class="panel-head">
         <h2>Leslocatie</h2>
         <div class="panel-actions">
-          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe locatie</button>
-          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+          <button class="btn btn--dark">
+            <svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe locatie
+          </button>
+          <button class="btn btn--primary">
+            <svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan
+          </button>
         </div>
       </div>
 
@@ -188,8 +192,12 @@
       <div class="panel-head">
         <h2>Les trainers</h2>
         <div class="panel-actions">
-          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe trainer</button>
-          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+          <button class="btn btn--dark">
+            <svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe trainer
+          </button>
+          <button class="btn btn--primary">
+            <svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan
+          </button>
         </div>
       </div>
 
@@ -224,8 +232,12 @@
       <div class="panel-head">
         <h2>E-mails</h2>
         <div class="panel-actions">
-          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe template</button>
-          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+          <button class="btn btn--dark">
+            <svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuwe template
+          </button>
+          <button class="btn btn--primary">
+            <svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan
+          </button>
         </div>
       </div>
 
@@ -267,7 +279,7 @@
     </section>
   </main>
 
-  <div class="version-tag">assets v0903stable2</div>
+  <div class="version-tag">assets v0903clean</div>
   <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
 
   <!-- Tab-wissel -->
@@ -277,6 +289,7 @@
         btn.addEventListener('click', () => {
           document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+
           const id = btn.getAttribute('data-tab');
           document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
           const panel = document.getElementById(id);
