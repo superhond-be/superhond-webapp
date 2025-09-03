@@ -8,22 +8,15 @@
   <!-- Stylesheet met cache-bust -->
   <link rel="stylesheet" href="styles.css?v=0903k" />
   <style>
-    .page-badge {
-      background:#ffe48a;
-      border:1px solid #e2b200;
-      border-radius:6px;
-      padding:2px 6px;
-      font-size:.85rem;
-      margin-left:8px;
-    }
-    .tabbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-    .tab-btn{border:1px solid #ccc;background:#f7f7f7;padding:8px 10px;border-radius:8px;cursor:pointer}
-    .tab-btn.active{background:#fff;border-color:#88b7ff;box-shadow:0 0 0 2px #cfe3ff}
-    .tab-panel[hidden]{display:none}
+    .page-badge{background:#ffe48a;border:1px solid #e2b200;border-radius:6px;padding:2px 6px;font-size:.85rem;margin-left:8px}
+    .tabbar{position:sticky;top:64px;z-index:10;background:#fff;display:flex;gap:8px;flex-wrap:wrap;padding:8px 0;margin-bottom:12px}
+    .tab-btn{display:inline-block;border:1px solid #ccc;background:#f7f7f7;padding:8px 10px;border-radius:8px;text-decoration:none;color:#222}
     .card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .grid label{display:flex;flex-direction:column;font-weight:600}
     .help{background:#fff7e6;border:1px solid #ffd28a;border-radius:8px;padding:8px;margin-bottom:10px}
+    .tab-panel{margin-bottom:24px}
+    html{scroll-behavior:smooth}
   </style>
 </head>
 <body>
@@ -40,30 +33,27 @@
     </ul>
   </nav>
 
-  <!-- Titel onder de gele balk -->
+  <!-- Titel -->
   <header class="page-header">
-    <h1>
-      Superhond.be – Admin instellingen
-      <span class="page-badge">v0903k</span>
-    </h1>
+    <h1>Superhond.be – Admin instellingen <span class="page-badge">v0903k</span></h1>
   </header>
 
-  <main>
-    <!-- Tabs -->
-    <div class="tabbar">
-      <button class="tab-btn active" data-tab="lestype">Lestype</button>
-      <button class="tab-btn" data-tab="lesthema">Les thema</button>
-      <button class="tab-btn" data-tab="leslocatie">Leslocatie</button>
-      <button class="tab-btn" data-tab="lestrainers">Les trainers</button>
-      <button class="tab-btn" data-tab="email">E-mails</button>
-    </div>
+  <!-- “Tabs” als snelkoppelingen (ankers) -->
+  <div class="tabbar">
+    <a class="tab-btn" href="#sect-lestype">Lestype</a>
+    <a class="tab-btn" href="#sect-lesthema">Les thema</a>
+    <a class="tab-btn" href="#sect-leslocatie">Leslocatie</a>
+    <a class="tab-btn" href="#sect-lestrainers">Les trainers</a>
+    <a class="tab-btn" href="#sect-email">E-mails</a>
+  </div>
 
-    <!-- TAB: Lestype -->
-    <section class="tab-panel" id="tab-lestype">
+  <main>
+    <!-- SECTIE: Lestype -->
+    <section class="tab-panel" id="sect-lestype">
       <div class="card">
         <h2>Lestype</h2>
         <div class="help">
-          Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers. <br>
+          Lestypes bepalen aantal lessen, <b>lesduur</b>, geldigheidsduur en max. deelnemers.<br>
           <b>Opgelet:</b> de <u>startdatum</u> kies je later bij inschrijving van de klant.
         </div>
 
@@ -114,8 +104,8 @@
       </div>
     </section>
 
-    <!-- TAB: Les thema -->
-    <section class="tab-panel" id="tab-lesthema" hidden>
+    <!-- SECTIE: Les thema -->
+    <section class="tab-panel" id="sect-lesthema">
       <div class="card">
         <h2>Les thema</h2>
         <p class="help">Voeg thema’s toe met naam en beschrijving.</p>
@@ -123,8 +113,8 @@
       </div>
     </section>
 
-    <!-- TAB: Leslocatie -->
-    <section class="tab-panel" id="tab-leslocatie" hidden>
+    <!-- SECTIE: Leslocatie -->
+    <section class="tab-panel" id="sect-leslocatie">
       <div class="card">
         <h2>Leslocatie</h2>
         <p class="help">Geef locatie, adres, postbus/plaats en beschrijving in.</p>
@@ -132,8 +122,8 @@
       </div>
     </section>
 
-    <!-- TAB: Les trainers -->
-    <section class="tab-panel" id="tab-lestrainers" hidden>
+    <!-- SECTIE: Les trainers -->
+    <section class="tab-panel" id="sect-lestrainers">
       <div class="card">
         <h2>Les trainers</h2>
         <p class="help">Beheer trainers en functies.</p>
@@ -141,8 +131,8 @@
       </div>
     </section>
 
-    <!-- TAB: E-mails -->
-    <section class="tab-panel" id="tab-email" hidden>
+    <!-- SECTIE: E-mails -->
+    <section class="tab-panel" id="sect-email">
       <div class="card">
         <h2>E-mailtemplates</h2>
         <div class="help">
@@ -193,21 +183,8 @@
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <!-- Scripts -->
+  <!-- Alleen functionele scripts (GEEN tabswitcher meer) -->
   <script src="Js/les-instellingen.js?v=0903k"></script>
   <script src="Js/email-templates.js?v=0903k"></script>
-
-  <script>
-    // Tabswitcher
-    document.querySelectorAll('.tab-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p=>p.hidden = true);
-        btn.classList.add('active');
-        document.getElementById('tab-'+id).hidden = false;
-      });
-    });
-  </script>
 </body>
 </html>
