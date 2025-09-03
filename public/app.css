@@ -67,3 +67,136 @@ main {
 
 /* ========== TABS (frisse pill-stijl) ========== */
 .tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0 16px;
+}
+.tab-btn {
+  background: #ffec99;      /* zacht geel */
+  color: #222;
+  border: 1px solid #ffd84d;
+  padding: 8px 14px;
+  border-radius: 999px;      /* pill */
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .02s;
+}
+.tab-btn:hover { background: #ffe070; }
+.tab-btn:active { transform: translateY(1px); }
+.tab-btn.active {
+  background: #f1c40f;
+  border-color: #d4aa0d;
+}
+
+/* Panels als kaarten + scroll veilig */
+.tab-panel {
+  display: none;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  overflow: visible;         /* nooit afknippen */
+}
+.tab-panel.active { display: block; }
+
+/* Panel header: titel links, acties rechts */
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.panel-head h2 { margin: 0; }
+
+/* ========== FORM GRID ========== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+  margin: 8px 0 4px;
+}
+.form-grid .form-item { grid-column: span 6; }
+.form-grid .form-item:nth-child(2) { grid-column: span 12; } /* beschrijving vaak breder */
+
+.form-grid label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.form-grid input,
+.form-grid textarea,
+.form-grid select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.form-grid textarea { resize: vertical; min-height: 84px; }
+
+/* ========== TABELLEN ========== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: #fff;
+}
+th, td {
+  border: 1px solid #e6e6e6;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #f9f9f9;
+  font-weight: 700;
+}
+.t-actions { white-space: nowrap; width: 1%; }
+
+/* ========== KNOPPEN ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1.2;
+  transition: transform .02s, box-shadow .15s, background .15s;
+}
+.btn--primary { background: #1971c2; color: #fff; border-color: #145ea3; }
+.btn--primary:hover { filter: brightness(.95); }
+.btn--dark { background: #333; color: #fff; border-color: #222; }
+.btn--dark:hover { filter: brightness(1.05); }
+.btn--ghost { background: #fff; color: #222; border-color: #ddd; }
+.btn--ghost:hover { background: rgba(0,0,0,.04); }
+.btn--sm { padding: 6px 10px; font-size: 13px; }
+
+.icon { width: 16px; height: 16px; display: inline-block; fill: currentColor; }
+
+/* ========== VERSIE BADGE ========== */
+.version-tag {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  background: #28a745;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: monospace;
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  z-index: 9999;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 720px) {
+  .form-grid .form-item { grid-column: span 12; }
+  .panel-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
