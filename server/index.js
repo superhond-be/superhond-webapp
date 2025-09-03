@@ -1,5 +1,5 @@
 // server/index.js
-// Superhond.be Admin backend (Express + JSON files) — SAFE IO
+// Superhond.be Admin backend (Express + JSON files) — SAFE INIT
 
 const express = require("express");
 const path = require("path");
@@ -15,28 +15,43 @@ app.use(express.json());
 // Public map serveren
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// ---------- FS helpers (SAFE) ----------
+// ---------- FS helpers (SAFE INIT) ----------
 const DB_DIR = path.join(__dirname, "db");
 
-// Zorg dat de DB-map bestaat
+// lijst van alle JSON-bestanden die we gebruiken
+const ENTITIES = [
+  "lessen.json",
+  "boekingen.json",
+  "klanten.json",
+  "honden.json",
+  "trainers.json",
+  "locaties.json",
+  "email-templates.json",
+];
+
+// Zorg dat de DB-map én lege bestanden bestaan
 function ensureDbDir() {
   try {
     if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
+    ENTITIES.forEach((file) => {
+      const p = path.join(DB_DIR, file);
+      if (!fs.existsSync(p)) {
+        fs.writeFileSync(p, "[]", "utf8");
+        console.log(`📂 Init: ${file} aangemaakt (leeg).`);
+      }
+    });
   } catch (e) {
-    console.error("Kan DB-map niet maken:", e.message);
+    console.error("Kan DB-map/bestanden niet maken:", e.message);
   }
 }
 ensureDbDir();
 
 const dbPath = (file) => path.join(DB_DIR, file);
 
-// Lezen met fallbacks (retourneert altijd [] bij problemen)
+// Lezen met fallbacks
 function readDB(file) {
   try {
-    ensureDbDir();
-    const p = dbPath(file);
-    if (!fs.existsSync(p)) return [];
-    const raw = fs.readFileSync(p, "utf8");
+    const raw = fs.readFileSync(dbPath(file), "utf8");
     return JSON.parse(raw);
   } catch (e) {
     console.warn(`Waarschuwing: kon ${file} niet lezen/parsen → [] (${e.message})`);
@@ -44,10 +59,9 @@ function readDB(file) {
   }
 }
 
-// Schrijven (maakt bestand aan als het nog niet bestond)
+// Schrijven
 function writeDB(file, data) {
   try {
-    ensureDbDir();
     fs.writeFileSync(dbPath(file), JSON.stringify(data, null, 2), "utf8");
   } catch (e) {
     console.error(`Fout bij schrijven ${file}:`, e.message);
@@ -61,7 +75,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "superhond-webapp" });
 });
 
-// Generieke CRUD (lessen, boekingen, klanten, honden, trainers, locaties)
+// Generieke CRUD voor alle entities behalve e-mail
 ["lessen", "boekingen", "klanten", "honden", "trainers", "locaties"].forEach(
   (entity) => {
     const file = `${entity}.json`;
@@ -106,10 +120,8 @@ app.get("/api/health", (_req, res) => {
 const emailFile = "email-templates.json";
 const emailBase = "/api/email-templates";
 
-// GET all
 app.get(emailBase, (_req, res) => res.json(readDB(emailFile)));
 
-// POST new
 app.post(emailBase, (req, res) => {
   const list = readDB(emailFile);
   const item = { id: Date.now().toString(), ...req.body };
@@ -118,7 +130,6 @@ app.post(emailBase, (req, res) => {
   res.status(201).json(item);
 });
 
-// PUT update
 app.put(`${emailBase}/:id`, (req, res) => {
   const list = readDB(emailFile);
   const idx = list.findIndex((x) => x.id === req.params.id);
@@ -128,7 +139,6 @@ app.put(`${emailBase}/:id`, (req, res) => {
   res.json(list[idx]);
 });
 
-// DELETE
 app.delete(`${emailBase}/:id`, (req, res) => {
   let list = readDB(emailFile);
   const before = list.length;
