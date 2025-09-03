@@ -2,13 +2,12 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Boekingen</title>
-  <link rel="stylesheet" href="app.css?v=v0903stable" />
+  <link rel="stylesheet" href="app.css?v=v0903clean" />
   <script src="app.js" defer></script>
 </head>
 <body>
-
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -21,27 +20,30 @@
     </ul>
   </nav>
 
-  <div style="text-align:center; margin-top:20px;">
+  <div class="page-title-wrap">
     <div class="page-title"><span class="paw">🐾</span> Superhond.be – Admin <span class="paw">🐾</span></div>
   </div>
 
   <main>
     <h2>Overzicht boekingen</h2>
+    <p>
+      <button class="btn btn--dark">Nieuwe boeking</button>
+      <button class="btn btn--ghost btn--sm">Zoeken</button>
+    </p>
     <table>
       <thead><tr><th>Klant</th><th>Hond</th><th>Les</th><th>Datum</th><th>Acties</th></tr></thead>
       <tbody>
         <tr>
           <td>Jan Peeters</td><td>Otje</td><td>Puppy Start</td><td>01/10/2025</td>
-          <td>
-            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-edit"></use></svg></button>
-            <button class="btn btn--ghost btn--sm"><svg class="icon"><use href="icons.svg#icon-delete"></use></svg></button>
+          <td class="t-actions">
+            <button class="btn btn--ghost btn--sm">Bewerken</button>
+            <button class="btn btn--ghost btn--sm">Verwijderen</button>
           </td>
         </tr>
       </tbody>
     </table>
   </main>
 
-  <div class="version-tag">assets v0903stable</div>
-  <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
+  <div class="version-tag">assets v0903clean</div>
 </body>
 </html>
