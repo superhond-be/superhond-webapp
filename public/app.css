@@ -1,183 +1,48 @@
-
-
-
-:root{
-  /* Superhond – Geel thema */
-  --bg: #fffbe6;            /* paginabackground */
-  --card: #ffffff;          /* panel/kaart achtergrond */
-  --text: #1f2937;          /* hoofdtekst */
-  --muted: #6b7280;         /* secundaire tekst */
-  --border: #e5e7eb;        /* randen */
-  --primary: #f5c400;       /* hoofdaccent (geel) */
-  --primary-600:#e0b400;    /* hover/darker */
-  --accent: #2563eb;        /* link/extra accent (blauw) */
-  --danger:#ef4444;         /* fouten */
-  --success:#16a34a;        /* succes */
-  --radius: 10px;           /* ronde hoeken */
-  --shadow: 0 10px 30px rgba(2,6,23,.06);
+/* Algemene body instellingen */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  color: #000;
 }
 
-/* optioneel: donker thema – activeer door <html class="dark"> */
-html.dark{
-  --bg:#0b1220;
-  --card:#0f172a;
-  --text:#e5e7eb;
-  --muted:#94a3b8;
-  --border:#1f2937;
-  --primary:#f5c400;
-  --primary-600:#e0b400;
-  --accent:#60a5fa;
-  --danger:#f87171;
-  --success:#22c55e;
-  --shadow: 0 10px 30px rgba(0,0,0,.5);
+/* Navigatie bovenaan */
+.topnav {
+  background-color: #f1c40f; /* geel */
+  padding: 10px;
 }
 
-
-
-/ * ==== Basis ==== */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+.topnav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
 }
 
-/* ==== Layout: topbar + shell ==== */
-.topbar{
-  position:sticky; top:0; z-index:20;
-  display:flex; align-items:center; gap:12px;
-  padding:14px 18px;
-  background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 94%, #fff 6%), var(--primary));
-  color:#111; border-bottom:1px solid var(--border);
-  box-shadow:var(--shadow);
-}
-.topbar .brand{font-weight:800; letter-spacing:.2px; font-size: clamp(18px, 2.5vw, 22px);}
-.topbar .brand .paw{filter: drop-shadow(0 1px 0 rgba(255,255,255,.4));}
-
-.shell{
-  display:grid; grid-template-columns: 260px 1fr; gap:18px;
-  padding:18px; max-width:1200px; margin:0 auto;
-}
-@media (max-width: 900px){
-  .shell{grid-template-columns: 1fr}
-  .sidebar{position:relative; order:-1}
+.topnav li {
+  margin-right: 20px;
 }
 
-/* ==== Sidebar ==== */
-.sidebar{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:14px;
-  box-shadow: var(--shadow);
-}
-.sidebar h4{
-  margin:0 0 10px; font-size:14px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
-}
-.nav{
-  display:flex; flex-direction:column; gap:8px;
-}
-.nav a{
-  display:flex; align-items:center; gap:10px;
-  padding:10px 12px; border-radius:8px; color:var(--text); text-decoration:none;
-  border:1px solid transparent;
-}
-.nav a:hover{ background: color-mix(in srgb, var(--primary) 22%, #fff 78%); border-color:var(--border) }
-.nav a.active{ background:var(--primary); border-color: transparent; font-weight:700 }
-
-/* ==== Main content ==== */
-.main{
-  min-height: calc(100vh - 120px);
-  display:flex; flex-direction:column; gap:18px;
-}
-.header{
-  display:flex; justify-content:space-between; align-items:center; gap:12px;
-}
-.header h1{ margin:0; font-size: clamp(20px, 3vw, 28px) }
-
-/* ==== Kaarten / panelen ==== */
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:16px;
-}
-.card .card-title{ margin:0 0 10px; font-weight:700; font-size:18px }
-
-/* ==== Formulieren ==== */
-.input, select, textarea{
-  width:100%; padding:10px 12px; border-radius:8px;
-  border:1px solid var(--border); background:var(--card); color:var(--text);
-}
-label{ display:block; font-size:13px; color:var(--muted); margin:10px 0 6px }
-.row{ display:grid; grid-template-columns: repeat(12,1fr); gap:12px }
-.col-12{ grid-column: span 12 } .col-6{ grid-column: span 6 } .col-4{ grid-column: span 4 } .col-3{ grid-column: span 3 }
-@media (max-width: 900px){ .col-6, .col-4, .col-3 { grid-column: span 12 }}
-
-/* ==== Tabel ==== */
-.table{ width:100%; border-collapse:collapse; font-size:14px }
-.table th, .table td{ padding:10px 12px; border-bottom:1px solid var(--border) }
-.table th{ text-align:left; color:var(--muted); font-weight:600 }
-.table tr:hover td{ background: color-mix(in srgb, var(--primary) 12%, #fff 88%) }
-
-/* ==== Buttons ==== */
-.btn{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:10px 14px; border-radius:8px; border:1px solid transparent; cursor:pointer;
-  font-weight:600; background:var(--card); color:var(--text)
-}
-.btn.primary{ background:var(--primary) }
-.btn.primary:hover{ background:var(--primary-600) }
-.btn.outline{ background:transparent; border-color:var(--border) }
-.btn.danger{ background:var(--danger); color:#fff }
-.btn.success{ background:var(--success); color:#fff }
-
-/* ==== Alerts ==== */
-.alert{
-  padding:10px 12px; border-radius:8px; border:1px solid var(--border); background:var(--card)
-}
-.alert.error{ border-color: color-mix(in srgb, var(--danger) 50%, var(--border) 50%); color:var(--danger) }
-.alert.success{ border-color: color-mix(in srgb, var(--success) 50%, var(--border) 50%); color:var(--success) }
-
-/* ==== Utilities ==== */
-.m0{margin:0} .mt8{margin-top:8px} .mt16{margin-top:16px} .mt24{margin-top:24px}
-.grid{display:grid; gap:12px}
-.badge{ display:inline-block; padding:4px 8px; border-radius:999px; background: color-mix(in srgb, var(--accent) 16%, #fff 84%); color:var(--accent); font-weight:700; font-size:12px }
-.footer{ color:var(--muted); font-size:12px }
-:root{
-  /* Superhond – Geel thema */
-  --bg: #fffbe6;            /* paginabackground */
-  --card: #ffffff;          /* panel/kaart achtergrond */
-  --text: #1f2937;          /* hoofdtekst */
-  --muted: #6b7280;         /* secundaire tekst */
-  --border: #e5e7eb;        /* randen */
-  --primary: #f5c400;       /* hoofdaccent (geel) */
-  --primary-600:#e0b400;    /* hover/darker */
-  --accent: #2563eb;        /* link/extra accent (blauw) */
-  --danger:#ef4444;         /* fouten */
-  --success:#16a34a;        /* succes */
-  --radius: 10px;           /* ronde hoeken */
-  --shadow: 0 10px 30px rgba(2,6,23,.06);
+.topnav a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
 }
 
-/* optioneel: donker thema – activeer door <html class="dark"> */
-html.dark{
-  --bg:#0b1220;
-  --card:#0f172a;
-  --text:#e5e7eb;
-  --muted:#94a3b8;
-  --border:#1f2937;
-  --primary:#f5c400;
-  --primary-600:#e0b400;
-  --accent:#60a5fa;
-  --danger:#f87171;
-  --success:#22c55e;
-  --shadow: 0 10px 30px rgba(0,0,0,.5);
+.topnav a:hover {
+  text-decoration: underline;
 }
 
+/* Dashboard titel */
+main h1 {
+  background-color: #f1c40f;
+  padding: 10px;
+  display: inline-block;
+  border-radius: 5px;
+}
 
-
+/* Container voor inhoud */
+main {
+  padding: 20px;
+}
