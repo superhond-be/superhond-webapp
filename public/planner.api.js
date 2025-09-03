@@ -41,3 +41,14 @@ const API = {
     del: async (id)=> (await quickFetch('/api/enrollments/'+id,{method:'DELETE'})).json(),
   }
 };
+
+(function keepAlive(){
+  let timer;
+  function start(){
+    stop();
+    timer = setInterval(()=> quickFetch('/api/ping').catch(()=>{}), 4*60*1000);
+  }
+  function stop(){ if (timer) clearInterval(timer); }
+  document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
+  start();
+})();
