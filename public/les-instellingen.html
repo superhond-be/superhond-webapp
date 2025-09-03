@@ -1,207 +1,80 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Superhond.be – Admin instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903u">
-</head>
-<body class="page-settings">
-  <!-- SVG icon-sprite laden (één regel, vereist voor de icoonknoppen) -->
-  <object type="image/svg+xml" data="img/icons.svg" style="display:none"></object>
-
-  <!-- Gele hoofdnavigatie -->
-  <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a class="active" href="les-instellingen.html">Instellingen</a></li>
-    </ul>
-  </nav>
-
-  <main>
-    <!-- Gele titelbalk (badge in titel is uitgezet; groene versie staat onderaan) -->
-    <h1>Superhond.be – Admin instellingen</h1>
-
-    <!-- Tabs (altijd zichtbaar, geel) -->
-    <div class="tabs">
-      <button class="tab-button active" data-tab="tab-lestype">Lestype</button>
-      <button class="tab-button" data-tab="tab-les-thema">Les thema</button>
-      <button class="tab-button" data-tab="tab-leslocatie">Leslocatie</button>
-      <button class="tab-button" data-tab="tab-les-trainers">Les trainers</button>
-      <button class="tab-button" data-tab="tab-emails">E-mails</button>
-    </div>
-
-    <!-- LESTYPE -->
-    <section id="tab-lestype" class="tab-panel active">
-      <h2>Lestype</h2>
-      <p class="hint">Lestypes bepalen aantal lessen, <b>lesduur</b>, geldigheidsduur (maanden) en max. deelnemers. Startdatum kies je later bij de inschrijving van de klant.</p>
-
-      <form id="form-lestype" class="form-grid">
-        <label>Naam* <input type="text" name="naam" placeholder="bv. Puppy" required></label>
-        <label>Aantal lessen <input type="number" name="aantal" placeholder="bv. 6"></label>
-        <label>Lesduur (minuten) <input type="number" name="lesduur" placeholder="bv. 60"></label>
-        <label>Geldigheidsduur (maanden) <input type="number" name="geldigheid" placeholder="bv. 6"></label>
-        <label>Max deelnemers <input type="number" name="max" placeholder="bv. 10"></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-
-        <div class="btn-row form-buttons">
-          <button type="submit" class="btn btn--primary" title="Opslaan">
-            <svg><use href="#i-save"/></svg> Opslaan
-          </button>
-          <button type="reset" class="btn btn--success" title="Nieuw">
-            <svg><use href="#i-plus"/></svg> Nieuw
-          </button>
-        </div>
-      </form>
-
-      <table id="tbl-lestypes">
-        <thead>
-          <tr>
-            <th>Naam</th><th>Aantal</th><th>Lesduur (min)</th><th>Geldig (m)</th><th>Max</th><th>Beschrijving</th><th>Acties</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="7" class="muted">Nog geen lestypes toegevoegd.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- LES THEMA -->
-    <section id="tab-les-thema" class="tab-panel">
-      <h2>Les thema</h2>
-      <form id="form-lesthema" class="form-grid">
-        <label>Naam* <input type="text" name="naam" placeholder="bv. Gehoorzaamheid" required></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-        <div class="btn-row form-buttons">
-          <button type="submit" class="btn btn--primary"><svg><use href="#i-save"/></svg> Opslaan</button>
-          <button type="reset" class="btn btn--success"><svg><use href="#i-plus"/></svg> Nieuw</button>
-        </div>
-      </form>
-      <table id="tbl-lesthema">
-        <thead><tr><th>Naam</th><th>Beschrijving</th><th>Acties</th></tr></thead>
-        <tbody><tr><td colspan="3" class="muted">Nog geen thema’s toegevoegd.</td></tr></tbody>
-      </table>
-    </section>
-
-    <!-- LESLOCATIE -->
-    <section id="tab-leslocatie" class="tab-panel">
-      <h2>Leslocatie</h2>
-      <form id="form-leslocatie" class="form-grid">
-        <label>Locatie* <input type="text" name="locatie" placeholder="bv. Retie" required></label>
-        <label>Adres <input type="text" name="adres" placeholder="Straat en nr."></label>
-        <label>Postbus / plaats <input type="text" name="plaats" placeholder="bv. 2470 Retie"></label>
-        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
-        <div class="btn-row form-buttons">
-          <button type="submit" class="btn btn--primary"><svg><use href="#i-save"/></svg> Opslaan</button>
-          <button type="reset" class="btn btn--success"><svg><use href="#i-plus"/></svg> Nieuw</button>
-        </div>
-      </form>
-      <table id="tbl-leslocatie">
-        <thead><tr><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Beschrijving</th><th style="width:120px">Acties</th></tr></thead>
-        <tbody><tr><td colspan="5" class="muted">Nog geen locaties toegevoegd.</td></tr></tbody>
-      </table>
-    </section>
-
-    <!-- LES TRAINERS -->
-    <section id="tab-les-trainers" class="tab-panel">
-      <h2>Les trainers</h2>
-      <form id="form-lestrainers" class="form-grid">
-        <label>Naam* <input type="text" name="naam" placeholder="Trainernaam" required></label>
-        <label>Functie <input type="text" name="functie" placeholder="bv. Hoofdtrainer"></label>
-        <div class="btn-row form-buttons">
-          <button type="submit" class="btn btn--primary"><svg><use href="#i-save"/></svg> Opslaan</button>
-          <button type="reset" class="btn btn--success"><svg><use href="#i-plus"/></svg> Nieuw</button>
-        </div>
-      </form>
-      <table id="tbl-lestrainers">
-        <thead><tr><th>Naam</th><th>Functie</th><th style="width:120px">Acties</th></tr></thead>
-        <tbody><tr><td colspan="3" class="muted">Nog geen trainers toegevoegd.</td></tr></tbody>
-      </table>
-    </section>
-
-    <!-- E-MAILS (overzicht met demo-templates + modal) -->
-    <section id="tab-emails" class="tab-panel">
-      <h2>E-mails</h2>
-      <p class="hint">Overzicht van e-mailtemplates (verjaardag, herinneringen, bevestigingen). Je kunt ze bewerken, verwijderen, exporteren en importeren.</p>
-
-      <div class="btn-row" style="margin-bottom:10px">
-        <button class="btn btn--success" id="btn-email-new" type="button" title="Nieuwe template">
-          <svg><use href="#i-plus"/></svg> Nieuwe template
-        </button>
-        <button class="btn btn--ghost" id="btn-email-export" type="button" title="Exporteren">
-          <svg><use href="#i-download"/></svg> Export
-        </button>
-        <button class="btn btn--ghost" id="btn-email-import" type="button" title="Importeren">
-          <svg><use href="#i-upload"/></svg> Import
-        </button>
-        <input type="file" id="email-import-file" accept="application/json" style="display:none">
-      </div>
-
-      <table id="tbl-emails">
-        <thead>
-          <tr>
-            <th>Naam</th>
-            <th>Categorie</th>
-            <th>Onderwerp</th>
-            <th style="width:120px">Acties</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="4" class="muted">Laden…</td></tr>
-        </tbody>
-      </table>
-
-      <!-- Modal (dialog) voor bewerken/nieuw -->
-      <dialog id="dlg-email">
-        <form method="dialog" id="form-email" style="min-width: min(90vw, 560px)">
-          <h3 id="dlg-title">Template</h3>
-          <input type="hidden" name="id" id="em-id">
-          <label>Naam*
-            <input type="text" id="em-naam" name="naam" required>
-          </label>
-          <label>Categorie
-            <input type="text" id="em-cat" name="categorie" placeholder="bv. Klant templates / Lessen / Administratie">
-          </label>
-          <label>Onderwerp*
-            <input type="text" id="em-onderwerp" name="onderwerp" required>
-          </label>
-          <label>Inhoud (HTML toegestaan)
-            <textarea id="em-inhoud" name="inhoud" rows="8" placeholder="Bijv. Beste {{klant_naam}}, morgen om {{les_tijd}}…"></textarea>
-          </label>
-          <div class="btn-row" style="margin-top:10px;justify-content:flex-end">
-            <button class="btn btn--ghost" value="cancel" type="reset">Annuleren</button>
-            <button class="btn btn--primary" value="default" type="submit">
-              <svg><use href="#i-save"/></svg> Opslaan
-            </button>
-          </div>
-        </form>
-      </dialog>
-    </section>
-  </main>
-
-  <!-- Groen labeltje rechtsonder voor cache-bust/versie -->
-  <div class="debug-label">assets v0903u</div>
-
-  <!-- Alleen je eigen logica; géén cleanup-script meer -->
-  <script src="Js/lessen-instellingen.js?v=0903u"></script>
-  <script src="Js/email-templates.js?v=0903u"></script>
-
-  <script>
-    // simpele tabwissel (class togglen)
-    document.querySelectorAll(".tab-button").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        document.querySelectorAll(".tab-button").forEach(b=>b.classList.remove("active"));
-        document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.tab).classList.add("active");
-        // scroll naar begin van sectie (fijn op iPad)
-        document.getElementById(btn.dataset.tab).scrollIntoView({behavior:"smooth", block:"start"});
-      });
-    });
-  </script>
-</body>
-</html>
+  1 <!DOCTYPE html>
+  2 <html lang="nl">
+  3 <head>
+  4   <meta charset="UTF-8">
+  5   <title>Superhond.be – Admin instellingen</title>
+  6   <!-- BASIS stylesheet (voor alle pagina's) -->
+  7   <link rel="stylesheet" href="styles.css?v=0903pretty">
+  8   <!-- EXTRA stylesheet (alleen voor Instellingen) -->
+  9   <link rel="stylesheet" href="settings.css?v=0903pretty">
+ 10 </head>
+ 11 <body class="page-settings">
+ 12   <!-- Iconen sprite -->
+ 13   <object type="image/svg+xml" data="img/icons.svg" style="display:none"></object>
+ 14 
+ 15   <!-- Navigatie -->
+ 16   <nav class="topnav">
+ 17     <ul>
+ 18       <li><a href="index.html">Dashboard</a></li>
+ 19       <li><a href="klanten.html">Klanten</a></li>
+ 20       <li><a href="honden.html">Honden</a></li>
+ 21       <li><a href="lessen.html">Lessen beheren</a></li>
+ 22       <li><a href="boekingen.html">Boekingen</a></li>
+ 23       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+ 24       <li><a class="active" href="les-instellingen.html">Instellingen</a></li>
+ 25     </ul>
+ 26   </nav>
+ 27 
+ 28   <main>
+ 29     <!-- Gele titelbalk -->
+ 30     <h1>Superhond.be – Admin instellingen</h1>
+ 31 
+ 32     <!-- Tabs -->
+ 33     <div class="tabs">
+ 34       <button class="tab-button active" data-tab="tab-lestype">Lestype</button>
+ 35       <button class="tab-button" data-tab="tab-les-thema">Les thema</button>
+ 36       <button class="tab-button" data-tab="tab-leslocatie">Leslocatie</button>
+ 37       <button class="tab-button" data-tab="tab-les-trainers">Les trainers</button>
+ 38       <button class="tab-button" data-tab="tab-emails">E-mails</button>
+ 39     </div>
+ 40 
+ 41     <!-- Voorbeeld inhoud tab Lestype -->
+ 42     <section id="tab-lestype" class="tab-panel active">
+ 43       <h2>Lestype</h2>
+ 44       <form>
+ 45         <label>Naam <input type="text"></label>
+ 46         <label>Aantal lessen <input type="number"></label>
+ 47         <label>Lesduur (minuten) <input type="number"></label>
+ 48         <label>Geldigheidsduur (maanden) <input type="number"></label>
+ 49         <label>Max deelnemers <input type="number"></label>
+ 50         <label>Beschrijving <textarea></textarea></label>
+ 51         <button class="btn-primary">Opslaan</button>
+ 52       </form>
+ 53       <table>
+ 54         <thead><tr><th>Naam</th><th>Aantal</th><th>Lesduur</th><th>Acties</th></tr></thead>
+ 55         <tbody><tr><td colspan="4">Nog geen lestypes</td></tr></tbody>
+ 56       </table>
+ 57     </section>
+ 58 
+ 59     <!-- Andere tabs (thema, locatie, trainers, e-mails) hier op zelfde manier -->
+ 60   </main>
+ 61 
+ 62   <!-- Groen debuglabel rechtsonder -->
+ 63   <div class="debug-label">assets v0903pretty</div>
+ 64 
+ 65   <!-- Scripts -->
+ 66   <script src="Js/lessen-instellingen.js?v=0903pretty"></script>
+ 67   <script src="Js/email-templates.js?v=0903pretty"></script>
+ 68   <script>
+ 69     // Tab wisselen
+ 70     document.querySelectorAll(".tab-button").forEach(btn=>{
+ 71       btn.addEventListener("click", ()=>{
+ 72         document.querySelectorAll(".tab-button").forEach(b=>b.classList.remove("active"));
+ 73         document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+ 74         btn.classList.add("active");
+ 75         document.getElementById(btn.dataset.tab).classList.add("active");
+ 76       });
+ 77     });
+ 78   </script>
+ 79 </body>
+ 80 </html>
