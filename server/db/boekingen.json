@@ -1,10 +1,18 @@
 [
   {
-    "id": "bk_1001",
-    "les_id": "ls_001",
+    "id": "bk_001",
     "klant_id": "kl_001",
     "hond_id": "hd_001",
+    "les_id": "ls_001",
     "status": "bevestigd",
     "datum": "2025-09-10"
+  },
+  {
+    "id": "bk_002",
+    "klant_id": "kl_002",
+    "hond_id": "hd_002",
+    "les_id": "ls_002",
+    "status": "wachtlijst",
+    "datum": "2025-09-12"
   }
 ]
