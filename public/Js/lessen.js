@@ -1,5 +1,5 @@
-/* public/Js/lessen.js v0903q (duplicate + CRUD) */
-console.log("lessen.js geladen v0903q");
+/* public/Js/lessen.js v0903s (kolom 'Vrij' + export) */
+console.log("lessen.js geladen v0903s");
 
 const $ = s => document.querySelector(s);
 
@@ -46,17 +46,25 @@ function toCSV(rows, headers){
 let DATA = { lessen: [], trainers: [], locaties: [] };
 let ENRICHED = [];
 
-function byId(arr){ return Object.fromEntries(arr.map(x=>[x.id,x])); }
+const byId = arr => Object.fromEntries(arr.map(x=>[x.id,x]));
+const clamp0 = n => Math.max(0, Number(n||0));
+
 function enrich(){
   const tBy = byId(DATA.trainers);
   const lBy = byId(DATA.locaties);
-  ENRICHED = DATA.lessen.map(x=>({
-    ...x,
-    trainerNaam: tBy[x.trainer_id]?.naam || "",
-    locatieNaam: lBy[x.locatie_id]?.locatie || "",
-    startTekst: fmtDateTime(x.start),
-    cap: `${x.bezet ?? 0}/${x.capaciteit ?? ""}`
-  }));
+  ENRICHED = DATA.lessen.map(x=>{
+    const cap = clamp0(x.capaciteit);
+    const bez = clamp0(x.bezet);
+    const vrij = Math.max(0, cap - bez);
+    return {
+      ...x,
+      trainerNaam: tBy[x.trainer_id]?.naam || "",
+      locatieNaam: lBy[x.locatie_id]?.locatie || "",
+      startTekst: fmtDateTime(x.start),
+      capTxt: `${bez}/${cap || ""}`,
+      vrij
+    };
+  });
 }
 
 function render(){
@@ -75,7 +83,7 @@ function render(){
   });
 
   if(!rows.length){
-    tbody.innerHTML = `<tr class="placeholder"><td colspan="8" style="text-align:center;color:#777;">Geen lessen gevonden.</td></tr>`;
+    tbody.innerHTML = `<tr class="placeholder"><td colspan="9" style="text-align:center;color:#777;">Geen lessen gevonden.</td></tr>`;
     return;
   }
 
@@ -86,7 +94,8 @@ function render(){
       <td>${r.trainerNaam||""}</td>
       <td>${r.locatieNaam||""}</td>
       <td>${r.startTekst||""}</td>
-      <td>${r.cap||""}</td>
+      <td>${r.capTxt||""}</td>
+      <td>${r.vrij}</td>
       <td>${badge(r.status)}</td>
       <td class="t-actions">
         <button class="icon-btn edit" title="Bewerken">✏️</button>
@@ -117,9 +126,15 @@ function exportCSV(){
     {key:"start", label:"Start (ISO)"},
     {key:"capaciteit", label:"Capaciteit"},
     {key:"bezet", label:"Bezet"},
-    {key:"status", label:"Status"}
+    {key:"status", label:"Status"},
+    {key:"_vrij", label:"Vrij"}
   ];
-  const csv = toCSV(DATA.lessen, headers);
+  // verrijk ‘vrij’ voor export
+  const rows = DATA.lessen.map(l=>{
+    const cap = clamp0(l.capaciteit), bez = clamp0(l.bezet);
+    return {...l, _vrij: Math.max(0, cap - bez)};
+  });
+  const csv = toCSV(rows, headers);
   const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -128,6 +143,7 @@ function exportCSV(){
   URL.revokeObjectURL(url);
 }
 
+/* — modal helpers (ongewijzigd t.o.v. v0903q) — */
 function openModal(){ document.getElementById("modal-les").classList.add("open"); }
 function closeModal(){ document.getElementById("modal-les").classList.remove("open"); }
 
@@ -151,6 +167,7 @@ function populateModal({selectedTrainer, selectedLoc, row}){
   $("#f-status").value= row?.status || "actief";
 }
 
+/* — CRUD — */
 async function loadAll(){
   const [lessen, trainers, locaties] = await Promise.all([
     j("/api/lessen"), j("/api/trainers"), j("/api/locaties")
@@ -224,7 +241,7 @@ function onDuplicate(id){
   const row = DATA.lessen.find(x=>x.id===id);
   if(!row) return;
   $("#modal-title").textContent = "Dupliceer les";
-  const form = $("#form-les"); form.reset(); form.id.value = ""; // lege id → POST
+  const form = $("#form-les"); form.reset(); form.id.value = "";
   const copy = { ...row, naam: `${row.naam} (kopie)` };
   populateModal({selectedTrainer: copy.trainer_id, selectedLoc: copy.locatie_id, row: copy});
   openModal();
@@ -236,17 +253,15 @@ function onDuplicate(id){
   try{
     await loadAll();
 
-    // filters
     ["#q","#status","#trainer-filter","#loc-filter"].forEach(sel=>{
       $(sel).addEventListener("input", render);
       $(sel).addEventListener("change", render);
     });
     $("#export").addEventListener("click", exportCSV);
     $("#btn-new").addEventListener("click", onNew);
-    $("[data-close='modal-les']").addEventListener("click", closeModal);
+    $("[data-close='modal-les']").addEventListener("click", ()=>document.getElementById("modal-les").classList.remove("open"));
     $("#form-les").addEventListener("submit", onSubmit);
 
-    // acties in tabel
     tbody.addEventListener("click",(e)=>{
       const btn = e.target.closest("button"); if(!btn) return;
       const id = e.target.closest("tr")?.dataset?.id;
@@ -257,6 +272,6 @@ function onDuplicate(id){
 
   }catch(err){
     console.error(err);
-    tbody.innerHTML = `<tr class="placeholder"><td colspan="8" style="text-align:center;color:#b00;">Kan data niet laden (${err.message}).</td></tr>`;
+    tbody.innerHTML = `<tr class="placeholder"><td colspan="9" style="text-align:center;color:#b00;">Kan data niet laden (${err.message}).</td></tr>`;
   }
 })();
