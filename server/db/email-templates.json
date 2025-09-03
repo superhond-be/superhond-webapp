@@ -1,22 +1,79 @@
 [
   {
     "id": "tpl_001",
-    "naam": "Verjaardag hond",
+    "naam": "Verjaardag hond (dag zelf)",
     "categorie": "Klant",
     "taal": "nl",
-    "beschrijving": "Proficiat met de verjaardag van de hond",
-    "trigger": "dog_birthday",
+    "beschrijving": "Felicitaties op de verjaardag van de hond.",
+    "trigger": "dog_birthday_same_day",
     "onderwerp": "🎉 Proficiat met {{hond_naam}}’s verjaardag!",
-    "inhoud": "<p>Beste {{klant_naam}},</p><p>{{hond_naam}} is jarig op {{geboortedatum}} — van harte proficiat!</p>"
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>Vandaag is {{hond_naam}} jarig — van harte proficiat! 🎂🐾</p><p>We wensen jullie een geweldige dag toe.</p><p>Vriendelijke groeten,<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "hond_naam"]
   },
   {
     "id": "tpl_002",
+    "naam": "Verjaardag hond (dag voordien)",
+    "categorie": "Klant",
+    "taal": "nl",
+    "beschrijving": "Herinnering eentje vooraf.",
+    "trigger": "dog_birthday_tomorrow",
+    "onderwerp": "Morgen is {{hond_naam}} jarig! 🎈",
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>Kleine reminder: morgen is {{hond_naam}} jarig. 🎉</p><p>We wensen jullie alvast een fijne dag toe!</p><p>Groetjes,<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "hond_naam"]
+  },
+  {
+    "id": "tpl_003",
     "naam": "Lesherinnering (morgen)",
     "categorie": "Training",
     "taal": "nl",
-    "beschrijving": "Herinnering voor de les",
-    "trigger": "class_reminder",
+    "beschrijving": "Herinnering voor les 1 dag op voorhand.",
+    "trigger": "class_reminder_tomorrow",
     "onderwerp": "Herinnering: {{les_naam}} op {{datum}} om {{starttijd}}",
-    "inhoud": "<p>Beste {{klant_naam}},</p><p>Tot morgen voor <b>{{les_naam}}</b> om {{starttijd}} in {{locatie}}.</p>"
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>Tot morgen voor <b>{{les_naam}}</b> om {{starttijd}} te {{locatie}}.</p><p>Breng aub: {{benodigdheden}}</p><p>Tot dan!<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "les_naam", "datum", "starttijd", "locatie", "benodigdheden"]
+  },
+  {
+    "id": "tpl_004",
+    "naam": "Lesbevestiging (direct na boeking)",
+    "categorie": "Training",
+    "taal": "nl",
+    "beschrijving": "Bevestiging na inschrijving.",
+    "trigger": "booking_confirmed",
+    "onderwerp": "Bevestiging: {{les_naam}} – {{datum}} {{starttijd}}",
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>Je inschrijving voor <b>{{les_naam}}</b> op {{datum}} om {{starttijd}} is geregistreerd voor {{hond_naam}}.</p><p>Locatie: {{locatie}}<br>Adres: {{adres}}</p><p>Tot snel!<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "hond_naam", "les_naam", "datum", "starttijd", "locatie", "adres"]
+  },
+  {
+    "id": "tpl_005",
+    "naam": "Wachtlijst melding",
+    "categorie": "Training",
+    "taal": "nl",
+    "beschrijving": "Boeking staat op wachtlijst.",
+    "trigger": "booking_waitlist",
+    "onderwerp": "Wachtlijst: {{les_naam}} – we houden je op de hoogte",
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>Voor <b>{{les_naam}}</b> staat je inschrijving momenteel op <b>wachtlijst</b>.</p><p>We contacteren je zodra er een plaats vrijkomt.</p><p>Groeten,<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "les_naam"]
+  },
+  {
+    "id": "tpl_006",
+    "naam": "Strippenkaart bijna op",
+    "categorie": "Strippenkaart",
+    "taal": "nl",
+    "beschrijving": "Klant is bijna door zijn/haar beurten.",
+    "trigger": "punchcard_low_balance",
+    "onderwerp": "Je strippenkaart is bijna op ({{resterend}} resterend)",
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>Je hebt nog <b>{{resterend}}</b> beurt(en) op je strippenkaart.</p><p>Je kan eenvoudig bijladen via het klantenportaal.</p><p>Groetjes,<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "resterend"]
+  },
+  {
+    "id": "tpl_007",
+    "naam": "Algemene mededeling",
+    "categorie": "Algemeen",
+    "taal": "nl",
+    "beschrijving": "Vrije template voor nieuws of updates.",
+    "trigger": "announcement",
+    "onderwerp": "{{onderwerp}}",
+    "inhoud_html": "<p>Beste {{klant_naam}},</p><p>{{bericht_html}}</p><p>Groeten,<br>Superhond.be</p>",
+    "placeholders": ["klant_naam", "onderwerp", "bericht_html"]
   }
 ]
