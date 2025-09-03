@@ -30,6 +30,13 @@ function saveJSON(name, data) {
 }
 const uid = () => Math.random().toString(36).slice(2, 10);
 
+function getLesById(lessen, id) {
+  return lessen.find(l => l.id === id);
+}
+function isBevestigd(status) {
+  return (status || "").toLowerCase() === "bevestigd";
+}
+
 // ---------- API (read) ----------
 app.get("/api/health", (_req, res) => res.json({ status: "ok", service: "superhond-webapp" }));
 app.get("/api/lessen",   (_req, res) => res.json(loadJSON("lessen.json")));
@@ -84,40 +91,104 @@ app.delete("/api/lessen/:id", (req, res) => {
   const idx = list.findIndex(x => x.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Les niet gevonden" });
   const [removed] = list.splice(idx, 1);
+
+  // Optioneel: bij verwijderen van les zou je gekoppelde boekingen kunnen checken.
+  // Voor simpelheid laten we dat hier achterwege.
+
   saveJSON("lessen.json", list);
   res.json({ ok: true, removed });
 });
 
-// ---------- CRUD: Boekingen (reeds aanwezig, laten staan) ----------
+// ---------- CRUD: Boekingen (met capaciteit-bewaking) ----------
 app.post("/api/boekingen", (req, res) => {
-  const list = loadJSON("boekingen.json");
+  const boekingen = loadJSON("boekingen.json");
+  const lessen = loadJSON("lessen.json");
   const { les_id, klant_id, hond_id, status = "bevestigd", datum } = req.body || {};
   if (!les_id || !klant_id || !hond_id) {
     return res.status(400).json({ error: "les_id, klant_id en hond_id zijn verplicht." });
   }
+  const les = getLesById(lessen, les_id);
+  if (!les) return res.status(400).json({ error: "Onbekende les_id" });
+
+  // Capaciteit check alleen voor bevestigde boekingen
+  if (isBevestigd(status)) {
+    const cap = Number(les.capaciteit ?? 0);
+    const bez = Number(les.bezet ?? 0);
+    if (cap > 0 && bez >= cap) {
+      return res.status(400).json({ error: "Les is vol" });
+    }
+    // reserveer plek
+    les.bezet = bez + 1;
+    saveJSON("lessen.json", lessen);
+  }
+
   const item = { id: "bk_" + uid(), les_id, klant_id, hond_id, status, datum: datum || null };
-  list.push(item);
-  saveJSON("boekingen.json", list);
+  boekingen.push(item);
+  saveJSON("boekingen.json", boekingen);
   res.status(201).json(item);
 });
 
 app.put("/api/boekingen/:id", (req, res) => {
-  const list = loadJSON("boekingen.json");
-  const idx = list.findIndex(x => x.id === req.params.id);
+  const boekingen = loadJSON("boekingen.json");
+  const lessen = loadJSON("lessen.json");
+  const idx = boekingen.findIndex(x => x.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Boeking niet gevonden" });
-  const prev = list[idx];
+
+  const prev = boekingen[idx];
   const { les_id, klant_id, hond_id, status, datum } = req.body || {};
-  list[idx] = { ...prev, les_id: les_id ?? prev.les_id, klant_id: klant_id ?? prev.klant_id, hond_id: hond_id ?? prev.hond_id, status: status ?? prev.status, datum: datum ?? prev.datum };
-  saveJSON("boekingen.json", list);
-  res.json(list[idx]);
+
+  const oldLes = getLesById(lessen, prev.les_id);
+  const newLes = getLesById(lessen, les_id ?? prev.les_id);
+
+  // Aanpassingen in bezetting:
+  const wasBevestigd = isBevestigd(prev.status);
+  const wordtBevestigd = isBevestigd(status ?? prev.status);
+  const lesWijzigt = (les_id && les_id !== prev.les_id);
+
+  // 1) als status of les verandert → corrigeer bezetting
+  if (wasBevestigd && (!wordtBevestigd || lesWijzigt)) {
+    if (oldLes && oldLes.bezet > 0) oldLes.bezet = Number(oldLes.bezet) - 1;
+  }
+  if ((!wasBevestigd && wordtBevestigd) || (lesWijzigt && wordtBevestigd)) {
+    if (!newLes) return res.status(400).json({ error: "Onbekende nieuwe les_id" });
+    const cap = Number(newLes.capaciteit ?? 0);
+    const bez = Number(newLes.bezet ?? 0);
+    if (cap > 0 && bez >= cap) {
+      return res.status(400).json({ error: "Les is vol" });
+    }
+    newLes.bezet = bez + 1;
+  }
+
+  // 2) sla boeking op
+  boekingen[idx] = {
+    ...prev,
+    les_id: les_id ?? prev.les_id,
+    klant_id: klant_id ?? prev.klant_id,
+    hond_id: hond_id ?? prev.hond_id,
+    status: status ?? prev.status,
+    datum: datum ?? prev.datum
+  };
+
+  saveJSON("lessen.json", lessen);
+  saveJSON("boekingen.json", boekingen);
+  res.json(boekingen[idx]);
 });
 
 app.delete("/api/boekingen/:id", (req, res) => {
-  const list = loadJSON("boekingen.json");
-  const idx = list.findIndex(x => x.id === req.params.id);
+  const boekingen = loadJSON("boekingen.json");
+  const lessen = loadJSON("lessen.json");
+  const idx = boekingen.findIndex(x => x.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Boeking niet gevonden" });
-  const [removed] = list.splice(idx, 1);
-  saveJSON("boekingen.json", list);
+
+  const removed = boekingen.splice(idx, 1)[0];
+  // enkel bij bevestigde boeking bezetting verlagen
+  if (removed && isBevestigd(removed.status)) {
+    const les = getLesById(lessen, removed.les_id);
+    if (les && les.bezet > 0) les.bezet = Number(les.bezet) - 1;
+    saveJSON("lessen.json", lessen);
+  }
+
+  saveJSON("boekingen.json", boekingen);
   res.json({ ok: true, removed });
 });
 
