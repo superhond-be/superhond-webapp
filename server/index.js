@@ -1,48 +1,25 @@
 // server/index.js
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
-// bovenaan bij de imports
-import searchRoutes from "./routes/search.js";
+const express = require("express");
+const path = require("path");
 
-
-
-// ⤵️ Optioneel: alleen gebruiken als je een routes/debug.js hebt
-import debugRoutes from "./routes/debug.js";
-
-// __dirname voor ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// App
 const app = express();
-app.use(express.json());
 
-// ... na app en middleware:
-app.use("/api/search", searchRoutes);
-
-// Static frontend (public/)
+// Zorg dat alles in /public bereikbaar is
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// Health check
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, time: new Date().toISOString() });
+// (optioneel) voorbeeld-API endpoint, later uit te breiden
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", service: "superhond-webapp" });
 });
 
-// Debug endpoints (optioneel)
-if (debugRoutes) {
-  app.use("/debug", debugRoutes);
-}
-
-// SPA fallback naar public/index.html
-app.get("*", (_req, res) => {
+// Fallback: altijd index.html tonen bij onbekende route
+// (handig als je client-side routing zou gebruiken)
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 
-// Start
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+// Start server
+const port = process.env.PORT || 10000;
+app.listen(port, () => {
+  console.log(`✅ Superhond server live op poort ${port}`);
 });
-
-export default app;
