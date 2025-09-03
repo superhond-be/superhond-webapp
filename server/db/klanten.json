@@ -1,1 +1,4 @@
-
+[
+  { "id": "kl_001", "naam": "Jan Janssen", "email": "jan@example.com" },
+  { "id": "kl_002", "naam": "Els Peeters", "email": "els@example.com" }
+]
