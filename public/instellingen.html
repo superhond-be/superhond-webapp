@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+  <!-- ====== 1. META & STYLES ====== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Superhond.be – Admin instellingen</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="settings.css">
 </head>
-<body>
-  <!-- Navigatie -->
+<body class="page-settings">
+
+  <!-- ====== 2. ICONEN ====== -->
+  <object type="image/svg+xml" data="img/icons.svg" style="display:none"></object>
+
+  <!-- ====== 3. NAVIGATIE ====== -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -20,12 +26,12 @@
     </ul>
   </nav>
 
-  <!-- Titel -->
+  <!-- ====== 4. PAGINA TITEL ====== -->
   <header class="page-header">
     <h1>Superhond.be – Admin instellingen</h1>
   </header>
 
-  <!-- Tabs -->
+  <!-- ====== 5. TABS ====== -->
   <div class="tabs">
     <button class="tablink active" onclick="openTab(event, 'lestype')">Lestype</button>
     <button class="tablink" onclick="openTab(event, 'lesthema')">Les thema</button>
@@ -34,11 +40,12 @@
     <button class="tablink" onclick="openTab(event, 'emails')">E-mails</button>
   </div>
 
-  <!-- Inhoud tabs -->
+  <!-- ====== 6. TAB-INHOUD ====== -->
   <div id="lestype" class="tabcontent" style="display:block;">
     <h2>Lestype</h2>
     <p class="hint">Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers.<br>
-    <b>Opgelet:</b> de <u>startdatum</u> kies je later bij inschrijving van de klant.</p>
+    <b>Opgelet:</b> de startdatum kies je later bij inschrijving van de klant.</p>
+
     <form>
       <label>Naam*</label>
       <input type="text" placeholder="bv. Puppy">
@@ -65,6 +72,7 @@
     </form>
   </div>
 
+  <!-- ====== 7. ANDERE TABS ====== -->
   <div id="lesthema" class="tabcontent">
     <h2>Les thema</h2>
     <p>Voeg thema’s toe met naam en beschrijving.</p>
@@ -85,6 +93,10 @@
     <p>Hier beheer je e-mailtemplates (bijv. bevestigingen, herinneringen, verjaardagen).</p>
   </div>
 
+  <!-- ====== 8. FOOTER / DEBUG ====== -->
+  <div class="debug-label">assets v0903pretty</div>
+
+  <!-- ====== 9. SCRIPTS ====== -->
   <script src="js/instellingen.js"></script>
 </body>
 </html>
