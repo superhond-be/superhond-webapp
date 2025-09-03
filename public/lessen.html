@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Superhond · Lessen beheren</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <link rel="stylesheet" href="styles.css?v=0903l" />
+  <style>
+    .status-badge{border-radius:999px;padding:2px 8px;font-size:.85rem;font-weight:700;display:inline-block}
+    .st-actief{background:#e6ffcc;border:1px solid #97d36b;color:#185b00}
+    .st-vol{background:#ffe6e6;border:1px solid #ff9a9a;color:#7d0000}
+    .st-geannuleerd{background:#f1f1f1;border:1px solid #d0d0d0;color:#666}
+    .mono{font-family:ui-monospace,Menlo,monospace}
+  </style>
 </head>
 <body>
   <nav class="topnav">
@@ -28,32 +35,50 @@
   <main>
     <section class="card">
       <div class="help">
-        Placeholder-pagina. Hier komt later het plannen en beheren van reeksen/losse lessen.
-        Gebruik ondertussen <a href="les-instellingen.html">Instellingen</a> om types/locaties/trainers te beheren.
+        Dit overzicht leest live uit <span class="mono">/api/lessen</span>, <span class="mono">/api/locaties</span> en
+        <span class="mono">/api/trainers</span>. Gebruik de filters hieronder om snel te zoeken.
       </div>
 
       <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <div class="col"><button class="btn">+ Nieuwe les</button></div>
-        <div class="col"><label>Zoek <input placeholder="bv. Puppy, dinsdag, Retie"></label></div>
+        <div class="col"><button id="btn-new" class="btn">+ Nieuwe les</button></div>
+        <div class="col" style="min-width:220px"><label>Zoek <input id="q" placeholder="naam, type, locatie, trainer…"></label></div>
         <div class="col">
-          <label>Filter status
-            <select>
-              <option>Alle</option><option>Actief</option><option>Vol</option><option>Geannuleerd</option>
+          <label>Status
+            <select id="status">
+              <option value="">Alle</option>
+              <option value="actief">Actief</option>
+              <option value="vol">Vol</option>
+              <option value="geannuleerd">Geannuleerd</option>
             </select>
           </label>
         </div>
+        <div class="col">
+          <label>Trainer
+            <select id="trainer-filter"><option value="">Alle</option></select>
+          </label>
+        </div>
+        <div class="col">
+          <label>Locatie
+            <select id="loc-filter"><option value="">Alle</option></select>
+          </label>
+        </div>
+        <div class="col"><button id="export" class="btn">Export CSV</button></div>
       </div>
 
-      <table style="margin-top:10px">
-        <thead><tr><th>Naam</th><th>Type</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Capaciteit</th><th></th></tr></thead>
+      <table id="tbl-lessen" style="margin-top:10px">
+        <thead>
+          <tr><th>Naam</th><th>Type</th><th>Trainer</th><th>Locatie</th><th>Start</th><th>Cap.</th><th>Status</th><th></th></tr>
+        </thead>
         <tbody>
-          <tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen lessen gepland.</td></tr>
+          <tr class="placeholder"><td colspan="8" style="text-align:center;color:#777;">Laden…</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-  <script src="Js/script.js?v=0903k"></script>
+
+  <script src="Js/script.js?v=0903l"></script>
+  <script src="Js/lessen.js?v=0903l"></script>
 </body>
 </html>
