@@ -1,29 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond · Instellingen</title>
-
-  <link rel="stylesheet" href="styles.css?v=0903k" />
-  <style>
-    .page-badge{background:#ffe48a;border:1px solid #e2b200;border-radius:6px;padding:2px 6px;font-size:.85rem;margin-left:8px}
-    .tabbar{position:sticky;top:64px;z-index:10;background:#fff;display:flex;gap:8px;flex-wrap:wrap;padding:8px 0;margin-bottom:12px}
-    .tab-btn{display:inline-block;border:1px solid #ccc;background:#f7f7f7;padding:8px 10px;border-radius:8px;text-decoration:none;color:#222}
-    .card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid label{display:flex;flex-direction:column;font-weight:600}
-    .help{background:#fff7e6;border:1px solid #ffd28a;border-radius:8px;padding:8px;margin-bottom:10px}
-    .tab-panel{margin-bottom:24px}
-    html{scroll-behavior:smooth}
-    .t-actions{white-space:nowrap}
-    .icon-btn{border:0;background:transparent;cursor:pointer;font-size:18px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #eee;vertical-align:top}
-  </style>
+  <meta charset="UTF-8">
+  <title>Superhond.be – Admin instellingen</title>
+  <link rel="stylesheet" href="styles.css?v=0903l">
 </head>
 <body>
-  <!-- Gele balk -->
+  <!-- Gele hoofdnavigatie -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -32,136 +15,90 @@
       <li><a href="lessen.html">Lessen beheren</a></li>
       <li><a href="boekingen.html">Boekingen</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html" class="active">Instellingen</a></li>
+      <li><a class="active" href="les-instellingen.html">Instellingen</a></li>
     </ul>
   </nav>
 
-  <header class="page-header">
-    <h1>Superhond.be – Admin instellingen <span class="page-badge">v0903k</span></h1>
-  </header>
-
-  <!-- Snellinks (ankers) -->
-  <div class="tabbar">
-    <a class="tab-btn" href="#sect-lestype">Lestype</a>
-    <a class="tab-btn" href="#sect-lesthema">Les thema</a>
-    <a class="tab-btn" href="#sect-leslocatie">Leslocatie</a>
-    <a class="tab-btn" href="#sect-lestrainers">Les trainers</a>
-    <a class="tab-btn" href="#sect-email">E-mails</a>
-  </div>
-
   <main>
-    <!-- LESTYPE -->
-    <section class="tab-panel" id="sect-lestype">
-      <div class="card">
-        <h2>Lestype</h2>
-        <div class="help">
-          Lestypes bepalen aantal lessen, <b>lesduur</b>, geldigheidsduur en max. deelnemers.<br>
-          <b>Opgelet:</b> de <u>startdatum</u> kies je later bij inschrijving van de klant.
+    <h1>Superhond.be – Admin instellingen 
+      <span class="page-badge">v0903l</span>
+    </h1>
+
+    <!-- Tabbar met vijf knoppen -->
+    <div class="tabbar">
+      <a class="tab-btn" href="#sect-lestype">Lestype</a>
+      <a class="tab-btn" href="#sect-lesthema">Les thema</a>
+      <a class="tab-btn" href="#sect-leslocatie">Leslocatie</a>
+      <a class="tab-btn" href="#sect-lestrainers">Les trainers</a>
+      <a class="tab-btn" href="#sect-email">E-mails</a>
+    </div>
+
+    <!-- Secties -->
+    <section id="sect-lestype" class="tab-panel">
+      <h2>Lestype</h2>
+      <p class="hint">
+        Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers.  
+        <b>Opgelet:</b> de startdatum kies je later bij inschrijving van de klant.
+      </p>
+
+      <form id="form-lestype">
+        <label>Naam* <input type="text" name="naam" placeholder="bv. Puppy"></label>
+        <label>Aantal lessen <input type="number" name="aantal" placeholder="bv. 6"></label>
+        <label>Lesduur (minuten) <input type="number" name="lesduur" placeholder="bv. 60"></label>
+        <label>Geldigheidsduur (maanden) <input type="number" name="geldigheid" placeholder="bv. 6"></label>
+        <label>Max deelnemers <input type="number" name="max" placeholder="bv. 10"></label>
+        <label>Beschrijving <textarea name="beschrijving" placeholder="Korte omschrijving..."></textarea></label>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn">Opslaan</button>
+          <button type="reset" class="btn">Nieuw</button>
+          <button type="button" class="btn" id="lt-export">Export JSON</button>
+          <button type="button" class="btn" id="lt-import">Import JSON</button>
+          <input type="file" id="lt-file" accept="application/json" style="display:none">
         </div>
+      </form>
 
-        <form id="form-lestype" class="grid">
-          <input type="hidden" name="id" id="lt-id" />
-
-          <label>Naam*
-            <input id="lt-naam" name="naam" placeholder="bv. Puppy" required />
-          </label>
-
-          <label>Aantal lessen
-            <input id="lt-aantal" name="aantal_lessen" type="number" min="0" placeholder="bv. 6" />
-          </label>
-
-          <label>Lesduur (minuten)
-            <input id="lt-duur" name="lesduur_min" type="number" min="0" placeholder="bv. 60" />
-          </label>
-
-          <label>Geldigheidsduur (maanden)
-            <input id="lt-geldig" name="geldigheid_m" type="number" min="0" placeholder="bv. 6" />
-          </label>
-
-          <label>Max deelnemers
-            <input id="lt-max" name="max_deelnemers" type="number" min="0" placeholder="bv. 10" />
-          </label>
-
-          <label>Beschrijving
-            <textarea id="lt-beschrijving" name="beschrijving" rows="3" placeholder="Korte omschrijving..."></textarea>
-          </label>
-
-          <div style="grid-column:1/-1;display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-            <button class="btn" type="submit">Opslaan</button>
-            <button class="btn" type="button" id="lt-nieuw">Nieuw</button>
-            <button class="btn" type="button" id="lt-export">Export JSON</button>
-            <button class="btn" type="button" id="lt-import">Import JSON</button>
-            <input type="file" id="lt-file" accept="application/json" style="display:none">
-          </div>
-        </form>
-
-        <table id="tbl-lestypes" style="margin-top:12px">
-          <thead>
-            <tr>
-              <th>Naam</th><th>Aantal</th><th>Lesduur (min)</th>
-              <th>Geldig (m)</th><th>Max</th><th>Beschrijving</th><th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="7" style="text-align:center;color:#777;">Nog geen lestypes toegevoegd.</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <table id="table-lestype">
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>Aantal</th>
+            <th>Lesduur (min)</th>
+            <th>Geldig (m)</th>
+            <th>Max</th>
+            <th>Beschrijving</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="6">Nog geen lestypes toegevoegd.</td></tr>
+        </tbody>
+      </table>
     </section>
 
-    <!-- LES THEMA -->
-    <section class="tab-panel" id="sect-lesthema">
-      <div class="card">
-        <h2>Les thema</h2>
-        <p class="help">Voeg thema’s toe met naam en beschrijving.</p>
-        <div id="lesthema-root"></div>
-      </div>
+    <section id="sect-lesthema" class="tab-panel">
+      <h2>Les thema</h2>
+      <p class="hint">Voeg thema’s toe met naam en beschrijving.</p>
     </section>
 
-    <!-- LOCATIE -->
-    <section class="tab-panel" id="sect-leslocatie">
-      <div class="card">
-        <h2>Leslocatie</h2>
-        <p class="help">Geef locatie, adres, postbus/plaats en beschrijving in.</p>
-        <div id="leslocatie-root"></div>
-      </div>
+    <section id="sect-leslocatie" class="tab-panel">
+      <h2>Leslocatie</h2>
+      <p class="hint">Geef locatie, adres, postbus/plaats en beschrijving in.</p>
     </section>
 
-    <!-- TRAINERS -->
-    <section class="tab-panel" id="sect-lestrainers">
-      <div class="card">
-        <h2>Les trainers</h2>
-        <p class="help">Beheer trainers en functies.</p>
-        <div id="lestrainers-root"></div>
-      </div>
+    <section id="sect-lestrainers" class="tab-panel">
+      <h2>Les trainers</h2>
+      <p class="hint">Voeg trainers toe met naam en functie.</p>
     </section>
 
-    <!-- E-MAILS -->
-    <section class="tab-panel" id="sect-email">
-      <div class="card">
-        <h2>E-mailtemplates</h2>
-        <div class="help">
-          Beheer templates. Bewaard in <code>/server/db/email-templates.json</code> en bereikbaar via <code>/api/email-templates</code>.
-        </div>
-        <button id="btn-new" class="btn">+ Nieuwe template</button>
-        <table id="tbl-templates" style="margin-top:10px">
-          <thead>
-            <tr><th>Naam</th><th>Categorie</th><th>Trigger</th><th>Onderwerp</th><th></th></tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="5" style="text-align:center;color:#777;">Laden…</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- (optioneel) modal voor e-mail bewerken/nieuw – laat je huidige modal staan -->
-      <div id="modal-tpl" class="modal" hidden></div>
+    <section id="sect-email" class="tab-panel">
+      <h2>E-mails</h2>
+      <p class="hint">Beheer je e-mail templates, ontvangers en instellingen.</p>
     </section>
   </main>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-
-  <script src="Js/les-instellingen.js?v=0903k"></script>
-  <script src="Js/email-templates.js?v=0903k"></script>
+  <!-- Scripts -->
+  <script src="Js/les-instellingen.js?v=0903l"></script>
+  <script src="Js/email-templates.js?v=0903l"></script>
+  <script src="Js/cleanup-banner.js?v=0903l"></script>
 </body>
 </html>
