@@ -1,15 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond · Dashboard</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <meta charset="UTF-8">
+  <title>Superhond.be – Dashboard</title>
+  <link rel="stylesheet" href="styles.css?v=0903n">
 </head>
 <body>
+  <!-- Gele hoofdnavigatie -->
   <nav class="topnav">
     <ul>
-      <li><a href="index.html" class="active">Dashboard</a></li>
+      <li><a class="active" href="index.html">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
       <li><a href="lessen.html">Lessen beheren</a></li>
@@ -19,17 +19,27 @@
     </ul>
   </nav>
 
-  <header class="page-header">
-    <h1>Dashboard <span class="page-badge">v0903k</span></h1>
-  </header>
-
   <main>
-    <section class="card">
-      <p>Welkom bij Superhond.be – Admin.</p>
+    <h1>Superhond.be – Dashboard <span class="page-badge">v0903n</span></h1>
+
+    <section class="tab-panel">
+      <h2>Welkom</h2>
+      <p class="hint">Dit is het startscherm van het Superhond.be admin portaal.</p>
+    </section>
+
+    <section class="tab-panel">
+      <h2>Overzicht</h2>
+      <p class="hint">Hier kan je later statistieken of samenvattingen tonen.</p>
     </section>
   </main>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-  <script src="Js/script.js?v=0903k"></script>
+  <!-- Groen labeltje rechtsonder -->
+  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;
+              padding:4px 8px;border-radius:6px;z-index:9999">
+    assets v0903n
+  </div>
+
+  <!-- Scripts -->
+  <script src="Js/cleanup-banner.js?v=0903n"></script>
 </body>
 </html>
