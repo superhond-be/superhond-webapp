@@ -1,17 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond · Honden</title>
-  <link rel="stylesheet" href="styles.css?v=0903k" />
+  <meta charset="UTF-8">
+  <title>Superhond.be – Honden</title>
+  <link rel="stylesheet" href="styles.css?v=0903s">
 </head>
 <body>
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html" class="active">Honden</a></li>
+      <li><a class="active" href="honden.html">Honden</a></li>
       <li><a href="lessen.html">Lessen beheren</a></li>
       <li><a href="boekingen.html">Boekingen</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
@@ -19,15 +18,38 @@
     </ul>
   </nav>
 
-  <header class="page-header">
-    <h1>Honden <span class="page-badge">v0903k</span></h1>
-  </header>
-
   <main>
-    <section class="card"><div id="honden-root">—</div></section>
+    <h1>Honden <span class="page-badge">v0903s</span></h1>
+
+    <section class="tab-panel">
+      <h2>Zoeken & filter</h2>
+      <form id="honden-search" style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="search" id="q" placeholder="Zoek op naam, klant of chip…" style="flex:1">
+        <select id="filter-thema">
+          <option value="">Thema (alle)</option>
+          <option>Puppy</option>
+          <option>Gehoorzaamheid</option>
+        </select>
+        <button class="btn" type="submit">Zoeken</button>
+        <button class="btn" type="button" id="btn-new">+ Nieuwe hond</button>
+      </form>
+    </section>
+
+    <section class="tab-panel">
+      <h2>Resultaten</h2>
+      <table id="tbl-honden">
+        <thead>
+          <tr><th>Naam</th><th>Ras</th><th>Eigenaar</th><th>Geboortedatum</th><th>Acties</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" class="muted">Nog geen honden geladen.</td></tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
-  <script src="Js/honden.js?v=0903k"></script>
+  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
+
+  <script src="Js/honden.js?v=0903s"></script>
 </body>
 </html>
