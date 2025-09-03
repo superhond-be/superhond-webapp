@@ -1,42 +1,50 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Superhond.be – Dashboard</title>
-
-  <!-- Koppel jouw centrale CSS -->
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="app.css?v=v0903clean" />
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <!-- Navigatiebalk -->
-  <div class="topnav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="klanten.html">Klanten</a>
-    <a href="honden.html">Honden</a>
-    <a href="lessen.html">Lessen beheren</a>
-    <a href="boekingen.html">Boekingen</a>
-    <a href="strippenkaarten.html">Strippenkaarten</a>
-    <a href="instellingen.html">Instellingen</a>
+  <nav class="topnav">
+    <ul>
+      <li><a class="active" href="index.html">Dashboard</a></li>
+      <li><a href="klanten.html">Klanten</a></li>
+      <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html">Lessen beheren</a></li>
+      <li><a href="boekingen.html">Boekingen</a></li>
+      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+      <li><a href="instellingen.html">Instellingen</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-title-wrap">
+    <div class="page-title"><span class="paw">🐾</span> Superhond.be – Admin <span class="paw">🐾</span></div>
   </div>
 
-  <!-- Titelbalk -->
-  <header class="page-header">
-    <h1>🐾 Superhond.be – Dashboard 🐾</h1>
-  </header>
+  <main>
+    <h2>Snel acties</h2>
+    <p>
+      <button class="btn btn--dark">Nieuwe klant</button>
+      <button class="btn btn--primary">Nieuwe hond</button>
+      <button class="btn btn--ghost btn--sm">Zoeken</button>
+    </p>
 
-  <!-- Hoofdinhoud -->
-  <main class="content">
-    <h2>Welkom terug bij Superhond.be!</h2>
-    <p>Hier zie je een overzicht van klanten, honden, lessen en boekingen.</p>
+    <h2>Overzicht</h2>
+    <table>
+      <thead><tr><th>Module</th><th>Omschrijving</th></tr></thead>
+      <tbody>
+        <tr><td>Klanten</td><td>Beheer je klantenbestand en contactgegevens.</td></tr>
+        <tr><td>Honden</td><td>Hondenprofielen koppelen aan klanten.</td></tr>
+        <tr><td>Lessen</td><td>Plan en beheer trainingslessen.</td></tr>
+        <tr><td>Boekingen</td><td>Inschrijvingen en aanwezigheden.</td></tr>
+        <tr><td>Strippenkaarten</td><td>Credits en geldigheid beheren.</td></tr>
+      </tbody>
+    </table>
   </main>
 
-  <!-- Asset-versie rechtsonder -->
-  <footer class="version">
-    assets v0903pretty
-  </footer>
-
-  <!-- JavaScript -->
-  <script src="app.js"></script>
+  <div class="version-tag">assets v0903clean</div>
 </body>
 </html>
