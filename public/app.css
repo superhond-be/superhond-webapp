@@ -25,7 +25,7 @@ html, body {
 .topnav a {
   text-decoration: none;
   color: #000;
-  font-weight: bold;
+  font-weight: bold
 }
 .topnav a.active { text-decoration: underline; }
 
@@ -225,3 +225,71 @@ th { background: #f4f4f4; font-weight: 700; }
   .panel-head { flex-direction: column; align-items: flex-start; }
 }
 
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Superhond.be – Instellingen</title>
+  <link rel="stylesheet" href="app.css?v=v0903stable" />
+  <script src="app.js" defer></script>
+
+  <!-- Kleine scroll-fix zodat panels altijd scrolbaar blijven -->
+  <style>
+    html, body { height: auto; overflow: auto !important; }
+    main { overflow: visible !important; }
+    .tab-panel { display: none; overflow: visible; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body class="page-settings">
+
+  <!-- Gele navigatie -->
+  <nav class="topnav">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="klanten.html">Klanten</a></li>
+      <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html">Lessen beheren</a></li>
+      <li><a href="boekingen.html">Boekingen</a></li>
+      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
+      <li><a class="active" href="instellingen.html">Instellingen</a></li>
+    </ul>
+  </nav>
+
+  <!-- Centrale gele titelbalk -->
+  <div style="text-align:center; margin-top:20px;">
+    <div class="page-title">
+      <span class="paw">🐾</span> Superhond.be – Admin <span class="paw">🐾</span>
+    </div>
+  </div>
+
+  <main>
+    <!-- TAB knoppen -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tab-lestypes">Lestypes</button>
+      <button class="tab-btn" data-tab="tab-thema">Les thema</button>
+      <button class="tab-btn" data-tab="tab-locaties">Leslocatie</button>
+      <button class="tab-btn" data-tab="tab-trainers">Les trainers</button>
+      <button class="tab-btn" data-tab="tab-emails">E-mails</button>
+    </div>
+
+    <!-- ===== LESTYPES ===== -->
+    <section id="tab-lestypes" class="tab-panel active">
+      <div class="panel-head">
+        <h2>Lestypes</h2>
+        <div class="panel-actions">
+          <button class="btn btn--dark"><svg class="icon"><use href="icons.svg#icon-plus"></use></svg> Nieuw lestype</button>
+          <button class="btn btn--primary"><svg class="icon"><use href="icons.svg#icon-save"></use></svg> Opslaan</button>
+        </div>
+      </div>
+
+      <form class="form-grid">
+        <div class="form-item">
+          <label>Naam</label>
+          <input type="text" placeholder="bv. Puppy Start">
+        </div>
+        <div class="form-item">
+          <label>Beschrijving</label>
+          <textarea rows="3" placeholder="Korte omschrijving van dit lestype..."></textarea>
+        </div
