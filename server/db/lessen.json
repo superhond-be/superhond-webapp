@@ -4,21 +4,21 @@
     "naam": "Puppy Basis",
     "type": "Puppy",
     "trainer_id": "tr_001",
-    "locatie_id": "lc_001",
-    "start": "2025-09-15T18:30:00",
+    "locatie_id": "loc_001",
+    "start": "2025-09-15T18:00:00.000Z",
     "capaciteit": 10,
-    "bezet": 7,
+    "bezet": 4,
     "status": "actief"
   },
   {
     "id": "ls_002",
-    "naam": "Socialisatie",
-    "type": "Socialisatie",
+    "naam": "Agility Gevorderd",
+    "type": "Agility",
     "trainer_id": "tr_002",
-    "locatie_id": "lc_002",
-    "start": "2025-09-17T19:00:00",
+    "locatie_id": "loc_002",
+    "start": "2025-09-20T14:00:00.000Z",
     "capaciteit": 8,
-    "bezet": 5,
-    "status": "actief"
+    "bezet": 8,
+    "status": "vol"
   }
 ]
