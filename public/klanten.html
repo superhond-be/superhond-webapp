@@ -3,48 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond.be – Klanten</title>
-  <link rel="stylesheet" href="styles.css?v=0903s">
+  <link rel="stylesheet" href="styles.css?v=0903t">
 </head>
-<body>
+<body class="page-klanten">
   <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a class="active" href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html">Instellingen</a></li>
-    </ul>
+    <a href="index.html">Dashboard</a>
+    <a href="klanten.html" class="active">Klanten</a>
+    <a href="honden.html">Honden</a>
+    <a href="lessen.html">Lessen beheren</a>
+    <a href="boekingen.html">Boekingen</a>
+    <a href="strippenkaarten.html">Strippenkaarten</a>
+    <a href="les-instellingen.html">Instellingen</a>
   </nav>
 
   <main>
-    <h1>Klanten <span class="page-badge">v0903s</span></h1>
+    <h1>Superhond.be – Klanten</h1>
 
-    <section class="tab-panel">
-      <h2>Zoeken & acties</h2>
-      <form id="klanten-search" style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="search" id="q" placeholder="Zoek op naam, e-mail of telefoon…" style="flex:1">
-        <button class="btn" type="submit">Zoeken</button>
-        <button class="btn" type="button" id="btn-new">+ Nieuwe klant</button>
-      </form>
-    </section>
-
-    <section class="tab-panel">
-      <h2>Resultaten</h2>
-      <table id="tbl-klanten">
+    <section>
+      <h2>Overzicht klanten</h2>
+      <table>
         <thead>
-          <tr><th>Naam</th><th>E-mail</th><th>Tel</th><th>Honden</th><th>Acties</th></tr>
+          <tr><th>Naam</th><th>E-mail</th><th>Telefoon</th><th>Acties</th></tr>
         </thead>
         <tbody>
-          <tr><td colspan="5" class="muted">Nog geen klanten geladen.</td></tr>
+          <tr><td>—</td><td>—</td><td>—</td><td>✏️ ❌</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
-  <div style="position:fixed;right:8px;bottom:8px;background:#28a745;color:#fff;padding:4px 8px;border-radius:6px;z-index:9999">assets v0903s</div>
-
-  <script src="Js/klanten.js?v=0903s"></script>
+  <footer>
+    <span class="debug-label">assets v0903t</span>
+  </footer>
 </body>
 </html>
