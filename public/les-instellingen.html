@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Superhond · Instellingen</title>
 
-  <!-- Stylesheet met cache-bust -->
   <link rel="stylesheet" href="styles.css?v=0903k" />
   <style>
     .page-badge{background:#ffe48a;border:1px solid #e2b200;border-radius:6px;padding:2px 6px;font-size:.85rem;margin-left:8px}
@@ -17,10 +16,14 @@
     .help{background:#fff7e6;border:1px solid #ffd28a;border-radius:8px;padding:8px;margin-bottom:10px}
     .tab-panel{margin-bottom:24px}
     html{scroll-behavior:smooth}
+    .t-actions{white-space:nowrap}
+    .icon-btn{border:0;background:transparent;cursor:pointer;font-size:18px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eee;vertical-align:top}
   </style>
 </head>
 <body>
-  <!-- Gele balk / topnav -->
+  <!-- Gele balk -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -33,12 +36,11 @@
     </ul>
   </nav>
 
-  <!-- Titel -->
   <header class="page-header">
     <h1>Superhond.be – Admin instellingen <span class="page-badge">v0903k</span></h1>
   </header>
 
-  <!-- “Tabs” als snelkoppelingen (ankers) -->
+  <!-- Snellinks (ankers) -->
   <div class="tabbar">
     <a class="tab-btn" href="#sect-lestype">Lestype</a>
     <a class="tab-btn" href="#sect-lesthema">Les thema</a>
@@ -48,7 +50,7 @@
   </div>
 
   <main>
-    <!-- SECTIE: Lestype -->
+    <!-- LESTYPE -->
     <section class="tab-panel" id="sect-lestype">
       <div class="card">
         <h2>Lestype</h2>
@@ -84,9 +86,12 @@
             <textarea id="lt-beschrijving" name="beschrijving" rows="3" placeholder="Korte omschrijving..."></textarea>
           </label>
 
-          <div style="grid-column:1/-1;display:flex;gap:8px;margin-top:8px">
+          <div style="grid-column:1/-1;display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
             <button class="btn" type="submit">Opslaan</button>
             <button class="btn" type="button" id="lt-nieuw">Nieuw</button>
+            <button class="btn" type="button" id="lt-export">Export JSON</button>
+            <button class="btn" type="button" id="lt-import">Import JSON</button>
+            <input type="file" id="lt-file" accept="application/json" style="display:none">
           </div>
         </form>
 
@@ -104,7 +109,7 @@
       </div>
     </section>
 
-    <!-- SECTIE: Les thema -->
+    <!-- LES THEMA -->
     <section class="tab-panel" id="sect-lesthema">
       <div class="card">
         <h2>Les thema</h2>
@@ -113,7 +118,7 @@
       </div>
     </section>
 
-    <!-- SECTIE: Leslocatie -->
+    <!-- LOCATIE -->
     <section class="tab-panel" id="sect-leslocatie">
       <div class="card">
         <h2>Leslocatie</h2>
@@ -122,7 +127,7 @@
       </div>
     </section>
 
-    <!-- SECTIE: Les trainers -->
+    <!-- TRAINERS -->
     <section class="tab-panel" id="sect-lestrainers">
       <div class="card">
         <h2>Les trainers</h2>
@@ -131,15 +136,13 @@
       </div>
     </section>
 
-    <!-- SECTIE: E-mails -->
+    <!-- E-MAILS -->
     <section class="tab-panel" id="sect-email">
       <div class="card">
         <h2>E-mailtemplates</h2>
         <div class="help">
-          Beheer templates. Bewaard in <code>/server/db/email-templates.json</code>
-          en beschikbaar via <code>/api/email-templates</code>.
+          Beheer templates. Bewaard in <code>/server/db/email-templates.json</code> en bereikbaar via <code>/api/email-templates</code>.
         </div>
-
         <button id="btn-new" class="btn">+ Nieuwe template</button>
         <table id="tbl-templates" style="margin-top:10px">
           <thead>
@@ -151,39 +154,13 @@
         </table>
       </div>
 
-      <!-- Modal e-mail -->
-      <div id="modal-tpl" class="modal">
-        <div class="modal-content">
-          <h3 id="modal-title">Nieuwe template</h3>
-          <form id="form-tpl">
-            <input type="hidden" name="id" />
-            <label>Naam <input name="naam" id="f-naam" required /></label>
-            <label>Categorie
-              <select name="categorie" id="f-cat">
-                <option>Algemeen</option>
-                <option>Klant</option>
-                <option>Training</option>
-                <option>Strippenkaart</option>
-              </select>
-            </label>
-            <label>Trigger <input name="trigger" id="f-trigger" placeholder="bv. dog_birthday" /></label>
-            <label>Onderwerp <input name="onderwerp" id="f-onderwerp" required /></label>
-            <label>Inhoud
-              <textarea name="inhoud" id="f-inhoud" rows="8" placeholder="HTML-body…"></textarea>
-            </label>
-            <div class="modal-actions">
-              <button type="submit" class="btn">Opslaan</button>
-              <button type="button" class="btn" data-close="modal-tpl">Annuleren</button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <!-- (optioneel) modal voor e-mail bewerken/nieuw – laat je huidige modal staan -->
+      <div id="modal-tpl" class="modal" hidden></div>
     </section>
   </main>
 
   <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
 
-  <!-- Alleen functionele scripts (GEEN tabswitcher meer) -->
   <script src="Js/les-instellingen.js?v=0903k"></script>
   <script src="Js/email-templates.js?v=0903k"></script>
 </body>
