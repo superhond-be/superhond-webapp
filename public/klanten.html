@@ -9,6 +9,7 @@
 </head>
 <body>
 
+  <!-- Navigatie -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
@@ -21,15 +22,48 @@
     </ul>
   </nav>
 
+  <!-- Titel -->
   <div style="text-align:center; margin-top:20px;">
-    <div class="page-title"><span class="paw">🐾</span> Superhond.be – Klanten <span class="paw">🐾</span></div>
+    <div class="page-title">
+      <span class="paw">🐾</span> Superhond.be – Klanten <span class="paw">🐾</span>
+    </div>
   </div>
 
+  <!-- Inhoud -->
   <main>
     <h2>Overzicht klanten</h2>
-    <p>Hier beheer je alle klantgegevens.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Email</th>
+          <th>Telefoon</th>
+          <th>Acties</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jan Peeters</td>
+          <td>jan@example.com</td>
+          <td>0477 12 34 56</td>
+          <td>
+            <!-- Actieknoppen met iconen -->
+            <button class="btn btn--ghost btn--sm">
+              <svg class="icon"><use href="icons.svg#icon-edit"></use></svg>
+            </button>
+            <button class="btn btn--ghost btn--sm">
+              <svg class="icon"><use href="icons.svg#icon-delete"></use></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </main>
 
+  <!-- Versiecode -->
   <div class="version-tag">assets v0903stable</div>
+
+  <!-- SVG-icons inladen -->
+  <object type="image/svg+xml" data="icons.svg" style="display:none;"></object>
 </body>
 </html>
