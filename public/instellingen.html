@@ -1,102 +1,12 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <!-- ====== 1. META & STYLES ====== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Superhond.be – Admin instellingen</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="settings.css">
+  <link rel="stylesheet" href="app.css?v=v0903stable">
 </head>
 <body class="page-settings">
-
-  <!-- ====== 2. ICONEN ====== -->
-  <object type="image/svg+xml" data="img/icons.svg" style="display:none"></object>
-
-  <!-- ====== 3. NAVIGATIE ====== -->
-  <nav class="topnav">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a class="active" href="instellingen.html">Instellingen</a></li>
-    </ul>
-  </nav>
-
-  <!-- ====== 4. PAGINA TITEL ====== -->
-  <header class="page-header">
-    <h1>Superhond.be – Admin instellingen</h1>
-  </header>
-
-  <!-- ====== 5. TABS ====== -->
-  <div class="tabs">
-    <button class="tablink active" onclick="openTab(event, 'lestype')">Lestype</button>
-    <button class="tablink" onclick="openTab(event, 'lesthema')">Les thema</button>
-    <button class="tablink" onclick="openTab(event, 'leslocatie')">Leslocatie</button>
-    <button class="tablink" onclick="openTab(event, 'lestrainers')">Les trainers</button>
-    <button class="tablink" onclick="openTab(event, 'emails')">E-mails</button>
-  </div>
-
-  <!-- ====== 6. TAB-INHOUD ====== -->
-  <div id="lestype" class="tabcontent" style="display:block;">
-    <h2>Lestype</h2>
-    <p class="hint">Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers.<br>
-    <b>Opgelet:</b> de startdatum kies je later bij inschrijving van de klant.</p>
-
-    <form>
-      <label>Naam*</label>
-      <input type="text" placeholder="bv. Puppy">
-
-      <label>Aantal lessen</label>
-      <input type="number" placeholder="bv. 6">
-
-      <label>Lesduur (minuten)</label>
-      <input type="number" placeholder="bv. 60">
-
-      <label>Geldigheidsduur (maanden)</label>
-      <input type="number" placeholder="bv. 6">
-
-      <label>Max deelnemers</label>
-      <input type="number" placeholder="bv. 10">
-
-      <label>Beschrijving</label>
-      <textarea placeholder="Korte omschrijving..."></textarea>
-
-      <div class="form-buttons">
-        <button type="submit">Opslaan</button>
-        <button type="reset">Nieuw</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- ====== 7. ANDERE TABS ====== -->
-  <div id="lesthema" class="tabcontent">
-    <h2>Les thema</h2>
-    <p>Voeg thema’s toe met naam en beschrijving.</p>
-  </div>
-
-  <div id="leslocatie" class="tabcontent">
-    <h2>Leslocatie</h2>
-    <p>Geef locatie, adres, postbus/plaats en beschrijving in.</p>
-  </div>
-
-  <div id="lestrainers" class="tabcontent">
-    <h2>Les trainers</h2>
-    <p>Voeg trainers toe met naam en functie.</p>
-  </div>
-
-  <div id="emails" class="tabcontent">
-    <h2>E-mails</h2>
-    <p>Hier beheer je e-mailtemplates (bijv. bevestigingen, herinneringen, verjaardagen).</p>
-  </div>
-
-  <!-- ====== 8. FOOTER / DEBUG ====== -->
-  <div class="debug-label">assets v0903pretty</div>
-
-  <!-- ====== 9. SCRIPTS ====== -->
-  <script src="js/instellingen.js"></script>
+  <!-- inhoud van instellingen -->
 </body>
 </html>
