@@ -1,304 +1,242 @@
-// ===== Helpers =====
+/* public/Js/lessen-instellingen.js — v0903j */
+console.log("les-instellingen JS geladen v0903j");
+
+/* storage helpers */
 const store = {
-  get: (k, f=[]) => { try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch { return f; } },
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+  get: (k, f = []) => { try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch { return f; } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
 };
-const uid = () => Math.random().toString(36).slice(2,10);
+const _uid = () => Math.random().toString(36).slice(2,10);
 
-// ===== Tabs =====
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.tab).classList.add("active");
-    });
-  });
-
   setupLestype();
   setupThema();
   setupLocatie();
   setupTrainer();
+  setupEmailTemplates();
+  setupEmailRecipients();
+  setupEmailSettings();
+  setupEmailSubtabs();
+  setupEmailAutomation();
 });
 
-// ===== 1) LESTYPE =====
-function setupLestype() {
-  const KEY = "lessonTypes";
-  const form = document.getElementById("form-type");
-  const tbody = document.querySelector("#table-type tbody");
-  document.getElementById("reset-type").addEventListener("click", () => form.reset());
+/* ========== 1) LESTYPE ========== */
+function setupLestype(){
+  const KEY="lessonTypes";
+  const form=document.getElementById("form-type");
+  const tbody=document.querySelector("#table-type tbody");
+  document.getElementById("reset-type")?.addEventListener("click",()=>form.reset());
+  if(!form||!tbody) return;
 
-  function placeholder() {
-    tbody.innerHTML = `<tr class="placeholder"><td colspan="8" style="text-align:center;color:#777;">
-      Nog geen <strong>lestypes</strong> toegevoegd. Vul het formulier hierboven in en klik op <em>Opslaan</em>.
-    </td></tr>`;
-  }
+  // migreer oude velden (actief/online) weg
+  (function migrateOld(){
+    const list=store.get(KEY); let c=false;
+    list.forEach(r=>{ if("actief" in r){delete r.actief;c=true;} if("online" in r){delete r.online;c=true;} });
+    if(c) store.set(KEY,list);
+  })();
 
-  function render() {
-    const rows = store.get(KEY);
-    if (!rows.length) { placeholder(); return; }
-    tbody.innerHTML = rows.map(r => `
+  const render=()=>{
+    const rows=store.get(KEY);
+    if(!rows.length){
+      tbody.innerHTML=`<tr class="placeholder"><td colspan="6" style="text-align:center;color:#777;">Nog geen <strong>lestypes</strong>.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML=rows.map(r=>`
       <tr>
-        <td>${r.naam ?? ""}</td>
-        <td>${r.aantal_lessen ?? ""}</td>
-        <td>${r.geldigheidsduur ?? ""}</td>
-        <td>${r.startdatum ?? ""}</td>
-        <td>${r.max_deelnemers ?? ""}</td>
-        <td>${r.actief === "J" ? "Ja" : "Nee"}</td>
-        <td>${r.online === "J" ? "Ja" : "Nee"}</td>
+        <td>${r.naam??""}</td>
+        <td>${r.aantal_lessen??""}</td>
+        <td>${r.lesduur_min??""}</td>
+        <td>${r.geldigheidsduur??""}</td>
+        <td>${r.max_deelnemers??""}</td>
         <td class="t-actions">
-          <button class="btn" data-edit="${r.id}">Bewerken</button>
-          <button class="btn" data-del="${r.id}">Verwijderen</button>
+          <button class="icon-btn edit" data-edit="${r.id}" title="Bewerken">✏️</button>
+          <button class="icon-btn delete" data-del="${r.id}" title="Verwijderen">🗑️</button>
         </td>
-      </tr>
-    `).join("");
-  }
+      </tr>`).join("");
+  };
   render();
 
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit",e=>{
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-
-    // Validaties
-    if (data.max_deelnemers && Number(data.max_deelnemers) < 1) {
-      showNotification?.("Max deelnemers moet minstens 1 zijn.", "error"); return;
-    }
-    if (data.aantal_lessen && Number(data.aantal_lessen) < 1) {
-      showNotification?.("Aantal lessen moet minstens 1 zijn.", "error"); return;
-    }
-    if (data.online === "J" && data.actief !== "J") {
-      showNotification?.("Online zichtbaar kan alleen als Les actief = Ja.", "error"); return;
-    }
-
-    const list = store.get(KEY);
-    if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
-    store.set(KEY, list);
-    form.reset();
-    render();
-    showNotification?.("Lestype opgeslagen", "success");
+    const data=Object.fromEntries(new FormData(form).entries());
+    if(data.max_deelnemers && Number(data.max_deelnemers)<1) return alert("Max deelnemers moet minstens 1 zijn.");
+    if(data.aantal_lessen && Number(data.aantal_lessen)<1) return alert("Aantal lessen moet minstens 1 zijn.");
+    if(data.lesduur_min && Number(data.lesduur_min)<1) return alert("Lesduur moet minstens 1 minuut zijn.");
+    const list=store.get(KEY);
+    if(!data.id){ data.id=_uid(); list.push(data); }
+    else { const i=list.findIndex(x=>x.id===data.id); if(i!==-1) list[i]=data; }
+    store.set(KEY,list); form.reset(); render();
   });
 
-  tbody.addEventListener("click", e => {
-    const editId = e.target.getAttribute("data-edit");
-    const delId  = e.target.getAttribute("data-del");
-    const list = store.get(KEY);
-
-    if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
-      Object.entries(row).forEach(([k,v]) => {
-        if (form[k]) {
-          if (form[k].type === "radio") {
-            [...form[k]].forEach(r => r.checked = (r.value === v));
-          } else { form[k].value = v; }
-        }
-      });
-      showNotification?.("Lestype geladen voor bewerking", "info");
+  tbody.addEventListener("click",e=>{
+    const btn=e.target.closest("button"); if(!btn) return;
+    const list=store.get(KEY);
+    if(btn.dataset.edit){
+      const row=list.find(x=>x.id===btn.dataset.edit); if(!row) return;
+      Object.entries(row).forEach(([k,v])=>{ if(form[k]) form[k].value=v; });
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Lestype verwijderd", "success");
+    if(btn.dataset.del){
+      store.set(KEY,list.filter(x=>x.id!==btn.dataset.del)); render();
     }
   });
 }
 
-// ===== 2) THEMA =====
-function setupThema() {
-  const KEY = "lessonThemes";
-  const form = document.getElementById("form-thema");
-  const tbody = document.querySelector("#table-thema tbody");
-  document.getElementById("reset-thema").addEventListener("click", () => form.reset());
+/* ========== 2) LES THEMA ========== */
+function setupThema(){
+  const KEY="lessonThemes";
+  const form=document.getElementById("form-thema");
+  const tbody=document.querySelector("#table-thema tbody");
+  document.getElementById("reset-thema")?.addEventListener("click",()=>form.reset());
+  if(!form||!tbody) return;
 
-  function placeholder() {
-    tbody.innerHTML = `<tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">
-      Nog geen <strong>les thema’s</strong>. Voeg er één toe via het formulier hierboven.
-    </td></tr>`;
-  }
-  function render() {
-    const rows = store.get(KEY);
-    if (!rows.length) { placeholder(); return; }
-    tbody.innerHTML = rows.map(r => `
+  const render=()=>{
+    const rows=store.get(KEY);
+    if(!rows.length){
+      tbody.innerHTML=`<tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les thema’s</strong>.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML=rows.map(r=>`
       <tr>
-        <td>${r.naam ?? ""}</td>
-        <td>${r.beschrijving ?? ""}</td>
+        <td>${r.naam??""}</td>
+        <td>${r.beschrijving??""}</td>
         <td class="t-actions">
-          <button class="btn" data-edit="${r.id}">Bewerken</button>
-          <button class="btn" data-del="${r.id}">Verwijderen</button>
+          <button class="icon-btn edit" data-edit="${r.id}" title="Bewerken">✏️</button>
+          <button class="icon-btn delete" data-del="${r.id}" title="Verwijderen">🗑️</button>
         </td>
-      </tr>
-    `).join("");
-  }
+      </tr>`).join("");
+  };
   render();
 
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit",e=>{
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    const list = store.get(KEY);
-    if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
-    store.set(KEY, list);
-    form.reset();
-    render();
-    showNotification?.("Les thema opgeslagen", "success");
+    const data=Object.fromEntries(new FormData(form).entries());
+    const list=store.get(KEY);
+    if(!data.id){ data.id=_uid(); list.push(data); }
+    else { const i=list.findIndex(x=>x.id===data.id); if(i!==-1) list[i]=data; }
+    store.set(KEY,list); form.reset(); render();
   });
 
-  tbody.addEventListener("click", e => {
-    const editId = e.target.getAttribute("data-edit");
-    const delId  = e.target.getAttribute("data-del");
-    const list = store.get(KEY);
-
-    if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
-      Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
-      showNotification?.("Les thema geladen voor bewerking", "info");
+  tbody.addEventListener("click",e=>{
+    const btn=e.target.closest("button"); if(!btn) return;
+    const list=store.get(KEY);
+    if(btn.dataset.edit){
+      const row=list.find(x=>x.id===btn.dataset.edit); if(!row) return;
+      Object.entries(row).forEach(([k,v])=>{ if(form[k]) form[k].value=v; });
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Les thema verwijderd", "success");
+    if(btn.dataset.del){
+      store.set(KEY,list.filter(x=>x.id!==btn.dataset.del)); render();
     }
   });
 }
 
-// ===== 3) LOCATIE =====
-function setupLocatie() {
-  const KEY = "lessonLocations";
-  const form = document.getElementById("form-loc");
-  const tbody = document.querySelector("#table-loc tbody");
-  document.getElementById("reset-loc").addEventListener("click", () => form.reset());
-  document.getElementById("map-btn").addEventListener("click", () => {
-    const adres = form.adres.value || "";
-    const plaats = form.plaats.value || "";
-    const q = encodeURIComponent(`${adres} ${plaats}`.trim());
-    if (!q) { showNotification?.("Vul eerst Adres/Plaats in.", "error"); return; }
-    window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
-  });
+/* ========== 3) LESLOCATIE ========== */
+function setupLocatie(){
+  const KEY="lessonLocations";
+  const form=document.getElementById("form-loc");
+  const tbody=document.querySelector("#table-loc tbody");
+  document.getElementById("reset-loc")?.addEventListener("click",()=>form.reset());
+  if(!form||!tbody) return;
 
-  function placeholder() {
-    tbody.innerHTML = `<tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">
-      Nog geen <strong>leslocaties</strong>. Vul het formulier in en druk <em>Opslaan</em>. Met <em>Bekijk locatie</em> open je Google Maps.
-    </td></tr>`;
-  }
-  function render() {
-    const rows = store.get(KEY);
-    if (!rows.length) { placeholder(); return; }
-    tbody.innerHTML = rows.map(r => `
+  const render=()=>{
+    const rows=store.get(KEY);
+    if(!rows.length){
+      tbody.innerHTML=`<tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen <strong>leslocaties</strong>.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML=rows.map(r=>`
       <tr>
-        <td>${r.naam ?? ""}</td>
-        <td>${r.adres ?? ""}</td>
-        <td>${r.plaats ?? ""}</td>
-        <td>${r.locatie ?? ""}</td>
+        <td>${r.locatie??""}</td>
+        <td>${r.adres??""}</td>
+        <td>${r.plaats??""}</td>
+        <td>${r.beschrijving??""}</td>
         <td class="t-actions">
-          <button class="btn" data-edit="${r.id}">Bewerken</button>
-          <button class="btn" data-del="${r.id}">Verwijderen</button>
+          <button class="icon-btn edit" data-edit="${r.id}" title="Bewerken">✏️</button>
+          <button class="icon-btn delete" data-del="${r.id}" title="Verwijderen">🗑️</button>
+          <button class="icon-btn view"  data-view="${r.id}" title="Bekijk locatie">📍</button>
         </td>
-      </tr>
-    `).join("");
-  }
+      </tr>`).join("");
+  };
   render();
 
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit",e=>{
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    const list = store.get(KEY);
-    if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
-    store.set(KEY, list);
-    form.reset();
-    render();
-    showNotification?.("Leslocatie opgeslagen", "success");
+    const data=Object.fromEntries(new FormData(form).entries());
+    const list=store.get(KEY);
+    if(!data.id){ data.id=_uid(); list.push(data); }
+    else { const i=list.findIndex(x=>x.id===data.id); if(i!==-1) list[i]=data; }
+    store.set(KEY,list); form.reset(); render();
   });
 
-  tbody.addEventListener("click", e => {
-    const editId = e.target.getAttribute("data-edit");
-    const delId  = e.target.getAttribute("data-del");
-    const list = store.get(KEY);
-
-    if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
-      Object.entries(row).forEach(([k,v]) => { if (form[k] !== undefined) form[k].value = v; });
-      showNotification?.("Leslocatie geladen voor bewerking", "info");
+  tbody.addEventListener("click",e=>{
+    const btn=e.target.closest("button"); if(!btn) return;
+    const list=store.get(KEY);
+    if(btn.dataset.edit){
+      const row=list.find(x=>x.id===btn.dataset.edit); if(!row) return;
+      ["locatie","adres","plaats","beschrijving","id"].forEach(k=>{ if(form[k]!==undefined) form[k].value=row[k]??""; });
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Leslocatie verwijderd", "success");
+    if(btn.dataset.del){
+      store.set(KEY,list.filter(x=>x.id!==btn.dataset.del)); render();
+    }
+    if(btn.dataset.view){
+      const row=list.find(x=>x.id===btn.dataset.view); if(!row) return;
+      const q=encodeURIComponent(`${row.adres||""} ${row.plaats||""}`.trim());
+      if(!q) return alert("Geen adres/plaats beschikbaar.");
+      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank");
     }
   });
 }
 
-// ===== 4) TRAINERS =====
-function setupTrainer() {
-  const KEY = "lessonTrainers";
-  const form = document.getElementById("form-trainer");
-  const tbody = document.querySelector("#table-trainer tbody");
-  document.getElementById("reset-trainer").addEventListener("click", () => form.reset());
+/* ========== 4) LES TRAINERS ========== */
+function setupTrainer(){
+  const KEY="lessonTrainers";
+  const form=document.getElementById("form-trainer");
+  const tbody=document.querySelector("#table-trainer tbody");
+  document.getElementById("reset-trainer")?.addEventListener("click",()=>form.reset());
+  if(!form||!tbody) return;
 
-  function placeholder() {
-    tbody.innerHTML = `<tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">
-      Nog geen <strong>les trainers</strong>. Voeg er één toe via het formulier.
-    </td></tr>`;
-  }
-  function render() {
-    const rows = store.get(KEY);
-    if (!rows.length) { placeholder(); return; }
-    tbody.innerHTML = rows.map(r => `
+  const render=()=>{
+    const rows=store.get(KEY);
+    if(!rows.length){
+      tbody.innerHTML=`<tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les trainers</strong>.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML=rows.map(r=>`
       <tr>
-        <td>${r.naam ?? ""}</td>
-        <td>${r.functie ?? ""}</td>
+        <td>${r.naam??""}</td>
+        <td>${r.functie??""}</td>
         <td class="t-actions">
-          <button class="btn" data-edit="${r.id}">Bewerken</button>
-          <button class="btn" data-del="${r.id}">Verwijderen</button>
+          <button class="icon-btn edit" data-edit="${r.id}" title="Bewerken">✏️</button>
+          <button class="icon-btn delete" data-del="${r.id}" title="Verwijderen">🗑️</button>
         </td>
-      </tr>
-    `).join("");
-  }
+      </tr>`).join("");
+  };
   render();
 
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit",e=>{
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    const list = store.get(KEY);
-    if (!data.id) { data.id = uid(); list.push(data); }
-    else {
-      const i = list.findIndex(x => x.id === data.id);
-      if (i !== -1) list[i] = data;
-    }
-    store.set(KEY, list);
-    form.reset();
-    render();
-    showNotification?.("Les trainer opgeslagen", "success");
+    const data=Object.fromEntries(new FormData(form).entries());
+    const list=store.get(KEY);
+    if(!data.id){ data.id=_uid(); list.push(data); }
+    else { const i=list.findIndex(x=>x.id===data.id); if(i!==-1) list[i]=data; }
+    store.set(KEY,list); form.reset(); render();
   });
 
-  tbody.addEventListener("click", e => {
-    const editId = e.target.getAttribute("data-edit");
-    const delId  = e.target.getAttribute("data-del");
-    const list = store.get(KEY);
-
-    if (editId) {
-      const row = list.find(x => x.id === editId);
-      if (!row) return;
-      Object.entries(row).forEach(([k,v]) => { if (form[k]) form[k].value = v; });
-      showNotification?.("Les trainer geladen voor bewerking", "info");
+  tbody.addEventListener("click",e=>{
+    const btn=e.target.closest("button"); if(!btn) return;
+    const list=store.get(KEY);
+    if(btn.dataset.edit){
+      const row=list.find(x=>x.id===btn.dataset.edit); if(!row) return;
+      Object.entries(row).forEach(([k,v])=>{ if(form[k]) form[k].value=v; });
     }
-    if (delId) {
-      store.set(KEY, list.filter(x => x.id !== delId));
-      render();
-      showNotification?.("Les trainer verwijderd", "success");
+    if(btn.dataset.del){
+      store.set(KEY,list.filter(x=>x.id!==btn.dataset.del)); render();
     }
   });
 }
+
+/* ========== 5a) EMAIL — Templates ========== */
+/* (ongewijzigd t.o.v. v0903i – bevat demos incl. class_reminder) */
+/* … laat je huidige v0903i blok hier staan … */
+
+/* ========== 5b/5c/5d/5e EMAIL ========== */
+/* (laat de bestaande v0903i functies voor ontvangers, instellingen, subtabs en automation staan) */
