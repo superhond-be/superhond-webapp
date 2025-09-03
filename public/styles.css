@@ -1,161 +1,82 @@
 /* ===== Basis layout ===== */
+* { box-sizing: border-box; }
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   background: #f9f9f9;
   color: #222;
 }
-
-h1, h2 {
-  margin: 0 0 10px 0;
-  font-weight: 600;
-}
-
 main {
-  max-width: 1000px;
-  margin: 20px auto;
+  max-width: 1100px;
+  margin: 16px auto 60px;
   padding: 0 16px;
 }
 
 /* ===== Gele hoofdnavigatie ===== */
-.topnav {
-  background: #ffcc00;
-  padding: 0;
-}
-.topnav ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-}
-.topnav li {
-  margin: 0;
-}
+.topnav { background:#ffcc00; }
+.topnav ul { margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; }
+.topnav li { margin:0; }
 .topnav a {
-  display: block;
-  padding: 12px 16px;
-  color: #000;
-  text-decoration: none;
-  font-weight: bold;
+  display:block; padding:12px 16px; color:#000; text-decoration:none; font-weight:700;
 }
-.topnav a.active {
-  background: #e6b800;
-}
-.topnav a:hover {
-  background: #ffd633;
-}
+.topnav a.active { background:#e6b800; }
+.topnav a:hover { background:#ffd633; }
 
-/* ===== Badge bij titels ===== */
-.page-badge {
-  display: inline-block;
-  background: #eee;
-  border: 1px solid #ccc;
-  font-size: 0.8em;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 6px;
-  color: #555;
+/* ===== Gele titelbalk voor pagina's ===== */
+.page-settings main > h1,
+.page-dashboard main > h1,
+.page-klanten  main > h1,
+.page-honden   main > h1,
+.page-lessen   main > h1,
+.page-boekingen main > h1,
+.page-strippenkaarten main > h1 {
+  background:#ffcc00; color:#000; padding:12px 16px; border-radius:10px;
+  display:inline-block; margin:16px 0 12px; box-shadow:0 1px 0 rgba(0,0,0,0.06) inset;
 }
+/* badge in titel verbergen; we tonen alleen het groene label onderaan */
+.page-badge { display:none !important; }
 
-/* ===== Tabs (boven secties) ===== */
-.tabbar {
-  margin: 20px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.tabbar .tab-btn {
-  background: #ffe048;     /* Geel */
-  color: #111;             /* Zwarte tekst */
-  border: 1px solid #c9a300;
-  border-radius: 8px;
-  padding: 8px 10px;
-  text-decoration: none;
-  font-weight: 600;
-  cursor: pointer;
-}
-.tabbar .tab-btn:hover {
-  background: #ffd21a;
-}
-.tabbar .tab-btn:focus {
-  outline: 2px solid #333;
-  outline-offset: 2px;
-}
-
-/* ===== Secties ===== */
-.tab-panel {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 15px;
-  margin-bottom: 20px;
-}
+/* ===== Hints/kaarten ===== */
 .hint {
-  font-size: 0.9em;
-  color: #555;
-  background: #fef8e6;
-  border-left: 4px solid #ffcc00;
-  padding: 6px 10px;
-  margin-bottom: 12px;
+  font-size: 0.92em; color:#333; background:#fff7d1; border-left:4px solid #ffcc00;
+  padding: 8px 10px; margin: 10px 0 12px; border-radius:4px;
 }
+.card { background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px; }
+
+/* ===== Tabs (geel, groter) ===== */
+.tabs, .tabbar { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+.tabs .tab-button, .tabbar .tab-btn{
+  background:#fdd835; color:#000; border:none; border-radius:10px;
+  padding:10px 14px; font-weight:700; font-size:15px; cursor:pointer;
+}
+.tabs .tab-button.active, .tabbar .tab-btn.active{
+  background:#ffeb3b; border-bottom:2px solid #000;
+}
+
+/* ===== Panels ===== */
+.tab-panel {
+  background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px; margin-bottom:16px;
+  display:none;
+}
+.tab-panel.active { display:block; }
 
 /* ===== Formulieren ===== */
-form label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 600;
+.form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
 }
-form input, form textarea {
-  width: 100%;
-  padding: 6px;
-  margin-top: 4px;
-  box-sizing: border-box;
+.form-grid label { display:flex; flex-direction:column; font-weight:700; }
+.form-grid input, .form-grid textarea {
+  margin-top:4px; padding:8px 10px; border:1px solid #ccd; border-radius:10px;
 }
-form textarea {
-  min-height: 60px;
-}
-.form-buttons {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-}
-.btn {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-.btn:hover {
-  background: #0056b3;
-}
+.form-buttons { margin-top:6px; }
 
 /* ===== Tabellen ===== */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-th {
-  background: #f4f4f4;
-  text-align: left;
-}
+table { width:100%; border-collapse:collapse; margin-top:12px; }
+th, td { border-bottom:1px solid #eee; padding:8px; vertical-align:top; }
+th { background:#f7f7f7; text-align:left; }
+.muted { color:#777; }
 
-/* ===== Debug banners verbergen ===== */
-#style-debug,
-.env-banner,
-.debug-banner,
-.style-banner,
-.dev-banner {
-  display: none !important;
-}
-
-/* ===== Buttons & Icons (globaal) ===== */
+/* ===== Buttons & Icons ===== */
 :root{
   --btn-radius: 10px;
   --c-primary: #0d6efd;
@@ -166,38 +87,38 @@ th {
   --c-danger-h:#c9302c;
   --c-ghost:   #eef1f4;
 }
-
 .btn, .btn-icon{
   display:inline-flex; align-items:center; gap:8px;
   border:0; border-radius:var(--btn-radius);
-  font-weight:700; line-height:1; cursor:pointer;
-  text-decoration:none; user-select:none;
+  font-weight:700; line-height:1; cursor:pointer; text-decoration:none; user-select:none;
 }
-
 .btn{ padding:10px 14px; }
 .btn-icon{ padding:8px; border-radius:8px; background:var(--c-ghost); }
 .btn-icon svg, .btn svg{ width:18px; height:18px; fill:currentColor; }
 
 .btn--primary{ background:var(--c-primary); color:#fff; }
 .btn--primary:hover{ background:var(--c-primary-h); }
-
 .btn--success{ background:var(--c-success); color:#fff; }
 .btn--success:hover{ background:var(--c-success-h); }
-
 .btn--danger{ background:var(--c-danger); color:#fff; }
 .btn--danger:hover{ background:var(--c-danger-h); }
-
 .btn--ghost{ background:var(--c-ghost); color:#111; }
 .btn--ghost:hover{ filter:brightness(0.97); }
 
 .btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
-
-/* Zoekbalk */
 .searchbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
 .searchbar input[type="search"]{
   flex:1; min-width:240px; padding:10px 12px; border:1px solid #ccd; border-radius:10px;
 }
-
-/* Actieknoppen in tabellen netjes uitlijnen */
 td .btn-icon + .btn-icon{ margin-left:6px; }
 
+/* ===== Debug/stylesheet banners veilig verbergen (CSS-only) ===== */
+#style-debug, .env-banner, .debug-banner, .style-banner, .dev-banner, .render-debug, .render-banner {
+  display:none !important; visibility:hidden !important; height:0 !important; overflow:hidden !important;
+}
+
+/* ===== Groen versielabel rechtsonder ===== */
+.debug-label{
+  position:fixed; right:8px; bottom:8px; background:#28a745; color:#fff;
+  padding:4px 8px; border-radius:6px; z-index:9999; font-size:12px;
+}
