@@ -1,73 +1,77 @@
 /* ===== Basis ===== */
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#fff;
-  color:#000;
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #fff;
+  color: #000;
 }
 
 /* ===== Gele navigatiebalk ===== */
-.topnav{
-  background:#ffcc00;
-  padding:10px 12px;
+.topnav {
+  background: #ffcc00;
+  padding: 10px 12px;
 }
-.topnav ul{
-  list-style:none;           /* géén bullets */
-  margin:0;
-  padding:0;
-  display:flex;              /* horizontaal naast elkaar */
-  gap:20px;
-  align-items:center;
-  flex-wrap:wrap;
+.topnav ul {
+  list-style: none;      /* géén bullets */
+  margin: 0;
+  padding: 0;
+  display: flex;         /* menu in één rij */
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;       /* mag aflopen op kleine schermen */
 }
-.topnav a{
-  text-decoration:none;
-  color:#000;
-  font-weight:bold;
+.topnav li { margin: 0; }
+.topnav a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
 }
-.topnav a.active{ text-decoration:underline; }
+.topnav a.active { text-decoration: underline; }
 
-/* ===== Moderne gele titelbox net onder menu ===== */
-.page-title{
-  background:linear-gradient(90deg,#ffcc00,#ffdb4d);
-  padding:15px 20px;
-  text-align:center;
-  font-size:24px;
-  font-weight:bold;
-  color:#000;
-  border-radius:6px;
-  margin:15px auto 18px;
-  max-width:960px;
-  box-shadow:0 2px 6px rgba(0,0,0,.15);
-}
-
-/* ===== Content spacing ===== */
-main{ padding:0 20px 24px; max-width:960px; margin:0 auto; }
-h2{ margin:0 0 8px; }
-
-/* ===== Groene versiebadge rechtsonder ===== */
-.version, .debug-label{
-  position:fixed; right:10px; bottom:10px;
-  background:#28a745; color:#fff;
-  padding:4px 8px; border-radius:6px;
-  font-size:12px; box-shadow:0 1px 2px rgba(0,0,0,.15);
-  z-index:9999;
-}
-/* Titelbalk compact en modern */
-.page-title-container {
+/* ===== Compacte, gecentreerde gele titelbalk ===== */
+.page-title-wrap {            /* centreert het blok */
   text-align: center;
   margin-top: 20px;
 }
-
-.page-title {
+.page-title-container {       /* gele achtergrond die meegroeit met tekst */
   display: inline-block;
   background: linear-gradient(135deg, #ffcc00, #ffd633);
   padding: 10px 20px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #222;
   border-radius: 8px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-  letter-spacing: 0.5px;
+}
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: .3px;
+  text-align: center;
 }
 
+/* ===== Content ===== */
+main { 
+  max-width: 960px; 
+  margin: 16px auto 24px; 
+  padding: 0 16px; 
+}
+h2 { margin: 8px 0 6px; }
+
+/* ===== Tabel basis (voor later) ===== */
+table { width: 100%; border-collapse: collapse; background:#fff; }
+th, td { padding: 8px 10px; border: 1px solid #e3e3e3; text-align: left; }
+th { background: #f4f4f4; font-weight: 700; }
+
+/* ===== Groene versiebadge rechtsonder ===== */
+.version-tag, .debug-label {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  background: #28a745;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  z-index: 9999;
+}
