@@ -1,377 +1,90 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Superhond · Les instellingen</title>
-  <link rel="stylesheet" href="styles.css?v=0903i" />
-  <style>
-    .help{background:#fff8d8;border:1px solid #f1cf5b;border-radius:8px;padding:10px 12px;margin:0 0 12px 0;font-size:.92rem;color:#553}
-    .tabs{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
-    .tab-btn{display:inline-block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 14px;font-weight:600;color:#333;text-decoration:none}
-    .tab-btn:hover{background:#ffd300;border-color:#ffd300;color:#222}
-    .kbd{font-family:ui-monospace,Menlo,monospace;background:#f6f6f6;border:1px solid #ddd;border-radius:6px;padding:2px 6px}
-
-    /* email: kaarten en subtabs */
-    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-    .card-mini{background:#fff;border:1px solid #eaeaea;border-radius:10px;padding:10px 12px}
-    .card-mini h4{margin:.1rem 0 .4rem;font-size:1rem}
-    .card-mini p{margin:0;color:#666;font-size:.9rem}
-    .card-mini .row-actions{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
-    .subtabs{display:flex;gap:6px;margin:6px 0 12px;flex-wrap:wrap}
-    .subtab{border:1px solid #ddd;background:#fff;border-radius:8px;padding:6px 10px;text-decoration:none;color:#333;font-weight:600}
-    .subtab.active{background:#ffd300;border-color:#ffd300}
-
-    /* modals */
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
-    .modal.open{display:flex}
-    .modal-card{background:#fff;max-width:980px;width:100%;max-height:90vh;border-radius:10px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.2)}
-    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee}
-    .modal-body{padding:16px}
-    .close-x{border:none;background:transparent;font-size:22px;cursor:pointer}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superhond.be – Admin instellingen</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Navigatie -->
   <nav class="topnav">
     <ul>
       <li><a href="index.html">Dashboard</a></li>
       <li><a href="klanten.html">Klanten</a></li>
       <li><a href="honden.html">Honden</a></li>
+      <li><a href="lessen.html">Lessen beheren</a></li>
+      <li><a href="boekingen.html">Boekingen</a></li>
       <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="les-instellingen.html" class="active">Les instellingen</a></li>
+      <li><a class="active" href="instellingen.html">Instellingen</a></li>
     </ul>
   </nav>
 
-  <header>
-    <h1>Les instellingen
-      <span style="font-size:.8rem;background:#ffd300;border-radius:6px;padding:2px 8px;margin-left:8px;">v0903i</span>
-    </h1>
+  <!-- Titel -->
+  <header class="page-header">
+    <h1>Superhond.be – Admin instellingen</h1>
   </header>
 
+  <!-- Tabs -->
   <div class="tabs">
-    <a class="tab-btn" href="#sect-type">Lestype</a>
-    <a class="tab-btn" href="#sect-thema">Les thema</a>
-    <a class="tab-btn" href="#sect-loc">Leslocatie</a>
-    <a class="tab-btn" href="#sect-trainer">Les trainers</a>
-    <a class="tab-btn" href="#sect-email">E-mail</a>
+    <button class="tablink active" onclick="openTab(event, 'lestype')">Lestype</button>
+    <button class="tablink" onclick="openTab(event, 'lesthema')">Les thema</button>
+    <button class="tablink" onclick="openTab(event, 'leslocatie')">Leslocatie</button>
+    <button class="tablink" onclick="openTab(event, 'lestrainers')">Les trainers</button>
+    <button class="tablink" onclick="openTab(event, 'emails')">E-mails</button>
   </div>
 
-  <main>
-    <!-- 1) LESTYPE -->
-    <section class="card" id="sect-type">
-      <h2>Lestype</h2>
-      <div class="help">Lestypes bepalen aantal lessen, geldigheidsduur en max. deelnemers.
-        <br><b>Opgelet:</b> de <u>startdatum</u> kies je later bij inschrijving van de klant.</div>
-      <form id="form-type">
-        <input type="hidden" name="id" />
-        <div class="row">
-          <div class="col"><label>Naam* <input name="naam" required placeholder="bv. Puppy"/></label></div>
-          <div class="col"><label>Aantal lessen <input type="number" name="aantal_lessen" min="1" placeholder="bv. 6"/></label></div>
-          <div class="col"><label>Geldigheidsduur (maanden) <input type="number" name="geldigheidsduur" min="1" placeholder="bv. 6"/></label></div>
-        </div>
-        <div class="row"><div class="col"><label>Max deelnemers <input type="number" name="max_deelnemers" min="1" placeholder="bv. 10"/></label></div></div>
-        <label>Beschrijving <textarea name="beschrijving" rows="2" placeholder="Korte omschrijving…"></textarea></label>
-        <button type="submit" class="btn">Opslaan</button><button type="button" class="btn" id="reset-type">Nieuw</button>
-      </form>
-      <table id="table-type">
-        <thead><tr><th>Naam</th><th>Aantal</th><th>Geldig (m)</th><th>Max</th><th></th></tr></thead>
-        <tbody><tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen <strong>lestypes</strong>.</td></tr></tbody>
-      </table>
-    </section>
+  <!-- Inhoud tabs -->
+  <div id="lestype" class="tabcontent" style="display:block;">
+    <h2>Lestype</h2>
+    <p class="hint">Lestypes bepalen aantal lessen, lesduur, geldigheidsduur en max. deelnemers.<br>
+    <b>Opgelet:</b> de <u>startdatum</u> kies je later bij inschrijving van de klant.</p>
+    <form>
+      <label>Naam*</label>
+      <input type="text" placeholder="bv. Puppy">
 
-    <!-- 2) LES THEMA -->
-    <section class="card" id="sect-thema">
-      <h2>Les thema</h2>
-      <div class="help">Voeg hier thema’s toe (bv. Socialisatie, Gehoorzaamheid).</div>
-      <form id="form-thema">
-        <input type="hidden" name="id" />
-        <div class="row"><div class="col"><label>Naam* <input name="naam" required placeholder="bv. Socialisatie"/></label></div></div>
-        <label>Beschrijving <textarea name="beschrijving" rows="2" placeholder="Waar gaat dit thema over?"></textarea></label>
-        <button class="btn" type="submit">Opslaan</button><button class="btn" type="button" id="reset-thema">Nieuw</button>
-      </form>
-      <table id="table-thema">
-        <thead><tr><th>Naam</th><th>Beschrijving</th><th></th></tr></thead>
-        <tbody><tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les thema’s</strong>.</td></tr></tbody>
-      </table>
-    </section>
+      <label>Aantal lessen</label>
+      <input type="number" placeholder="bv. 6">
 
-    <!-- 3) LESLOCATIE -->
-    <section class="card" id="sect-loc">
-      <h2>Leslocatie</h2>
-      <div class="help">“Locatie” is de naam/omschrijving die je publiek toont (bv. “Retie — Coach Sofie”).</div>
-      <form id="form-loc">
-        <input type="hidden" name="id" />
-        <div class="row"><div class="col"><label>Locatie* <input name="locatie" required placeholder="bv. Retie — Coach Sofie"/></label></div></div>
-        <div class="row">
-          <div class="col"><label>Adres <input name="adres" placeholder="Straat 1"/></label></div>
-          <div class="col"><label>Postbus / Plaats <input name="plaats" placeholder="Postcode + gemeente"/></label></div>
-        </div>
-        <label>Beschrijving <textarea name="beschrijving" rows="2" placeholder="Praktische info, parkeerplaats…"></textarea></label>
-        <button class="btn" type="submit">Opslaan</button><button class="btn" type="button" id="reset-loc">Nieuw</button>
-      </form>
-      <table id="table-loc">
-        <thead><tr><th>Locatie</th><th>Adres</th><th>Postbus / Plaats</th><th>Beschrijving</th><th></th></tr></thead>
-        <tbody><tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen <strong>leslocaties</strong>.</td></tr></tbody>
-      </table>
-    </section>
+      <label>Lesduur (minuten)</label>
+      <input type="number" placeholder="bv. 60">
 
-    <!-- 4) LES TRAINERS -->
-    <section class="card" id="sect-trainer">
-      <h2>Les trainers</h2>
-      <div class="help">Beheer hier je trainers (naam + functie).</div>
-      <form id="form-trainer">
-        <input type="hidden" name="id" />
-        <div class="row">
-          <div class="col"><label>Naam* <input name="naam" required placeholder="bv. Sofie Janssens"/></label></div>
-          <div class="col"><label>Functie <input name="functie" placeholder="bv. Coach"/></label></div>
-        </div>
-        <button class="btn" type="submit">Opslaan</button><button class="btn" type="button" id="reset-trainer">Nieuw</button>
-      </form>
-      <table id="table-trainer">
-        <thead><tr><th>Naam</th><th>Functie</th><th></th></tr></thead>
-        <tbody><tr class="placeholder"><td colspan="3" style="text-align:center;color:#777;">Nog geen <strong>les trainers</strong>.</td></tr></tbody>
-      </table>
-    </section>
+      <label>Geldigheidsduur (maanden)</label>
+      <input type="number" placeholder="bv. 6">
 
-    <!-- 5) E-MAIL (subtabs) -->
-    <section class="card" id="sect-email">
-      <h2>E-mail</h2>
-      <div class="subtabs">
-        <a href="#email-tab-templates"  class="subtab active" data-email-tab="templates">Templates</a>
-        <a href="#email-tab-recipients" class="subtab"        data-email-tab="recipients">Ontvangers</a>
-        <a href="#email-tab-settings"   class="subtab"        data-email-tab="settings">Instellingen</a>
-        <a href="#email-tab-automation" class="subtab"        data-email-tab="automation">Automatisch</a>
+      <label>Max deelnemers</label>
+      <input type="number" placeholder="bv. 10">
+
+      <label>Beschrijving</label>
+      <textarea placeholder="Korte omschrijving..."></textarea>
+
+      <div class="form-buttons">
+        <button type="submit">Opslaan</button>
+        <button type="reset">Nieuw</button>
       </div>
-
-      <!-- Templates -->
-      <div id="email-tab-templates" class="email-tab active">
-        <div class="help">Beheer e-mailsjablonen. Gebruik <span class="kbd">{{placeholder}}</span> in onderwerp/inhoud (bv. <span class="kbd">{{klant_naam}}</span>, <span class="kbd">{{hond_naam}}</span>, <span class="kbd">{{datum}}</span>).</div>
-        <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap">
-          <div class="col" style="min-width:260px"><label>Zoek <input id="email-search" placeholder="Zoek op naam/onderwerp…"/></label></div>
-          <div class="col" style="min-width:220px">
-            <label>Categorie
-              <select id="email-filter">
-                <option value="">Alle categorieën</option><option>Boeking</option><option>Administratie</option><option>Klant</option><option>Training</option><option>Overig</option>
-              </select>
-            </label>
-          </div>
-          <div class="col" style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn" id="email-new">+ Template toevoegen</button>
-            <button class="btn" id="email-export">Export JSON</button>
-            <label class="btn" for="email-import-input" style="cursor:pointer">Import JSON</label>
-            <input id="email-import-input" type="file" accept="application/json" style="display:none"/>
-          </div>
-        </div>
-        <div id="email-groups" style="margin-top:12px"></div>
-      </div>
-
-      <!-- Ontvangers -->
-      <div id="email-tab-recipients" class="email-tab" style="display:none">
-        <div class="help">Beheer standaard ontvangers (bv. BCC administratie).</div>
-        <form id="form-recipient" style="margin-bottom:10px">
-          <input type="hidden" name="id" />
-          <div class="row">
-            <div class="col"><label>Naam <input name="naam" placeholder="bv. Administratie"/></label></div>
-            <div class="col"><label>E-mail* <input name="email" type="email" required placeholder="bv. admin@superhond.be"/></label></div>
-            <div class="col"><label>Rol <input name="rol" placeholder="bv. BCC"/></label></div>
-          </div>
-          <div class="row"><div class="col"><label>Actief <input name="actief" type="checkbox" checked/></label></div></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn" type="submit">Opslaan</button><button class="btn" type="button" id="recipient-new">Nieuw</button>
-            <button class="btn" type="button" id="recipient-export">Export JSON</button>
-            <label class="btn" for="recipient-import" style="cursor:pointer">Import JSON</label>
-            <input id="recipient-import" type="file" accept="application/json" style="display:none"/>
-          </div>
-        </form>
-        <table id="table-recipients">
-          <thead><tr><th>Naam</th><th>E-mail</th><th>Rol</th><th>Actief</th><th></th></tr></thead>
-          <tbody><tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen ontvangers.</td></tr></tbody>
-        </table>
-      </div>
-
-      <!-- Instellingen -->
-      <div id="email-tab-settings" class="email-tab" style="display:none">
-        <div class="help">Stel je afzender & handtekening in (lokaal opgeslagen).</div>
-        <form id="form-email-settings">
-          <div class="row">
-            <div class="col"><label>Afzender naam <input name="fromName" placeholder="bv. Superhond"/></label></div>
-            <div class="col"><label>Afzender e-mail <input name="fromEmail" type="email" placeholder="bv. info@superhond.be"/></label></div>
-            <div class="col"><label>Reply-to <input name="replyTo" type="email" placeholder="optioneel"/></label></div>
-          </div>
-          <div class="row"><div class="col"><label>BCC standaard <input name="bcc" type="email" placeholder="bv. administratie@superhond.be"/></label></div></div>
-          <label>Handtekening (HTML toegestaan)
-            <textarea name="signature" rows="6" placeholder="<p>Met vriendelijke groeten,<br>Team Superhond</p>"></textarea>
-          </label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-            <button class="btn" type="submit">Opslaan</button>
-            <button class="btn" type="button" id="email-settings-reset">Reset</button>
-            <button class="btn" type="button" id="email-settings-export">Export JSON</button>
-            <label class="btn" for="email-settings-import" style="cursor:pointer">Import JSON</label>
-            <input id="email-settings-import" type="file" accept="application/json" style="display:none"/>
-          </div>
-        </form>
-      </div>
-
-      <!-- Automatisch -->
-      <div id="email-tab-automation" class="email-tab" style="display:none">
-        <!-- Verjaardag hond -->
-        <div class="help">
-          <b>Verjaardag hond</b> gebruikt de template met trigger <span class="kbd">dog_birthday</span>.
-          Placeholders: <span class="kbd">{{klant_naam}}</span>, <span class="kbd">{{hond_naam}}</span>, <span class="kbd">{{geboortedatum}}</span>.
-        </div>
-
-        <details>
-          <summary><b>Data-bron honden</b> (klik)</summary>
-          <p>We lezen honden uit <span class="kbd">localStorage["dogs"]</span> of <span class="kbd">localStorage["honden"]</span>
-            (array met velden: <span class="kbd">hond_naam</span>, <span class="kbd">geboortedatum</span> = YYYY-MM-DD, <span class="kbd">klant_naam</span>, <span class="kbd">email</span>).</p>
-          <p>Geen data? Plak hieronder JSON en klik “Gebruik ingeplakte data”.</p>
-          <textarea id="auto-dogs-json" rows="6" style="width:100%;font-family:ui-monospace" placeholder='[
-  {"hond_naam":"Bowie","geboortedatum":"2020-09-03","klant_naam":"Eva","email":"eva@example.com"},
-  {"hond_naam":"Nala","geboortedatum":"2019-09-04","klant_naam":"Tom","email":"tom@example.com"}
-]'></textarea>
-          <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
-            <button class="btn" id="auto-use-pasted">Gebruik ingeplakte data</button>
-            <button class="btn" id="auto-use-storage">Gebruik data uit localStorage</button>
-          </div>
-        </details>
-
-        <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:8px">
-          <div class="col">
-            <label>Wanneer
-              <select id="auto-bday-when">
-                <option value="0">Vandaag jarig</option>
-                <option value="1">Morgen jarig</option>
-                <option value="7">Binnen 7 dagen</option>
-              </select>
-            </label>
-          </div>
-          <div class="col"><button class="btn" id="auto-bday-scan">Zoek verjaardagen</button></div>
-        </div>
-
-        <table id="table-auto-bday" style="margin-top:10px">
-          <thead><tr><th>Hond</th><th>Geboortedatum</th><th>Klant</th><th>E-mail</th><th></th></tr></thead>
-          <tbody><tr class="placeholder"><td colspan="5" style="text-align:center;color:#777;">Nog geen resultaten.</td></tr></tbody>
-        </table>
-
-        <hr style="margin:18px 0">
-
-        <!-- Lesherinnering -->
-        <h3>Lesherinnering</h3>
-        <div class="help">
-          Zoekt boekingen en maakt e-mails met template <span class="kbd">class_reminder</span>. Placeholders:
-          <span class="kbd">{{klant_naam}}</span>, <span class="kbd">{{les_naam}}</span>, <span class="kbd">{{datum}}</span>,
-          <span class="kbd">{{starttijd}}</span>, <span class="kbd">{{locatie}}</span>.
-        </div>
-
-        <details>
-          <summary><b>Data-bron lesboekingen</b> (klik)</summary>
-          <p>We zoeken boekingen in <span class="kbd">localStorage["classBookings"]</span> of <span class="kbd">localStorage["lessenBookings"]</span>.</p>
-          <p>Minimale structuur per item:</p>
-<pre class="kbd" style="display:block;white-space:pre-wrap;padding:8px">
-{ "klant_naam":"Eva", "email":"eva@example.com",
-  "les_naam":"Puppy Basis", "datum":"2025-09-10", "starttijd":"18:30", "locatie":"Retie — Coach Sofie" }
-</pre>
-          <p>Geen data? Plak JSON hieronder en klik “Gebruik ingeplakte boekingen”.</p>
-          <textarea id="auto-classes-json" rows="6" style="width:100%;font-family:ui-monospace" placeholder='[
-  {"klant_naam":"Eva","email":"eva@example.com","les_naam":"Puppy Basis","datum":"2025-09-10","starttijd":"18:30","locatie":"Retie — Coach Sofie"},
-  {"klant_naam":"Tom","email":"tom@example.com","les_naam":"Socialisatie","datum":"2025-09-11","starttijd":"19:00","locatie":"Turnhout"}
-]'></textarea>
-          <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
-            <button class="btn" id="auto-classes-use-pasted">Gebruik ingeplakte boekingen</button>
-            <button class="btn" id="auto-classes-use-storage">Gebruik boekingen uit localStorage</button>
-          </div>
-        </details>
-
-        <div class="row" style="gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:8px">
-          <div class="col">
-            <label>Wanneer
-              <select id="auto-class-when">
-                <option value="1">Morgen</option>
-                <option value="2">Overmorgen</option>
-                <option value="3">Binnen 3 dagen</option>
-              </select>
-            </label>
-          </div>
-          <div class="col"><button class="btn" id="auto-class-scan">Zoek lessen</button></div>
-        </div>
-
-        <table id="table-auto-class" style="margin-top:10px">
-          <thead><tr><th>Klant</th><th>E-mail</th><th>Les</th><th>Datum</th><th>Tijd</th><th>Locatie</th><th></th></tr></thead>
-          <tbody><tr class="placeholder"><td colspan="7" style="text-align:center;color:#777;">Nog geen resultaten.</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <!-- Modal: Template bewerken/nieuw -->
-  <div class="modal" id="modal-email">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h3 id="modal-email-title">Template</h3>
-        <button class="close-x" data-close="modal-email">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="form-email">
-          <input type="hidden" name="id" />
-          <div class="row">
-            <div class="col"><label>Naam* <input name="naam" required placeholder="bv. Nieuwe booking"/></label></div>
-            <div class="col"><label>Categorie
-              <select name="categorie">
-                <option>Boeking</option><option>Administratie</option><option>Klant</option><option>Training</option><option>Overig</option>
-              </select></label></div>
-            <div class="col"><label>Taal
-              <select name="taal">
-                <option value="nl">Nederlands</option><option value="en">Engels</option><option value="fr">Frans</option>
-              </select></label></div>
-            <div class="col"><label>Trigger
-              <select name="trigger">
-                <option value="">(geen)</option>
-                <option value="booking_created">Nieuwe booking</option>
-                <option value="booking_changed">Booking gewijzigd</option>
-                <option value="payment_reminder">Betalingsherinnering</option>
-                <option value="invoice_created">Factuur gemaakt</option>
-                <option value="class_reminder">Lesherinnering</option>
-                <option value="dog_birthday">Verjaardag hond</option>
-                <option value="generic_notice">Algemene mededeling</option>
-              </select></label></div>
-          </div>
-          <div class="row"><div class="col"><label>Korte beschrijving
-            <input name="beschrijving" placeholder="bv. Bevestiging voor nieuwe booking"/></label></div></div>
-          <div class="row"><div class="col"><label>Onderwerp*
-            <input name="onderwerp" required placeholder="bv. Bevestiging: {{les_naam}} op {{datum}}"/></label></div></div>
-          <label>Inhoud (HTML toegestaan)*
-            <textarea name="inhoud" rows="10" required placeholder="Beste {{klant_naam}},&#10;&#10>..."></textarea>
-          </label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-            <button class="btn" type="submit">Opslaan</button>
-            <button class="btn" type="button" id="email-preview">Voorbeeld</button>
-            <button class="btn" type="button" data-close="modal-email">Annuleer</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    </form>
   </div>
 
-  <!-- Modal: Preview -->
-  <div class="modal" id="modal-preview">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h3>Voorbeeld e-mail</h3>
-        <button class="close-x" data-close="modal-preview">✕</button>
-      </div>
-      <div class="modal-body">
-        <div style="margin-bottom:10px">
-          <label>Voorbeeld-waarden (JSON)
-            <textarea id="preview-data" rows="6" style="width:100%;font-family:ui-monospace" placeholder='{"klant_naam":"Eva","hond_naam":"Bowie","datum":"ma 7 okt"}'></textarea>
-          </label>
-        </div>
-        <div id="preview-render" style="border:1px solid #eee;border-radius:8px;padding:12px"></div>
-      </div>
-    </div>
+  <div id="lesthema" class="tabcontent">
+    <h2>Les thema</h2>
+    <p>Voeg thema’s toe met naam en beschrijving.</p>
   </div>
 
-  <footer>&copy; 2025 Superhond.be – Admin Portaal</footer>
+  <div id="leslocatie" class="tabcontent">
+    <h2>Leslocatie</h2>
+    <p>Geef locatie, adres, postbus/plaats en beschrijving in.</p>
+  </div>
 
-  <script src="Js/script.js?v=0903i"></script>
-  <script src="Js/lessen-instellingen.js?v=0903i"></script>
+  <div id="lestrainers" class="tabcontent">
+    <h2>Les trainers</h2>
+    <p>Voeg trainers toe met naam en functie.</p>
+  </div>
+
+  <div id="emails" class="tabcontent">
+    <h2>E-mails</h2>
+    <p>Hier beheer je e-mailtemplates (bijv. bevestigingen, herinneringen, verjaardagen).</p>
+  </div>
+
+  <script src="js/instellingen.js"></script>
 </body>
 </html>
