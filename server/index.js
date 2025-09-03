@@ -228,3 +228,8 @@ app.get("*", (_req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Superhond server draait op http://localhost:${PORT}`);
 });
+
+
+// ...
+app.use('/api/passes', require('./routes/passes'));   // <— NIEUW
+// ...
