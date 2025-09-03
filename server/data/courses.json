@@ -1,0 +1,15 @@
+[
+  {
+    "id": "course-001",
+    "naam": "Puppy Start",
+    "beschrijving": "Basiscursus voor jonge honden.",
+    "aantal_lessen": 10,
+    "lesuur": "19:00",
+    "geldigheid": 90,
+    "max": 6,
+    "requires_pass": true,
+    "pass_type_id": "type-10beurten",
+    "locatie_naam": "Terrein Retie",
+    "trainer_naam": "Sofie Thijs"
+  }
+]
