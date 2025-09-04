@@ -7,7 +7,7 @@
   <style>
     body { font-family: system-ui, sans-serif; background:#f7f7f7; padding:20px; }
     h1 { font-size:22px; }
-    table { width:100%; border-collapse: collapse; margin:20px 0; }
+    table { width:100%; border-collapse: collapse; margin:20px 0; background:#fff; border-radius:8px; overflow:hidden; }
     th, td { padding:8px; border-bottom:1px solid #ccc; text-align:left; }
     th { background:#eee; }
     .btn { padding:6px 10px; border:0; border-radius:6px; cursor:pointer; }
@@ -15,7 +15,7 @@
     .del { background:#c62828; color:#fff; }
     form { margin:20px 0; padding:16px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.1);}
     label { display:block; margin-top:8px; }
-    input { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; }
+    input,select { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; }
   </style>
 </head>
 <body>
@@ -51,6 +51,14 @@
   <script>
     const token = localStorage.getItem('adminToken');
     if(!token){ alert("Niet ingelogd!"); location.href="/admin-login.html"; }
+
+    function decodeJwtRole(t){
+      try{ const [,p]=t.split('.'); return (JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))).role)||''; }
+      catch{ return ''; }
+    }
+    if (decodeJwtRole(token) !== 'superadmin'){
+      alert('Alleen superadmin kan deze pagina gebruiken.'); location.href='/index.html';
+    }
 
     async function api(path, opt={}) {
       const headers = { 'Content-Type':'application/json', ...(opt.headers||{}) };
