@@ -1,1 +1,4 @@
-[]
+[
+  { "id": "tr-001", "naam": "Sofie Thijs", "email": "sofie@superhond.be" },
+  { "id": "tr-002", "naam": "Paul Thijs", "email": "paul@superhond.be" }
+]
