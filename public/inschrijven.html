@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Superhond – Inschrijving</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; background:#f7f7f7; }
+    h1 { text-align: center; }
+    form { max-width: 500px; margin: 20px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    label { display:block; margin-top: 12px; }
+    input, select, button { width:100%; padding:8px; margin-top:4px; }
+    button { background:#ffb300; border:none; font-weight:bold; cursor:pointer; border-radius:6px; }
+    button:hover { background:#e6a200; }
+    .notice { margin:10px auto; max-width:500px; text-align:center; padding:10px; border-radius:6px; }
+    .ok { background:#c8e6c9; }
+    .err { background:#ffcdd2; }
+  </style>
+</head>
+<body>
+  <h1>🐾 Superhond – Inschrijving</h1>
+  <form id="form">
+    <label>Les:
+      <select name="course" id="course"></select>
+    </label>
+    <label>Datum / Sessie:
+      <select name="session" id="session"></select>
+    </label>
+    <label>Klant:
+      <select name="client" id="client"></select>
+    </label>
+    <label>Hond:
+      <select name="dog" id="dog"></select>
+    </label>
+    <button type="submit">Inschrijven</button>
+  </form>
+  <div id="notice"></div>
+  <script src="inschrijven.js"></script>
+</body>
+</html>
