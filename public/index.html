@@ -79,6 +79,10 @@
           <h3>API test</h3>
           <p>Snelle testknop om de backend te checken.</p>
         </a>
+        <a href="docs.html" class="card">
+          <h3>Documentatie</h3>
+          <p>Overzicht van functies, API’s en gebruik.</p>
+        </a>
       </div>
     </section>
 
@@ -139,7 +143,7 @@
     };
     setAuthUI(!!token);
 
-    // --- Ping de server (optioneel) ---
+    // --- Ping de server ---
     (async () => {
       try {
         const r = await fetch('/api/ping');
