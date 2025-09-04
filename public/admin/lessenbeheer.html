@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Lessenbeheer – Superhond</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:1000px;margin:24px auto;padding:0 16px}
+h1{margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr; gap:16px}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px}
+label{display:block;font-size:12px;margin-top:8px}
+input,textarea,select,button{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+td,th{border-bottom:1px solid #eee;padding:6px;text-align:left}
+small.muted{color:#777}
+.err{color:#b00020}
+.ok{color:#2e7d32}
+</style>
+</head>
+<body>
+<h1>🧱 Lessenbeheer</h1>
+<p class="muted">Eerst <b>Les-types</b> aanmaken. Daarna op basis van een type een <b>Cursus/Les</b> aanmaken (velden worden automatisch ingevuld, maar kan je wijzigen).</p>
+
+<div class="grid">
+  <div class="card">
+    <h3>Les-types</h3>
+    <form id="fType">
+      <label>Naam<input id="tNaam" required></label>
+      <label>Beschrijving<textarea id="tDesc"></textarea></label>
+      <label>Aantal lessen<input id="tAantal" type="number" value="6"></label>
+      <label>Lesduur (minuten)<input id="tDuur" type="number" value="60"></label>
+      <label>Geldigheid (dagen)<input id="tGeldigheid" type="number" value="90"></label>
+      <label>Max. deelnemers<input id="tMax" type="number" value="8"></label>
+      <button>Aanmaken</button>
+      <div id="msgType"></div>
+    </form>
+    <table><thead><tr><th>Naam</th><th>Max</th><th></th></tr></thead><tbody id="types"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h3>Cursussen / Lessen</h3>
+    <form id="fCourse">
+      <label>Type<select id="cType" required></select></label>
+      <label>Naam<input id="cNaam" required placeholder="bv. Puppy groep A (okt)"></label>
+      <label>Thema<input id="cThema" placeholder="bv. Rustig wandelen"></label>
+      <label>Beschrijving<textarea id="cDesc"></textarea></label>
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <label>Aantal lessen<input id="cAantal" type="number"></label>
+        <label>Lesduur (min)<input id="cDuur" type="number"></label>
+        <label>Geldigheid (dagen)<input id="cGeldigheid" type="number"></label>
+        <label>Max. deelnemers<input id="cMax" type="number"></label>
+      </div>
+      <small class="muted">Bij wisselen van <b>Type</b> vullen deze velden automatisch vanuit het type.</small>
+      <button>Aanmaken</button>
+      <div id="msgCourse"></div>
+    </form>
+    <table><thead><tr><th>Naam</th><th>Type</th><th>Max</th><th></th></tr></thead><tbody id="courses"></tbody></table>
+  </div>
+</div>
+
+<script>
+const $=sel=>document.querySelector(sel);
+const api=(p,opt={})=>fetch(p,{credentials:'include',headers:{'Content-Type':'application/json'},...opt});
+
+async function loadTypes(){
+  const r=await api('/api/lessons/types'); const data=await r.json();
+  const tBody=$('#types'); tBody.innerHTML='';
+  const sel=$('#cType'); sel.innerHTML='<option value="" disabled selected>— kies type —</option>';
+  data.forEach(t=>{
+    sel.insertAdjacentHTML('beforeend', `<option value="${t.id}">${t.naam}</option>`);
+    tBody.insertAdjacentHTML('beforeend', `
+      <tr><td>${t.naam}</td><td>${t.max_deelnemers}</td>
+      <td><button data-del="${t.id}">Verwijder</button></td></tr>`);
+  });
+  tBody.querySelectorAll('button[data-del]').forEach(b=>{
+    b.onclick=async()=>{
+      if(!confirm('Verwijderen?'))return;
+      await api('/api/lessons/types/'+b.dataset.del,{method:'DELETE'});
+      loadTypes();
+    };
+  });
+}
+
+async function loadCourses(){
+  const r=await api('/api/lessons/courses'); const data=await r.json();
+  const tBody=$('#courses'); tBody.innerHTML='';
+  const typeMap={}; (await (await api('/api/lessons/types')).json()).forEach(t=>typeMap[t.id]=t.naam);
+  data.forEach(c=>{
+    tBody.insertAdjacentHTML('beforeend', `
+      <tr><td>${c.naam}</td><td>${typeMap[c.type_id]||'-'}</td>
+      <td>${c.max_deelnemers}</td>
+      <td><button data-delc="${c.id}">Verwijder</button></td></tr>`);
+  });
+  tBody.querySelectorAll('button[data-delc]').forEach(b=>{
+    b.onclick=async()=>{
+      if(!confirm('Verwijderen?'))return;
+      await api('/api/lessons/courses/'+b.dataset.delc,{method:'DELETE'});
+      loadCourses();
+    };
+  });
+}
+
+$('#fType').onsubmit=async e=>{
+  e.preventDefault();
+  const body={
+    naam: $('#tNaam').value.trim(),
+    beschrijving: $('#tDesc').value.trim(),
+    aantal_lessen: $('#tAantal').value,
+    lesduur_min: $('#tDuur').value,
+    geldigheid_dagen: $('#tGeldigheid').value,
+    max_deelnemers: $('#tMax').value
+  };
+  const r=await api('/api/lessons/types',{method:'POST',body:JSON.stringify(body)});
+  $('#msgType').textContent=r.ok?'✔️ Type opgeslagen':'❌ Fout bij opslaan';
+  await loadTypes();
+  e.target.reset();
+};
+
+$('#cType').onchange=async()=>{
+  const id=$('#cType').value; if(!id) return;
+  const types=await (await api('/api/lessons/types')).json();
+  const t=types.find(x=>x.id===id); if(!t) return;
+  $('#cDesc').value=t.beschrijving||'';
+  $('#cAantal').value=t.aantal_lessen||'';
+  $('#cDuur').value=t.lesduur_min||'';
+  $('#cGeldigheid').value=t.geldigheid_dagen||'';
+  $('#cMax').value=t.max_deelnemers||'';
+};
+
+$('#fCourse').onsubmit=async e=>{
+  e.preventDefault();
+  const body={
+    type_id: $('#cType').value,
+    naam: $('#cNaam').value.trim(),
+    thema: $('#cThema').value.trim(),
+    beschrijving: $('#cDesc').value.trim(),
+    aantal_lessen: $('#cAantal').value,
+    lesduur_min: $('#cDuur').value,
+    geldigheid_dagen: $('#cGeldigheid').value,
+    max_deelnemers: $('#cMax').value
+  };
+  const r=await api('/api/lessons/courses',{method:'POST',body:JSON.stringify(body)});
+  $('#msgCourse').textContent=r.ok?'✔️ Cursus opgeslagen':'❌ Fout bij opslaan';
+  await loadCourses();
+  e.target.reset();
+};
+
+(async()=>{ await loadTypes(); await loadCourses(); })();
+</script>
+</body>
+</html>
