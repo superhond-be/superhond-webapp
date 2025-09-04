@@ -1,58 +1,33 @@
-// server/index.js
 const express = require('express');
 const path = require('path');
+const adminGuard = require('./adminGuard');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---- Middleware ----
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Statische bestanden (admin/publieke pages in /public)
+// Public files
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Korte health checks
-app.get('/api/ping', (_req, res) => res.json({ ok: true, pong: Date.now() }));
-app.get('/health', (_req, res) => res.status(200).send('OK'));
+// Health check
+app.get('/api/ping', (_req, res) => res.json({ ok: true }));
 
-// ---- API routes ----
-// Settings (lestypes, themas, locaties, trainers)
-app.use('/api/settings', require('./routes/settings'));
+// ----- Admin-only API’s -----
+app.use('/api/settings',   adminGuard, require('./routes/settings'));
+app.use('/api/courses',    adminGuard, require('./routes/courses'));
+app.use('/api/sessions',   adminGuard, require('./routes/sessions'));
+app.use('/api/memberships',adminGuard, require('./routes/memberships'));
 
-// Lessen (courses) & Sessies
-app.use('/api/courses',  require('./routes/courses'));
-app.use('/api/sessions', require('./routes/sessions'));
-
-// Inschrijvingen (met clients/dogs + strippenkaarten)
-app.use('/api/enrollments', require('./routes/enrollments'));
-
-// Strippenkaarten
-app.use('/api/passes', require('./routes/passes'));
-
-// Klanten & Honden
+// ----- Publieke API’s -----
 app.use('/api/clients', require('./routes/clients'));
 app.use('/api/dogs',    require('./routes/dogs'));
+app.use('/api/enrollments', require('./routes/enrollments'));
+app.use('/api/passes',      require('./routes/passes'));
+app.use('/api/purchases',   require('./routes/purchases'));
 
-// Optionele testroutes (niet verplicht aanwezig)
-const tryMount = (route, mountPath) => {
-  try { app.use(mountPath, require(route)); }
-  catch (e) { console.warn(`⚠️  Optionele route overgeslagen: ${mountPath} (${e.message})`); }
-};
-tryMount('./routes/testmail', '/api/test');      // POST /api/test/mail
-tryMount('./routes/email.test', '/api/email-test');
-
-// 404 voor onbekende API-paden
-app.use('/api', (_req, res) => res.status(404).json({ error: 'Not found' }));
-
-// Globale foutafhandelaar (laatste vangnet)
-app.use((err, _req, res, _next) => {
-  console.error('🔴 Unhandled error:', err);
-  res.status(500).json({ error: 'Server error', message: err.message });
-});
-
-// ---- Start server ----
-// Bind op 0.0.0.0 zodat je via LAN/Render bereikbaar bent
+// Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Superhond server draait op http://localhost:${PORT}`);
 });
