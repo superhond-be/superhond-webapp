@@ -1,82 +1,144 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Superhond Admin Portaal</title>
+  <meta charset="UTF-8" />
+  <title>Superhond – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      background: #f7f7f7;
-    }
-    header {
-      background: #ffb300;
-      padding: 20px;
-      text-align: center;
-      color: #111;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    main {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 40px auto;
-      max-width: 900px;
-      gap: 20px;
-    }
-    a.card {
-      display: block;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      text-align: center;
-      text-decoration: none;
-      color: #111;
-      padding: 30px 20px;
-      flex: 1 1 250px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    a.card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-    a.card h2 {
-      margin: 0 0 10px;
-      font-size: 20px;
-    }
-    a.card p {
-      margin: 0;
-      font-size: 14px;
-      color: #555;
-    }
+    :root { --brand:#ffb300; --bg:#f7f7f7; --text:#111; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+    header { background:var(--brand); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
+    header h1 { margin:0; font-size:20px; }
+    .auth { display:flex; gap:8px; align-items:center; }
+    .auth small { opacity:.8; }
+    .btn { border:0; background:#333; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .btn:hover { filter:brightness(1.05); }
+    main { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+    h2 { margin: 8px 0 16px; font-size: 18px; }
+    .grid { display:grid; grid-template-columns: repeat( auto-fill, minmax(220px,1fr) ); gap:16px; }
+    a.card { display:block; text-decoration:none; color:inherit; background:#fff; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,.08); transition:transform .12s ease, box-shadow .12s ease; }
+    a.card:hover { transform: translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,.12); }
+    .card h3 { margin:0 0 6px; font-size:16px; }
+    .card p { margin:0; color:#555; font-size:14px; }
+    .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; background:#eee; color:#333; margin-left:6px; vertical-align:middle; }
+    footer { text-align:center; padding:20px; color:#666; font-size:13px; }
+    .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   </style>
 </head>
 <body>
   <header>
-    🐾 Superhond – Admin Portaal
+    <h1>🐾 Superhond – Dashboard</h1>
+    <div class="auth">
+      <small id="authStatus">Niet ingelogd</small>
+      <button id="loginBtn" class="btn">Login</button>
+      <button id="logoutBtn" class="btn" style="display:none;">Logout</button>
+    </div>
   </header>
+
   <main>
-    <a href="lessenbeheer.html" class="card">
-      <h2>Lessenbeheer</h2>
-      <p>Maak en beheer lessen en sessies.</p>
-    </a>
-    <a href="klantenbeheer.html" class="card">
-      <h2>Klanten & Honden</h2>
-      <p>Beheer baasjes en hun honden.</p>
-    </a>
-    <a href="passes.html" class="card">
-      <h2>Strippenkaarten</h2>
-      <p>Uitgeven en beheren van beurtenkaarten.</p>
-    </a>
-    <a href="inschrijven.html" class="card">
-      <h2>Publieke inschrijving</h2>
-      <p>Formulier voor deelnemers (klant + hond) om zich in te schrijven.</p>
-    </a>
-    <a href="api-test.html" class="card">
-      <h2>API Test</h2>
-      <p>Snelle test van je backend API.</p>
-    </a>
+    <section>
+      <h2>Admin</h2>
+      <div class="grid" id="adminGrid">
+        <a href="lessenbeheer.html" class="card require-auth">
+          <h3>Lessenbeheer <span class="badge">Admin</span></h3>
+          <p>Maak en beheer lessen en sessies.</p>
+        </a>
+        <a href="klantenbeheer.html" class="card require-auth">
+          <h3>Klanten & Honden <span class="badge">Admin</span></h3>
+          <p>Beheer baasjes en hun honden.</p>
+        </a>
+        <a href="passes.html" class="card require-auth">
+          <h3>Strippenkaarten <span class="badge">Admin</span></h3>
+          <p>Uitgeven en beheren van beurtenkaarten.</p>
+        </a>
+        <a href="admin-login.html" class="card" id="adminLoginCard" style="display:none;">
+          <h3>Inloggen</h3>
+          <p>Log in om het adminportaal te gebruiken.</p>
+        </a>
+        <a href="lessenbeheer.html#requests" class="card require-auth">
+          <h3>Aanvragen <span class="badge">Admin</span></h3>
+          <p>Goedkeuren/weigeren van memberships (na betaling).</p>
+        </a>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2>Publiek</h2>
+      <div class="grid">
+        <a href="inschrijven.html" class="card">
+          <h3>Publieke inschrijving</h3>
+          <p>Schrijf in (of maak klant + hond aan) voor beschikbare sessies.</p>
+        </a>
+        <a href="start.html" class="card">
+          <h3>Onboarding na betaling</h3>
+          <p>Rond je aankoop af met token (bijv. <code>?token=...</code>).</p>
+        </a>
+        <a href="api-test.html" class="card">
+          <h3>API test</h3>
+          <p>Snelle testknop om de backend te checken.</p>
+        </a>
+      </div>
+    </section>
   </main>
+
+  <footer>
+    <div class="row" id="envRow">
+      <span>Serverstatus:</span>
+      <span id="ping">…</span>
+    </div>
+  </footer>
+
+  <script>
+    // --- Auth helpers (JWT in localStorage) ---
+    const token = localStorage.getItem('adminToken');
+    const authStatus = document.getElementById('authStatus');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminLoginCard = document.getElementById('adminLoginCard');
+
+    function setAuthUI(isAuthed){
+      if (isAuthed){
+        authStatus.textContent = 'Ingelogd (admin)';
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        adminLoginCard.style.display = 'none';
+        // admin links blijven gewoon klikbaar
+      } else {
+        authStatus.textContent = 'Niet ingelogd';
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        adminLoginCard.style.display = 'block';
+        // prevent direct open van admin pagina’s
+        document.querySelectorAll('.require-auth').forEach(a=>{
+          a.addEventListener('click', (e)=>{
+            if (!localStorage.getItem('adminToken')){
+              e.preventDefault();
+              window.location.href = '/admin-login.html';
+            }
+          });
+        });
+      }
+    }
+
+    loginBtn.onclick = () => location.href = '/admin-login.html';
+    logoutBtn.onclick = () => {
+      localStorage.removeItem('adminToken');
+      setAuthUI(false);
+    };
+
+    setAuthUI(!!token);
+
+    // --- Ping de server (optioneel) ---
+    (async () => {
+      try {
+        const r = await fetch('/api/ping');
+        const js = await r.json();
+        document.getElementById('ping').textContent = js.ok ? 'OK' : 'Onbekend';
+      } catch {
+        document.getElementById('ping').textContent = 'Niet bereikbaar';
+      }
+    })();
+  </script>
 </body>
 </html>
