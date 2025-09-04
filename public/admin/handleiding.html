@@ -23,7 +23,7 @@
 
   <h2>1) Rollen & rechten</h2>
   <ul>
-    <li><b>Superadmin</b> (Sofie): alles mogen, incl. admin-accounts toevoegen/verwijderen.</li>
+    <li><b>Superadmin</b> (Sofie): alles mogen, incl. admin-accounts toevoegen/verwijderen en wachtwoorden resetten.</li>
     <li><b>Admin</b> (Paul en externen): dagelijks beheer (lessen, klanten, honden, passes, aanvragen), geen gebruikersbeheer.</li>
   </ul>
 
@@ -48,7 +48,7 @@ ADMIN_JWT_SECRET=iets-sterks</code></pre>
     <li><b>Klanten & Honden</b>: klant- en hondgegevens beheren.</li>
     <li><b>Strippenkaarten</b>: types beheren en passen uitgeven.</li>
     <li><b>Aanvragen</b>: memberships goedkeuren na betaling.</li>
-    <li><b>Admin gebruikers</b> (alleen zichtbaar/werkend voor superadmin): beheert admin-accounts.</li>
+    <li><b>Admin gebruikers</b> (alleen zichtbaar/werkend voor superadmin): beheert admin-accounts en wachtwoorden.</li>
   </ul>
 
   <h2>4) Externe medewerkers toevoegen</h2>
@@ -81,6 +81,18 @@ ADMIN_JWT_SECRET=iets-sterks</code></pre>
     <li>Publieke inschrijving: <a href="/inschrijven.html">/inschrijven.html</a></li>
     <li>Onboarding na betaling: <a href="/start.html">/start.html</a></li>
   </ul>
+
+  <h2>7) Wachtwoord resetten</h2>
+  <div class="tip">
+    <ol>
+      <li>Alleen Sofie (superadmin) kan dit.</li>
+      <li>Ga naar <b>Admin gebruikers</b> in het dashboard.</li>
+      <li>Klik op <b>Reset wachtwoord</b> bij de juiste gebruiker.</li>
+      <li>Er opent een <b>popup-venster</b> met naam en e-mail van de gebruiker.</li>
+      <li>Vul een nieuw wachtwoord in en klik <b>Opslaan</b>.</li>
+      <li>De gebruiker kan daarna inloggen met dit nieuwe wachtwoord.</li>
+    </ol>
+  </div>
 
   <p><a href="/index.html">⬅ Terug naar Dashboard</a></p>
 </body>
