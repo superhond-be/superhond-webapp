@@ -1,50 +1,82 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Superhond.be – Dashboard</title>
-  <link rel="stylesheet" href="app.css?v=v0903clean" />
-  <script src="app.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Superhond Admin Portaal</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #f7f7f7;
+    }
+    header {
+      background: #ffb300;
+      padding: 20px;
+      text-align: center;
+      color: #111;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 40px auto;
+      max-width: 900px;
+      gap: 20px;
+    }
+    a.card {
+      display: block;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      text-decoration: none;
+      color: #111;
+      padding: 30px 20px;
+      flex: 1 1 250px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    a.card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    a.card h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+    a.card p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
-  <nav class="topnav">
-    <ul>
-      <li><a class="active" href="index.html">Dashboard</a></li>
-      <li><a href="klanten.html">Klanten</a></li>
-      <li><a href="honden.html">Honden</a></li>
-      <li><a href="lessen.html">Lessen beheren</a></li>
-      <li><a href="boekingen.html">Boekingen</a></li>
-      <li><a href="strippenkaarten.html">Strippenkaarten</a></li>
-      <li><a href="instellingen.html">Instellingen</a></li>
-    </ul>
-  </nav>
-
-  <div class="page-title-wrap">
-    <div class="page-title"><span class="paw">🐾</span> Superhond.be – Admin <span class="paw">🐾</span></div>
-  </div>
-
+  <header>
+    🐾 Superhond – Admin Portaal
+  </header>
   <main>
-    <h2>Snel acties</h2>
-    <p>
-      <button class="btn btn--dark">Nieuwe klant</button>
-      <button class="btn btn--primary">Nieuwe hond</button>
-      <button class="btn btn--ghost btn--sm">Zoeken</button>
-    </p>
-
-    <h2>Overzicht</h2>
-    <table>
-      <thead><tr><th>Module</th><th>Omschrijving</th></tr></thead>
-      <tbody>
-        <tr><td>Klanten</td><td>Beheer je klantenbestand en contactgegevens.</td></tr>
-        <tr><td>Honden</td><td>Hondenprofielen koppelen aan klanten.</td></tr>
-        <tr><td>Lessen</td><td>Plan en beheer trainingslessen.</td></tr>
-        <tr><td>Boekingen</td><td>Inschrijvingen en aanwezigheden.</td></tr>
-        <tr><td>Strippenkaarten</td><td>Credits en geldigheid beheren.</td></tr>
-      </tbody>
-    </table>
+    <a href="lessenbeheer.html" class="card">
+      <h2>Lessenbeheer</h2>
+      <p>Maak en beheer lessen en sessies.</p>
+    </a>
+    <a href="klantenbeheer.html" class="card">
+      <h2>Klanten & Honden</h2>
+      <p>Beheer baasjes en hun honden.</p>
+    </a>
+    <a href="passes.html" class="card">
+      <h2>Strippenkaarten</h2>
+      <p>Uitgeven en beheren van beurtenkaarten.</p>
+    </a>
+    <a href="inschrijven.html" class="card">
+      <h2>Publieke inschrijving</h2>
+      <p>Formulier voor deelnemers (klant + hond) om zich in te schrijven.</p>
+    </a>
+    <a href="api-test.html" class="card">
+      <h2>API Test</h2>
+      <p>Snelle test van je backend API.</p>
+    </a>
   </main>
-
-  <div class="version-tag">assets v0903clean</div>
 </body>
 </html>
