@@ -24,6 +24,7 @@
     .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; background:#eee; color:#333; margin-left:6px; vertical-align:middle; }
     footer { text-align:center; padding:20px; color:#666; font-size:13px; }
     .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .muted { color:#666; font-size:13px; }
   </style>
 </head>
 <body>
@@ -52,13 +53,13 @@
           <h3>Strippenkaarten <span class="badge">Admin</span></h3>
           <p>Uitgeven en beheren van beurtenkaarten.</p>
         </a>
+        <a href="lessenbeheer.html#requests" class="card require-auth">
+          <h3>Aanvragen <span class="badge">Admin</span></h3>
+          <p>Goedkeuren of weigeren van memberships (na betaling).</p>
+        </a>
         <a href="admin-login.html" class="card" id="adminLoginCard" style="display:none;">
           <h3>Inloggen</h3>
           <p>Log in om het adminportaal te gebruiken.</p>
-        </a>
-        <a href="lessenbeheer.html#requests" class="card require-auth">
-          <h3>Aanvragen <span class="badge">Admin</span></h3>
-          <p>Goedkeuren/weigeren van memberships (na betaling).</p>
         </a>
       </div>
     </section>
@@ -79,6 +80,17 @@
           <p>Snelle testknop om de backend te checken.</p>
         </a>
       </div>
+    </section>
+
+    <section class="card" style="max-width:1000px;margin:20px auto;">
+      <h2 style="margin:0 0 12px;">Snel naar cursus</h2>
+      <div class="row">
+        <input id="quickCourse" placeholder="bv. course-001" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:8px;">
+        <button class="btn" id="quickGo">Open inschrijving</button>
+      </div>
+      <p class="muted" style="margin-top:8px;">
+        Tip: je vindt het <code>course_id</code> in Lessenbeheer (bv. <code>course-001</code>).
+      </p>
     </section>
   </main>
 
@@ -103,13 +115,12 @@
         loginBtn.style.display = 'none';
         logoutBtn.style.display = 'inline-block';
         adminLoginCard.style.display = 'none';
-        // admin links blijven gewoon klikbaar
       } else {
         authStatus.textContent = 'Niet ingelogd';
         loginBtn.style.display = 'inline-block';
         logoutBtn.style.display = 'none';
         adminLoginCard.style.display = 'block';
-        // prevent direct open van admin pagina’s
+        // blokkeer admin-links bij niet-ingelogd
         document.querySelectorAll('.require-auth').forEach(a=>{
           a.addEventListener('click', (e)=>{
             if (!localStorage.getItem('adminToken')){
@@ -126,7 +137,6 @@
       localStorage.removeItem('adminToken');
       setAuthUI(false);
     };
-
     setAuthUI(!!token);
 
     // --- Ping de server (optioneel) ---
@@ -139,6 +149,19 @@
         document.getElementById('ping').textContent = 'Niet bereikbaar';
       }
     })();
+
+    // --- Quick course redirect ---
+    const quickInput = document.getElementById('quickCourse');
+    const quickBtn = document.getElementById('quickGo');
+    if (quickBtn) {
+      const openCourse = () => {
+        const id = (quickInput.value || '').trim();
+        if (!id) { alert('Geef een course id in, bv. course-001'); return; }
+        location.href = '/inschrijven.html?course=' + encodeURIComponent(id);
+      };
+      quickBtn.addEventListener('click', openCourse);
+      quickInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') openCourse(); });
+    }
   </script>
 </body>
 </html>
