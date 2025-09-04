@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "sess-001",
+    "sjabloon_id": "course-001",
+    "datum": "2025-09-15",
+    "tijd": "19:00",
+    "geannuleerd": false
+  }
+]
