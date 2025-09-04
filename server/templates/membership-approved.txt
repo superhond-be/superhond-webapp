@@ -1,0 +1,4 @@
+Hallo {{naam}},
+
+Je inschrijving voor {{lesNaam}} is goedgekeurd.
+Kies je data via: {{inschrijf_url}}
