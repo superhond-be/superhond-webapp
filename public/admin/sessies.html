@@ -1,0 +1,95 @@
+<!doctype html><html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sessies plannen – Superhond</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px}
+h1{margin:0 0 16px}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px;margin-bottom:16px}
+label{display:block;font-size:12px;margin-top:8px}
+input,select,button{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+td,th{border-bottom:1px solid #eee;padding:6px;text-align:left}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.badge{padding:2px 8px;border-radius:999px;border:1px solid #ddd;font-size:12px}
+</style>
+</head><body>
+<h1>🗓️ Sessies plannen</h1>
+<div class="card">
+  <div class="grid">
+    <label>Cursus<select id="course"></select></label>
+    <label>Capaciteit<input id="cap" type="number" value="10"></label>
+  </div>
+  <div class="grid">
+    <label>Start (ISO)<input id="start" placeholder="2025-09-06T19:00:00+02:00"></label>
+    <label>Einde (ISO)<input id="end" placeholder="2025-09-06T20:00:00+02:00"></label>
+  </div>
+  <div class="grid">
+    <label>Locatie (optioneel)<input id="loc"></label>
+    <label>Trainers (kommagescheiden id's)<input id="trainers" placeholder="trainer-001,trainer-002"></label>
+  </div>
+  <button id="btnAdd">Sessie toevoegen</button>
+  <div id="msg"></div>
+</div>
+
+<div class="card">
+  <h3>Geplande sessies</h3>
+  <table>
+    <thead><tr><th>Start</th><th>Cap</th><th>Status</th><th></th></tr></thead>
+    <tbody id="list"></tbody>
+  </table>
+</div>
+
+<script>
+const api=(p,opt={})=>fetch(p,{credentials:'include',headers:{'Content-Type':'application/json'},...opt});
+const $=s=>document.querySelector(s);
+
+async function loadCourses(){
+  const r=await api('/api/lessons/courses'); const arr=await r.json();
+  const sel=$('#course'); sel.innerHTML='';
+  arr.forEach(c=> sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.naam}</option>`));
+  if(arr.length) await loadSessions();
+}
+
+async function loadSessions(){
+  const cid=$('#course').value; if(!cid){ $('#list').innerHTML=''; return; }
+  const r=await api('/api/sessions?course_id='+encodeURIComponent(cid));
+  const arr=await r.json(); const t=$('#list'); t.innerHTML='';
+  arr.sort((a,b)=>a.start_iso.localeCompare(b.start_iso));
+  arr.forEach(s=>{
+    t.insertAdjacentHTML('beforeend',`
+      <tr>
+        <td>${s.start_iso}</td>
+        <td>${s.enrolled||0}/${s.capacity}</td>
+        <td><span class="badge">${s.status||'open'}</span></td>
+        <td>
+          <button data-del="${s.id}">Verwijder</button>
+        </td>
+      </tr>`);
+  });
+  t.querySelectorAll('button[data-del]').forEach(b=>{
+    b.onclick=async()=>{ if(!confirm('Verwijderen?'))return;
+      await api('/api/sessions/'+b.dataset.del,{method:'DELETE'}); loadSessions();
+    };
+  });
+}
+
+$('#course').onchange=loadSessions;
+
+$('#btnAdd').onclick=async()=>{
+  const cid=$('#course').value; if(!cid) return alert('Kies een cursus');
+  const body={
+    course_id: cid,
+    start_iso: $('#start').value.trim(),
+    end_iso: $('#end').value.trim()||null,
+    capacity: Number($('#cap').value||10),
+    location_id: $('#loc').value.trim()||null,
+    trainer_ids: ($('#trainers').value.trim() ? $('#trainers').value.split(',').map(s=>s.trim()) : [])
+  };
+  const r=await api('/api/sessions',{method:'POST', body: JSON.stringify(body)});
+  $('#msg').textContent = r.ok ? '✔️ Toegevoegd' : '❌ Fout';
+  if(r.ok){ $('#start').value=''; $('#end').value=''; loadSessions(); }
+};
+
+loadCourses();
+</script>
+</body></html>
