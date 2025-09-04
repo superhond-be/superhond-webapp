@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Superhond – Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: system-ui, sans-serif; background:#f7f7f7; display:flex; justify-content:center; align-items:center; height:100vh; }
     form { background:#fff; padding:30px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.1); width:300px; }
@@ -11,14 +12,14 @@
     input { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; }
     button { margin-top:20px; width:100%; padding:10px; border:none; border-radius:6px; background:#ffb300; font-weight:700; cursor:pointer; }
     button:hover { background:#e6a200; }
-    .err { color:#b71c1c; font-size:14px; text-align:center; margin-top:10px; }
+    .err { color:#b71c1c; font-size:14px; text-align:center; margin-top:10px; min-height:1em; }
   </style>
 </head>
 <body>
   <form id="loginForm">
     <h1>🐾 Superhond Admin</h1>
-    <label>Gebruiker</label>
-    <input id="user" required>
+    <label>E-mail</label>
+    <input id="user" type="email" required>
     <label>Wachtwoord</label>
     <input id="pass" type="password" required>
     <button type="submit">Login</button>
@@ -29,21 +30,20 @@
     const form = document.getElementById('loginForm');
     form.onsubmit = async e => {
       e.preventDefault();
-      const user = document.getElementById('user').value;
-      const pass = document.getElementById('pass').value;
+      const email = document.getElementById('user').value;
+      const password = document.getElementById('pass').value;
       try {
         const res = await fetch('/api/admin/login',{
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({user,pass})
+          body: JSON.stringify({ email, password })
         });
-        if(!res.ok) throw new Error(await res.text());
         const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'login_failed');
         localStorage.setItem('adminToken', data.token);
-        // doorsturen naar dashboard
         location.href = '/index.html';
       } catch(err){
-        document.getElementById('err').textContent = '❌ Foutieve login';
+        document.getElementById('err').textContent = '❌ ' + err.message;
       }
     };
   </script>
