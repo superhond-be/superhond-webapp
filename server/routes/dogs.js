@@ -1,22 +1,46 @@
-import express from "express";
+const express = require('express');
+const { readJSON, writeJSON, uid } = require('../helpers');
 const router = express.Router();
 
-// Alle honden ophalen
-router.get("/", (req, res) => {
-  res.json([
-    { id: 1, name: "Bello", breed: "Labrador" },
-    { id: 2, name: "Rex", breed: "Herder" }
-  ]);
+const FILE = 'dogs.json';
+
+router.get('/', (req,res) => {
+  const client_id = req.query.client_id;
+  let list = readJSON(FILE, []);
+  if (client_id) list = list.filter(d=>d.client_id===client_id);
+  res.json(list);
 });
 
-// Nieuwe hond toevoegen
-router.post("/", (req, res) => {
-  const { name, breed } = req.body;
-  if (!name || !breed) {
-    return res.status(400).json({ error: "Naam en ras zijn verplicht" });
+router.post('/', (req,res) => {
+  const list = readJSON(FILE, []);
+  const item = {
+    id: uid(),
+    naam: (req.body.naam||'').trim(),
+    ras: req.body.ras||'',
+    geboortedatum: req.body.geboortedatum||null,
+    client_id: req.body.client_id
+  };
+  if (!item.naam || !item.client_id) {
+    return res.status(422).json({error:'validation', fields:['naam','client_id']});
   }
-  const newDog = { id: Date.now(), name, breed };
-  res.status(201).json(newDog);
+  list.push(item);
+  writeJSON(FILE, list);
+  res.status(201).json(item);
 });
 
-export default router;
+router.put('/:id', (req,res) => {
+  const list = readJSON(FILE, []);
+  const i = list.findIndex(x=>x.id===req.params.id);
+  if (i===-1) return res.status(404).json({error:'not_found'});
+  list[i] = { ...list[i], ...req.body };
+  writeJSON(FILE, list);
+  res.json(list[i]);
+});
+
+router.delete('/:id', (req,res) => {
+  const out = readJSON(FILE, []).filter(x=>x.id!==req.params.id);
+  writeJSON(FILE, out);
+  res.json({ok:true});
+});
+
+module.exports = router;
