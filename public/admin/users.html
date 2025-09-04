@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin gebruikersbeheer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; background:#f7f7f7; padding:20px; }
+    h1 { font-size:22px; }
+    table { width:100%; border-collapse: collapse; margin:20px 0; }
+    th, td { padding:8px; border-bottom:1px solid #ccc; text-align:left; }
+    th { background:#eee; }
+    .btn { padding:6px 10px; border:0; border-radius:6px; cursor:pointer; }
+    .add { background:#1976d2; color:#fff; }
+    .del { background:#c62828; color:#fff; }
+    form { margin:20px 0; padding:16px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.1);}
+    label { display:block; margin-top:8px; }
+    input { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <h1>🐾 Admin gebruikersbeheer</h1>
+  <p>Alleen <b>superadmin</b> kan gebruikers beheren.</p>
+
+  <h2>Bestaande gebruikers</h2>
+  <table id="tbl">
+    <thead>
+      <tr><th>Naam</th><th>E-mail</th><th>Rol</th><th>Aangemaakt</th><th>Acties</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Nieuwe gebruiker toevoegen</h2>
+  <form id="addForm">
+    <label>Naam</label>
+    <input id="name" required>
+    <label>E-mail</label>
+    <input id="email" type="email" required>
+    <label>Wachtwoord</label>
+    <input id="pass" type="password" required>
+    <label>Rol</label>
+    <select id="role">
+      <option value="admin">admin</option>
+      <option value="superadmin">superadmin</option>
+    </select>
+    <button class="btn add" type="submit">➕ Toevoegen</button>
+  </form>
+
+  <p><a href="/index.html">⬅ Terug naar Dashboard</a></p>
+
+  <script>
+    const token = localStorage.getItem('adminToken');
+    if(!token){ alert("Niet ingelogd!"); location.href="/admin-login.html"; }
+
+    async function api(path, opt={}) {
+      const headers = { 'Content-Type':'application/json', ...(opt.headers||{}) };
+      headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch(path, { ...opt, headers });
+      if(!res.ok) throw new Error(await res.text());
+      return res.json();
+    }
+
+    async function loadUsers(){
+      try{
+        const users = await api('/api/admin/users');
+        const tbody = document.querySelector('#tbl tbody');
+        tbody.innerHTML='';
+        users.forEach(u=>{
+          const tr=document.createElement('tr');
+          tr.innerHTML=`<td>${u.name}</td>
+            <td>${u.email}</td>
+            <td>${u.role}</td>
+            <td>${new Date(u.created_at).toLocaleString()}</td>
+            <td><button class="btn del" data-id="${u.id}">Verwijder</button></td>`;
+          tbody.appendChild(tr);
+        });
+      }catch(e){ alert("Kan gebruikers niet laden: "+e.message); }
+    }
+
+    document.addEventListener('click', async e=>{
+      if(e.target.classList.contains('del')){
+        const id=e.target.dataset.id;
+        if(confirm("Verwijder gebruiker?")){
+          try{ await api('/api/admin/users/'+id,{method:'DELETE'}); loadUsers(); }
+          catch(err){ alert("Fout: "+err.message); }
+        }
+      }
+    });
+
+    document.getElementById('addForm').onsubmit=async e=>{
+      e.preventDefault();
+      try{
+        await api('/api/admin/users',{method:'POST',
+          body: JSON.stringify({
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('pass').value,
+            role: document.getElementById('role').value
+          })
+        });
+        alert("Gebruiker toegevoegd.");
+        e.target.reset();
+        loadUsers();
+      }catch(err){ alert("Fout: "+err.message); }
+    };
+
+    loadUsers();
+  </script>
+</body>
+</html>
