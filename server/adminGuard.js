@@ -1,17 +1,14 @@
+// JWT guard
 const jwt = require('jsonwebtoken');
 const SECRET = process.env.ADMIN_JWT_SECRET || 'devsecret';
 
 module.exports = function adminGuard(req, res, next) {
   const auth = req.headers.authorization || '';
-  if (!auth.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing token' });
-  }
-  const token = auth.slice(7);
+  if (!auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
   try {
-    const decoded = jwt.verify(token, SECRET);
-    req.admin = decoded;
+    req.admin = jwt.verify(auth.slice(7), SECRET);
     next();
-  } catch (e) {
-    return res.status(401).json({ error: 'Invalid token' });
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
   }
 };
