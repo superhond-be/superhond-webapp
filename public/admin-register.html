@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Registratie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; background:#f7f7f7; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;}
+    form { background:#fff; padding:28px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.1); width:320px;}
+    h1 { margin:0 0 16px; font-size:20px; text-align:center; }
+    label{display:block;margin:10px 0 4px;}
+    input,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;}
+    button{margin-top:16px;width:100%;padding:10px;border:0;border-radius:8px;background:#ffb300;font-weight:700;cursor:pointer;}
+    .err{color:#b71c1c; font-size:14px; margin-top:10px; text-align:center;}
+    .ok{color:#1b5e20; font-size:14px; margin-top:10px; text-align:center;}
+  </style>
+</head>
+<body>
+  <form id="f">
+    <h1>🐾 Admin registreren</h1>
+    <label>Setup token</label>
+    <input id="token" required>
+    <label>Naam</label>
+    <input id="name" required>
+    <label>E-mail</label>
+    <input id="email" type="email" required>
+    <label>Wachtwoord</label>
+    <input id="pass" type="password" required>
+    <button>Aanmaken</button>
+    <div id="msg"></div>
+  </form>
+  <script>
+    const $ = id => document.getElementById(id);
+    $('f').onsubmit = async (e)=>{
+      e.preventDefault();
+      $('msg').textContent=''; $('msg').className='';
+      try{
+        const res = await fetch('/api/admin/register', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            token: $('token').value.trim(),
+            name: $('name').value.trim(),
+            email: $('email').value.trim(),
+            password: $('pass').value
+          })
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'register_failed');
+        $('msg').className='ok';
+        $('msg').textContent='✅ Account aangemaakt. Ga nu naar login.';
+        setTimeout(()=>location.href='/admin-login.html', 1000);
+      }catch(err){
+        $('msg').className='err';
+        $('msg').textContent='❌ ' + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
