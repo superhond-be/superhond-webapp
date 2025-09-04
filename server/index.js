@@ -24,6 +24,8 @@ app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));
 
 app.use('/api/lessons', require('./routes/lessons'));
 
+app.use('/api/sessions', require('./routes/sessions'));
+
 // --- server starten (Render gebruikt PORT) ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
