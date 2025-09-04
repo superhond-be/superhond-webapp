@@ -22,6 +22,8 @@ app.use('/api/admin', require('./routes/admin'));  // <— belangrijk
 // --- 404 voor onbekende API-routes ---
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));
 
+app.use('/api/lessons', require('./routes/lessons'));
+
 // --- server starten (Render gebruikt PORT) ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
