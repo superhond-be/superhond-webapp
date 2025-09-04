@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Superhond – Documentatie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; line-height: 1.6; background:#f7f7f7; }
+    h1 { font-size: 24px; margin-bottom: 20px; }
+    h2 { margin-top: 30px; font-size: 20px; }
+    .admin { border-left: 5px solid #c62828; padding-left: 12px; background:#fff; margin:12px 0; padding:12px; border-radius:8px; }
+    .public { border-left: 5px solid #2e7d32; padding-left: 12px; background:#fff; margin:12px 0; padding:12px; border-radius:8px; }
+    code { background:#eee; padding:2px 4px; border-radius:4px; }
+    a { color:#1976d2; }
+    table { width:100%; border-collapse: collapse; margin:12px 0; }
+    th, td { padding:6px 8px; border-bottom:1px solid #ccc; font-size:14px; text-align:left; }
+    th { background:#eee; }
+  </style>
+</head>
+<body>
+  <h1>📘 Superhond – Documentatie</h1>
+
+  <p>Welkom bij de documentatie van het Superhond-platform.  
+  Hier vind je een overzicht van de belangrijkste onderdelen voor <b>administratie</b> en <b>klanten</b>.</p>
+
+  <h2>🔒 Admin (intern gebruik)</h2>
+  <div class="admin">
+    <h3>Lessenbeheer</h3>
+    <p>Beheer <b>lessen</b> en <b>sessies</b>. Voeg lessen toe, bepaal thema’s, locaties, trainers en capaciteiten.</p>
+  </div>
+  <div class="admin">
+    <h3>Klanten & Honden</h3>
+    <p>Beheer klantgegevens en honden. Klanten toevoegen, wijzigen of koppelen met honden.</p>
+  </div>
+  <div class="admin">
+    <h3>Strippenkaarten</h3>
+    <p>Beheer strippenkaarttypes en wijs strippenkaarten toe aan klanten.</p>
+  </div>
+  <div class="admin">
+    <h3>Aanvragen</h3>
+    <p>Overzicht van <b>pending memberships</b> na betaling. Keur goed of wijs af. Bij goedkeuring ontvangt de klant automatisch een e-mail.</p>
+  </div>
+
+  <h2>🌐 Publiek (voor klanten)</h2>
+  <div class="public">
+    <h3>Publieke inschrijving</h3>
+    <p>Formulier voor klanten om <b>hond + gegevens</b> te registreren en zich in te schrijven voor een les.</p>
+  </div>
+  <div class="public">
+    <h3>Onboarding na betaling</h3>
+    <p>Klant komt via <code>?token=...</code> op <b>start.html</b>, vult gegevens in → membership of strippenkaart wordt klaargezet.</p>
+  </div>
+  <div class="public">
+    <h3>API test</h3>
+    <p>Eenvoudige testpagina om de backend te checken.</p>
+  </div>
+
+  <h2>🔌 API-overzicht (cheat sheet)</h2>
+  <p>Handig voor testen met <b>curl</b> of <b>Postman</b>. Admin-routes vereisen een JWT-token (na login via <code>/api/admin/login</code>).</p>
+
+  <table>
+    <tr><th>Endpoint</th><th>Methode</th><th>Omschrijving</th></tr>
+    <tr><td><code>/api/admin/login</code></td><td>POST</td><td>Inloggen (body: {user,pass}) → JWT-token</td></tr>
+    <tr><td><code>/api/settings/locaties</code></td><td>GET/POST/DELETE</td><td>Beheer locaties (Admin)</td></tr>
+    <tr><td><code>/api/courses</code></td><td>GET/POST</td><td>Lessen beheren (Admin)</td></tr>
+    <tr><td><code>/api/sessions</code></td><td>GET/POST</td><td>Sessies beheren (Admin)</td></tr>
+    <tr><td><code>/api/memberships</code></td><td>GET/POST</td><td>Memberships beheren, goedkeuren/weigeren (Admin)</td></tr>
+    <tr><td><code>/api/clients</code></td><td>GET/POST</td><td>Klantrecords ophalen/toevoegen</td></tr>
+    <tr><td><code>/api/dogs</code></td><td>GET/POST</td><td>Honden ophalen/toevoegen</td></tr>
+    <tr><td><code>/api/enrollments</code></td><td>GET/POST/DELETE</td><td>Inschrijvingen voor sessies</td></tr>
+    <tr><td><code>/api/passes</code></td><td>GET/POST</td><td>Strippenkaarten uitgeven</td></tr>
+    <tr><td><code>/api/passes/types</code></td><td>GET/POST</td><td>Strippenkaarttypes beheren</td></tr>
+    <tr><td><code>/api/purchases/webhook</code></td><td>POST</td><td>Webhook van betaalprovider (Admin)</td></tr>
+    <tr><td><code>/api/purchases/start/:token</code></td><td>GET</td><td>Onboarding starten (Publiek)</td></tr>
+    <tr><td><code>/api/purchases/complete/:token</code></td><td>POST</td><td>Onboarding afronden (Publiek)</td></tr>
+    <tr><td><code>/api/ping</code></td><td>GET</td><td>Serverstatus checken</td></tr>
+  </table>
+
+  <p><b>Voorbeeld curl:</b></p>
+  <pre><code>curl -X POST https://jouw-app.onrender.com/api/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"user":"admin","pass":"supergeheim"}'</code></pre>
+
+  <p><a href="index.html">⬅ Terug naar Dashboard</a></p>
+</body>
+</html>
