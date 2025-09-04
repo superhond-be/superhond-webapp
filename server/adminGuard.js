@@ -1,17 +1,17 @@
-// server/adminGuard.js
+const jwt = require('jsonwebtoken');
+const SECRET = process.env.ADMIN_JWT_SECRET || 'devsecret';
+
 module.exports = function adminGuard(req, res, next) {
   const auth = req.headers.authorization || '';
-  const [type, b64] = auth.split(' ');
-  if (type !== 'Basic' || !b64) return ask();
-
-  const [u, p] = Buffer.from(b64, 'base64').toString().split(':');
-  if (u === process.env.ADMIN_USER && p === process.env.ADMIN_PASS) {
-    return next();
+  if (!auth.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing token' });
   }
-  return ask();
-
-  function ask() {
-    res.set('WWW-Authenticate', 'Basic realm="Superhond Admin"');
-    res.status(401).send('Unauthorized');
+  const token = auth.slice(7);
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    req.admin = decoded;
+    next();
+  } catch (e) {
+    return res.status(401).json({ error: 'Invalid token' });
   }
 };
