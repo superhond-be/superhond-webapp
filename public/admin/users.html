@@ -13,6 +13,7 @@
     .btn { padding:6px 10px; border:0; border-radius:6px; cursor:pointer; }
     .add { background:#1976d2; color:#fff; }
     .del { background:#c62828; color:#fff; }
+    .reset { background:#ffb300; color:#000; margin-left:6px; }
     form { margin:20px 0; padding:16px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.1);}
     label { display:block; margin-top:8px; }
     input,select { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; }
@@ -49,25 +50,37 @@
   <p><a href="/index.html">⬅ Terug naar Dashboard</a></p>
 
   <script>
+    // --- Auth & role check ---
     const token = localStorage.getItem('adminToken');
     if(!token){ alert("Niet ingelogd!"); location.href="/admin-login.html"; }
 
     function decodeJwtRole(t){
-      try{ const [,p]=t.split('.'); return (JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))).role)||''; }
-      catch{ return ''; }
+      try{
+        const [,p]=t.split('.');
+        return (JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))).role)||'';
+      }catch{ return ''; }
     }
     if (decodeJwtRole(token) !== 'superadmin'){
-      alert('Alleen superadmin kan deze pagina gebruiken.'); location.href='/index.html';
+      alert('Alleen superadmin kan deze pagina gebruiken.');
+      location.href='/index.html';
     }
 
+    // --- API helper ---
     async function api(path, opt={}) {
       const headers = { 'Content-Type':'application/json', ...(opt.headers||{}) };
       headers['Authorization'] = 'Bearer ' + token;
       const res = await fetch(path, { ...opt, headers });
-      if(!res.ok) throw new Error(await res.text());
-      return res.json();
+      if(!res.ok) {
+        // probeer nette fout te tonen
+        let msg = 'Onbekende fout';
+        try { const t = await res.text(); msg = t || res.statusText; } catch {}
+        throw new Error(msg);
+      }
+      const ct = res.headers.get('content-type') || '';
+      return ct.includes('application/json') ? res.json() : res.text();
     }
 
+    // --- Lijst laden ---
     async function loadUsers(){
       try{
         const users = await api('/api/admin/users');
@@ -75,30 +88,54 @@
         tbody.innerHTML='';
         users.forEach(u=>{
           const tr=document.createElement('tr');
-          tr.innerHTML=`<td>${u.name}</td>
+          tr.innerHTML=`
+            <td>${u.name}</td>
             <td>${u.email}</td>
             <td>${u.role}</td>
             <td>${new Date(u.created_at).toLocaleString()}</td>
-            <td><button class="btn del" data-id="${u.id}">Verwijder</button></td>`;
+            <td>
+              <button class="btn del" data-id="${u.id}">Verwijder</button>
+              <button class="btn reset" data-id="${u.id}">Reset wachtwoord</button>
+            </td>`;
           tbody.appendChild(tr);
         });
       }catch(e){ alert("Kan gebruikers niet laden: "+e.message); }
     }
 
+    // --- Acties (verwijderen / reset) ---
     document.addEventListener('click', async e=>{
+      // Verwijder
       if(e.target.classList.contains('del')){
         const id=e.target.dataset.id;
         if(confirm("Verwijder gebruiker?")){
-          try{ await api('/api/admin/users/'+id,{method:'DELETE'}); loadUsers(); }
-          catch(err){ alert("Fout: "+err.message); }
+          try{
+            await api('/api/admin/users/'+id,{method:'DELETE'});
+            loadUsers();
+          }catch(err){ alert("Fout: "+err.message); }
+        }
+      }
+      // Reset wachtwoord
+      if(e.target.classList.contains('reset')){
+        const id=e.target.dataset.id;
+        const newPass = prompt("Nieuw wachtwoord voor deze gebruiker:");
+        if(newPass){
+          try{
+            await api('/api/admin/users/'+id+'/password', {
+              method:'PATCH',
+              body: JSON.stringify({ password: newPass })
+            });
+            alert("Wachtwoord aangepast.");
+          }catch(err){ alert("Fout: "+err.message); }
         }
       }
     });
 
+    // --- Toevoegen ---
     document.getElementById('addForm').onsubmit=async e=>{
       e.preventDefault();
       try{
-        await api('/api/admin/users',{method:'POST',
+        await api('/api/admin/users',{
+          method:'POST',
           body: JSON.stringify({
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
@@ -112,6 +149,7 @@
       }catch(err){ alert("Fout: "+err.message); }
     };
 
+    // Init
     loadUsers();
   </script>
 </body>
