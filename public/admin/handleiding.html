@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Superhond – Admin Handleiding</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; line-height: 1.6; background:#f7f7f7; }
+    h1 { font-size: 24px; margin-bottom: 20px; }
+    h2 { margin-top: 28px; font-size: 20px; }
+    h3 { margin-top: 18px; font-size: 16px; }
+    p, li { margin: 6px 0; }
+    code { background:#eee; padding:2px 6px; border-radius:4px; }
+    .tip { background:#fff; border-left: 5px solid #ffb300; padding:12px; margin:12px 0; border-radius:6px; }
+    .ok  { background:#fff; border-left: 5px solid #2e7d32; padding:12px; margin:12px 0; border-radius:6px; }
+    .warn{ background:#fff; border-left: 5px solid #c62828; padding:12px; margin:12px 0; border-radius:6px; }
+    a { color:#1976d2; }
+  </style>
+</head>
+<body>
+  <h1>🐾 Superhond – Admin Handleiding</h1>
+  <p>Deze pagina is voor het interne beheer door Sofie (superadmin), Paul (admin) en eventuele externe medewerkers.</p>
+
+  <h2>1) Rollen & rechten</h2>
+  <ul>
+    <li><b>Superadmin</b> (Sofie): alles mogen, incl. admin-accounts toevoegen/verwijderen.</li>
+    <li><b>Admin</b> (Paul en externen): dagelijks beheer (lessen, klanten, honden, passes, aanvragen), geen gebruikersbeheer.</li>
+  </ul>
+
+  <h2>2) Eerste registratie (eenmalig)</h2>
+  <div class="tip">
+    <p><b>Alleen eerste keer nodig.</b></p>
+    <ol>
+      <li>Zet in Render → <i>Environment</i>:
+        <pre><code>SETUP_TOKEN=iets-geheims
+ADMIN_JWT_SECRET=iets-sterks</code></pre>
+      </li>
+      <li>Sofie gaat naar <code>/admin-register.html</code>, vult <b>Setup token</b>, <b>Naam</b>, <b>E-mail</b>, <b>Wachtwoord</b> in.</li>
+      <li>Eerste account wordt automatisch <b>superadmin</b>.</li>
+      <li>Paul registreert daarna ook via <code>/admin-register.html</code> en wordt <b>admin</b>.</li>
+      <li>Inloggen via <code>/admin-login.html</code> (e-mail + wachtwoord).</li>
+    </ol>
+  </div>
+
+  <h2>3) Dagelijks gebruik (Dashboard)</h2>
+  <ul>
+    <li><b>Lessenbeheer</b>: lessen en sessies aanmaken, thema/locatie/trainer instellen, capaciteit beheren.</li>
+    <li><b>Klanten & Honden</b>: klant- en hondgegevens beheren.</li>
+    <li><b>Strippenkaarten</b>: types beheren en passen uitgeven.</li>
+    <li><b>Aanvragen</b>: memberships goedkeuren na betaling.</li>
+    <li><b>Admin gebruikers</b> (alleen zichtbaar/werkend voor superadmin): beheert admin-accounts.</li>
+  </ul>
+
+  <h2>4) Externe medewerkers toevoegen</h2>
+  <div class="ok">
+    <ol>
+      <li><b>Sofie (superadmin) logt in</b> via <code>/admin-login.html</code>.</li>
+      <li>Open het Dashboard → klik op <b>Admin gebruikers</b>.</li>
+      <li>Vul <b>Naam</b>, <b>E-mail</b>, <b>Wachtwoord</b>, <b>Rol</b> (= <b>admin</b> voor externen) in en klik <b>Toevoegen</b>.</li>
+      <li>Externe medewerker logt daarna in via <code>/admin-login.html</code> met eigen e-mail + wachtwoord.</li>
+      <li>Verwijderen kan via dezelfde pagina (knop <b>Verwijder</b>).</li>
+    </ol>
+  </div>
+
+  <h2>5) Veiligheid</h2>
+  <div class="warn">
+    <ul>
+      <li><b>SETUP_TOKEN</b> is alleen nodig tijdens de eerste registraties. Verwijder of wijzig het daarna in Render om misbruik te voorkomen.</li>
+      <li>Gebruik <b>sterke wachtwoorden</b> voor alle admins.</li>
+      <li>Geef externen de rol <b>admin</b>, niet <b>superadmin</b>.</li>
+      <li>Controleer periodiek de lijst met admin-gebruikers en verwijder wie niet meer actief is.</li>
+    </ul>
+  </div>
+
+  <h2>6) Snelle links</h2>
+  <ul>
+    <li>Dashboard: <a href="/index.html">/index.html</a></li>
+    <li>Admin login: <a href="/admin-login.html">/admin-login.html</a></li>
+    <li>Admin registratie (eenmalig): <a href="/admin-register.html">/admin-register.html</a></li>
+    <li>Admin gebruikers: <a href="/admin/users.html">/admin/users.html</a></li>
+    <li>Publieke inschrijving: <a href="/inschrijven.html">/inschrijven.html</a></li>
+    <li>Onboarding na betaling: <a href="/start.html">/start.html</a></li>
+  </ul>
+
+  <p><a href="/index.html">⬅ Terug naar Dashboard</a></p>
+</body>
+</html>
