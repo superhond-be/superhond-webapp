@@ -232,4 +232,7 @@ app.listen(PORT, () => {
 
 // ...
 app.use('/api/passes', require('./routes/passes'));   // <— NIEUW
+app.use('/api/clients', require('./routes/clients'));
+app.use('/api/dogs', require('./routes/dogs'));
 // ...
+
