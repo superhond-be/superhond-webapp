@@ -1,12 +1,1 @@
-[
-  {
-    "id": "pass-001",
-    "email": "klant@voorbeeld.be",
-    "type_id": "type-10beurten",
-    "remaining": 10,
-    "starts_at": 1735948800000,
-    "expires_at": 1767484800000,
-    "active": true,
-    "note": "Testkaart voor klant"
-  }
-]
+[]
