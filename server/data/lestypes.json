@@ -1,4 +1,20 @@
 [
-  { "id": "type-001", "naam": "Groepsles" },
-  { "id": "type-002", "naam": "Privéles" }
+  {
+    "id": "type-001",
+    "naam": "Puppy",
+    "beschrijving": "Puppycursus met basis gehoorzaamheid.",
+    "aantal_lessen": 6,
+    "lesduur_min": 60,
+    "geldigheid_dagen": 90,
+    "max_deelnemers": 8
+  },
+  {
+    "id": "type-002",
+    "naam": "Basis",
+    "beschrijving": "Basistraining voor jonge honden.",
+    "aantal_lessen": 8,
+    "lesduur_min": 60,
+    "geldigheid_dagen": 120,
+    "max_deelnemers": 10
+  }
 ]
