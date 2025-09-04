@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "type-10beurten",
+    "naam": "10-beurtenkaart",
+    "total_credits": 10,
+    "expiry_days": 365,
+    "allowed_course_type_ids": null
+  }
+]
