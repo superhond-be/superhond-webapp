@@ -14,7 +14,7 @@ function findCustomerByEmail(email){ const e=(email||'').toLowerCase(); return r
 function findDog(id){ return readJSON('dogs.json',[]).find(d=>d.id===id) || null; }
 function findDogsByClient(client_id){ return readJSON('dogs.json',[]).filter(d=>d.client_id===client_id); }
 
-// Passes
+// Passes / ledger
 const PASS_FILE='passes.json', TYPES_FILE='pass_types.json', LEDGER_FILE='pass_ledger.json';
 function pushLedger(entry){ const led=readJSON(LEDGER_FILE,[]); led.push({id:uid(),ts:Date.now(),...entry}); writeJSON(LEDGER_FILE,led); }
 function findValidPass({email,type_id=null,at=Date.now()}) {
@@ -39,6 +39,8 @@ function refundPass({email,enrollment_id}){
   pushLedger({action:'refund',amount:1,pass_id:d.pass_id,email:E,enrollment_id}); return true;
 }
 
-module.exports = { datapath, readJSON, writeJSON, uid,
+module.exports = {
+  datapath, readJSON, writeJSON, uid,
   findCustomer, findCustomerByEmail, findDog, findDogsByClient,
-  PASS_FILE, TYPES_FILE, LEDGER_FILE, findValidPass, issuePass, debitPass, refundPass };
+  PASS_FILE, TYPES_FILE, LEDGER_FILE, findValidPass, issuePass, debitPass, refundPass
+};
