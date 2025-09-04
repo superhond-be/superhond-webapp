@@ -1,0 +1,89 @@
+<!doctype html><html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aanmeldingen (pending) – Superhond</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:1000px;margin:24px auto;padding:0 16px}
+h1{margin:0 0 16px}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+.badge{padding:2px 8px;border:1px solid #ddd;border-radius:999px;font-size:12px}
+.actions button{margin-right:6px}
+#msg{margin-top:10px}
+</style>
+</head><body>
+<h1>📥 Aanmeldingen (pending)</h1>
+<div class="card">
+  <table>
+    <thead><tr>
+      <th>Wanneer</th><th>Klant</th><th>Hond</th><th>Sessie</th><th>Status</th><th class="actions">Acties</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div id="msg"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const api=(p,opt={})=>fetch(p,{credentials:'include',headers:{'Content-Type':'application/json'},...opt});
+
+async function load(){
+  const r=await api('/api/public-enrollments'); // admin endpoint
+  const list=await r.json();
+  const rows=$('#rows'); rows.innerHTML='';
+  list.filter(e=>e.status==='pending').forEach(e=>{
+    const dt=new Date(e.created_at||Date.now()).toLocaleString();
+    rows.insertAdjacentHTML('beforeend', `
+      <tr data-id="${e.id}">
+        <td>${dt}</td>
+        <td>${(e.klant?.naam||'-')}<br><small>${e.klant?.email||''} ${e.klant?.tel?('· '+e.klant.tel):''}</small></td>
+        <td>${(e.hond?.naam||'(onbekend)')}</td>
+        <td>${e.session_id}</td>
+        <td><span class="badge">${e.status}</span></td>
+        <td class="actions">
+          <button data-mail="${e.id}">Mail versturen</button>
+          <button data-link="${e.id}">Link kopiëren</button>
+          <button data-cancel="${e.id}">Annuleer</button>
+        </td>
+      </tr>
+    `);
+  });
+
+  rows.querySelectorAll('button[data-mail]').forEach(b=>{
+    b.onclick=async()=>{
+      const id=b.dataset.mail;
+      const rec=(await (await api('/api/public-enrollments')).json()).find(x=>x.id===id);
+      if(!rec?.klant?.email) return alert('Geen e-mail gevonden.');
+      const rr=await api('/api/onboarding/start',{method:'POST',body:JSON.stringify({email:rec.klant.email,enrollment_id:id,naam:rec.klant.naam||''})});
+      const data=await rr.json();
+      if(!rr.ok) return alert('❌ Mailen mislukt: '+(data.error||''));
+      alert('✅ Mail verzonden naar '+rec.klant.email);
+    };
+  });
+
+  rows.querySelectorAll('button[data-link]').forEach(b=>{
+    b.onclick=async()=>{
+      const id=b.dataset.link;
+      const rec=(await (await api('/api/public-enrollments')).json()).find(x=>x.id===id);
+      if(!rec?.klant?.email) return alert('Geen e-mail gevonden.');
+      const rr=await api('/api/onboarding/start',{method:'POST',body:JSON.stringify({email:rec.klant.email,enrollment_id:id,naam:rec.klant.naam||''})});
+      const data=await rr.json();
+      if(!rr.ok||!data.link) return alert('Kon link niet maken.');
+      navigator.clipboard?.writeText(data.link);
+      alert('🔗 Link gekopieerd:\n'+data.link);
+    };
+  });
+
+  rows.querySelectorAll('button[data-cancel]').forEach(b=>{
+    b.onclick=async()=>{
+      if(!confirm('Aanmelding annuleren?'))return;
+      const id=b.dataset.cancel;
+      const rr=await api('/api/public-enrollments/'+id+'/cancel',{method:'PATCH'});
+      if(rr.ok) load();
+    };
+  });
+}
+
+load();
+</script>
+</body></html>
