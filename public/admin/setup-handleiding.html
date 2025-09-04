@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Setup Handleiding – Superhond Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; line-height: 1.6; background:#f7f7f7; }
+    h1 { font-size: 24px; margin-bottom: 20px; }
+    h2 { margin-top: 28px; font-size: 20px; }
+    p, li { margin: 6px 0; }
+    code { background:#eee; padding:2px 6px; border-radius:4px; }
+    .tip { background:#fff; border-left: 5px solid #ffb300; padding:12px; margin:12px 0; border-radius:6px; }
+    a { color:#1976d2; }
+  </style>
+</head>
+<body>
+  <h1>🐾 Superhond – Setup Handleiding</h1>
+
+  <p>Deze handleiding legt stap voor stap uit hoe je het <b>SETUP_TOKEN</b> instelt in Render en hoe je je eerste admin-accounts aanmaakt.</p>
+
+  <h2>1. Ga naar je service in Render</h2>
+  <ol>
+    <li>Log in op <a href="https://dashboard.render.com" target="_blank">Render</a>.</li>
+    <li>Klik op je service <b>superhond-webapp</b>.</li>
+  </ol>
+
+  <h2>2. Open het menu <i>Environment</i></h2>
+  <p>In de linkerkolom zie je opties zoals <i>Events</i>, <i>Settings</i> en <b>Environment</b>. Klik op <b>Environment</b>.</p>
+
+  <h2>3. Voeg de variabele toe</h2>
+  <div class="tip">
+    <p>Klik op <b>Add Environment Variable</b> en vul in:</p>
+    <ul>
+      <li><b>Key</b>: <code>SETUP_TOKEN</code></li>
+      <li><b>Value</b>: kies een geheime code, bv. <code>Superhond2024!</code></li>
+    </ul>
+    <p>Klik daarna op <b>Save Changes</b>. Render start de app opnieuw op.</p>
+  </div>
+
+  <h2>4. Registreer admins</h2>
+  <ol>
+    <li>Ga naar <a href="/admin-register.html">/admin-register.html</a>.</li>
+    <li>Vul bij <b>Setup token</b> exact de waarde in die je net in Render zette.</li>
+    <li>Vul <b>Naam</b>, <b>E-mail</b> en <b>Wachtwoord</b> in.</li>
+    <li>Klik <b>Aanmaken</b>.</li>
+  </ol>
+  <ul>
+    <li>De <b>eerste gebruiker</b> wordt automatisch <b>superadmin</b> (Sofie).</li>
+    <li>De <b>tweede gebruiker</b> wordt automatisch <b>admin</b> (Paul).</li>
+  </ul>
+
+  <h2>5. Na registratie</h2>
+  <ul>
+    <li>Inloggen kan altijd via <a href="/admin-login.html">/admin-login.html</a> (e-mail + wachtwoord).</li>
+    <li>Nieuwe externen kunnen door Sofie (superadmin) toegevoegd worden via <b>Dashboard → Admin gebruikers</b>.</li>
+    <li>Als de eerste accounts klaar zijn, verwijder of wijzig je de <code>SETUP_TOKEN</code> variabele in Render voor extra veiligheid.</li>
+  </ul>
+
+  <p><a href="/admin/handleiding.html">⬅ Terug naar Admin Handleiding</a></p>
+</body>
+</html>
