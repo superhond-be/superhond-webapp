@@ -28,6 +28,8 @@ app.use('/api/sessions', require('./routes/sessions'));
 
 app.use('/api/enrollments', require('./routes/enrollments'));
 
+app.use('/api/public-enrollments', require('./routes/publicEnroll_admin'));
+
 // --- server starten (Render gebruikt PORT) ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
