@@ -1,101 +1,29 @@
-// server/routes/purchases.js
-import express from "express";
-import { findCustomer } from "./customers.js";
+const express = require('express');
+const { readJSON, writeJSON, uid, findCustomerByEmail } = require('../helpers');
+const router = express.Router(); const FILE='purchases.json';
 
-const router = express.Router();
+router.post('/webhook', (req,res)=>{ const list=readJSON(FILE,[]); const it={ id:uid(), order_id:String(req.body.order_id||''), email:(req.body.email||'').toLowerCase(), sku:String(req.body.sku||''), status:'ready', token:uid(), created_at:Date.now() }; list.push(it); writeJSON(FILE,list); res.json({ ok:true, token:it.token }); });
 
-/**
- * Pending aankopen die via Google binnenkomen.
- * Voorbeeldrecord:
- * { id, email, packageKey, lessons, classKey, expiresAt, claimed }
- */
-let NEXT_PURCHASE_ID = 1;
-const PENDING_PURCHASES = [];
+router.get('/start/:token', (req,res)=>{ const it=readJSON(FILE,[]).find(x=>x.token===req.params.token && x.status==='ready'); if(!it) return res.status(404).json({error:'token_invalid'}); const map=readJSON('products.json',[]).find(p=>p.sku===it.sku); if(!map) return res.status(400).json({error:'unknown_sku'}); res.json({ email:it.email, sku:it.sku, map }); });
 
-/**
- * POST /api/integrations/google/purchase  (webhook)
- * Body: { email, packageKey, lessons, classKey?, expiresAt? }
- * - email: verplicht
- * - lessons: aantal lessen/strips (bv. 9)
- * - packageKey: bv. "puppy-9"
- * - classKey (optioneel): bv. "puppy"
- * - expiresAt (ISO, optioneel)
- */
-router.post("/integrations/google/purchase", (req, res) => {
-  const { email, packageKey, lessons, classKey = null, expiresAt = null } = req.body || {};
-  if (!email || !lessons) {
-    return res.status(400).json({ error: "email en lessons zijn verplicht" });
-  }
-  const purchase = {
-    id: NEXT_PURCHASE_ID++,
-    email: String(email).trim().toLowerCase(),
-    packageKey: packageKey || `pakket-${lessons}`,
-    lessons: Number(lessons),
-    classKey,        // bv. 'puppy'
-    expiresAt,       // ISO of null
-    claimed: false,
-    createdAt: new Date().toISOString(),
-  };
-  PENDING_PURCHASES.push(purchase);
-  return res.status(201).json(purchase);
+router.post('/complete/:token', (req,res)=>{
+  const purchases=readJSON(FILE,[]); const idx=purchases.findIndex(x=>x.token===req.params.token && x.status==='ready'); if(idx===-1) return res.status(404).json({error:'token_invalid'});
+  const purchase=purchases[idx]; const products=readJSON('products.json',[]); const map=products.find(p=>p.sku===purchase.sku); if(!map) return res.status(400).json({error:'unknown_sku'});
+
+  // client + dog aanmaken/zoeken
+  const clients=readJSON('clients.json',[]); let client=findCustomerByEmail(req.body.client?.email||purchase.email);
+  if(!client){ client={ id:uid(), naam:req.body.client?.naam||'', email:(req.body.client?.email||purchase.email).toLowerCase(), telefoon:req.body.client?.telefoon||'' }; clients.push(client); writeJSON('clients.json',clients); }
+  const dogs=readJSON('dogs.json',[]); let dog=dogs.find(d=>d.client_id===client.id && d.naam===(req.body.dog?.naam||'').trim());
+  if(!dog){ dog={ id:uid(), naam:req.body.dog?.naam||'', ras:req.body.dog?.ras||'', geboortedatum:req.body.dog?.geboortedatum||null, client_id:client.id }; dogs.push(dog); writeJSON('dogs.json',dogs); }
+
+  // membership pending
+  const memberships=readJSON('course_memberships.json',[]); if(map.action==='enroll_course'){ memberships.push({ id:uid(), course_id:map.course_id, client_id:client.id, dog_id:dog.id, status:'pending', source:{order_id:purchase.order_id, sku:purchase.sku}, created_at:Date.now() }); writeJSON('course_memberships.json',memberships); }
+
+  // als issue_pass: zet alleen record weg (uitgifte kun je ook hier doen als gewenst)
+  if(map.action==='issue_pass'){ const pending=readJSON('pass_issues.json',[]); pending.push({ id:uid(), email:client.email, type_id:map.pass_type_id, source:{order_id:purchase.order_id, sku:purchase.sku}, created_at:Date.now() }); writeJSON('pass_issues.json',pending); }
+
+  purchases[idx]={...purchase,status:'consumed',consumed_at:Date.now()}; writeJSON(FILE,purchases);
+  res.json({ ok:true, client, dog, action: map.action });
 });
 
-/**
- * GET /api/purchases/pending?email=...
- * Haal alle on-geclaimde aankopen voor een email.
- */
-router.get("/purchases/pending", (req, res) => {
-  const email = String(req.query.email || "").trim().toLowerCase();
-  if (!email) return res.status(400).json({ error: "email query param ontbreekt" });
-  const items = PENDING_PURCHASES.filter(p => !p.claimed && p.email === email);
-  res.json(items);
-});
-
-/**
- * POST /api/purchases/claim
- * Body: { email, purchaseId, customerId, dogId }
- * - Zoekt pending aankoop op email + id
- * - Zet om naar strippenkaart bij klant
- * - Markeer purchase als claimed
- */
-router.post("/purchases/claim", (req, res) => {
-  const { email, purchaseId, customerId, dogId } = req.body || {};
-  const normEmail = String(email || "").trim().toLowerCase();
-  const pid = Number(purchaseId);
-  const cid = Number(customerId);
-
-  if (!normEmail || !pid || !cid) {
-    return res.status(400).json({ error: "email, purchaseId en customerId zijn verplicht" });
-  }
-  const purchase = PENDING_PURCHASES.find(p => p.id === pid && p.email === normEmail && !p.claimed);
-  if (!purchase) return res.status(404).json({ error: "Pending aankoop niet gevonden" });
-
-  const customer = findCustomer(cid);
-  if (!customer) return res.status(404).json({ error: "Klant niet gevonden" });
-
-  // Maak/append strippenkaart (we gebruiken je passes-model bij de klant)
-  customer.passes = customer.passes || [];
-  const newPass = {
-    id: (customer.passes.at(-1)?.id || 0) + 1,
-    type: purchase.packageKey || `${purchase.lessons}-beurten`,
-    totalStrips: purchase.lessons,
-    remaining: purchase.lessons,
-    validMonths: 0,
-    createdAt: new Date().toISOString(),
-    notes: purchase.classKey ? `Lestype: ${purchase.classKey}` : "",
-    classKey: purchase.classKey || null,
-    dogId: dogId ? Number(dogId) : null, // optioneel al aan hond hangen
-    expiresAt: purchase.expiresAt || null
-  };
-  customer.passes.push(newPass);
-
-  // Markeer geclaimd
-  purchase.claimed = true;
-  purchase.claimedAt = new Date().toISOString();
-  purchase.claimedByCustomerId = customer.id;
-  if (dogId) purchase.claimedDogId = Number(dogId);
-
-  return res.status(201).json({ ok: true, pass: newPass, purchase });
-});
-
-export default router;
+module.exports = router;
