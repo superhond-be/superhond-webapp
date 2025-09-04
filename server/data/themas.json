@@ -1,1 +1,4 @@
-[]
+[
+  { "id": "thema-001", "naam": "Puppy" },
+  { "id": "thema-002", "naam": "Basis gehoorzaamheid" }
+]
