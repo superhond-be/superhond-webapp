@@ -1,0 +1,9 @@
+[
+  {
+    "id": "dog-001",
+    "naam": "Rex",
+    "ras": "Mechelse herder",
+    "geboortedatum": "2023-05-10",
+    "client_id": "cl-001"
+  }
+]
