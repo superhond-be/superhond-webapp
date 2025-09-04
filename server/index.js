@@ -26,6 +26,8 @@ app.use('/api/lessons', require('./routes/lessons'));
 
 app.use('/api/sessions', require('./routes/sessions'));
 
+app.use('/api/enrollments', require('./routes/enrollments'));
+
 // --- server starten (Render gebruikt PORT) ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
