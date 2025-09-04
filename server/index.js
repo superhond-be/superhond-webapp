@@ -3,7 +3,15 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 
+
 const app = express();
+
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+// bestaande routes...
+app.use('/api/onboarding', require('./routes/onboarding'));
+app.use('/api/public-enrollments', require('./routes/publicEnroll_admin'));
 
 // --- middleware ---
 app.use(cors());
