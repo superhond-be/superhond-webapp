@@ -1,15 +1,17 @@
 {
-  "name": "superhond-webapp",
+  "name": "superhond",
   "version": "1.0.0",
-  "main": "server/index.js",
-  "scripts": { "start": "node server/index.js" },
-  "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "cookie-parser": "^1.4.6",
-    "nodemailer": "^6.9.11"
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server/index.js",
+    "start": "NODE_ENV=production node server/index.js"
   },
-  "engines": { "node": ">=18" }
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "uuid": "^9.0.1"
+  }
 }
