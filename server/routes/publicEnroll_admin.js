@@ -1,20 +1,37 @@
-// server/routes/publicEnroll_admin.js
 const express = require('express');
 const adminGuard = require('../adminGuard');
-const { read: readPE, write: writePE } = require('../helpers/publicEnrollments');
+const { read: readCredits } = require('../helpers/credits');
+const Dogs = require('../helpers/dogs');
+const { readCustomers } = require('../helpers/customers');
 
 const router = express.Router();
 
-// lijst voor admins
-router.get('/', adminGuard, (_req,res)=> res.json(readPE()));
+router.get('/expiring-credits', adminGuard, (_req,res)=>{
+  const all = readCredits();
+  const dogs = Dogs.read();
+  const customers = readCustomers();
 
-// annuleren
-router.patch('/:id/cancel', adminGuard, (req,res)=>{
-  const arr=readPE();
-  const i=arr.findIndex(e=>e.id===req.params.id);
-  if(i===-1) return res.status(404).json({error:'not_found'});
-  arr[i].status='geannuleerd'; writePE(arr);
-  res.json({ok:true});
+  const now = Date.now();
+  const expiring = all.filter(c=>{
+    if(!c.valid_until) return false;
+    const daysLeft = Math.ceil((c.valid_until - now) / (1000*60*60*24));
+    return c.approved && c.remaining>0 && daysLeft>0 && daysLeft<=14;
+  }).map(c=>{
+    const dog = dogs.find(d=>d.id===c.dog_id);
+    const cust = customers.find(k=>k.id===dog?.eigenaar_id);
+    const daysLeft = Math.ceil((c.valid_until - now) / (1000*60*60*24));
+    return {
+      dog: dog?.naam || c.dog_id,
+      klant: cust?.naam || '-',
+      email: cust?.email || '-',
+      course_id: c.course_id,
+      remaining: c.remaining,
+      valid_until: c.valid_until,
+      daysLeft
+    };
+  });
+
+  res.json({ ok:true, expiring });
 });
 
 module.exports = router;
