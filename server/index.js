@@ -5,32 +5,28 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Render luistert op $PORT
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser(process.env.SESSION_SECRET || 'secret'));
 app.use(express.json({ limit: '1mb' }));
 
-// Static files
+// Static
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Routes
+// API routes
 app.use('/api/customer', require('./routes/customer'));
 app.use('/api/customer/calendar', require('./routes/customer_calendar'));
 app.use('/api/customer/preferences', require('./routes/customer_prefs'));
-
 app.use('/api/admin/notifications', require('./routes/admin_notifications'));
 app.use('/api/public-enrollments', require('./routes/publicEnroll_admin'));
 app.use('/api/admin/segments', require('./routes/segments_admin'));
-
 app.use('/admin/email-preview', require('./routes/email_preview'));
 
 // Health
 app.get('/healthz', (_req,res)=>res.json({ok:true}));
 
-// Verjaardagen (dagelijkse check)
-const { checkTodayBirthdays } = require('./helpers/birthdays');
-try { const count = checkTodayBirthdays(); if(count>0) console.log('🎂 Birthday notices created:', count); } catch(e){}
-setInterval(()=>{ try { const count = checkTodayBirthdays(); if(count>0) console.log('🎂 Birthday notices created:', count); } catch(e){} }, 24*60*60*1000);
+// Optioneel: verjaardagen trigger
+try { require('./helpers/birthdays').checkTodayBirthdays(); } catch(_){}
 
-app.listen(PORT, ()=>{ console.log(`Superhond server running on http://localhost:${PORT}`); });
+app.listen(PORT, ()=> console.log(`Superhond server luistert op ${PORT}`));
