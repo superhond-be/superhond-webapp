@@ -1,178 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Admin gebruikersbeheer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/app.css">
   <style>
-    body { font-family: system-ui, sans-serif; background:#f7f7f7; padding:20px; }
-    h1 { font-size:22px; }
-    table { width:100%; border-collapse: collapse; margin:20px 0; background:#fff; border-radius:8px; overflow:hidden; }
-    th, td { padding:8px; border-bottom:1px solid #ccc; text-align:left; }
-    th { background:#eee; }
-    .btn { padding:6px 10px; border:0; border-radius:6px; cursor:pointer; }
-    .add { background:#1976d2; color:#fff; }
-    .del { background:#c62828; color:#fff; }
-    .reset { background:#ffb300; color:#000; margin-left:6px; }
-    form { margin:20px 0; padding:16px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.1);}
-    label { display:block; margin-top:8px; }
-    input,select { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; }
-
-    /* Modaal */
-    .modal {
-      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,.5); justify-content:center; align-items:center;
-    }
-    .modal-content {
-      background:#fff; padding:20px; border-radius:8px; max-width:400px; width:90%;
-      box-shadow:0 4px 12px rgba(0,0,0,.3);
-    }
-    .modal-content h3 { margin-top:0; }
-    .modal-content .row { margin-top:12px; display:flex; gap:8px; justify-content:flex-end; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+    th { background: #f4a300; color: #111; }
+    button { margin-right: 6px; }
+    form.add-user { margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+    label { display: block; margin: 6px 0; }
+    input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <h1>🐾 Admin gebruikersbeheer</h1>
-  <p>Alleen <b>superadmin</b> kan gebruikers beheren.</p>
+  <header class="bar">
+    <h1>🐾 Superhond – Admin gebruikers</h1>
+    <nav>
+      <a href="/admin/">Dashboard</a>
+    </nav>
+  </header>
 
-  <h2>Bestaande gebruikers</h2>
-  <table id="tbl">
-    <thead>
-      <tr><th>Naam</th><th>E-mail</th><th>Rol</th><th>Aangemaakt</th><th>Acties</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <main>
+    <section>
+      <h2>Bestaande admins</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>E-mail</th>
+            <th>Rol</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+        <tbody id="adminTable"></tbody>
+      </table>
+    </section>
 
-  <h2>Nieuwe gebruiker toevoegen</h2>
-  <form id="addForm">
-    <label>Naam</label>
-    <input id="name" required>
-    <label>E-mail</label>
-    <input id="email" type="email" required>
-    <label>Wachtwoord</label>
-    <input id="pass" type="password" required>
-    <label>Rol</label>
-    <select id="role">
-      <option value="admin">admin</option>
-      <option value="superadmin">superadmin</option>
-    </select>
-    <button class="btn add" type="submit">➕ Toevoegen</button>
-  </form>
+    <section>
+      <h2>Nieuwe admin toevoegen</h2>
+      <form id="addUserForm" class="add-user">
+        <label>Naam <input name="name" required></label>
+        <label>E-mail <input name="email" type="email" required></label>
+        <label>Wachtwoord <input name="password" type="password" required></label>
+        <label>Rol
+          <select name="role">
+            <option value="admin">Admin</option>
+            <option value="superadmin">Superadmin</option>
+          </select>
+        </label>
+        <button type="submit">Toevoegen</button>
+      </form>
+    </section>
+  </main>
 
-  <p><a href="/index.html">⬅ Terug naar Dashboard</a></p>
-
-  <!-- Reset wachtwoord modaal -->
-  <div class="modal" id="resetModal">
-    <div class="modal-content">
-      <h3>Reset wachtwoord</h3>
-      <p id="resetUser"></p>
-      <label>Nieuw wachtwoord</label>
-      <input id="resetPass" type="password">
-      <div class="row">
-        <button class="btn" id="resetCancel">Annuleer</button>
-        <button class="btn add" id="resetSave">Opslaan</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // --- Auth & role check ---
-    const token = localStorage.getItem('adminToken');
-    if(!token){ alert("Niet ingelogd!"); location.href="/admin-login.html"; }
-
-    function decodeJwtRole(t){
-      try{ const [,p]=t.split('.'); return (JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))).role)||''; }
-      catch{ return ''; }
-    }
-    if (decodeJwtRole(token) !== 'superadmin'){
-      alert('Alleen superadmin kan deze pagina gebruiken.');
-      location.href='/index.html';
-    }
-
-    // --- API helper ---
-    async function api(path, opt={}) {
-      const headers = { 'Content-Type':'application/json', ...(opt.headers||{}) };
-      headers['Authorization'] = 'Bearer ' + token;
-      const res = await fetch(path, { ...opt, headers });
-      if(!res.ok) throw new Error(await res.text());
-      return res.json();
-    }
-
-    // --- Gebruikers laden ---
-    async function loadUsers(){
-      const users = await api('/api/admin/users');
-      const tbody = document.querySelector('#tbl tbody');
-      tbody.innerHTML='';
-      users.forEach(u=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td>${u.name}</td>
-          <td>${u.email}</td>
-          <td>${u.role}</td>
-          <td>${new Date(u.created_at).toLocaleString()}</td>
-          <td>
-            <button class="btn del" data-action="del" data-id="${u.id}">Verwijder</button>
-            <button class="btn reset" data-action="reset" data-id="${u.id}" data-name="${u.name}" data-email="${u.email}">Reset wachtwoord</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // --- Acties ---
-    document.addEventListener('click', async e=>{
-      if(e.target.dataset.action==="del"){
-        if(confirm("Verwijder gebruiker?")){
-          try{ await api('/api/admin/users/'+e.target.dataset.id,{method:'DELETE'}); loadUsers(); }
-          catch(err){ alert("Fout: "+err.message); }
-        }
-      }
-      if(e.target.dataset.action==="reset"){
-        openResetModal(e.target.dataset.id, e.target.dataset.name, e.target.dataset.email);
-      }
-    });
-
-    // --- Reset modaal ---
-    let resetUserId = null;
-    function openResetModal(id, name, email){
-      resetUserId = id;
-      document.getElementById('resetUser').textContent = name + " ("+email+")";
-      document.getElementById('resetPass').value='';
-      document.getElementById('resetModal').style.display='flex';
-    }
-    document.getElementById('resetCancel').onclick = ()=>{ document.getElementById('resetModal').style.display='none'; };
-    document.getElementById('resetSave').onclick = async ()=>{
-      const newPass = document.getElementById('resetPass').value.trim();
-      if(!newPass){ alert("Geef een nieuw wachtwoord in."); return; }
-      try{
-        await api('/api/admin/users/'+resetUserId+'/password',{
-          method:'PATCH',
-          body: JSON.stringify({ password: newPass })
-        });
-        alert("Wachtwoord aangepast.");
-        document.getElementById('resetModal').style.display='none';
-      }catch(err){ alert("Fout: "+err.message); }
-    };
-
-    // --- Toevoegen ---
-    document.getElementById('addForm').onsubmit=async e=>{
-      e.preventDefault();
-      try{
-        await api('/api/admin/users',{
-          method:'POST',
-          body: JSON.stringify({
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('pass').value,
-            role: document.getElementById('role').value
-          })
-        });
-        alert("Gebruiker toegevoegd.");
-        e.target.reset();
-        loadUsers();
-      }catch(err){ alert("Fout: "+err.message); }
-    };
-
-    loadUsers();
-  </script>
+  <script src="/js/admin-users.js"></script>
 </body>
 </html>
