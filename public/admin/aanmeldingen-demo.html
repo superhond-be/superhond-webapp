@@ -1,20 +1,18 @@
 <!doctype html><html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aanmeldingen – DEMO met kleuren</title>
+<title>Aanmeldingen – DEMO</title>
 <style>
   body{font-family:system-ui,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px}
   h1{margin:0 0 16px}
   .card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px}
   table{width:100%;border-collapse:collapse;margin-top:10px}
   th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
-  .badge{padding:2px 8px;border-radius:999px;font-size:12px;color:#fff;font-weight:600}
-  .badge.pending{background:#f4a000;}      /* oranje */
-  .badge.actief{background:#2e7d32;}       /* groen */
-  .badge.geannuleerd{background:#9e9e9e;}  /* grijs */
+  .badge{padding:2px 8px;border:1px solid #ddd;border-radius:999px;font-size:12px}
   small{color:#666}
+  button{padding:6px 10px;border:1px solid #ccc;border-radius:6px;cursor:pointer;margin-right:6px}
 </style>
 </head><body>
-<h1>📥 Aanmeldingen (DEMO kleuren)</h1>
+<h1>📥 Aanmeldingen (DEMO)</h1>
 <div class="card">
   <table>
     <thead><tr>
@@ -25,39 +23,51 @@
       <th>Status</th>
       <th>Onboarding verstuurd</th>
       <th>Actief sinds</th>
+      <th>Acties</th>
     </tr></thead>
     <tbody>
       <tr>
-        <td>05/09/2025 09:00</td>
-        <td>Sofie Thijs<br><small>info@superhond.be</small></td>
+        <td>04/09/2025 14:10</td>
+        <td>Sofie Thijs<br><small>info@superhond.be · +32 470 00 00 00</small></td>
         <td>Pip</td>
-        <td>sess-101</td>
-        <td><span class="badge pending">pending</span></td>
+        <td>sess-001</td>
+        <td><span class="badge">pending</span></td>
         <td>-</td>
         <td>-</td>
+        <td>
+          <button disabled>Mail versturen</button>
+          <button disabled>Link kopiëren</button>
+          <button disabled>Annuleer</button>
+        </td>
       </tr>
       <tr>
-        <td>05/09/2025 08:30</td>
+        <td>04/09/2025 13:30</td>
         <td>Paul Thijs<br><small>paul@superhond.be</small></td>
         <td>Rex</td>
-        <td>sess-102</td>
-        <td><span class="badge actief">actief</span></td>
-        <td>05/09/2025 08:35</td>
-        <td>05/09/2025 08:40</td>
+        <td>sess-002</td>
+        <td><span class="badge">pending</span></td>
+        <td>04/09/2025 13:35</td>
+        <td>-</td>
+        <td>
+          <button disabled>Mail versturen</button>
+          <button disabled>Link kopiëren</button>
+          <button disabled>Annuleer</button>
+        </td>
       </tr>
       <tr>
-        <td>04/09/2025 17:10</td>
+        <td>04/09/2025 11:05</td>
         <td>Laura Jans<br><small>laura@example.com</small></td>
         <td>Bo</td>
-        <td>sess-103</td>
-        <td><span class="badge geannuleerd">geannuleerd</span></td>
-        <td>04/09/2025 17:12</td>
-        <td>-</td>
+        <td>sess-003</td>
+        <td><span class="badge">actief</span></td>
+        <td>04/09/2025 11:10</td>
+        <td>04/09/2025 11:18</td>
+        <td><small>Geen acties</small></td>
       </tr>
     </tbody>
   </table>
 </div>
 <p style="margin-top:10px;color:#666">
-  Dit is een statische demo met gekleurde badges. Voor echte data gebruik je <code>/admin/aanmeldingen.html</code>.
+  Dit is statische demo-HTML. Voor echte data gebruik je <code>/admin/aanmeldingen.html</code>.
 </p>
 </body></html>
