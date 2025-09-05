@@ -1,0 +1,41 @@
+<!doctype html><html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email preview – Admin</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px}
+iframe{width:100%;height:600px;border:1px solid #ccc;border-radius:8px}
+select,input{padding:6px;margin:4px}
+</style>
+</head><body>
+<h1>📧 Email preview</h1>
+<p>Kies een type en testgegevens om een voorbeeld van de mail te zien.</p>
+<div>
+  <label>Type:
+    <select id="type">
+      <option value="onboarding_mail">Onboarding</option>
+      <option value="credits_approved">Credits goedgekeurd</option>
+      <option value="lesson_signup">Lesaanmelding</option>
+      <option value="lesson_cancelled">Les geannuleerd</option>
+      <option value="dog_birthday">Verjaardag hond</option>
+    </select>
+  </label>
+  <label>Naam: <input id="naam" value="Paul"></label>
+  <label>Hond: <input id="hond" value="Fido"></label>
+  <label>Cursus: <input id="cursus" value="Puppycursus"></label>
+  <label>Datum: <input id="datum" value="01/01/2026"></label>
+  <button onclick="refresh()">Toon voorbeeld</button>
+</div>
+<iframe id="frame"></iframe>
+<script>
+function refresh(){
+  const type=document.getElementById('type').value;
+  const naam=document.getElementById('naam').value;
+  const hond=document.getElementById('hond').value;
+  const cursus=document.getElementById('cursus').value;
+  const datum=document.getElementById('datum').value;
+  const url=`/admin/email-preview?type=${encodeURIComponent(type)}&naam=${encodeURIComponent(naam)}&hond=${encodeURIComponent(hond)}&cursus=${encodeURIComponent(cursus)}&datum=${encodeURIComponent(datum)}`;
+  document.getElementById('frame').src=url;
+}
+refresh();
+</script>
+</body></html>
