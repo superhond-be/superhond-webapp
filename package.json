@@ -4,8 +4,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "dev": "node server/index.js",
-    "start": "NODE_ENV=production node server/index.js"
+    "start": "node server/index.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",
