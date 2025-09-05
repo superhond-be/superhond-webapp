@@ -22,5 +22,24 @@
     <a class="tile" href="/admin/aanvragen.html"><h3>Aanvragen</h3></a>
     <a class="tile" href="/admin/users.html"><h3>Admin gebruikers</h3></a>
   </main>
+  <div class="card">
+  <h3>Admin status</h3>
+  <p>Bekijk hoeveel admins momenteel geregistreerd zijn.</p>
+  <button onclick="checkAdmins()">Check status</button>
+  <pre id="adminStatus">Nog niet getest…</pre>
+</div>
+
+<script>
+  async function checkAdmins() {
+    document.getElementById("adminStatus").textContent = "Bezig...";
+    try {
+      const r = await fetch("/api/admin/status");
+      const j = await r.json();
+      document.getElementById("adminStatus").textContent = JSON.stringify(j, null, 2);
+    } catch (err) {
+      document.getElementById("adminStatus").textContent = "Fout: " + err.message;
+    }
+  }
+</script>
 </body>
 </html>
