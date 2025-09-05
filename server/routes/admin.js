@@ -1,46 +1,79 @@
 // server/routes/admin.js
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
 
 const router = express.Router();
-const adminsFile = path.join(__dirname, '..', '..', 'data', 'admins.json');
 
-// hulpfunctie: lees admin-lijst (maakt file als die nog niet bestaat)
+const DATA_DIR = path.join(__dirname, "../../data");
+const ADMINS_FILE = path.join(DATA_DIR, "admins.json");
+
+// — Helpers ---------------------------------------------------
+function ensureDataFile() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(ADMINS_FILE)) fs.writeFileSync(ADMINS_FILE, "[]", "utf-8");
+}
 function readAdmins() {
-  if (!fs.existsSync(adminsFile)) {
-    fs.writeFileSync(adminsFile, JSON.stringify([]), 'utf8');
-    return [];
-  }
-  try {
-    const raw = fs.readFileSync(adminsFile, 'utf8');
-    return JSON.parse(raw || '[]');
-  } catch (e) {
-    console.error('Kan admins.json niet lezen:', e);
-    return [];
-  }
+  ensureDataFile();
+  return JSON.parse(fs.readFileSync(ADMINS_FILE, "utf-8"));
+}
+function writeAdmins(admins) {
+  fs.writeFileSync(ADMINS_FILE, JSON.stringify(admins, null, 2), "utf-8");
+}
+function hashPassword(pw) {
+  // eenvoudige hash (geen extra dependency)
+  return crypto.createHash("sha256").update(pw).digest("hex");
 }
 
-// GET /api/admin/status — aantal admins + setup-token status
-router.get('/status', (req, res) => {
+// — Routes ----------------------------------------------------
+
+// Status voor dashboard-kaart
+// GET /api/admin/status  -> { count: number, hasSetupToken: boolean }
+router.get("/status", (req, res) => {
   const admins = readAdmins();
-  const count = admins.length;
-
-  // Setup-token wordt als "gezet" beschouwd als ENV bestaat en niet leeg is
-  const hasSetupToken = Boolean(
-    (process.env.SETUP_TOKEN || process.env.SETUP || '').toString().trim()
-  );
-
-  res.json({ count, hasSetupToken });
+  const hasSetupToken = !!process.env.SETUP_TOKEN && String(process.env.SETUP_TOKEN).length > 0;
+  res.json({ count: admins.length, hasSetupToken });
 });
 
-// (Optioneel) GET /api/admin — lijst van admins (alleen naam & e-mail)
-router.get('/', (req, res) => {
-  const admins = readAdmins().map(a => ({
-    name: a.name || a.naam || '',
-    email: a.email || ''
-  }));
+// Lijst met admin users
+// GET /api/admin/users
+router.get("/users", (req, res) => {
+  const admins = readAdmins().map(a => ({ id: a.id, name: a.name, email: a.email, role: a.role }));
   res.json({ admins });
+});
+
+// Nieuwe admin toevoegen
+// POST /api/admin/users   body: { name, email, password, role? }
+router.post("/users", (req, res) => {
+  const { name, email, password, role } = req.body || {};
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Naam, e-mail en wachtwoord zijn verplicht." });
+  }
+
+  const admins = readAdmins();
+
+  if (admins.find(a => a.email.toLowerCase() === String(email).toLowerCase())) {
+    return res.status(400).json({ error: "Deze gebruiker bestaat al." });
+  }
+
+  const newAdmin = {
+    id: Date.now(),
+    name: String(name).trim(),
+    email: String(email).toLowerCase().trim(),
+    password: hashPassword(String(password)),
+    role: role === "superadmin" ? "superadmin" : "admin",
+    createdAt: new Date().toISOString()
+  };
+
+  admins.push(newAdmin);
+  writeAdmins(admins);
+
+  res.json({
+    message: "Admin toegevoegd",
+    admin: { id: newAdmin.id, name: newAdmin.name, email: newAdmin.email, role: newAdmin.role }
+  });
 });
 
 module.exports = router;
