@@ -1,22 +1,6 @@
-// server/customers.js
-
-const { readJSON } = require('./helpers');
-
-const FILE = 'clients.json';
-
-// Vind klant op ID
-function findCustomer(id) {
-  const list = readJSON(FILE, []);
-  return list.find(c => c.id === id) || null;
-}
-
-// Vind klant op e-mail
-function findCustomerByEmail(email) {
-  const list = readJSON(FILE, []);
-  return list.find(c => (c.email || '').toLowerCase() === email.toLowerCase()) || null;
-}
-
-module.exports = {
-  findCustomer,
-  findCustomerByEmail
-};
+const { load, save, path } = require('./fsdb');
+const FILE = path.join(__dirname,'..','data','customers.json');
+function readCustomers(){ return load(FILE) || []; }
+function writeCustomers(a){ save(FILE, a); }
+function findByEmail(email){ return readCustomers().find(c => (c.email||'').toLowerCase()===String(email||'').toLowerCase()); }
+module.exports = { readCustomers, writeCustomers, findByEmail };
