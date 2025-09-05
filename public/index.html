@@ -1,179 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Superhond – Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root { --brand:#ffb300; --bg:#f7f7f7; --text:#111; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
-    header { background:var(--brand); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
-    header h1 { margin:0; font-size:20px; }
-    .auth { display:flex; gap:8px; align-items:center; }
-    .auth small { opacity:.8; }
-    .btn { border:0; background:#333; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; }
-    .btn:hover { filter:brightness(1.05); }
-    main { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
-    h2 { margin: 8px 0 8px; font-size: 18px; }
-    .grid { display:grid; grid-template-columns: repeat( auto-fill, minmax(220px,1fr) ); gap:16px; }
-    a.card { display:block; text-decoration:none; color:inherit; background:#fff; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,.08); transition:transform .12s ease, box-shadow .12s ease; }
-    a.card:hover { transform: translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,.12); }
-    .card h3 { margin:0 0 6px; font-size:16px; }
-    .card p { margin:0; color:#555; font-size:14px; }
-    .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; background:#eee; color:#333; margin-left:6px; vertical-align:middle; }
-    footer { text-align:center; padding:20px; color:#666; font-size:13px; }
-    .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .muted { color:#666; font-size:13px; }
-    /* borders voor duidelijk onderscheid */
-    .card.admin { border: 2px solid #c62828; }
-    .card.public { border: 2px solid #2e7d32; }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond – Klantenportaal</title>
+  <link rel="stylesheet" href="/app.css">
 </head>
 <body>
-  <header>
-    <h1>🐾 Superhond – Dashboard</h1>
-    <div class="auth">
-      <small id="authStatus">Niet ingelogd</small>
-      <button id="loginBtn" class="btn">Login</button>
-      <button id="logoutBtn" class="btn" style="display:none;">Logout</button>
-    </div>
+  <header class="bar">
+    <h1>Superhond – Klantenportaal</h1>
+    <nav>
+      <a href="/admin/">Admin</a>
+    </nav>
   </header>
 
-  <main>
-    <section>
-      <h2>Admin</h2>
-      <p style="color:#b71c1c; font-weight:600; margin:0 0 12px;">
-        🔒 Alleen voor administratie – inloggen vereist
-      </p>
-      <div class="grid" id="adminGrid">
-        <a href="lessenbeheer.html" class="card admin require-auth">
-          <h3>Lessenbeheer <span class="badge">Admin</span></h3>
-          <p>Maak en beheer lessen en sessies.</p>
-        </a>
-        <a href="klantenbeheer.html" class="card admin require-auth">
-          <h3>Klanten & Honden <span class="badge">Admin</span></h3>
-          <p>Beheer baasjes en hun honden.</p>
-        </a>
-        <a href="passes.html" class="card admin require-auth">
-          <h3>Strippenkaarten <span class="badge">Admin</span></h3>
-          <p>Uitgeven en beheren van beurtenkaarten.</p>
-        </a>
-        <a href="lessenbeheer.html#requests" class="card admin require-auth">
-          <h3>Aanvragen <span class="badge">Admin</span></h3>
-          <p>Memberships goedkeuren/weigeren (na betaling).</p>
-        </a>
-        <a href="admin/users.html" id="adminUsersCard" class="card admin require-auth">
-          <h3>Admin gebruikers <span class="badge">Superadmin</span></h3>
-          <p>Beheer admin-accounts (toevoegen of verwijderen).</p>
-        </a>
-      </div>
-    </section>
-
-    <section style="margin-top:28px;">
-      <h2>Publiek</h2>
-      <p style="color:#1b5e20; font-weight:600; margin:0 0 12px;">
-        🌐 Voor klanten – publiek toegankelijk
-      </p>
-      <div class="grid">
-        <a href="inschrijven.html" class="card public">
-          <h3>Publieke inschrijving</h3>
-          <p>Schrijf in (of maak klant + hond aan) voor beschikbare sessies.</p>
-        </a>
-        <a href="start.html" class="card public">
-          <h3>Onboarding na betaling</h3>
-          <p>Rond je aankoop af met token (bv. <code>?token=...</code>).</p>
-        </a>
-        <a href="api-test.html" class="card public">
-          <h3>API test</h3>
-          <p>Snelle testknop om de backend te checken.</p>
-        </a>
-        <a href="docs.html" class="card public">
-          <h3>Documentatie</h3>
-          <p>Overzicht Admin & Publiek + API cheat sheet.</p>
-        </a>
-      </div>
-    </section>
-
-    <section class="card" style="max-width:1000px;margin:20px auto;">
-      <h2 style="margin:0 0 12px;">Snel naar cursus</h2>
-      <div class="row">
-        <input id="quickCourse" placeholder="bv. course-001" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:8px;">
-        <button class="btn" id="quickGo">Open inschrijving</button>
-      </div>
-      <p class="muted" style="margin-top:8px;">
-        Tip: je vindt het <code>course_id</code> in Lessenbeheer (bv. <code>course-001</code>).
-      </p>
-    </section>
+  <main class="grid">
+    <a class="tile" href="/inschrijven.html">
+      <h3>Publieke inschrijving</h3>
+      <p>Schrijf in (klant + hond) voor sessies.</p>
+    </a>
+    <a class="tile" href="/onboarding.html">
+      <h3>Onboarding na betaling</h3>
+      <p>Rond aankoop af met token.</p>
+    </a>
   </main>
-
-  <footer>
-    <div class="row" id="envRow">
-      <span>Serverstatus:</span>
-      <span id="ping">…</span>
-    </div>
-  </footer>
-
-  <script>
-    const token = localStorage.getItem('adminToken');
-    const authStatus = document.getElementById('authStatus');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    function setAuthUI(isAuthed){
-      if (isAuthed){
-        authStatus.textContent = 'Ingelogd (admin)';
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-      } else {
-        authStatus.textContent = 'Niet ingelogd';
-        loginBtn.style.display = 'inline-block';
-        logoutBtn.style.display = 'none';
-        document.querySelectorAll('.require-auth').forEach(a=>{
-          a.addEventListener('click', (e)=>{
-            if (!localStorage.getItem('adminToken')){
-              e.preventDefault();
-              window.location.href = '/admin-login.html';
-            }
-          });
-        });
-      }
-    }
-    loginBtn.onclick = () => location.href = '/admin-login.html';
-    logoutBtn.onclick = () => { localStorage.removeItem('adminToken'); setAuthUI(false); };
-    setAuthUI(!!token);
-
-    (async () => {
-      try { const r = await fetch('/api/ping'); const js = await r.json(); document.getElementById('ping').textContent = js.ok ? 'OK' : 'Onbekend'; }
-      catch { document.getElementById('ping').textContent = 'Niet bereikbaar'; }
-    })();
-
-    // Quick course
-    const quickInput = document.getElementById('quickCourse');
-    const quickBtn = document.getElementById('quickGo');
-    if (quickBtn) {
-      const openCourse = () => {
-        const id = (quickInput.value || '').trim();
-        if (!id) { alert('Geef een course id in, bv. course-001'); return; }
-        location.href = '/inschrijven.html?course=' + encodeURIComponent(id);
-      };
-      quickBtn.addEventListener('click', openCourse);
-      quickInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') openCourse(); });
-    }
-
-    // Superadmin kaart restrictie (frontend)
-    function decodeJwtRole(t){ try{ const [,p]=t.split('.'); return (JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))).role)||''; }catch{ return ''; } }
-    (function guardAdminUsersCard(){
-      const card = document.getElementById('adminUsersCard');
-      if (!card) return;
-      const t = localStorage.getItem('adminToken');
-      if (!t) return; // require-auth stuurt naar login
-      const role = decodeJwtRole(t);
-      if (role !== 'superadmin') {
-        card.addEventListener('click', (e)=>{ e.preventDefault(); alert('Alleen superadmin kan Admin gebruikers openen.'); });
-        card.title = 'Alleen superadmin';
-      }
-    })();
-  </script>
 </body>
 </html>
