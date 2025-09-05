@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "sess-001",
+    "course_id": "course-001",
+    "start_iso": "2025-09-20T17:00:00Z",
+    "duration_min": 60,
+    "capacity": 8,
+    "enrolled": 0,
+    "status": "open",
+    "locatie": { "naam": "Terrein 1", "adres": "Retie" }
+  }
+]
