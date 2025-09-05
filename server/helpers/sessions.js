@@ -1,16 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-
-const FILE = path.join(__dirname, '..', 'data', 'sessions.json');
-
-function read() {
-  if (!fs.existsSync(FILE)) return [];
-  return JSON.parse(fs.readFileSync(FILE, 'utf8'));
-}
-function write(arr) {
-  fs.mkdirSync(path.dirname(FILE), { recursive: true });
-  fs.writeFileSync(FILE, JSON.stringify(arr, null, 2));
-}
-const uid = (p='sess') => `${p}-${Date.now()}`;
-
-module.exports = { read, write, uid };
+const { load, save, path } = require('./fsdb');
+const FILE = path.join(__dirname,'..','data','sessions.json');
+function read(){ return load(FILE) || []; }
+function write(a){ save(FILE, a); }
+module.exports = { read, write };
