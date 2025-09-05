@@ -1,0 +1,11 @@
+[
+  {"type":"onboarding_mail","audience":"customer","delivery":["email"]},
+  {"type":"credits_approved","audience":"customer","delivery":["dashboard","email"]},
+  {"type":"lesson_signup","audience":"both","delivery":["dashboard","email"]},
+  {"type":"credit_used","audience":"customer","delivery":["dashboard"]},
+  {"type":"credit_added","audience":"customer","delivery":["dashboard","email"]},
+  {"type":"validity_extended","audience":"customer","delivery":["dashboard","email"]},
+  {"type":"lesson_cancelled","audience":"both","delivery":["dashboard","email"]},
+  {"type":"dog_birthday","audience":"customer","delivery":["email"]},
+  {"type":"system_error","audience":"admin","delivery":["dashboard","email"]}
+]
