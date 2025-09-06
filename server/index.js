@@ -29,6 +29,21 @@ app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+// Voorbeeld: simpele in-memory store (vervang door jouw echte opslag)
+const adminStore = {
+  _items: [], // [{ id,name,email,role,createdAt }]
+  getAll() { return this._items; }
+};
+
+// Setup-status
+app.get('/api/admin/setup-status', (req, res) => {
+  const count = adminStore.getAll().length;
+  res.json({
+    ok: true,
+    count,
+    hasSetupToken: !!process.env.SETUP_TOKEN
+  });
+});
 app.listen(PORT, () => {
   console.log(`Superhond server luistert op ${PORT}`);
 });
