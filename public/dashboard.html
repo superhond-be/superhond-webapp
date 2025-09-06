@@ -1,57 +1,40 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Superhond • Dashboard</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#fafafa;color:#111}
-    header{padding:18px 20px;background:#111;color:#fff}
-    main{max-width:1100px;margin:24px auto;padding:0 16px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-    .tile{display:block;padding:16px;border-radius:14px;background:#fff;border:1px solid #eee;text-decoration:none;color:inherit;box-shadow:0 4px 18px rgba(0,0,0,.05)}
-    .tile h3{margin:0 0 6px}
-    .badge{display:inline-block;font-size:.78rem;border:1px solid #ddd;border-radius:999px;padding:2px 8px;margin-left:8px;background:#fff}
-    .muted{color:#666;font-size:.95rem}
-    .hidden{display:none}
-    .status{margin:8px 0 18px;padding:10px 12px;border-radius:10px;border:1px solid #eee;background:#fff}
-    .ok{color:#136f3a}
-    .warn{color:#a86a00}
-    .err{color:#b61c1c}
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond – Dashboard</title>
+  <link rel="stylesheet" href="/app.css" />
 </head>
 <body>
-  <header>
-    <h1>🐾 Superhond — Dashboard</h1>
+  <header class="topbar">
+    <h1>Superhond – Dashboard</h1>
+    <nav class="topnav">
+      <a href="/admin/login.html">Login</a>
+      <a href="/public/index.html">Publiek</a>
+    </nav>
   </header>
 
-  <main>
-    <div id="statusBox" class="status muted">Status laden…</div>
+  <main class="cards">
+    <a class="card" href="/admin/lessenbeheer.html"><h3>Lessenbeheer</h3></a>
+    <a class="card" href="/admin/klanten.html"><h3>Klanten & Honden</h3></a>
+    <a class="card" href="/admin/strippenkaarten.html"><h3>Strippenkaarten</h3></a>
+    <a class="card" href="/admin/aanvragen.html"><h3>Aanvragen</h3></a>
 
-    <div class="grid">
-      <!-- verschijnt alleen als er nog GEEN admin is -->
-      <a id="tile-setup" class="tile hidden" href="/admin/setup-superadmin.html">
-        <h3>🔑 Superadmin instellen</h3>
-        <p>Eerste beheerder aanmaken met je SETUP_TOKEN.</p>
-      </a>
+    <!-- Admin gebruikers -->
+    <a class="card" href="/admin/admin-gebruikers.html"><h3>Admin gebruikers</h3></a>
 
-      <a class="tile" href="/admin-login.html">
-        <h3>Admin inloggen</h3>
-        <p>Naar de inlogpagina voor beheerders.</p>
-      </a>
+    <!-- Admin status -->
+    <section class="card" id="admin-status">
+      <h3>Admin status</h3>
+      <p class="muted">Overzicht van geregistreerde admins en setup-token.</p>
 
-      <a class="tile" href="/admin/admin-users.html">
-        <h3>Admin gebruikers <span id="countBadge" class="badge">0</span></h3>
-        <p>Beheer admins: toevoegen, resetten, verwijderen.</p>
-      </a>
+      <div id="status-output" class="mono"></div>
 
-      <a class="tile" href="/lessen.html">
-        <h3>Lessenbeheer</h3>
-        <p>Les-types, thema’s, locaties en trainers beheren.</p>
-      </a>
-    </div>
+      <div id="callouts" class="stack" style="margin-top:12px"></div>
+    </section>
   </main>
 
-  <script src="/js/dashboard-status.js"></script>
+  <script src="/js/dashboard-status.js" defer></script>
 </body>
 </html>
