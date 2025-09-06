@@ -4,38 +4,31 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const adminUsersRouter = require('./routes/admin-users');
+const { count } = require('./store/adminStore');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
 app.use(bodyParser.json());
 
-// --- API ENDPOINTS ---
-
-// Admin status
-app.get('/api/admin/setup-status', (req, res) => {
+// --- API ---
+app.get('/api/admin/setup-status', (_req, res) => {
   const token = (process.env.SETUP_TOKEN || '').trim();
-  const hasSetupToken = token.length > 0;
-
-  // hier later database tellen → voorlopig altijd 0
   res.json({
     ok: true,
-    count: 0,
-    hasSetupToken
+    count: count(),              // <- telt echte admins in memory
+    hasSetupToken: token.length > 0,
   });
 });
 
-// Admin users router
 app.use('/api/admin/users', adminUsersRouter);
 
-// --- FRONTEND BESTANDEN ---
+// --- Static files ---
 app.use(express.static(path.join(__dirname, '../public')));
-
-app.get('*', (req, res) => {
+app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// --- START SERVER ---
 app.listen(PORT, () => {
   console.log(`Superhond server luistert op ${PORT}`);
 });
