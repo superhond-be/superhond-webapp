@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superhond • Eerste superadmin aanmaken</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#fafafa}
+    .wrap{max-width:520px;margin:48px auto;padding:20px;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.08)}
+    h1{margin:0 0 8px}
+    p.hint{color:#666;margin:0 0 18px}
+    label{display:block;margin:12px 0 6px;font-weight:600}
+    input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:16px}
+    button{margin-top:16px;width:100%;padding:12px 14px;border:0;border-radius:12px;background:#f6a100;color:#111;font-weight:700;cursor:pointer}
+    .note{display:none;margin-top:14px;padding:10px 12px;border-radius:10px;font-weight:600}
+    .note.ok{display:block;background:#e8f7ee;border:1px solid #bde5c8;color:#136f3a}
+    .note.err{display:block;background:#fdecea;border:1px solid #f5c2c0;color:#b61c1c}
+    .foot{margin-top:12px;text-align:center}
+    a{color:#0a58ca;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🐾 Eerste superadmin</h1>
+    <p class="hint">Vul hieronder het <strong>SETUP_TOKEN</strong> uit je Render-omgeving in om de allereerste superadmin aan te maken.</p>
+
+    <form id="setupForm">
+      <label>Setup token</label>
+      <input name="token" id="token" placeholder="bv. Superhond1983" required />
+
+      <label>Naam</label>
+      <input name="name" id="name" placeholder="Sofie Thijs" required />
+
+      <label>E-mail</label>
+      <input type="email" name="email" id="email" placeholder="info@superhond.be" required />
+
+      <label>Wachtwoord</label>
+      <input type="password" name="password" id="password" placeholder="Min. 8 tekens" required />
+
+      <button type="submit">Superadmin aanmaken</button>
+      <div id="note" class="note"></div>
+    </form>
+
+    <div class="foot">
+      <a href="/admin-login.html">Heb je al een account? Inloggen</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('setupForm');
+    const note = document.getElementById('note');
+
+    function show(type, msg){
+      note.className = 'note ' + (type === 'ok' ? 'ok' : 'err');
+      note.textContent = msg;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      show('ok', 'Verzenden…');
+
+      const payload = {
+        token: document.getElementById('token').value.trim(),
+        name:  document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const res = await fetch('/api/admin/users/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          const msg = data.error === 'Ongeldig setup-token.' || data.error === 'setup_token_invalid'
+            ? '❌ Setup token klopt niet.'
+            : data.error || '❌ Aanmaken mislukt.';
+          show('err', msg);
+          return;
+        }
+
+        show('ok', '✅ Superadmin aangemaakt. Je kan nu inloggen.');
+        setTimeout(() => location.href = '/admin-login.html', 900);
+      } catch (err) {
+        show('err', '❌ Netwerkfout. Probeer later opnieuw.');
+      }
+    });
+  </script>
+</body>
+</html>
