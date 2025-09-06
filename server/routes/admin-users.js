@@ -1,32 +1,44 @@
+// server/routes/admin-users.js
 const express = require('express');
 const router = express.Router();
 
-// Tijdelijke opslag in memory
-let users = [];
+/**
+ * Eenvoudige in-memory store.
+ * (Later kunnen we dit vervangen door een bestand/DB.)
+ */
+const users = [];
 
-// Voeg een admin toe
+/**
+ * GET /api/admin/users
+ * Alle admin users ophalen
+ */
+router.get('/', (req, res) => {
+  res.json({ ok: true, users });
+});
+
+/**
+ * POST /api/admin/users
+ * Nieuwe admin user toevoegen
+ * body: { name, email, password, role }
+ */
 router.post('/', (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role } = req.body || {};
 
   if (!name || !email || !password || !role) {
-    return res.status(400).json({ error: 'Alle velden zijn verplicht' });
+    return res.status(400).json({ ok: false, error: 'Alle velden zijn verplicht.' });
   }
 
-  const newUser = {
+  // heel basic: geen hashing (mag later met bcrypt)
+  const user = {
     id: `adm_${Date.now()}`,
     name,
     email,
     role,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
 
-  users.push(newUser);
-  res.json({ ok: true, user: newUser });
-});
-
-// Haal alle admins op
-router.get('/', (req, res) => {
-  res.json(users);
+  users.push(user);
+  res.json({ ok: true, user });
 });
 
 module.exports = router;
