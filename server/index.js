@@ -1,49 +1,24 @@
-// server/index.js
+// server/index.js  (relevante fragmenten)
 const express = require('express');
-const bodyParser = require('body-parser');
 const path = require('path');
 
-const adminUsersRouter = require('./routes/admin-users');
-const { count } = require('./store/adminStore');
-
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// statics
+app.use('/public', express.static(path.join(__dirname, '..', 'public')));
+
+// ===== API routes =====
+const adminUsersRoutes  = require('./routes/admin-users');   // bestaat al bij jullie
+const adminStatusRoutes = require('./routes/admin-status');  // <— NIEUW
+
+app.use('/api/admin', adminUsersRoutes);
+app.use('/api/admin', adminStatusRoutes);
+
+// health
+app.get('/healthz', (_req, res) => res.json({ ok: true }));
+
+// start (Render leest PORT uit env)
 const PORT = process.env.PORT || 10000;
-
-app.use(bodyParser.json());
-
-// --- API ---
-app.get('/api/admin/setup-status', (_req, res) => {
-  const token = (process.env.SETUP_TOKEN || '').trim();
-  res.json({
-    ok: true,
-    count: count(),              // <- telt echte admins in memory
-    hasSetupToken: token.length > 0,
-  });
-});
-
-app.use('/api/admin/users', adminUsersRouter);
-
-// --- Static files ---
-app.use(express.static(path.join(__dirname, '../public')));
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// Voorbeeld: simpele in-memory store (vervang door jouw echte opslag)
-const adminStore = {
-  _items: [], // [{ id,name,email,role,createdAt }]
-  getAll() { return this._items; }
-};
-
-// Setup-status
-app.get('/api/admin/setup-status', (req, res) => {
-  const count = adminStore.getAll().length;
-  res.json({
-    ok: true,
-    count,
-    hasSetupToken: !!process.env.SETUP_TOKEN
-  });
-});
-app.listen(PORT, () => {
-  console.log(`Superhond server luistert op ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Superhond server luistert op ${PORT}`));
