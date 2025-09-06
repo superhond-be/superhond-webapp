@@ -1,38 +1,31 @@
-// public/js/admin-status.js
-(async function () {
-  const btn = document.getElementById('checkAdminStatus');
-  const out = document.getElementById('adminStatusResult');
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.querySelector("#check-status-btn");
+  const output = document.querySelector("#admin-status-output");
 
-  if (!btn || !out) return;
+  button.addEventListener("click", async () => {
+    output.textContent = "⏳ Status wordt opgehaald...";
 
-  function show(msg, type = 'info') {
-    out.innerHTML = msg;
-    out.className = ''; // reset
-    out.classList.add('admin-status', `admin-status--${type}`);
-  }
-
-  btn.addEventListener('click', async () => {
-    show('Bezig met ophalen…');
     try {
-      const res = await fetch('/api/admin/status', { cache: 'no-store' });
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(`API-fout (${res.status}): ${text || res.statusText}`);
-      }
+      const res = await fetch("/api/admin/status");
       const data = await res.json();
 
-      // Toon netjes
-      const tokenText = data.hasSetupToken ? 'gezet ✅' : 'niet gezet ❌';
-      show(
-        `
-          <div><strong>Admins:</strong> ${data.count}</div>
-          <div><strong>Setup-token:</strong> ${tokenText}</div>
-        `,
-        'ok'
-      );
+      if (!data.ok) {
+        output.textContent = `❌ Fout: ${data.error || "Onbekende fout"}`;
+        output.style.color = "red";
+        return;
+      }
+
+      if (data.count > 0) {
+        output.textContent = `✅ Er zijn momenteel ${data.count} admin(s) geregistreerd.`;
+        output.style.color = "green";
+      } else {
+        output.textContent = "⚠️ Er zijn nog geen admins geregistreerd.";
+        output.style.color = "orange";
+      }
     } catch (err) {
       console.error(err);
-      show(`Fout: ${err.message}`, 'error');
+      output.textContent = "❌ Server niet bereikbaar.";
+      output.style.color = "red";
     }
   });
-})();
+});
