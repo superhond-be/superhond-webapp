@@ -1,26 +1,28 @@
-// Dummy login handler
-document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
+// public/js/admin-login.js
+const form = document.getElementById("loginForm");
+const out  = document.getElementById("out");
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const form = e.target;
-  const data = {
-    email: form.email.value,
-    password: form.password.value
-  };
+  out.textContent = "Bezig met inloggen…";
+  const data = Object.fromEntries(new FormData(form).entries());
 
   try {
-    const res = await fetch("/api/admin/login", {
+    const resp = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      credentials: "same-origin"
     });
-    const j = await res.json();
-    if (res.ok) {
-      alert("✅ Ingelogd als admin: " + j.email);
-      window.location.href = "/admin/index.html";
-    } else {
-      alert("❌ Fout: " + (j.error || "Onbekende fout"));
+
+    const json = await resp.json();
+    out.textContent = JSON.stringify(json, null, 2);
+
+    if (json.ok) {
+      // doorsturen naar admin dashboard (pas aan naar jouw pad)
+      location.href = "/admin-login.html"; // of bv. "/dashboard.html"
     }
   } catch (err) {
-    alert("❌ Netwerkfout: " + err.message);
+    out.textContent = "Netwerkfout: " + err.message;
   }
 });
