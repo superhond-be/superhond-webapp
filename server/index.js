@@ -1,40 +1,50 @@
 // server/index.js
-const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
+const path = require('path');
+const express = require('express');
+const session = require('express-session');
 
 const app = express();
 
-// --- core middlewares ---
+// --- Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
-// --- sessions (MemoryStore is ok voor ontwikkel/test) ---
-const SESSION_SECRET = process.env.SESSION_SECRET || "dev_session_secret_change_me";
-app.use(session({
-  name: "sh.sid",
-  secret: SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: "lax",
-    // secure: true  // <— zet aan als je een custom https domein gebruikt
-  }
-}));
+// --- Sessions (gebruik je ENV: SESSION_SECRET)
+const SESSION_SECRET = process.env.SESSION_SECRET || 'devsecret';
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      sameSite: 'lax',
+      // zet secure: true als je via https draait op eigen domein
+    },
+  })
+);
 
-// --- static files ---
-app.use(express.static(path.join(process.cwd(), "public")));
+// --- Static files
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// --- routes ---
-app.use("/api/auth", require("./routes/auth"));         // << nieuw
-app.use("/api/admin", require("./routes/admin-users")); // je bestaande admin-user routes
-// ... laat overige routes die je al had gewoon staan
+// --- Routers
+// voorbeeld: admin users
+const adminUsersRouter = require('../routes/admin-users');
+app.use('/api/admin', adminUsersRouter);
 
-// --- server listen (Render gebruikt PORT env) ---
+// Healthcheck / status endpoints (optioneel, handig bij testen)
+app.get('/api/status', (req, res) => {
+  res.json({ ok: true, time: new Date().toISOString() });
+});
+
+// Fallback: alles wat niet /api is, serve index.html (SPA-achtig)
+app.get(/^(?!\/api\/).*$/, (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+// Start server (Render zet PORT in env)
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Superhond server luistert op ${PORT}`);
 });
+
+module.exports = app;
