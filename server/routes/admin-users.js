@@ -1,49 +1,77 @@
 // server/routes/admin-users.js
 const express = require('express');
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
-const { requireLogin, requireRole } = require('../helpers/auth');
-const store = require('../helpers/adminStore');
-
 const router = express.Router();
+const bcrypt = require('bcryptjs');                 // ← hashing
+const { requireSuperAdmin, requireAdmin } = require('../helpers/auth');
+
+// In-memory store (later DB)
+let admins = [];
+
+// Hulpfunctie: nooit wachtwoord terugsturen
+const scrub = (a) => {
+  const { password, ...safe } = a;
+  return safe;
+};
 
 /**
- * GET /api/admin/users
- * Admin of superadmin mag lijst bekijken (zonder wachtwoordHash).
+ * Lijst alle admins (alleen superadmin)
  */
-router.get('/users', requireLogin, requireRole('admin'), async (req, res) => {
-  const all = await store.getAllAdmins();
-  const safe = all.map(({ passwordHash, ...rest }) => rest);
-  res.json({ ok: true, users: safe });
+router.get('/', requireSuperAdmin, (req, res) => {
+  res.json(admins.map(scrub));
 });
 
 /**
- * POST /api/admin/users
- * Alleen superadmin mag nieuwe admin/superadmin aanmaken.
- * body: { name, email, password, role }
+ * Nieuwe admin toevoegen (alleen superadmin)
+ * Body: { name, email, password, role }
  */
-router.post('/users', requireLogin, requireRole('superadmin'), async (req, res) => {
+router.post('/', requireSuperAdmin, async (req, res) => {
   try {
-    const { name, email, password, role } = (req.body || {});
+    const { name, email, password, role } = req.body;
     if (!name || !email || !password || !role) {
-      return res.status(400).json({ ok: false, error: 'missing_fields' });
+      return res.status(400).json({ error: 'Alle velden zijn verplicht' });
     }
-    if (!['admin', 'superadmin'].includes(role)) {
-      return res.status(400).json({ ok: false, error: 'invalid_role' });
-    }
-    const passwordHash = await bcrypt.hash(password, 10);
-    const id = 'adm_' + crypto.randomUUID().replace(/-/g, '').slice(0, 12);
 
-    const user = await store.createAdmin({ id, name, email, role, passwordHash });
-    const { passwordHash: _, ...safe } = user;
-    res.json({ ok: true, user: safe });
-  } catch (e) {
-    if (e.message === 'email_exists') {
-      return res.status(409).json({ ok: false, error: 'email_exists' });
+    // bestaat al?
+    if (admins.some(a => a.email.toLowerCase() === String(email).toLowerCase())) {
+      return res.status(409).json({ error: 'E-mail bestaat al' });
     }
-    console.error('create admin error', e);
-    res.status(500).json({ ok: false, error: 'server_error' });
+
+    // hash wachtwoord
+    const hash = await bcrypt.hash(password, 12);
+
+    const newAdmin = {
+      id: `adm_${Date.now()}`,
+      name,
+      email,
+      password: hash,                     // ← gehashed
+      role,                               // 'admin' | 'superadmin'
+      createdAt: new Date().toISOString()
+    };
+
+    admins.push(newAdmin);
+    res.json({ ok: true, user: scrub(newAdmin) });
+  } catch (err) {
+    console.error('POST /api/admin/users error:', err);
+    res.status(500).json({ error: 'Interne fout' });
   }
+});
+
+/**
+ * Eén admin ophalen (admin + superadmin)
+ */
+router.get('/:id', requireAdmin, (req, res) => {
+  const admin = admins.find(a => a.id === req.params.id);
+  if (!admin) return res.status(404).json({ error: 'Admin niet gevonden' });
+  res.json(scrub(admin));
+});
+
+/**
+ * Admin verwijderen (alleen superadmin)
+ */
+router.delete('/:id', requireSuperAdmin, (req, res) => {
+  const before = admins.length;
+  admins = admins.filter(a => a.id !== req.params.id);
+  res.json({ ok: true, removed: before - admins.length });
 });
 
 module.exports = router;
