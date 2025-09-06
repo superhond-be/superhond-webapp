@@ -1,4 +1,82 @@
-<a id="tile-setup" class="tile" href="/admin/setup-superadmin.html" style="display:none;">
-  <h3>🔑 Superadmin instellen</h3>
-  <p>Maak de allereerste superadmin aan met je SETUP_TOKEN.</p>
-</a>
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Superhond • Dashboard</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#fafafa;color:#111}
+    header{padding:18px 20px;background:#111;color:#fff}
+    main{max-width:1100px;margin:24px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .tile{display:block;padding:16px;border-radius:14px;background:#fff;border:1px solid #eee;text-decoration:none;color:inherit;box-shadow:0 4px 18px rgba(0,0,0,.05)}
+    .tile h3{margin:0 0 6px}
+    .badge{display:inline-block;font-size:.78rem;border:1px solid #ddd;border-radius:999px;padding:2px 8px;margin-left:8px;background:#fff}
+    .muted{color:#666;font-size:.95rem}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐾 Superhond — Dashboard</h1>
+  </header>
+
+  <main>
+    <p class="muted" id="adminStatusLine">Status laden…</p>
+
+    <div class="grid">
+      <!-- Tegel verschijnt enkel als er NOG GEEN admin is -->
+      <a id="tile-setup" class="tile hidden" href="/admin/setup-superadmin.html">
+        <h3>🔑 Superadmin instellen</h3>
+        <p>Eerste beheerder aanmaken met je SETUP_TOKEN.</p>
+      </a>
+
+      <!-- Voorbeeld andere tegels -->
+      <a class="tile" href="/admin-login.html">
+        <h3>Admin inloggen</h3>
+        <p>Naar de inlogpagina voor beheerders.</p>
+      </a>
+
+      <a class="tile" href="/admin/admin-users.html">
+        <h3>Admin gebruikers <span id="countBadge" class="badge">0</span></h3>
+        <p>Beheer admins: toevoegen, resetten, verwijderen.</p>
+      </a>
+
+      <a class="tile" href="/lessen.html">
+        <h3>Lessenbeheer</h3>
+        <p>Les-types, thema’s, locaties en trainers beheren.</p>
+      </a>
+    </div>
+  </main>
+
+  <script>
+    async function init() {
+      const line = document.getElementById('adminStatusLine');
+      const tileSetup = document.getElementById('tile-setup');
+      const countBadge = document.getElementById('countBadge');
+
+      try {
+        const res = await fetch('/api/admin/status');
+        const j = await res.json();
+        if (!res.ok) throw new Error(j.error || 'status_error');
+
+        // status-lijn
+        line.textContent = `Admins: ${j.count} • Setup token: ${j.hasSetupToken ? 'actief' : 'niet gezet'}`;
+        // badge
+        countBadge.textContent = j.count;
+
+        // tegel tonen/ verbergen
+        if (j.count === 0) {
+          tileSetup.classList.remove('hidden');
+        } else {
+          tileSetup.classList.add('hidden');
+        }
+      } catch (e) {
+        line.textContent = 'Status kon niet geladen worden.';
+        console.warn(e);
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
