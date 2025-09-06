@@ -1,87 +1,81 @@
-async function loadAdmins() {
-  const tbody = document.getElementById("adminTable");
-  tbody.innerHTML = "<tr><td colspan='4'>Laden...</td></tr>";
+// public/js/admin-users.js
+const el = sel => document.querySelector(sel);
 
+function showNote(type, msg) {
+  const box = el('#admin-users-note');
+  box.className = ''; // reset
+  box.classList.add('note', type === 'success' ? 'note--success' : 'note--error');
+  box.textContent = msg;
+  box.style.display = 'block';
+  setTimeout(() => { box.style.display = 'none'; }, 4000);
+}
+
+async function fetchJSON(url, opts = {}) {
+  const res = await fetch(url, { credentials: 'include', ...opts });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data?.error || 'request_failed');
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+async function loadUsers() {
+  const tbody = el('#admin-users-tbody');
+  tbody.innerHTML = '<tr><td colspan="3">Laden…</td></tr>';
   try {
-    const res = await fetch("/api/admin/users");
-    const admins = await res.json();
-
-    if (!res.ok) throw new Error(admins.error || "Kon admins niet ophalen");
-
-    if (!Array.isArray(admins) || admins.length === 0) {
-      tbody.innerHTML = "<tr><td colspan='4'>Geen admins gevonden</td></tr>";
-      return;
-    }
-
-    tbody.innerHTML = "";
-    admins.forEach((a) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${a.name}</td>
-        <td>${a.email}</td>
-        <td>${a.role}</td>
-        <td>
-          <button onclick="resetPassword('${a.id}')">Reset wachtwoord</button>
-          <button onclick="deleteAdmin('${a.id}')">Verwijderen</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  } catch (err) {
-    tbody.innerHTML = `<tr><td colspan='4'>❌ Fout: ${err.message}</td></tr>`;
+    const data = await fetchJSON('/api/admin/users');
+    const rows = (data.users || []).map(u => `
+      <tr>
+        <td>${u.name || '-'}</td>
+        <td>${u.email}</td>
+        <td>${u.role}</td>
+      </tr>
+    `).join('');
+    tbody.innerHTML = rows || '<tr><td colspan="3">Nog geen gebruikers.</td></tr>';
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="3">Kon lijst niet laden.</td></tr>';
   }
 }
 
-async function deleteAdmin(id) {
-  if (!confirm("Weet je zeker dat je deze admin wilt verwijderen?")) return;
-  try {
-    const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Verwijderen mislukt");
-    alert("✅ Verwijderd");
-    loadAdmins();
-  } catch (err) {
-    alert("❌ " + err.message);
-  }
-}
-
-async function resetPassword(id) {
-  const nieuw = prompt("Nieuw wachtwoord (min. 8 tekens):");
-  if (!nieuw) return;
-  try {
-    const res = await fetch(`/api/admin/users/${id}/password`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: nieuw }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Wachtwoord reset mislukt");
-    alert("✅ Wachtwoord aangepast");
-  } catch (err) {
-    alert("❌ " + err.message);
-  }
-}
-
-document.getElementById("addUserForm")?.addEventListener("submit", async (e) => {
+async function onSubmit(e) {
   e.preventDefault();
-  const form = e.target;
-  const data = Object.fromEntries(new FormData(form));
+  const name = el('#new-name').value.trim();
+  const email = el('#new-email').value.trim();
+  const password = el('#new-password').value;
+  const role = el('#new-role').value;
+
+  if (!name || !email || !password) {
+    showNote('error', 'Vul naam, e-mail en wachtwoord in.');
+    return;
+  }
 
   try {
-    const res = await fetch("/api/admin/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+    const body = JSON.stringify({ name, email, password, role });
+    await fetchJSON('/api/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body
     });
-    const j = await res.json();
-    if (!res.ok) throw new Error(j.error || "Toevoegen mislukt");
-    alert("✅ Admin toegevoegd");
-    form.reset();
-    loadAdmins();
+    showNote('success', 'Gebruiker toegevoegd.');
+    e.target.reset();
+    await loadUsers();
   } catch (err) {
-    alert("❌ " + err.message);
+    if (err.status === 409) {
+      showNote('error', 'Dit e-mailadres bestaat al.');
+    } else if (err.status === 400) {
+      showNote('error', 'Onvolledige gegevens.');
+    } else if (err.status === 401 || err.status === 403) {
+      showNote('error', 'Je hebt geen rechten om dit te doen.');
+    } else {
+      showNote('error', 'Toevoegen mislukt. Probeer later opnieuw.');
+    }
   }
-});
+}
 
-// Laad admins bij openen
-loadAdmins();
+document.addEventListener('DOMContentLoaded', () => {
+  const form = el('#admin-add-form');
+  form.addEventListener('submit', onSubmit);
+  loadUsers();
+});
