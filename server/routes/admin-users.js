@@ -1,58 +1,37 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const router = express.Router();
+const SETUP_TOKEN = process.env.SETUP_TOKEN || "Superhond1983";
 
-// In-memory "database" (later kan dit MongoDB of PostgreSQL worden)
-let admins = [];
-
-/**
- * GET /api/admin/users
- * Haalt alle geregistreerde admins op
- */
-router.get("/", (req, res) => {
-  res.json(admins);
-});
-
-/**
- * POST /api/admin/users
- * Voegt een nieuwe admin toe
- * Body: { name, email, password, role }
- */
-router.post("/", async (req, res) => {
+// Als er nog geen admins zijn, gebruik het SETUP_TOKEN voor de eerste superadmin
+router.post("/setup", async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ error: "Alle velden zijn verplicht." });
+    if (admins.length > 0) {
+      return res.status(400).json({ error: "Er is al een admin geregistreerd." });
     }
 
-    // check of admin al bestaat
-    const existing = admins.find((u) => u.email === email);
-    if (existing) {
-      return res.status(400).json({ error: "Deze gebruiker bestaat al." });
+    const { name, email, password, token } = req.body;
+
+    if (token !== SETUP_TOKEN) {
+      return res.status(403).json({ error: "Ongeldig setup-token." });
     }
 
-    // wachtwoord versleutelen
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newAdmin = {
+    const superAdmin = {
       id: `adm_${Date.now()}`,
       name,
       email,
       password: hashedPassword,
-      role, // "superadmin" of "admin"
+      role: "superadmin",
       createdAt: new Date().toISOString(),
     };
 
-    admins.push(newAdmin);
+    admins.push(superAdmin);
 
     res.json({
       ok: true,
-      user: { id: newAdmin.id, name: newAdmin.name, email: newAdmin.email, role: newAdmin.role },
+      message: "Superadmin succesvol aangemaakt",
+      user: { id: superAdmin.id, name: superAdmin.name, email: superAdmin.email, role: superAdmin.role },
     });
   } catch (err) {
-    res.status(500).json({ error: "Serverfout bij toevoegen admin." });
+    res.status(500).json({ error: "Serverfout bij setup superadmin." });
   }
 });
-
-module.exports = router;
