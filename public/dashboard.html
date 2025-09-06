@@ -14,6 +14,10 @@
     .badge{display:inline-block;font-size:.78rem;border:1px solid #ddd;border-radius:999px;padding:2px 8px;margin-left:8px;background:#fff}
     .muted{color:#666;font-size:.95rem}
     .hidden{display:none}
+    .status{margin:8px 0 18px;padding:10px 12px;border-radius:10px;border:1px solid #eee;background:#fff}
+    .ok{color:#136f3a}
+    .warn{color:#a86a00}
+    .err{color:#b61c1c}
   </style>
 </head>
 <body>
@@ -22,16 +26,15 @@
   </header>
 
   <main>
-    <p class="muted" id="adminStatusLine">Status laden…</p>
+    <div id="statusBox" class="status muted">Status laden…</div>
 
     <div class="grid">
-      <!-- Tegel verschijnt enkel als er NOG GEEN admin is -->
+      <!-- verschijnt alleen als er nog GEEN admin is -->
       <a id="tile-setup" class="tile hidden" href="/admin/setup-superadmin.html">
         <h3>🔑 Superadmin instellen</h3>
         <p>Eerste beheerder aanmaken met je SETUP_TOKEN.</p>
       </a>
 
-      <!-- Voorbeeld andere tegels -->
       <a class="tile" href="/admin-login.html">
         <h3>Admin inloggen</h3>
         <p>Naar de inlogpagina voor beheerders.</p>
@@ -49,34 +52,6 @@
     </div>
   </main>
 
-  <script>
-    async function init() {
-      const line = document.getElementById('adminStatusLine');
-      const tileSetup = document.getElementById('tile-setup');
-      const countBadge = document.getElementById('countBadge');
-
-      try {
-        const res = await fetch('/api/admin/status');
-        const j = await res.json();
-        if (!res.ok) throw new Error(j.error || 'status_error');
-
-        // status-lijn
-        line.textContent = `Admins: ${j.count} • Setup token: ${j.hasSetupToken ? 'actief' : 'niet gezet'}`;
-        // badge
-        countBadge.textContent = j.count;
-
-        // tegel tonen/ verbergen
-        if (j.count === 0) {
-          tileSetup.classList.remove('hidden');
-        } else {
-          tileSetup.classList.add('hidden');
-        }
-      } catch (e) {
-        line.textContent = 'Status kon niet geladen worden.';
-        console.warn(e);
-      }
-    }
-    init();
-  </script>
+  <script src="/js/dashboard-status.js"></script>
 </body>
 </html>
