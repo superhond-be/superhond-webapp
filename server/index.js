@@ -46,5 +46,7 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Superhond server luistert op ${PORT}`);
 });
+const adminUsersRoutes = require("./routes/admin-users");
+app.use("/api/admin/users", adminUsersRoutes);
 
 module.exports = app;
