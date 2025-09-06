@@ -1,9 +1,7 @@
 // server/routes/admin-users.js
 const express = require('express');
+const { addUser, getUsers } = require('../store/adminStore');
 const router = express.Router();
-
-// In-memory opslag (later vervangen door database)
-let users = [];
 
 // Nieuwe gebruiker toevoegen
 router.post('/', (req, res) => {
@@ -13,22 +11,22 @@ router.post('/', (req, res) => {
     return res.status(400).json({ ok: false, error: 'Alle velden verplicht' });
   }
 
-  const newUser = {
+  const user = {
     id: 'adm_' + Date.now(),
     name,
     email,
     role,
-    password, // ⚠️ in productie: hashen met bcrypt!
-    createdAt: new Date().toISOString()
+    password, // ⚠️ productie: hash met bcrypt
+    createdAt: new Date().toISOString(),
   };
 
-  users.push(newUser);
-  res.json({ ok: true, user: newUser });
+  addUser(user);
+  res.json({ ok: true, user });
 });
 
 // Alle gebruikers ophalen
-router.get('/', (req, res) => {
-  res.json({ ok: true, users });
+router.get('/', (_req, res) => {
+  res.json({ ok: true, users: getUsers() });
 });
 
 module.exports = router;
