@@ -2,43 +2,33 @@
 const express = require('express');
 const router = express.Router();
 
-/**
- * Eenvoudige in-memory store.
- * (Later kunnen we dit vervangen door een bestand/DB.)
- */
-const users = [];
+// In-memory opslag (later vervangen door database)
+let users = [];
 
-/**
- * GET /api/admin/users
- * Alle admin users ophalen
- */
-router.get('/', (req, res) => {
-  res.json({ ok: true, users });
-});
-
-/**
- * POST /api/admin/users
- * Nieuwe admin user toevoegen
- * body: { name, email, password, role }
- */
+// Nieuwe gebruiker toevoegen
 router.post('/', (req, res) => {
-  const { name, email, password, role } = req.body || {};
+  const { name, email, role, password } = req.body;
 
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ ok: false, error: 'Alle velden zijn verplicht.' });
+  if (!name || !email || !role || !password) {
+    return res.status(400).json({ ok: false, error: 'Alle velden verplicht' });
   }
 
-  // heel basic: geen hashing (mag later met bcrypt)
-  const user = {
-    id: `adm_${Date.now()}`,
+  const newUser = {
+    id: 'adm_' + Date.now(),
     name,
     email,
     role,
-    createdAt: new Date().toISOString(),
+    password, // ⚠️ in productie: hashen met bcrypt!
+    createdAt: new Date().toISOString()
   };
 
-  users.push(user);
-  res.json({ ok: true, user });
+  users.push(newUser);
+  res.json({ ok: true, user: newUser });
+});
+
+// Alle gebruikers ophalen
+router.get('/', (req, res) => {
+  res.json({ ok: true, users });
 });
 
 module.exports = router;
