@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin inloggen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: light dark; }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:24px}
+    .card{max-width:440px;margin:auto;border:1px solid #eee;border-radius:12px;padding:18px;background:#fff}
+    label{display:block;font-size:14px;margin:10px 0 4px}
+    input{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:8px}
+    button{margin-top:16px;background:#f0a000;color:#111;padding:10px 14px;border:none;border-radius:10px;font-weight:700;width:100%}
+    pre{background:#0b1020;color:#cde;padding:12px;border-radius:8px;overflow:auto}
+    a{color:#0a58ca;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🐾 Admin login</h1>
+    <label>E-mail</label>
+    <input id="email" type="email" placeholder="email@voorbeeld.be" />
+    <label>Wachtwoord</label>
+    <input id="password" type="password" placeholder="••••••••" />
+    <button id="btn">Inloggen</button>
+    <p style="margin-top:12px">Nog geen superadmin? <a href="/admin/admin-register.html">Registreer eerst</a>.</p>
+    <div id="out"></div>
+  </div>
+
+  <script>
+    const out = document.getElementById('out');
+    document.getElementById('btn').addEventListener('click', async () => {
+      out.innerHTML = '';
+      const payload = {
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value
+      };
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw data;
+        localStorage.setItem('admin_token', data.token);
+        localStorage.setItem('admin_user', JSON.stringify(data.user));
+        out.innerHTML = '<pre>✅ Ingelogd.\n'+JSON.stringify(data.user,null,2)+'</pre>';
+        // doorsturen naar dashboard of gebruikersbeheer
+        setTimeout(()=>location.href='/admin/admin-users.html', 600);
+      } catch (e) {
+        out.innerHTML = '<pre>'+JSON.stringify(e,null,2)+'</pre>';
+      }
+    });
+  </script>
+</body>
+</html>
