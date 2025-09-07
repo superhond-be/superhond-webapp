@@ -1,34 +1,35 @@
 // server/routes/admin-status.js
 const express = require('express');
-const router = express.Router();
-
-// eenvoudige in-memory “datastore” (jullie hebben elders ook een data layer;
-// hier volstaat het om te tellen hoeveel admin users er zijn in memory file)
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
-const DB_FILE = path.join(__dirname, '..', 'data', 'admins.json');
+const router = express.Router();
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const DB_FILE  = path.join(DATA_DIR, 'admins.json');
 
-// helper: lees admin users (array)
+// ===== helpers =====
+function ensureStore() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, '[]', 'utf8');
+}
 function readAdmins() {
+  ensureStore();
   try {
-    if (!fs.existsSync(DB_FILE)) return [];
-    const raw = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(raw);
+    return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
   } catch {
     return [];
   }
 }
 
-// GET /api/admin/status  -> { ok:true, count: <number>, hasSetupToken: <bool> }
-router.get('/status', (req, res) => {
+// GET /api/admin/status  -> { ok:true, count, hasSetupToken }
+router.get('/status', (_req, res) => {
   try {
     const admins = readAdmins();
     const count = Array.isArray(admins) ? admins.length : 0;
-    const hasSetupToken = !!process.env.SETUP_TOKEN && String(process.env.SETUP_TOKEN).trim() !== '';
-    return res.json({ ok: true, count, hasSetupToken });
+    const hasSetupToken = !!(process.env.SETUP_TOKEN && String(process.env.SETUP_TOKEN).trim());
+    res.json({ ok: true, count, hasSetupToken });
   } catch (err) {
-    return res.status(500).json({ ok: false, error: 'status_failed', details: String(err.message || err) });
+    res.status(500).json({ ok: false, error: 'status_failed', details: String(err?.message || err) });
   }
 });
 
