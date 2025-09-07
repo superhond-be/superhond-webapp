@@ -2,9 +2,9 @@
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
-
+const adminUsers = require('./routes/admin-users');
 const app = express();
-
+app.use('/api/admin/users', adminUsers);
 // Basis security headers (simpel)
 app.disable('x-powered-by');
 
