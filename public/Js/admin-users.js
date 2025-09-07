@@ -1,87 +1,118 @@
-// public/js/admin-users.js
-(async function () {
-  const usersBox = document.getElementById("usersBox");
-  const addForm  = document.getElementById("addForm");
-  const resultEl = document.getElementById("result");
+(() => {
+  const $ = (sel) => document.querySelector(sel);
 
-  const API = "/api/admin/users";
+  const els = {
+    loading: $('#usersLoading'),
+    list: $('#usersList'),
+    empty: $('#usersEmpty'),
+    error: $('#usersError'),
+    result: $('#resultBox'),
+    form: $('#createForm'),
+    name: $('#name'),
+    email: $('#email'),
+    password: $('#password'),
+    role: $('#role'),
+  };
 
-  function showLoading() {
-    usersBox.textContent = "Laden…";
-  }
-
-  function renderUsers(users) {
-    if (!users || users.length === 0) {
-      usersBox.innerHTML = '<div class="muted">Nog geen gebruikers.</div>';
-      return;
+  function show(el) { el && (el.hidden = false); }
+  function hide(el) { el && (el.hidden = true); }
+  function setResult(obj) {
+    if (!els.result) return;
+    try {
+      els.result.textContent = JSON.stringify(obj, null, 2);
+    } catch {
+      els.result.textContent = String(obj);
     }
-    usersBox.innerHTML = users.map(u => `
-      <div class="item">
-        <div><b>${escapeHtml(u.name)}</b> — <span class="muted">${escapeHtml(u.email)}</span></div>
-        <div class="muted">rol: ${escapeHtml(u.role)} • id: ${escapeHtml(u.id)}</div>
-      </div>
-    `).join("");
-  }
-
-  function escapeHtml(s = "") {
-    return String(s)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
   }
 
   async function loadUsers() {
-    showLoading();
+    hide(els.error); hide(els.empty); hide(els.list);
+    show(els.loading);
+
     try {
-      const res = await fetch(API, { headers: { "Accept": "application/json" } });
+      const res = await fetch('/api/admin/users', { headers: { 'Accept': 'application/json' } });
+      // 401/403 → niet ingelogd/geen superadmin
       if (!res.ok) {
-        const text = await res.text();
-        usersBox.innerHTML = `<div class="muted">Fout: ${escapeHtml(text)}</div>`;
-        return;
+        const text = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status} ${res.statusText} – ${text}`);
       }
       const data = await res.json();
-      if (data.ok !== true) {
-        usersBox.innerHTML = `<div class="muted">Fout: ${escapeHtml(JSON.stringify(data))}</div>`;
+
+      // Altijd de loader weg
+      hide(els.loading);
+
+      // Verdere defensieve checks
+      const users = (data && Array.isArray(data.users)) ? data.users : [];
+
+      if (users.length === 0) {
+        show(els.empty);
+        els.list.innerHTML = '';
+        hide(els.list);
         return;
       }
-      renderUsers(data.users);
+
+      // Render lijst
+      els.list.innerHTML = users.map(u => `
+        <li>
+          <strong>${escapeHtml(u.name || '')}</strong>
+          &nbsp; <span class="badge">${escapeHtml(u.role || 'admin')}</span><br/>
+          <small>${escapeHtml(u.email || '')}</small>
+        </li>
+      `).join('');
+      show(els.list);
     } catch (err) {
-      usersBox.innerHTML = `<div class="muted">Netwerkfout: ${escapeHtml(err.message)}</div>`;
+      hide(els.loading);
+      show(els.error);
+      setResult({ ok:false, error: String(err && err.message || err) });
+      console.error('[admin-users] loadUsers failed:', err);
     }
   }
 
-  addForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    resultEl.textContent = 'Bezig met toevoegen…';
+  function escapeHtml(s) {
+    return String(s)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'","&#39;");
+  }
 
-    const formData = new FormData(addForm);
+  async function createUser(ev) {
+    ev.preventDefault();
+
     const payload = {
-      name: formData.get("name")?.trim(),
-      email: formData.get("email")?.trim(),
-      password: formData.get("password"),
-      role: formData.get("role") || "admin"
+      name: (els.name.value || '').trim(),
+      email: (els.email.value || '').trim(),
+      password: els.password.value,
+      role: els.role.value,
     };
+    setResult({ info: 'Bezig met toevoegen…', payload: { ...payload, password: '***' } });
 
     try {
-      const res = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(payload)
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept':'application/json' },
+        body: JSON.stringify(payload),
       });
-      const data = await res.json().catch(async () => ({ ok:false, error: await res.text() }));
-      resultEl.textContent = JSON.stringify(data, null, 2);
+      const data = await res.json().catch(() => ({}));
 
-      if (res.ok && data.ok) {
-        addForm.reset();
-        await loadUsers();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data && data.error ? data.error : `HTTP ${res.status}`);
       }
-    } catch (err) {
-      resultEl.textContent = JSON.stringify({ ok:false, error: err.message }, null, 2);
-    }
-  });
 
-  // Init
+      setResult({ ok: true, user: data.user || null });
+      // formulier resetten (wachtwoord leegmaken)
+      els.password.value = '';
+      // lijst herladen
+      await loadUsers();
+    } catch (err) {
+      setResult({ ok:false, error: String(err && err.message || err) });
+      console.error('[admin-users] createUser failed:', err);
+    }
+  }
+
+  // init
+  if (els.form) els.form.addEventListener('submit', createUser);
+  // laad de lijst (ook als leeg)
   loadUsers();
 })();
