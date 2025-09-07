@@ -1,34 +1,44 @@
 // server/routes/admin-users.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-// Tijdelijke opslag (kan later naar database)
+// Tijdelijke opslag in geheugen (kan later vervangen door DB)
 let admins = [];
 
-// GET alle admins
-router.get('/', (req, res) => {
-  res.json({ ok: true, users: admins });
+// GET - lijst van alle admins
+router.get("/", (req, res) => {
+  res.json({
+    ok: true,
+    users: admins
+  });
 });
 
-// POST nieuwe admin
-router.post('/', (req, res) => {
+// POST - nieuwe admin toevoegen
+router.post("/", (req, res) => {
   const { name, email, password, role } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ ok: false, error: 'Ontbrekende velden' });
+    return res.status(400).json({
+      ok: false,
+      error: "Naam, e-mail en wachtwoord zijn verplicht"
+    });
   }
 
-  const user = {
-    id: 'adm_' + Date.now(),
+  // Nieuwe admin object
+  const newAdmin = {
+    id: "adm_" + Date.now(),
     name,
     email,
-    role: role || 'admin',
+    role: role || "admin",
     createdAt: new Date().toISOString()
   };
 
-  admins.push(user);
+  admins.push(newAdmin);
 
-  res.json({ ok: true, user });
+  res.json({
+    ok: true,
+    user: newAdmin
+  });
 });
 
 module.exports = router;
