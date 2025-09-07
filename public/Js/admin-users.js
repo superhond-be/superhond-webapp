@@ -1,123 +1,135 @@
-// /public/js/admin-users.js
-// client-side logica voor admin gebruikersbeheer
+// public/js/admin-users.js
+// Volledige client-side logica voor Admin gebruikersbeheer
 
-const els = {
-  status:  document.querySelector('#status'),
-  table:   document.querySelector('#usersTable'),
-  tbody:   document.querySelector('#usersBody'),
-  name:    document.querySelector('#name'),
-  email:   document.querySelector('#email'),
-  password:document.querySelector('#password'),
-  role:    document.querySelector('#role'),
-  addBtn:  document.querySelector('#addBtn'),
-  result:  document.querySelector('#result'),
-};
+(() => {
+  const listEl = document.querySelector("#admin-users-list");
+  const formEl = document.querySelector("#add-admin-form");
+  const resultEl = document.querySelector("#result-box");
 
-function fmtDate(iso) {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleString();
-  } catch {
-    return iso || '';
+  const API = {
+    list: async () => {
+      const res = await fetch("/api/admin/users", { headers: { "Accept": "application/json" } });
+      if (!res.ok) throw new Error(`Laden mislukt (${res.status})`);
+      return res.json();
+    },
+    create: async (payload) => {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      // Backend geeft JSON terug met { ok: true/false, ... }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.ok === false) {
+        const msg = data?.error || `Opslaan mislukt (${res.status})`;
+        throw new Error(msg);
+      }
+      return data;
+    }
+  };
+
+  // Helpers
+  function setResult(message, type = "info") {
+    if (!resultEl) return;
+    resultEl.textContent = (typeof message === "string") ? message : JSON.stringify(message, null, 2);
+    resultEl.dataset.type = type; // handiger voor styling
   }
-}
 
-async function fetchStatus() {
-  try {
-    const res = await fetch('/api/admin/status');
-    if (!res.ok) throw new Error(`Status HTTP ${res.status}`);
-    const data = await res.json();
-    els.status.textContent = JSON.stringify(data);
-  } catch (err) {
-    els.status.textContent = JSON.stringify({ ok:false, error: String(err.message || err) });
+  function asListItem(user) {
+    const li = document.createElement("li");
+    li.className = "admin-user-item";
+    li.innerHTML = `
+      <strong>${escapeHtml(user.name)}</strong>
+      <span> (${escapeHtml(user.email)})</span>
+      <small> – rol: ${escapeHtml(user.role || "admin")}</small>
+      <small style="opacity:.7"> • ${new Date(user.createdAt).toLocaleString()}</small>
+    `;
+    return li;
   }
-}
 
-async function fetchUsers() {
-  els.tbody.innerHTML = '';
-  els.table.style.display = 'none';
-  try {
-    const res = await fetch('/api/admin/users');
-    if (!res.ok) throw new Error(`Users HTTP ${res.status}`);
-    const json = await res.json();
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+  }
 
-    // json kan bv. { ok:true, users:[...] } zijn — we ondersteunen beide
-    const users = Array.isArray(json) ? json : (json.users || []);
+  // UI acties
+  async function loadAdmins() {
+    if (listEl) listEl.innerHTML = `<em>Laden...</em>`;
+    try {
+      const data = await API.list(); // verwacht { ok:true, users:[...] }
+      if (!data?.ok) throw new Error(data?.error || "Onbekende fout");
 
-    if (!users.length) {
-      els.status.textContent = 'Nog geen admins.';
+      if (!data.users || data.users.length === 0) {
+        listEl.innerHTML = `<em>Er zijn nog geen admin-accounts.</em>`;
+        return;
+      }
+
+      // Render lijst
+      const container = document.createElement(listEl.tagName.toLowerCase() === "ul" ? "ul" : "div");
+      container.className = "admin-users";
+      data.users.forEach(u => container.appendChild(asListItem(u)));
+      listEl.replaceChildren(container);
+    } catch (err) {
+      listEl.innerHTML = `<span style="color:#b00020">Fout bij laden: ${escapeHtml(err.message)}</span>`;
+    }
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    if (!formEl) return;
+
+    // Lees velden
+    const fd = new FormData(formEl);
+    const name = fd.get("name")?.toString().trim();
+    const email = fd.get("email")?.toString().trim();
+    const password = fd.get("password")?.toString();
+    const role = (fd.get("role")?.toString().trim()) || "admin";
+
+    // Validatie
+    if (!name || !email || !password) {
+      setResult("Vul naam, e-mail en wachtwoord in.", "error");
+      return;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setResult("Ongeldig e-mailadres.", "error");
+      return;
+    }
+    if (password.length < 6) {
+      setResult("Wachtwoord moet minstens 6 tekens bevatten.", "error");
       return;
     }
 
-    els.table.style.display = '';
-    els.status.textContent = `Totaal: ${users.length}`;
-    for (const u of users) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${u.name || '-'}</td>
-        <td>${u.email || '-'}</td>
-        <td>
-          <span class="pill ${u.role === 'superadmin' ? 'super':''}">
-            ${u.role || 'admin'}
-          </span>
-        </td>
-        <td>${fmtDate(u.createdAt)}</td>
-      `;
-      els.tbody.appendChild(tr);
-    }
-  } catch (err) {
-    els.status.textContent = JSON.stringify({ ok:false, error: String(err.message || err) });
-  }
-}
-
-async function addUser() {
-  const name = els.name.value.trim();
-  const email = els.email.value.trim();
-  const password = els.password.value;
-  const role = els.role.value;
-
-  if (!name || !email || !password) {
-    els.result.textContent = JSON.stringify({ ok:false, error:'Vul naam, e-mail en wachtwoord in.' });
-    return;
-  }
-
-  els.addBtn.disabled = true;
-  els.result.textContent = 'Bezig…';
-
-  try {
-    const res = await fetch('/api/admin/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role })
-    });
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok || data.ok === false) {
-      const msg = (data && (data.error || data.message)) || `HTTP ${res.status}`;
-      throw new Error(msg);
+    // Submit blokkeren tijdens request
+    const submitBtn = formEl.querySelector("[type=submit]") || formEl.querySelector("button");
+    const originalText = submitBtn ? submitBtn.textContent : "";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Toevoegen…";
     }
 
-    els.result.textContent = JSON.stringify(data, null, 2);
-
-    // velden leegmaken
-    els.name.value = '';
-    els.email.value = '';
-    els.password.value = '';
-    els.role.value = 'admin';
-
-    // lijst opnieuw laden
-    await fetchUsers();
-    await fetchStatus();
-  } catch (err) {
-    els.result.textContent = JSON.stringify({ ok:false, error: String(err.message || err) });
-  } finally {
-    els.addBtn.disabled = false;
+    try {
+      const data = await API.create({ name, email, password, role });
+      setResult({ ok: true, user: data.user }, "success");
+      formEl.reset();
+      await loadAdmins();
+    } catch (err) {
+      setResult(`Fout: ${err.message}`, "error");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText || "Toevoegen";
+      }
+    }
   }
-}
 
-// events
-els.addBtn.addEventListener('click', addUser);
+  // Init
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") loadAdmins();
+  });
 
-// initial load
-fetchStatus();
-fetchUsers();
+  if (formEl) formEl.addEventListener("submit", onSubmit);
+
+  // Eerste load
+  loadAdmins();
+})();
