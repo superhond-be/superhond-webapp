@@ -1,1 +1,0 @@
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();alert('Login form submitted')})});
