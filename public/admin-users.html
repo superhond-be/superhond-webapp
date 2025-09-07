@@ -3,96 +3,79 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin gebruikers – Superhond</title>
-
-  <!-- jouw globale stylesheet (bestaat al in /public) -->
-  <link rel="stylesheet" href="/public/app.css" />
-
+  <title>Admin gebruikers — Superhond</title>
+  <link rel="stylesheet" href="/css/app.css" />
   <style>
-    /* kleine, lokale accenten */
-    .wrap { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
-    .page-title { font-size: 1.8rem; margin: 0 0 1rem; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
-    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
-
-    .card { background: #fff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 1rem 1.25rem; }
-    .card h2 { font-size: 1.2rem; margin: 0 0 .75rem; }
-
-    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
-    th, td { padding: .5rem .6rem; border-bottom: 1px solid #eee; }
-    th { text-align: left; color: #555; font-weight: 600; }
-
-    .muted { color:#777; font-size:.92rem; }
-    .row { display: grid; grid-template-columns: 1fr; gap:.75rem; }
-    @media (min-width: 560px) { .row.two { grid-template-columns: 1fr 1fr; } }
-    label { font-weight: 600; font-size: .92rem; }
-    input, select { width: 100%; padding:.6rem .65rem; border:1px solid #d6d6d6; border-radius:10px; font-size:1rem; }
-    .btn { display:inline-block; background:#f7a30a; color:#111; border:0; padding:.7rem 1rem;
-           border-radius: 10px; font-weight:700; cursor:pointer; }
-    .btn:disabled { opacity:.6; cursor:not-allowed; }
-    .pill { display:inline-block; padding:.25rem .55rem; border-radius:999px; background:#eef3ff; color:#2740d1; font-weight:600; font-size:.8rem; }
-    .pill.super { background:#fff3d6; color:#a05b00; }
-    .notice { background:#f6f7f8; border:1px dashed #d6d6d6; border-radius:10px; padding:.6rem .8rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.92rem; }
-    .toolbar { margin-bottom:.75rem; display:flex; gap:.5rem; align-items:center; justify-content:space-between; }
-    a.back { text-decoration:none; color:#2740d1; font-weight:600; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .page { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    .muted { color: #666; margin-bottom: 16px; }
+    .grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+    @media (min-width: 920px) { .grid { grid-template-columns: 1fr 1fr; } }
+    .card { border: 1px solid #e5e5e5; border-radius: 12px; padding: 16px; background: #fff; }
+    .card h2 { margin: 0 0 12px; font-size: 18px; }
+    ul.users { list-style: none; padding: 0; margin: 0; }
+    ul.users li { padding: 10px 12px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px; }
+    .row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+    button { background: #f6a400; border: 0; color: #000; font-weight: 700; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+    pre { background: #0b1020; color: #d7e3ff; padding: 10px 12px; border-radius: 10px; overflow: auto; font-size: 12px; }
+    .badge { display:inline-block; font-size:12px; background:#eef; border:1px solid #cde; padding:2px 6px; border-radius:6px; }
+    .empty { color:#777; font-style: italic; }
+    a { color:#3b63f0; text-decoration: none; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="toolbar">
-      <a class="back" href="/public/index.html">← Terug naar Dashboard</a>
-      <a class="back" href="/public/klantenportaal/index.html">Klantenportaal</a>
-    </div>
-
-    <h1 class="page-title">👩‍💻 Admin gebruikers</h1>
+  <div class="page">
+    <p><a href="/index.html">← Terug naar Dashboard</a>  ·  <a href="/klantenportaal.html">Klantenportaal</a></p>
+    <h1>👩‍💼 Admin gebruikers</h1>
     <p class="muted">Alleen <strong>superadmin</strong> kan gebruikers beheren.</p>
 
     <div class="grid">
-      <!-- Overzicht -->
+      <!-- Bestande gebruikers -->
       <section class="card">
-        <h2> Bestaande gebruikers </h2>
-        <div id="status" class="notice">Laden…</div>
-        <div style="overflow:auto">
-          <table id="usersTable" style="display:none">
-            <thead>
-              <tr>
-                <th>Naam</th>
-                <th>E-mail</th>
-                <th>Rol</th>
-                <th>Aangemaakt</th>
-              </tr>
-            </thead>
-            <tbody id="usersBody"></tbody>
-          </table>
+        <h2>Bestaande gebruikers</h2>
+        <div id="usersBox">
+          <div id="usersLoading">Laden…</div>
+          <ul id="usersList" class="users" hidden></ul>
+          <div id="usersEmpty" class="empty" hidden>Nog geen admin-gebruikers gevonden.</div>
+          <div id="usersError" class="empty" hidden>Kon gebruikers niet laden.</div>
         </div>
       </section>
 
-      <!-- Toevoegen -->
+      <!-- Nieuwe gebruiker -->
       <section class="card">
-        <h2> Nieuwe gebruiker toevoegen </h2>
-        <div class="row">
-          <label>Naam
-            <input id="name" autocomplete="name" placeholder="Voornaam Achternaam" />
-          </label>
-          <label>E-mail
-            <input id="email" type="email" autocomplete="email" placeholder="naam@domein.be" />
-          </label>
-          <label>Wachtwoord
-            <input id="password" type="password" autocomplete="new-password" placeholder="sterk wachtwoord" />
-          </label>
-          <label>Rol
+        <h2>Nieuwe gebruiker toevoegen</h2>
+        <form id="createForm">
+          <div class="row">
+            <label>Naam</label>
+            <input id="name" required placeholder="Voornaam Achternaam" />
+          </div>
+          <div class="row">
+            <label>E-mail</label>
+            <input id="email" type="email" required placeholder="naam@domein.be" />
+          </div>
+          <div class="row">
+            <label>Wachtwoord</label>
+            <input id="password" type="password" required placeholder="sterk wachtwoord" minlength="8" />
+          </div>
+          <div class="row">
+            <label>Rol</label>
             <select id="role">
               <option value="admin">admin</option>
               <option value="superadmin">superadmin</option>
             </select>
-          </label>
-          <button id="addBtn" class="btn">+ Toevoegen</button>
-          <div id="result" class="notice">{"info":"Resultaat verschijnt hier."}</div>
+          </div>
+          <button type="submit">+ Toevoegen</button>
+        </form>
+
+        <div style="margin-top:12px">
+          <pre id="resultBox">{"info":"Resultaat verschijnt hier."}</pre>
         </div>
       </section>
     </div>
   </div>
 
-  <script src="/public/js/admin-users.js" defer></script>
+  <script src="/js/admin-users.js" defer></script>
 </body>
 </html>
