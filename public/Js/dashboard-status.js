@@ -1,26 +1,25 @@
-// public/js/dashboard-status.js
-(function () {
-  const btn   = document.querySelector('#btnCheckStatus');
-  const preEl = document.querySelector('#statusOutput');
+// Zorgt ervoor dat de knop de backend status ophaalt en toont
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("checkStatus");
+  const result = document.getElementById("statusResult");
 
-  function show(obj) {
-    if (!preEl) return;
-    preEl.textContent = JSON.stringify(obj, null, 2);
-  }
-  async function check() {
+  if (!btn || !result) return;
+
+  btn.addEventListener("click", async () => {
+    result.textContent = "Bezig met ophalen…";
     try {
-      const res = await fetch('/api/admin/status', { headers: { 'Accept': 'application/json' } });
-      const ct = res.headers.get('content-type') || '';
-      if (!ct.includes('application/json')) {
-        const txt = await res.text();
-        throw new Error('API endpoint niet gevonden of geen JSON ontvangen');
+      const res = await fetch("/api/admin/status", { headers: { "Accept": "application/json" } });
+      // Als de server een HTML-foutpagina zou sturen, voorkom JSON parse error
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error("Server gaf geen geldige JSON terug:\n" + text.slice(0, 300));
       }
-      const data = await res.json();
-      show(data);
-    } catch (e) {
-      show({ ok:false, error: String(e?.message || e) });
+      result.textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      result.textContent = `Fout: ${err.message}`;
     }
-  }
-
-  if (btn) btn.addEventListener('click', check);
-})();
+  });
+});
