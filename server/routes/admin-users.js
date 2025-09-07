@@ -1,33 +1,34 @@
 // server/routes/admin-users.js
 const express = require('express');
 const router = express.Router();
-const store = require('../models/adminStore');
 
-// Alle admins
+// Tijdelijke opslag (kan later naar database)
+let admins = [];
+
+// GET alle admins
 router.get('/', (req, res) => {
-  try {
-    const users = store.getAll();
-    res.json({ ok: true, users });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
-  }
+  res.json({ ok: true, users: admins });
 });
 
-// Nieuwe admin toevoegen
-router.post('/', express.json(), (req, res) => {
-  try {
-    const { name, email, password, role } = req.body || {};
-    if (!email || !password) {
-      return res.status(400).json({ ok: false, error: 'E-mail en wachtwoord zijn verplicht.' });
-    }
-    const user = store.create({ name, email, password, role });
-    res.json({ ok: true, user });
-  } catch (e) {
-    if (e.code === 'DUPLICATE') {
-      return res.status(409).json({ ok: false, error: e.message });
-    }
-    res.status(500).json({ ok: false, error: e.message });
+// POST nieuwe admin
+router.post('/', (req, res) => {
+  const { name, email, password, role } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ ok: false, error: 'Ontbrekende velden' });
   }
+
+  const user = {
+    id: 'adm_' + Date.now(),
+    name,
+    email,
+    role: role || 'admin',
+    createdAt: new Date().toISOString()
+  };
+
+  admins.push(user);
+
+  res.json({ ok: true, user });
 });
 
 module.exports = router;
