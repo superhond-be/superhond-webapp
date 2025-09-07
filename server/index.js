@@ -1,41 +1,36 @@
-// server/index.js
-const path = require('path');
-const express = require('express');
-const session = require('express-session');
-const adminUsers = require('./routes/admin-users');
-const app = express();
-app.use('/api/admin/users', adminUsers);
-// Basis security headers (simpel)
-app.disable('x-powered-by');
+const express = require("express");
+const session = require("express-session");
+const path = require("path");
 
-// Body parsing voor eventuele andere routes
+const adminUsers = require("./routes/admin-users");
+const app = express();
+
+// basis security
+app.disable("x-powered-by");
+
+// body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Sessies (simple MemoryStore volstaat voor deze MVP op Render)
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 's3ss10n-2025!superhond',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { sameSite: 'lax' }
-  })
-);
+// sessions (simpel)
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev_secret",
+  saveUninitialized: true,
+  resave: false,
+  cookie: { sameSite: "lax" }
+}));
 
-// Static files (publieke site)
-app.use('/public', express.static(path.join(__dirname, '..', 'public')));
+// static files
+app.use("/public", express.static(path.join(__dirname, "..", "public")));
 
 // API routes
-app.use('/api/admin/users', require('./routes/admin-users'));
-app.use('/api/admin/status', require('./routes/admin-status'));
+app.use("/api/admin/users", adminUsers);
 
-// Healthcheck / root
-app.get('/', (_req, res) => {
-  res.redirect('/public/index.html');
-});
+// healthcheck (optioneel)
+app.get("/health", (req, res) => res.json({ ok: true }));
 
-// Start
+// start (Render leest PORT uit env)
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`Superhond server luistert op ${PORT}`);
+  console.log("Superhond server luistert op", PORT);
 });
