@@ -34,3 +34,8 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Superhond server luistert op", PORT);
 });
+
+// Root route -> dashboard tonen
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
