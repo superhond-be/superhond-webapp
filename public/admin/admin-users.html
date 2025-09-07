@@ -2,113 +2,64 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <title>Admin gebruikersbeheer</title>
+  <title>Admin gebruikers — Superhond</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/css/app.css" />
+  <link rel="stylesheet" href="/public/css/app.css" />
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
-    .card { border: 1px solid #eee; border-radius: 12px; padding: 16px; max-width: 720px; background: #fff; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    label { font-size: 14px; color: #333; display: block; margin-bottom: 4px; }
-    input, select { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; }
-    button { background: #f0a000; color: #111; padding: 10px 14px; border-radius: 10px; border: none; font-weight: 700; }
-    .list { margin-top: 16px; }
-    pre { background: #0b1020; color: #cde; padding: 12px; border-radius: 8px; overflow:auto; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; background: #fff; }
+    .title { font-size: 22px; font-weight: 700; margin: 0 0 12px; }
+    .btn { background: #f5a200; border: 0; color: #000; padding: 10px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .list { display: grid; gap: 8px; }
+    .item { padding: 10px; border: 1px solid #eee; border-radius: 8px; }
+    .muted { color: #666; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+    label { display:block; font-weight:600; margin-top:12px; }
+    input, select { width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; }
+    form { display: grid; gap: 10px; }
   </style>
 </head>
 <body>
-  <h1>🐾 Admin gebruikersbeheer</h1>
-  <p><a href="/dashboard.html">← Terug naar Dashboard</a></p>
+  <p><a href="/public/index.html">← Terug naar Dashboard</a></p>
+  <h1>👩‍💼 Admin gebruikers</h1>
+  <p class="muted">Alleen <b>superadmin</b> kan gebruikers beheren.</p>
 
-  <div class="card">
-    <h3>Bestaande gebruikers</h3>
-    <div class="list" id="list"></div>
+  <div class="grid">
+    <section class="card">
+      <h2 class="title">Bestaande gebruikers</h2>
+      <div id="usersBox" class="list">Laden…</div>
+    </section>
+
+    <section class="card">
+      <h2 class="title">Nieuwe gebruiker toevoegen</h2>
+      <form id="addForm">
+        <div>
+          <label for="name">Naam</label>
+          <input id="name" name="name" placeholder="Voornaam Achternaam" required />
+        </div>
+        <div>
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" placeholder="naam@domein.be" required />
+        </div>
+        <div>
+          <label for="password">Wachtwoord</label>
+          <input id="password" name="password" type="password" placeholder="sterk wachtwoord" required />
+        </div>
+        <div>
+          <label for="role">Rol</label>
+          <select id="role" name="role">
+            <option value="admin">admin</option>
+            <option value="superadmin">superadmin</option>
+          </select>
+        </div>
+        <div>
+          <button class="btn" type="submit">+ Toevoegen</button>
+        </div>
+      </form>
+      <pre id="result" class="muted">{"info":"Resultaat verschijnt hier."}</pre>
+    </section>
   </div>
 
-  <br/>
-
-  <div class="card">
-    <h3>Nieuwe gebruiker toevoegen</h3>
-    <div class="row">
-      <div>
-        <label>Naam</label>
-        <input id="name" placeholder="Naam" />
-      </div>
-      <div>
-        <label>E-mail</label>
-        <input id="email" placeholder="email@voorbeeld.be" />
-      </div>
-      <div>
-        <label>Wachtwoord</label>
-        <input id="password" type="password" placeholder="••••••••" />
-      </div>
-      <div>
-        <label>Rol</label>
-        <select id="role">
-          <option value="admin">admin</option>
-          <option value="superadmin">superadmin</option>
-        </select>
-      </div>
-    </div>
-    <br/>
-    <button id="addBtn">➕ Toevoegen</button>
-    <div id="out"></div>
-  </div>
-
-  <script>
-    const out = document.getElementById('out');
-    const list = document.getElementById('list');
-
-    function token() {
-      // verwacht dat /admin-login.html bij success localStorage.setItem('admin_token', token) zet
-      return localStorage.getItem('admin_token') || '';
-    }
-
-    async function fetchJSON(url, opts = {}) {
-      const res = await fetch(url, {
-        ...opts,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token(),
-          ...(opts.headers || {})
-        }
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw data;
-      return data;
-    }
-
-    async function loadUsers() {
-      list.innerHTML = 'Laden…';
-      try {
-        const data = await fetchJSON('/api/admin/users');
-        list.innerHTML = '<pre>'+JSON.stringify(data, null, 2)+'</pre>';
-      } catch (e) {
-        list.innerHTML = '<pre>'+JSON.stringify(e, null, 2)+'</pre>';
-      }
-    }
-
-    document.getElementById('addBtn').addEventListener('click', async () => {
-      out.innerHTML = 'Bezig…';
-      const payload = {
-        name: document.getElementById('name').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        password: document.getElementById('password').value,
-        role: document.getElementById('role').value
-      };
-      try {
-        const data = await fetchJSON('/api/admin/users', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        out.innerHTML = '<pre>'+JSON.stringify(data, null, 2)+'</pre>';
-        loadUsers();
-      } catch (e) {
-        out.innerHTML = '<pre>'+JSON.stringify(e, null, 2)+'</pre>';
-      }
-    });
-
-    loadUsers();
-  </script>
+  <script src="/public/js/admin-users.js" defer></script>
 </body>
 </html>
