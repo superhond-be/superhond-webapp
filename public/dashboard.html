@@ -2,39 +2,47 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond – Dashboard</title>
-  <link rel="stylesheet" href="/app.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/public/img/favicon.ico" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; background:#fafafa; color:#222; }
+    header { padding: 20px 24px; font-weight: 700; font-size: 22px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; padding:0 24px; }
+    .tile { background: #fff; border:1px solid #e9e9e9; border-radius:12px; padding:18px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .tile a { color:#111; text-decoration:none; font-weight:600; }
+    .card { background:#fff; border:1px solid #ececec; border-radius:14px; padding:20px; margin:24px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+    .btn { display:inline-block; padding:12px 18px; border-radius:10px; border:none; background:#f7a300; color:#111; font-weight:700; cursor:pointer; }
+    .btn:active { transform: translateY(1px); }
+    pre { background:#f6f6f6; border-radius:10px; padding:12px; overflow:auto; }
+    .muted { color:#666; font-size:14px; }
+    nav { display:flex; gap:14px; padding:0 24px 12px; }
+    nav a { text-decoration:none; color:#333; padding:10px 14px; border-radius:10px; background:#fff; border:1px solid #e9e9e9; }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <h1>Superhond – Dashboard</h1>
-    <nav class="topnav">
-      <a href="/admin/login.html">Login</a>
-      <a href="/public/index.html">Publiek</a>
-    </nav>
-  </header>
+  <header>Superhond – Dashboard</header>
 
-  <main class="cards">
-    <a class="card" href="/admin/lessenbeheer.html"><h3>Lessenbeheer</h3></a>
-    <a class="card" href="/admin/klanten.html"><h3>Klanten & Honden</h3></a>
-    <a class="card" href="/admin/strippenkaarten.html"><h3>Strippenkaarten</h3></a>
-    <a class="card" href="/admin/aanvragen.html"><h3>Aanvragen</h3></a>
+  <nav>
+    <a href="/public/dashboard.html">Dashboard</a>
+    <a href="/public/klantenportaal.html">Publiek</a>
+    <a href="/public/admin/index.html">Admin</a>
+  </nav>
 
-    <!-- Admin gebruikers -->
-    <a class="card" href="/admin/admin-gebruikers.html"><h3>Admin gebruikers</h3></a>
+  <section class="grid">
+    <div class="tile"><a href="/public/lessenbeheer.html">Lessenbeheer</a></div>
+    <div class="tile"><a href="/public/klanten-honden.html">Klanten &amp; Honden</a></div>
+    <div class="tile"><a href="/public/strippenkaarten.html">Strippenkaarten</a></div>
+    <div class="tile"><a href="/public/admin-gebruikers.html">Admin gebruikers</a></div>
+  </section>
 
-    <!-- Admin status -->
-    <section class="card" id="admin-status">
-      <h3>Admin status</h3>
-      <p class="muted">Overzicht van geregistreerde admins en setup-token.</p>
+  <section class="card">
+    <h3>Admin status</h3>
+    <p class="muted">Bekijk hoeveel admins momenteel geregistreerd zijn.</p>
+    <button id="btnCheckStatus" class="btn">Check status</button>
+    <pre id="statusOutput" class="mt-2">{"info":"Klik op \"Check status\""}</pre>
+  </section>
 
-      <div id="status-output" class="mono"></div>
-
-      <div id="callouts" class="stack" style="margin-top:12px"></div>
-    </section>
-  </main>
-
-  <script src="/js/dashboard-status.js" defer></script>
+  <script src="/public/js/dashboard-status.js"></script>
 </body>
 </html>
