@@ -1,65 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <title>Admin gebruikers — Superhond</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/public/css/app.css" />
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; background: #fff; }
-    .title { font-size: 22px; font-weight: 700; margin: 0 0 12px; }
-    .btn { background: #f5a200; border: 0; color: #000; padding: 10px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-    .list { display: grid; gap: 8px; }
-    .item { padding: 10px; border: 1px solid #eee; border-radius: 8px; }
-    .muted { color: #666; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
-    label { display:block; font-weight:600; margin-top:12px; }
-    input, select { width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; }
-    form { display: grid; gap: 10px; }
-  </style>
+  <meta charset="UTF-8">
+  <title>Admin gebruikers</title>
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <p><a href="/public/index.html">← Terug naar Dashboard</a></p>
-  <h1>👩‍💼 Admin gebruikers</h1>
-  <p class="muted">Alleen <b>superadmin</b> kan gebruikers beheren.</p>
+  <h2>👩‍💻 Admin gebruikers</h2>
+  <p>Alleen <strong>superadmin</strong> kan gebruikers beheren.</p>
 
-  <div class="grid">
-    <section class="card">
-      <h2 class="title">Bestaande gebruikers</h2>
-      <div id="usersBox" class="list">Laden…</div>
-    </section>
+  <div style="display:flex; gap:40px; margin-top:20px;">
+    <!-- Bestaande gebruikers -->
+    <div>
+      <h3>Bestaande gebruikers</h3>
+      <div id="user-list">Laden...</div>
+    </div>
 
-    <section class="card">
-      <h2 class="title">Nieuwe gebruiker toevoegen</h2>
-      <form id="addForm">
-        <div>
-          <label for="name">Naam</label>
-          <input id="name" name="name" placeholder="Voornaam Achternaam" required />
-        </div>
-        <div>
-          <label for="email">E-mail</label>
-          <input id="email" name="email" type="email" placeholder="naam@domein.be" required />
-        </div>
-        <div>
-          <label for="password">Wachtwoord</label>
-          <input id="password" name="password" type="password" placeholder="sterk wachtwoord" required />
-        </div>
-        <div>
-          <label for="role">Rol</label>
-          <select id="role" name="role">
-            <option value="admin">admin</option>
-            <option value="superadmin">superadmin</option>
-          </select>
-        </div>
-        <div>
-          <button class="btn" type="submit">+ Toevoegen</button>
-        </div>
+    <!-- Nieuwe gebruiker -->
+    <div>
+      <h3>Nieuwe gebruiker toevoegen</h3>
+      <form id="addUserForm">
+        <label>Naam</label><br>
+        <input type="text" id="name" placeholder="Voornaam Achternaam" required><br><br>
+
+        <label>E-mail</label><br>
+        <input type="email" id="email" placeholder="naam@domein.be" required><br><br>
+
+        <label>Wachtwoord</label><br>
+        <input type="password" id="password" placeholder="sterk wachtwoord" required><br><br>
+
+        <label>Rol</label><br>
+        <select id="role">
+          <option value="admin">admin</option>
+          <option value="superadmin">superadmin</option>
+        </select><br><br>
+
+        <button type="submit">+ Toevoegen</button>
       </form>
-      <pre id="result" class="muted">{"info":"Resultaat verschijnt hier."}</pre>
-    </section>
+
+      <pre id="result">{"info":"Resultaat verschijnt hier."}</pre>
+    </div>
   </div>
 
-  <script src="/public/js/admin-users.js" defer></script>
+  <p><a href="/index.html">← Terug naar Dashboard</a></p>
+
+  <script src="js/admin-users.js"></script>
 </body>
 </html>
