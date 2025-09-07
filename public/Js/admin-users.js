@@ -1,81 +1,123 @@
-// public/js/admin-users.js
-const el = sel => document.querySelector(sel);
+// /public/js/admin-users.js
+// client-side logica voor admin gebruikersbeheer
 
-function showNote(type, msg) {
-  const box = el('#admin-users-note');
-  box.className = ''; // reset
-  box.classList.add('note', type === 'success' ? 'note--success' : 'note--error');
-  box.textContent = msg;
-  box.style.display = 'block';
-  setTimeout(() => { box.style.display = 'none'; }, 4000);
-}
+const els = {
+  status:  document.querySelector('#status'),
+  table:   document.querySelector('#usersTable'),
+  tbody:   document.querySelector('#usersBody'),
+  name:    document.querySelector('#name'),
+  email:   document.querySelector('#email'),
+  password:document.querySelector('#password'),
+  role:    document.querySelector('#role'),
+  addBtn:  document.querySelector('#addBtn'),
+  result:  document.querySelector('#result'),
+};
 
-async function fetchJSON(url, opts = {}) {
-  const res = await fetch(url, { credentials: 'include', ...opts });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const err = new Error(data?.error || 'request_failed');
-    err.status = res.status;
-    throw err;
-  }
-  return data;
-}
-
-async function loadUsers() {
-  const tbody = el('#admin-users-tbody');
-  tbody.innerHTML = '<tr><td colspan="3">Laden…</td></tr>';
+function fmtDate(iso) {
   try {
-    const data = await fetchJSON('/api/admin/users');
-    const rows = (data.users || []).map(u => `
-      <tr>
-        <td>${u.name || '-'}</td>
-        <td>${u.email}</td>
-        <td>${u.role}</td>
-      </tr>
-    `).join('');
-    tbody.innerHTML = rows || '<tr><td colspan="3">Nog geen gebruikers.</td></tr>';
-  } catch (e) {
-    tbody.innerHTML = '<tr><td colspan="3">Kon lijst niet laden.</td></tr>';
+    const d = new Date(iso);
+    return d.toLocaleString();
+  } catch {
+    return iso || '';
   }
 }
 
-async function onSubmit(e) {
-  e.preventDefault();
-  const name = el('#new-name').value.trim();
-  const email = el('#new-email').value.trim();
-  const password = el('#new-password').value;
-  const role = el('#new-role').value;
+async function fetchStatus() {
+  try {
+    const res = await fetch('/api/admin/status');
+    if (!res.ok) throw new Error(`Status HTTP ${res.status}`);
+    const data = await res.json();
+    els.status.textContent = JSON.stringify(data);
+  } catch (err) {
+    els.status.textContent = JSON.stringify({ ok:false, error: String(err.message || err) });
+  }
+}
+
+async function fetchUsers() {
+  els.tbody.innerHTML = '';
+  els.table.style.display = 'none';
+  try {
+    const res = await fetch('/api/admin/users');
+    if (!res.ok) throw new Error(`Users HTTP ${res.status}`);
+    const json = await res.json();
+
+    // json kan bv. { ok:true, users:[...] } zijn — we ondersteunen beide
+    const users = Array.isArray(json) ? json : (json.users || []);
+
+    if (!users.length) {
+      els.status.textContent = 'Nog geen admins.';
+      return;
+    }
+
+    els.table.style.display = '';
+    els.status.textContent = `Totaal: ${users.length}`;
+    for (const u of users) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${u.name || '-'}</td>
+        <td>${u.email || '-'}</td>
+        <td>
+          <span class="pill ${u.role === 'superadmin' ? 'super':''}">
+            ${u.role || 'admin'}
+          </span>
+        </td>
+        <td>${fmtDate(u.createdAt)}</td>
+      `;
+      els.tbody.appendChild(tr);
+    }
+  } catch (err) {
+    els.status.textContent = JSON.stringify({ ok:false, error: String(err.message || err) });
+  }
+}
+
+async function addUser() {
+  const name = els.name.value.trim();
+  const email = els.email.value.trim();
+  const password = els.password.value;
+  const role = els.role.value;
 
   if (!name || !email || !password) {
-    showNote('error', 'Vul naam, e-mail en wachtwoord in.');
+    els.result.textContent = JSON.stringify({ ok:false, error:'Vul naam, e-mail en wachtwoord in.' });
     return;
   }
 
+  els.addBtn.disabled = true;
+  els.result.textContent = 'Bezig…';
+
   try {
-    const body = JSON.stringify({ name, email, password, role });
-    await fetchJSON('/api/admin/users', {
+    const res = await fetch('/api/admin/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body
+      body: JSON.stringify({ name, email, password, role })
     });
-    showNote('success', 'Gebruiker toegevoegd.');
-    e.target.reset();
-    await loadUsers();
-  } catch (err) {
-    if (err.status === 409) {
-      showNote('error', 'Dit e-mailadres bestaat al.');
-    } else if (err.status === 400) {
-      showNote('error', 'Onvolledige gegevens.');
-    } else if (err.status === 401 || err.status === 403) {
-      showNote('error', 'Je hebt geen rechten om dit te doen.');
-    } else {
-      showNote('error', 'Toevoegen mislukt. Probeer later opnieuw.');
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || data.ok === false) {
+      const msg = (data && (data.error || data.message)) || `HTTP ${res.status}`;
+      throw new Error(msg);
     }
+
+    els.result.textContent = JSON.stringify(data, null, 2);
+
+    // velden leegmaken
+    els.name.value = '';
+    els.email.value = '';
+    els.password.value = '';
+    els.role.value = 'admin';
+
+    // lijst opnieuw laden
+    await fetchUsers();
+    await fetchStatus();
+  } catch (err) {
+    els.result.textContent = JSON.stringify({ ok:false, error: String(err.message || err) });
+  } finally {
+    els.addBtn.disabled = false;
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const form = el('#admin-add-form');
-  form.addEventListener('submit', onSubmit);
-  loadUsers();
-});
+// events
+els.addBtn.addEventListener('click', addUser);
+
+// initial load
+fetchStatus();
+fetchUsers();
