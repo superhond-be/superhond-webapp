@@ -2,26 +2,95 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Superhond – Klantenportaal</title>
-  <link rel="stylesheet" href="/app.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superhond – Dashboard</title>
+
+  <!-- CSS bestand (pas aan naar jouw juiste pad, bv. /public/css/styles.css) -->
+  <link rel="stylesheet" href="/public/app.css" />
+  <link rel="icon" href="/public/img/favicon.ico" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fafafa;
+    }
+    header {
+      background: #ffcc00;
+      padding: 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      background: #333;
+      padding: 0.5rem;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+    }
+    nav a:hover {
+      background: #555;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+      color: #000;
+      transition: 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+      border-color: #ffcc00;
+    }
+  </style>
 </head>
 <body>
-  <header class="bar">
-    <h1>Superhond – Klantenportaal</h1>
-    <nav>
-      <a href="/admin/">Admin</a>
-    </nav>
+  <header>
+    <h1>Superhond – Dashboard</h1>
   </header>
 
-  <main class="grid">
-    <a class="tile" href="/inschrijven.html">
-      <h3>Publieke inschrijving</h3>
-      <p>Schrijf in (klant + hond) voor sessies.</p>
+  <nav>
+    <a href="/public/index.html">Dashboard</a>
+    <a href="/public/klantenportaal.html">Publiek</a>
+    <a href="/public/admin-login.html">Admin</a>
+  </nav>
+
+  <main>
+    <a class="card" href="/public/lessenbeheer.html">
+      <h2>Lessenbeheer</h2>
+      <p>Beheer alle lessen en sessies.</p>
     </a>
-    <a class="tile" href="/onboarding.html">
-      <h3>Onboarding na betaling</h3>
-      <p>Rond aankoop af met token.</p>
+
+    <a class="card" href="/public/klanten-honden.html">
+      <h2>Klanten & Honden</h2>
+      <p>Bekijk en beheer baasjes en honden.</p>
+    </a>
+
+    <a class="card" href="/public/strippenkaarten.html">
+      <h2>Strippenkaarten</h2>
+      <p>Beheer credits en strippenkaarten.</p>
+    </a>
+
+    <a class="card" href="/public/admin-users.html">
+      <h2>Admin gebruikers</h2>
+      <p>Beheer beheerders en superadmins.</p>
     </a>
   </main>
 </body>
