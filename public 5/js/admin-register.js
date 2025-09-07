@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('registerForm').addEventListener('submit',async e=>{e.preventDefault();alert('Register form submitted')})});
