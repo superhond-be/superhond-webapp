@@ -1,97 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Superhond – Dashboard</title>
-
-  <!-- CSS bestand (pas aan naar jouw juiste pad, bv. /public/css/styles.css) -->
-  <link rel="stylesheet" href="/public/app.css" />
-  <link rel="icon" href="/public/img/favicon.ico" />
+  <link rel="stylesheet" href="/css/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #fafafa;
       margin: 0;
-      background: #fafafa;
+      padding: 0;
+      text-align: center;
     }
     header {
       background: #ffcc00;
-      padding: 1rem;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      background: #333;
-      padding: 0.5rem;
-    }
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-    }
-    nav a:hover {
-      background: #555;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: bold;
     }
     main {
-      max-width: 900px;
-      margin: 2rem auto;
+      margin: 40px auto;
+      max-width: 800px;
+    }
+    .menu {
       display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
     }
-    .card {
-      background: #fff;
+    .menu a {
+      display: block;
+      background: white;
+      padding: 20px;
       border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: center;
+      border-radius: 8px;
       text-decoration: none;
-      color: #000;
-      transition: 0.2s;
+      color: #333;
+      font-weight: bold;
+      transition: all 0.2s;
     }
-    .card:hover {
-      transform: scale(1.03);
-      border-color: #ffcc00;
+    .menu a:hover {
+      background: #ffcc00;
+      color: #000;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Superhond – Dashboard</h1>
-  </header>
-
-  <nav>
-    <a href="/public/index.html">Dashboard</a>
-    <a href="/public/klantenportaal.html">Publiek</a>
-    <a href="/public/admin-login.html">Admin</a>
-  </nav>
-
+  <header>🐾 Superhond – Dashboard</header>
   <main>
-    <a class="card" href="/public/lessenbeheer.html">
-      <h2>Lessenbeheer</h2>
-      <p>Beheer alle lessen en sessies.</p>
-    </a>
-
-    <a class="card" href="/public/klanten-honden.html">
-      <h2>Klanten & Honden</h2>
-      <p>Bekijk en beheer baasjes en honden.</p>
-    </a>
-
-    <a class="card" href="/public/strippenkaarten.html">
-      <h2>Strippenkaarten</h2>
-      <p>Beheer credits en strippenkaarten.</p>
-    </a>
-
-    <a class="card" href="/public/admin-users.html">
-      <h2>Admin gebruikers</h2>
-      <p>Beheer beheerders en superadmins.</p>
-    </a>
+    <div class="menu">
+      <a href="/public/admin-users.html">👩‍💻 Admin gebruikers</a>
+      <a href="/public/customers.html">👥 Klanten & Honden</a>
+      <a href="/public/lessons.html">📅 Lessenbeheer</a>
+      <a href="/public/credits.html">🎟️ Strippenkaarten</a>
+      <a href="/public/requests.html">📩 Aanvragen</a>
+      <a href="/public/klantenportaal.html">🌐 Klantenportaal</a>
+    </div>
   </main>
 </body>
 </html>
