@@ -5,5 +5,12 @@
     "email": "klant@example.com",
     "phone": "0477123456",
     "requires_profile": false
+  },
+  {
+    "id": 2,
+    "name": "Nieuwe Klant",
+    "email": "klant2@example.com",
+    "phone": "0488123456",
+    "requires_profile": false
   }
 ]

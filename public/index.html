@@ -10,8 +10,8 @@
   <header class="topbar">
     <div class="brand">🐾 Superhond – <strong>Dashboard</strong></div>
     <div class="session">
-      <span class="badge">Ingelogd: <b>admin</b></span>
-      <button class="btn btn-ghost" onclick="alert('Logout volgt')">Logout</button>
+      <span class="badge">Welkom</span>
+      <button class="btn btn-ghost" data-logout>Logout</button>
     </div>
   </header>
 
@@ -38,28 +38,25 @@
       <section class="section section--public">
         <h2>Publiek <small>voor klanten – publiek toegankelijk</small></h2>
         <div class="tiles">
+          <a class="tile tile--public" href="customer-login.html">
+            <span class="tile-ico">👤</span>
+            Klant Login
+            <small>Log in met je e-mail.</small>
+          </a>
           <a class="tile tile--public" href="klantenportaal.html">
+            <span class="tile-ico">📒</span>
+            Klantenportaal
+            <small>Bekijk je lessen en inschrijvingen.</small>
+          </a>
+          <a class="tile tile--public" href="klantenportaal.html#beschikbaar">
             <span class="tile-ico">📝</span>
             Publieke inschrijving
-            <small>Schrijf in op klas/sessie (live beschikbaarheid).</small>
+            <small>Schrijf in op klas/sessie.</small>
           </a>
-
-          <a class="tile tile--public" href="#">
-            <span class="tile-ico">🎟️</span>
-            Onboarding na betaling
-            <small>Activeer toegang / QR-tickets.</small>
-          </a>
-
           <a class="tile tile--public" href="/api/health" target="_blank">
             <span class="tile-ico">🛠️</span>
             API test
             <small>Check backend status.</small>
-          </a>
-
-          <a class="tile tile--public" href="README.md" target="_blank">
-            <span class="tile-ico">📘</span>
-            Documentatie
-            <small>Overzicht Admin • Publiek • API.</small>
           </a>
         </div>
       </section>
@@ -72,35 +69,28 @@
             Lessenbeheer
             <small>Maak/beheer klassen en sessies.</small>
           </a>
-
           <a class="tile tile--admin" href="admin-users.html">
             <span class="tile-ico">👤</span>
             Admin gebruikers
             <small>Beheer admin-accounts.</small>
           </a>
-
-          <a class="tile tile--admin" href="klantenportaal.html">
-            <span class="tile-ico">🐶</span>
-            Klanten &amp; Honden
-            <small>Beheer baasjes en honden.</small>
+          <a class="tile tile--admin" href="email-importer.html">
+            <span class="tile-ico">✉️</span>
+            Email import test
+            <small>Plak e-mails en verwerk automatisch.</small>
           </a>
-
-          <a class="tile tile--admin" href="#">
-            <span class="tile-ico">🎫</span>
-            Strippenkaarten
-            <small>Beheer beurten/credits.</small>
-          </a>
-
-          <a class="tile tile--admin" href="#">
-            <span class="tile-ico">📨</span>
-            Aanvragen
-            <small>Memberships goedkeuren (na betaling).</small>
+          <a class="tile tile--admin" href="admin-login.html">
+            <span class="tile-ico">🔑</span>
+            Admin login
+            <small>Log in als beheerder.</small>
           </a>
         </div>
       </section>
     </main>
   </div>
 
+  <script src="/js/jwt-helper.js" defer></script>
+  <script src="/js/auth.js" defer></script>
   <script src="/js/dashboard.js" defer></script>
 </body>
 </html>
