@@ -1,0 +1,23 @@
+{
+  "contact": {
+    "id": "A1",
+    "email": "klant.allowed@example.com",
+    "first_name": "Anna",
+    "last_name": "De Vos",
+    "tags": [
+      "Betaling voldaan",
+      "Basisgroep"
+    ],
+    "fields": {
+      "hond": "Nala",
+      "ras": "Mechelse herder"
+    }
+  },
+  "automation": {
+    "id": "auto1",
+    "name": "Test Basisgroep"
+  },
+  "event": "tag_added",
+  "tag": "Basisgroep",
+  "created_at": "2025-09-08T18:20:00Z"
+}

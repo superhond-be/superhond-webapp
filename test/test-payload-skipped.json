@@ -1,0 +1,23 @@
+{
+  "contact": {
+    "id": "S1",
+    "email": "klant.skipped@example.com",
+    "first_name": "Bram",
+    "last_name": "Peeters",
+    "tags": [
+      "Betaling voldaan",
+      "Coachweekend Zeeland"
+    ],
+    "fields": {
+      "hond": "Rex",
+      "ras": "Labrador"
+    }
+  },
+  "automation": {
+    "id": "auto2",
+    "name": "Test Coachweekend"
+  },
+  "event": "tag_added",
+  "tag": "Coachweekend Zeeland",
+  "created_at": "2025-09-08T18:25:00Z"
+}
