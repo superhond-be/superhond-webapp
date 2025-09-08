@@ -1,7 +1,7 @@
 {
   "name": "superhond-mailblue-forwarder",
-  "version": "2.0.0",
-  "description": "Webhook forwarder voor MailBlue naar Superhond API (clean versie, alleen MailBlue).",
+  "version": "2.1.1",
+  "description": "MailBlue \u2192 Superhond forwarder (met welkomstpagina op /, tagfilter en betaald-check).",
   "main": "server/index.js",
   "type": "module",
   "scripts": {

@@ -1,27 +1,13 @@
-# Superhond – MailBlue Forwarder (Clean)
+# Superhond – MailBlue Forwarder (met welkomstpagina)
 
-Deze server ontvangt **MailBlue webhooks** en stuurt ze door naar de Superhond API.
-
-## Features
-- Endpoint: `POST /webhook`
-- Slaat elke payload op in `data/webhooks/`
-- Checkt op betaal-tags (standaard: "Betaling voldaan")
-- Alleen betaalde events worden doorgestuurd naar de Superhond API (als `REQUIRE_PAID=true`)
-- Forward met retries en queue als Superhond API tijdelijk niet bereikbaar is
-- Logging naar `data/forwarder.log`
+- `/` toont een korte status-tekst (geen 'Not found' meer)
+- `/health` geeft JSON status
+- `POST /webhook` ontvangt MailBlue webhooks
+- Filtert op `SUPERHOND_ALLOWED_TAGS` en controleert betaling via `PAID_TAGS` als `REQUIRE_PAID=true`
 
 ## Quick start
 ```bash
 npm install
-cp .env.example .env
+cp .env.example .env   # pas URL en tags aan
 npm run dev
 ```
-
-Health check: [http://localhost:3000/health](http://localhost:3000/health)
-
-## Config
-- `SUPERHOND_API_URL`: waar de payload heen moet
-- `SUPERHOND_API_KEY`: optioneel, Bearer token
-- `REQUIRE_PAID`: true/false
-- `PAID_TAGS`: komma-gescheiden lijst tags die betaling aanduiden
-- `QUEUE_INTERVAL_MS`: wachttijd voor de queue worker
