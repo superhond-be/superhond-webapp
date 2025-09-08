@@ -1,1 +1,12 @@
-{"users": []}
+{
+  "users": [
+    {
+      "id": "adm_1",
+      "name": "Sofie Thijs",
+      "email": "sofie@example.com",
+      "pass": "test123",
+      "role": "superadmin",
+      "createdAt": "2025-01-01T00:00:00.000Z"
+    }
+  ]
+}
