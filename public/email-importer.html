@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Import Test – Superhond</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🐾 Superhond – <strong>Email Import Test</strong></div>
+    <div class="session">
+      <a class="btn btn-ghost" href="index.html">Dashboard</a>
+    </div>
+  </header>
+
+  <main class="content" style="padding:1rem;">
+    <div class="card">
+      <h2>Plak hier de e-mailtekst</h2>
+      <textarea id="raw" class="input" rows="12" style="width:100%;" placeholder="Bijv. 
+Naam: Jan Jansen
+E-mail: jan@example.com
+Tel: +32 123 45 67
+Type: Puppy
+Thema: Socialisatie
+Locatie: Retie
+Datum: 12/09/2025
+Tijd: 18:30
+Les ID: 1"></textarea>
+      <div class="form-actions">
+        <button class="btn" id="btn-parse">Importeren</button>
+      </div>
+      <pre id="out" style="white-space:pre-wrap;background:#fafafa;border:1px solid #eee;padding:.6rem;border-radius:8px;"></pre>
+    </div>
+  </main>
+
+  <script>
+  document.getElementById('btn-parse').addEventListener('click', async () => {
+    const raw = document.getElementById('raw').value;
+    const out = document.getElementById('out');
+    out.textContent = 'Bezig met import...';
+    try{
+      const res = await fetch('/api/import/email', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ raw })
+      });
+      const data = await res.json();
+      out.textContent = JSON.stringify(data, null, 2);
+    }catch(e){
+      out.textContent = 'Fout: ' + e.message;
+    }
+  });
+  </script>
+</body>
+</html>
