@@ -1,59 +1,38 @@
-
-// Auth routes: register & login
 const express = require('express');
-const fs = require('fs/promises');
-const path = require('path');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { SECRET } = require('./auth-middleware');
-
+const storage = require('../server/storage');
 const router = express.Router();
-const DATA_FILE = path.join(__dirname, '..', 'server', 'data', 'users.json');
 
-async function readUsers(){
-  const raw = await fs.readFile(DATA_FILE, 'utf-8').catch(async () => {
-    const init = { users: [] };
-    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-    await fs.writeFile(DATA_FILE, JSON.stringify(init, null, 2), 'utf-8');
-    return JSON.stringify(init);
-  });
-  return JSON.parse(raw).users || [];
+const JWT_SECRET = process.env.JWT_SECRET || 'superhond-dev-secret';
+const TOKEN_TTL = '12h';
+
+function sign(payload){
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_TTL });
 }
 
-async function writeUsers(users){
-  await fs.writeFile(DATA_FILE, JSON.stringify({ users }, null, 2), 'utf-8');
-}
-
-function sign(user){
-  return jwt.sign({ id:user.id, email:user.email, role:user.role||'admin', name:user.name }, SECRET, { expiresIn: '7d' });
-}
-
-router.post('/register', async (req,res) => {
-  const { name, email, password } = req.body || {};
-  if(!name || !email || !password) return res.status(400).json({message:'Naam, e-mail en wachtwoord zijn verplicht'});
-  const users = await readUsers();
-  if(users.some(u => u.email.toLowerCase() === String(email).toLowerCase())){
-    return res.status(409).json({message:'E-mail bestaat al'});
-  }
-  const id = users.length ? Math.max(...users.map(u=>u.id||0))+1 : 1;
-  const passwordHash = await bcrypt.hash(String(password), 10);
-  const newUser = { id, name, email, passwordHash, role: users.length ? 'admin' : 'owner' }; // eerste user = owner
-  users.push(newUser);
-  await writeUsers(users);
-  const token = sign(newUser);
-  res.json({ token, user: { id:newUser.id, name:newUser.name, email:newUser.email, role:newUser.role } });
+router.post('/login', (req, res) => {
+  const { email, password } = req.body || {};
+  const admins = storage.read('admins', []);
+  const admin = admins.find(a => a.email === email && a.password === password);
+  if(!admin) return res.status(401).json({ error: 'Ongeldige inlog' });
+  const token = sign({ sub: `admin:${admin.id}`, role: 'admin', email: admin.email, name: admin.name });
+  res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email }, role: 'admin' });
 });
 
-router.post('/login', async (req,res) => {
-  const { email, password } = req.body || {};
-  if(!email || !password) return res.status(400).json({message:'E-mail en wachtwoord zijn verplicht'});
-  const users = await readUsers();
-  const user = users.find(u => u.email.toLowerCase() === String(email).toLowerCase());
-  if(!user) return res.status(401).json({message:'Onjuiste e-mail of wachtwoord'});
-  const ok = await bcrypt.compare(String(password), user.passwordHash);
-  if(!ok) return res.status(401).json({message:'Onjuiste e-mail of wachtwoord'});
-  const token = sign(user);
-  res.json({ token, user: { id:user.id, name:user.name, email:user.email, role:user.role } });
+// eenvoudige klant-login op e-mail (magic link simulatie)
+router.post('/login-customer', (req, res) => {
+  const { email } = req.body || {};
+  if(!email) return res.status(400).json({ error: 'email vereist' });
+  const customers = storage.read('customers', []);
+  let customer = customers.find(c => c.email && c.email.toLowerCase() === String(email).toLowerCase());
+  if(!customer){
+    const id = customers.length ? Math.max(...customers.map(x=>x.id)) + 1 : 1;
+    customer = { id, name: email.split('@')[0], email, requires_profile: true };
+    customers.push(customer);
+    storage.write('customers', customers);
+  }
+  const token = sign({ sub: `customer:${customer.id}`, role: 'customer', email: customer.email, customerId: customer.id });
+  res.json({ token, customer: { id: customer.id, name: customer.name, email: customer.email }, role: 'customer' });
 });
 
 module.exports = router;
