@@ -323,3 +323,42 @@ document.addEventListener('click', async (ev)=>{
     alert('Inschrijven mislukt: '+e.message);
   }
 });
+
+// Load bookings for current customer to toggle 'Inschrijven/Annuleren'
+(async()=>{
+  try{
+    const res = await fetch('/api/bookings');
+    window.__bookings = await res.json();
+  }catch(e){
+    window.__bookings = [];
+  }
+})();
+
+
+// Toggle booking on click based on current state text
+document.addEventListener('click', async (ev)=>{
+  const btn = ev.target.closest('.day-item button[data-lesson]');
+  if(!btn) return;
+  const lessonId = Number(btn.dataset.lesson);
+  const mine = (window.__bookings||[]).find(b=>b.lessonId===lessonId && b.klantId===1);
+  try{
+    if(mine){
+      const del = await fetch('/api/bookings/' + mine.id, { method:'DELETE' });
+      if(!del.ok && del.status!==204) throw new Error('HTTP '+del.status);
+      window.__bookings = (window.__bookings||[]).filter(b=>b.id!==mine.id);
+      btn.textContent = 'Inschrijven';
+    }else{
+      const res = await fetch('/api/bookings', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ klantId:1, lessonId })
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const created = await res.json();
+      window.__bookings = [...(window.__bookings||[]), created];
+      btn.textContent = 'Annuleren ❌';
+    }
+  }catch(e){
+    alert('Actie mislukt: ' + e.message);
+  }
+});

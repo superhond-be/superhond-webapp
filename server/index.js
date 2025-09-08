@@ -18,9 +18,13 @@ app.get('/api/health', (_req, res) => {
 const usersRouter = require('../routes/admin-users');
 const lessonsRouter = require('../routes/lessons');
 const bookingsRouter = require('../routes/bookings');
+const importRouter = require('../routes/import');
+const customersRouter = require('../routes/customers');
 app.use('/api/users', usersRouter);
 app.use('/api/lessons', lessonsRouter);
 app.use('/api/bookings', bookingsRouter);
+app.use('/api/import', importRouter);
+app.use('/api/customers', customersRouter);
 
 // Fallback to index.html for root
 app.get('/', (_req, res) => {

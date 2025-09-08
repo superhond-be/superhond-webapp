@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding na betaling – Superhond</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🐾 Superhond – <strong>Onboarding</strong></div>
+    <div class="session">
+      <a class="btn btn-ghost" href="index.html">Dashboard</a>
+    </div>
+  </header>
+
+  <main class="content" style="padding:1rem;">
+    <div class="card">
+      <h2>Rond je profiel af</h2>
+      <p class="muted">We hebben je betaling ontvangen via het externe systeem. Vul hieronder de ontbrekende gegevens aan om je les(sen) te activeren.</p>
+      <form class="form-grid" id="onb-form">
+        <input type="hidden" id="cust-id">
+        <label>Naam
+          <input type="text" id="name" required>
+        </label>
+        <label>E-mail
+          <input type="email" id="email" required>
+        </label>
+        <label>Telefoon
+          <input type="tel" id="phone" placeholder="+32 ..." required>
+        </label>
+        <label>Adres
+          <input type="text" id="address" placeholder="Straat, nr, gemeente" required>
+        </label>
+        <label>Naam hond
+          <input type="text" id="dogName" required>
+        </label>
+        <label>Ras
+          <input type="text" id="dogBreed">
+        </label>
+        <label>Geboortedatum hond
+          <input type="date" id="dogBirthdate">
+        </label>
+        <div class="form-actions">
+          <button class="btn" type="submit">Opslaan</button>
+          <a class="btn btn-ghost" href="klantenportaal.html">Naar klantenportaal</a>
+        </div>
+      </form>
+      <div id="onb-status" class="muted" style="margin-top:.6rem;"></div>
+    </div>
+  </main>
+
+  <script src="/js/onboarding.js" defer></script>
+</body>
+</html>

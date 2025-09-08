@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     table.innerHTML = myBookings.map(b=>{
       const l = lessons.find(x=>x.id===b.lessonId) || {};
-      return `<tr>
+      return `<tr>`
         <td>${l.datum||''}</td>
         <td>${l.tijd||''}</td>
         <td>${l.locatie||''}</td>
@@ -50,3 +50,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     table.innerHTML = '<tr><td colspan="6">Fout bij laden van inschrijvingen.</td></tr>';
   }
 })();
+
+// Annuleren knop
+document.addEventListener('click', async (ev)=>{
+  const btn = ev.target.closest('button[data-booking]');
+  if(!btn) return;
+  const id = Number(btn.dataset.booking);
+  if(!confirm('Inschrijving annuleren?')) return;
+  try{
+    const res = await fetch('/api/bookings/' + id, { method:'DELETE' });
+    if(!res.ok && res.status!==204) throw new Error('HTTP '+res.status);
+    // verwijder rij
+    const tr = btn.closest('tr'); if(tr) tr.remove();
+  }catch(e){
+    alert('Annuleren mislukt: ' + e.message);
+  }
+});
