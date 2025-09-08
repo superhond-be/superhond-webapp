@@ -10,7 +10,6 @@
   <header class="topbar">
     <div class="brand">🐾 Superhond – <strong>Klantenportaal</strong></div>
     <div class="session">
-      <span class="badge">Welkom, <b>Gast</b></span>
       <a class="btn btn-ghost" href="index.html">Dashboard</a>
     </div>
   </header>
@@ -20,97 +19,36 @@
       <div class="tabs">
         <button class="tab-btn active" data-tab="mijn-lessen">Mijn lessen</button>
         <button class="tab-btn" data-tab="beschikbaar">Beschikbare lessen</button>
-        <button class="tab-btn" data-tab="credits">Mijn credits</button>
         <button class="tab-btn" data-tab="profiel">Profiel</button>
       </div>
 
       <section class="tab-pane active" id="mijn-lessen">
         <h2>Mijn lessen</h2>
-        <p>Overzicht van jouw geplande sessies.</p>
         <table class="table">
           <thead>
             <tr>
-              <th>Datum</th>
-              <th>Tijd</th>
-              <th>Locatie</th>
-              <th>Les</th>
-              <th>Trainer</th>
-              <th>Status</th>
-              <th>Acties</th>
+              <th>Datum</th><th>Tijd</th><th>Locatie</th><th>Les</th><th>Trainer</th><th>Status</th><th>Acties</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>12/09/2025</td>
-              <td>18:30</td>
-              <td>Retie</td>
-              <td>Puppy – Socialisatie</td>
-              <td>Paul</td>
-              <td>Ingeschreven</td>
-            </tr>
+            <tr><td colspan="7">Laden…</td></tr>
           </tbody>
         </table>
       </section>
 
       <section class="tab-pane" id="beschikbaar">
         <h2>Beschikbare lessen</h2>
-        <p>Kies een les en schrijf in. (Demo)</p>
-        <div class="tiles">
-          <a class="tile tile--public" href="#">
-            Puppy – Wandelen in groep
-            <small>Za 10:00 • Mol • 1 credit</small>
-          </a>
-          <a class="tile tile--public" href="#">
-            Puber – Impulscontrole
-            <small>Di 19:00 • Retie • 1 credit</small>
-          </a>
-          <a class="tile tile--public" href="#">
-            Volwassen – Recall Pro
-            <small>Do 20:00 • Dessel • 1 credit</small>
-          </a>
-        </div>
-      </section>
-
-      <section class="tab-pane" id="credits">
-        <h2>Mijn credits</h2>
-        <div class="stat-cards">
-          <div class="stat"><div class="stat-num">7</div><div class="stat-label">Beschikbaar</div></div>
-          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Geboekt</div></div>
-          <div class="stat"><div class="stat-num">9</div><div class="stat-label">Totaal pakket</div></div>
-        </div>
-        <p class="muted">Credits worden pas afgetrokken na aanwezigheid (policy Superhond).</p>
+        <div class="tiles"></div>
       </section>
 
       <section class="tab-pane" id="profiel">
         <h2>Profiel</h2>
-        <form class="form-grid">
-          <label>Naam
-            <input type="text" placeholder="Voornaam Achternaam" value="Voorbeeld Klant">
-          </label>
-          <label>E-mail
-            <input type="email" placeholder="klant@example.com" value="klant@example.com">
-          </label>
-          <label>Telefoon
-            <input type="tel" placeholder="+32 ...">
-          </label>
-          <label>Naam hond
-            <input type="text" placeholder="Diva">
-          </label>
-          <label>Ras
-            <input type="text" placeholder="Dobermann">
-          </label>
-          <label>Geboortedatum hond
-            <input type="date">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
+        <p class="muted">Wordt later gekoppeld aan /api/customers.</p>
       </section>
     </div>
   </main>
 
   <script src="/js/dashboard.js" defer></script>
-<script src="/js/klantenportaal.js" defer></script>
+  <script src="/js/klantenportaal.js" defer></script>
 </body>
 </html>
