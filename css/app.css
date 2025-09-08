@@ -1,0 +1,9 @@
+:root{--brand:#ffcc00;--bg:#fafafa;--line:#ddd;}
+body{margin:0;font-family:sans-serif;background:var(--bg);}
+header{background:var(--brand);padding:14px;font-weight:700;display:flex;gap:10px;align-items:center;}
+header .back{text-decoration:none;color:#000;font-weight:600;}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px;margin:20px;}
+form label{display:block;margin-top:10px;}
+input,textarea,select,button{font:inherit;padding:8px;margin-top:4px;width:100%;}
+button{background:#ffb300;border:none;border-radius:6px;cursor:pointer;margin-top:12px;}
+pre{background:#111;color:#0f0;padding:10px;border-radius:6px;overflow:auto;}

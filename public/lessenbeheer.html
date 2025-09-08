@@ -1,13 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Lessenbeheer</title>
-  <link rel="stylesheet" href="css/app.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond – Lessenbeheer</title>
+  <link rel="stylesheet" href="/public/css/app.css" />
 </head>
 <body>
-  <h1>📚 Lessenbeheer</h1>
-  <p>Hier komt later de lessenadministratie.</p>
-  <script src="js/app.js"></script>
+  <header class="topbar">
+    <a class="brand" href="/public/index.html">Superhond</a>
+    <nav class="crumbs">
+      <a href="/public/index.html">Dashboard</a> › Lessenbeheer
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>📚 Lessenbeheer</h1>
+    <p>Deze pagina is voorbereid om later sessies/lessen te tonen en te beheren.</p>
+    <div class="card">
+      <p><em>Tip:</em> Zodra de API klaar is, kun je hier een overzicht laden.</p>
+      <pre id="debug">Nog geen data…</pre>
+    </div>
+  </main>
+
+  <script>
+    // Placeholder tot de echte API er is
+    document.getElementById('debug').textContent = JSON.stringify({ ok: true, items: [] }, null, 2);
+  </script>
 </body>
 </html>
