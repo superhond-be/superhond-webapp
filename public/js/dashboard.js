@@ -1,3 +1,3 @@
-
-// Dashboard interactions (placeholder)
-console.log('Dashboard loaded');
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Dashboard geladen (publiek blauw, admin rood)');
+});

@@ -1,47 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Superhond | Gebruikersbeheer</title>
-  <link rel="stylesheet" href="./css/app.css">
-  <script defer src="./js/common.js"></script>
-  <script src="./js/admin-users.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gebruikersbeheer - Superhond</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="container">
-      <div class="brand">🐾 Superhond.be <span class="muted">Admin portaal</span></div>
-      <nav class="topnav">
-        <a href="./index.html">Dashboard</a>
-        <a href="./admin-users.html">Gebruikers</a>
-        <a href="./lessenbeheer.html">Lessen</a>
-        <a href="./klantenportaal.html">Klantenportaal</a>
-        <a href="./admin-login.html" class="right">Login</a>
-      </nav>
-    </div>
+  <header>
+    <h1>Gebruikersbeheer</h1>
   </header>
-  <main class="container">
 
-<h1>Gebruikers</h1>
-<div class="card">
-  <div class="card-header">
-    <input id="userSearch" type="search" placeholder="Zoek op naam of e‑mail…">
-    <button id="newUserBtn" class="secondary">+ Nieuwe admin</button>
-  </div>
-  <table class="table" id="usersTable">
-    <thead>
-      <tr><th>Naam</th><th>E‑mail</th><th>Rol</th><th>Acties</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Demo Admin</td><td>admin@superhond.be</td><td>Owner</td><td><button class="link">Bewerk</button></td></tr>
-    </tbody>
-  </table>
-</div>
-
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Email</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jan Jansen</td>
+          <td>jan@example.com</td>
+          <td>Trainer</td>
+        </tr>
+        <tr>
+          <td>Piet Peeters</td>
+          <td>piet@example.com</td>
+          <td>Admin</td>
+        </tr>
+      </tbody>
+    </table>
   </main>
-  <footer class="footer">
-    <div class="container">© Superhond — Superhond.be</div>
-  </footer>
+
+  <script src="/js/dashboard.js" defer></script>
 </body>
 </html>

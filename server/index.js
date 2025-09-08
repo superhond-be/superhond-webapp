@@ -1,21 +1,34 @@
-
-// Express server with auth (JWT) and static hosting
 const express = require('express');
 const path = require('path');
+
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Serve static
+// Static files from /public
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Routes
-app.use('/api/auth', require('../routes/auth'));
-app.use('/api/admin-users', require('../routes/admin-users'));
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', app: 'superhond-webapp', time: new Date().toISOString() });
+});
 
-// Fallback: 404 for API not matched
-app.use('/api', (req,res)=> res.status(404).json({message:'Niet gevonden'}));
+// API routes
+const usersRouter = require('../routes/admin-users');
+app.use('/api/users', usersRouter);
 
-app.listen(PORT, () => console.log(`[superhond] Server running on http://localhost:${PORT}`));
+// Fallback to index.html for root
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+// 404 for API
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Superhond server running at http://localhost:${PORT}`);
+});

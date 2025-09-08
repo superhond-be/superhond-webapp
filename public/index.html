@@ -1,51 +1,75 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Superhond | Dashboard</title>
-  <link rel="stylesheet" href="./css/app.css">
-  <script defer src="./js/common.js"></script>
-  <script src="./js/dashboard.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superhond – Dashboard</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
   <header class="topbar">
-    <div class="container">
-      <div class="brand">🐾 Superhond.be <span class="muted">Admin portaal</span></div>
-      <nav class="topnav">
-        <a href="./index.html">Dashboard</a>
-        <a href="./admin-users.html">Gebruikers</a>
-        <a href="./lessenbeheer.html">Lessen</a>
-        <a href="./klantenportaal.html">Klantenportaal</a>
-        <a href="./admin-login.html" class="right">Login</a>
-      </nav>
+    <div class="brand">🐾 Superhond – <strong>Dashboard</strong></div>
+    <div class="session">
+      <span class="badge">Ingelogd: <b>admin</b></span>
+      <button class="btn btn-ghost" onclick="alert('Logout volgt')">Logout</button>
     </div>
   </header>
-  <main class="container">
 
-<h1>Dashboard</h1>
-<section class="tiles">
-  <a class="tile" href="./admin-users.html">
-    <span class="tile-title">Gebruikersbeheer</span>
-    <span class="tile-desc">Maak, bekijk en beheer admins</span>
-  </a>
-  <a class="tile" href="./lessenbeheer.html">
-    <span class="tile-title">Lessenbeheer</span>
-    <span class="tile-desc">Types, thema’s, locaties, trainers</span>
-  </a>
-  <a class="tile" href="./klantenportaal.html">
-    <span class="tile-title">Klantenportaal</span>
-    <span class="tile-desc">Overzicht klant/hond en boekingen</span>
-  </a>
-  <a class="tile" href="./admin-register.html">
-    <span class="tile-title">Nieuwe admin registreren</span>
-    <span class="tile-desc">Account aanmaken</span>
-  </a>
-</section>
+  <div class="layout">
+    <aside class="rail">
+      <div class="rail-title">Snel naar cursus</div>
+      <button class="btn" onclick="alert('Open inschrijving volgt')">Open inschrijving</button>
+    </aside>
 
-  </main>
-  <footer class="footer">
-    <div class="container">© Superhond — Superhond.be</div>
-  </footer>
+    <main class="content">
+      <section class="section section--public">
+        <h2>Publiek <small>voor klanten – publiek toegankelijk</small></h2>
+        <div class="tiles">
+          <a class="tile tile--public" href="#">Publieke inschrijving
+            <small>Schrijf in op markt/klas, toon (live) beschikbare sessies.</small>
+          </a>
+
+          <a class="tile tile--public" href="#">Onboarding na betaling
+            <small>Rond onboarding af met tokens / QR tickets…</small>
+          </a>
+
+          <a class="tile tile--public" href="#">API test
+            <small>Snelle testknop om de backend te checken.</small>
+          </a>
+
+          <a class="tile tile--public" href="#">Documentatie
+            <small>Overzicht Admin + Publiek + API cheatsheet.</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="section section--admin">
+        <h2>Admin <small>Alleen voor administratie – inloggen vereist</small></h2>
+        <div class="tiles">
+          <a class="tile tile--admin" href="lessenbeheer.html">Lessenbeheer
+            <small>Maak/beheer klassen en sessies.</small>
+          </a>
+
+          <a class="tile tile--admin" href="admin-users.html">Admin gebruikers
+            <small>Beheer admin-accounts (toevoegen/verwijderen).</small>
+          </a>
+
+          <a class="tile tile--admin" href="klantenportaal.html">Klanten &amp; Honden
+            <small>Beheer baasjes en hun honden.</small>
+          </a>
+
+          <a class="tile tile--admin" href="#">Strippenkaarten
+            <small>Uitgifte en beheer van beurten/credits.</small>
+          </a>
+
+          <a class="tile tile--admin" href="#">Aanvragen
+            <small>Memberships goedkeuren/weigeren (na betaling).</small>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js" defer></script>
 </body>
 </html>
