@@ -1,7 +1,7 @@
 {
-  "name": "superhond-forwarder-ultrasafe",
-  "version": "0.2.0",
-  "description": "Ultra-safe Superhond forwarder with minimal middleware to avoid Internal error",
+  "name": "superhond-forwarder-selftest",
+  "version": "0.5.0",
+  "description": "Ultra-safe forwarder with GET /selftest to test forwarding from the browser",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js"
