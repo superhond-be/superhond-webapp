@@ -1,28 +1,43 @@
-// Mapper voor Superhond API endpoints
-// Ontvangt payloads van forwarder en zet ze om naar interne data-structuren
-
+// services/mapper.js
 /**
- * Map een inkomende payload naar de juiste lesgroep (Puppy, Puber, Basis)
- * @param {Object} payload - inkomende JSON payload
- * @returns {Object} - gemapte data
+ * Twee identieke les-types met verschillende namen:
+ *  - "Puppy Pack Online"  -> canonical: "puppy_pack", variant: "online"
+ *  - "Puppy Pack Connect" -> canonical: "puppy_pack", variant: "connect"
+ * Beide worden behandeld als 1 en hetzelfde type in je backend.
  */
-function mapPayload(payload) {
-  if (!payload) return {};
 
-  const topic = (payload.topic || payload.group || "").toLowerCase();
-  let group = "Onbekend";
+const ALIASES = [
+  { re: /puppy\s*pack\s*online/i,  canonical: "puppy_pack", variant: "online",  group: "Puppy" },
+  { re: /puppy\s*pack\s*connect/i, canonical: "puppy_pack", variant: "connect", group: "Puppy" },
+];
 
-  if (topic.includes("puppy")) group = "Puppy";
-  else if (topic.includes("puber")) group = "Puber";
-  else if (topic.includes("basis")) group = "Basis";
+function resolveAlias(name) {
+  const s = String(name || "");
+  for (const a of ALIASES) if (a.re.test(s)) return a;
+  // fallback: als het woord "puppy" voorkomt, behandel als puppy_pack zonder variant
+  if (/\bpuppy\b/i.test(s)) return { canonical: "puppy_pack", variant: "unspecified", group: "Puppy" };
+  return { canonical: "unknown", variant: "unspecified", group: "Onbekend" };
+}
+
+function mapPayload(payload = {}) {
+  const rawName = payload.productName || payload.courseName || payload.topic || payload.title || "";
+  const alias   = resolveAlias(rawName);
 
   return {
-    naam: payload.name || payload.fullName || "",
+    // basis
+    naam:  payload.name || payload.fullName || "",
     email: payload.email || "",
     telefoon: payload.phone || "",
     hond: payload.dog || "",
     geboortedatum_hond: payload.dogBirth || "",
-    groep: group,
+
+    // normalisatie
+    group: alias.group,                 // "Puppy"
+    canonical: alias.canonical,         // "puppy_pack"
+    variant: alias.variant,             // "online" | "connect" | "unspecified"
+
+    // trace
+    rawProductName: rawName,
     bron: payload.source || "onbekend",
     raw: payload
   };
