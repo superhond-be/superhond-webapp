@@ -155,3 +155,25 @@ body{
   content:''; position:absolute; bottom:3px; left:50%; width:6px; height:6px;
   background:var(--public); border-radius:50%; transform:translateX(-50%);
 }
+
+#day-panel{margin-top:.5rem; font-size:.9rem}
+.daypanel{border-top:1px solid var(--border); padding-top:.5rem}
+.daypanel h4{margin:.2rem 0;font-size:1rem}
+.daylesson{background:#fff;border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem;margin-bottom:.3rem}
+.daylesson strong{color:#111}
+
+/* --- Agenda dagoverzicht --- */
+.day-panel{margin-top:.6rem; border:1px solid var(--border); border-radius:10px; background:#fff; padding:.6rem}
+.day-panel h4{margin:.2rem 0 .6rem; font-size:1rem}
+.day-list{display:flex; flex-direction:column; gap:.35rem}
+.day-item{display:flex; align-items:center; justify-content:space-between; gap:.6rem; border:1px solid var(--border); border-radius:8px; padding:.45rem .6rem}
+.day-meta{display:flex; gap:.6rem; align-items:center; color:#111}
+.badge-type{padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); font-size:.8rem}
+.badge-time{font-variant-numeric: tabular-nums; color:var(--muted)}
+.badge-loc{color:var(--muted)}
+.btn-mini{padding:.35rem .55rem; font-size:.85rem}
+
+/* type kleuren (optioneel zacht) */
+.type-Puppy{background:#e0f2fe;border-color:#badefd}
+.type-Puber{background:#fff7ed;border-color:#fde1c4}
+.type-Volwassen{background:#e8f5e9;border-color:#cfead2}
