@@ -1,67 +1,31 @@
-// Eenvoudige mapper van MailBlue/ActiveCampaign payload naar ons domeinmodel.
-// Past aan met eigen custom field sleutels of pipelines.
+// Mapper voor Superhond API endpoints
+// Ontvangt payloads van forwarder en zet ze om naar interne data-structuren
 
-const CFG = {
-  // Pas deze sleutel-namen aan op basis van je MailBlue custom fields
-  fields: {
-    phone: ["phone", "tel", "gsm", "phone_number"],
-    dogName: ["dog_name", "hond", "hondnaam"],
-    dogBreed: ["dog_breed", "ras"],
-    dogBirth: ["dog_birth", "geboortedatum_hond"],
-    credits: ["credits", "aantal_credits"],
-    lessonType: ["lesson_type", "les_type", "lestype"],
-  }
-};
+/**
+ * Map een inkomende payload naar de juiste lesgroep (Puppy, Puber, Basis)
+ * @param {Object} payload - inkomende JSON payload
+ * @returns {Object} - gemapte data
+ */
+function mapPayload(payload) {
+  if (!payload) return {};
 
-function pluck(any, keys) {
-  if (!any || typeof any !== "object") return undefined;
-  for (const k of keys) {
-    if (any[k] != null) return any[k];
-    // probeer nested fields
-    if (any.fields && any.fields[k] != null) return any.fields[k];
-    if (any.custom_fields && any.custom_fields[k] != null) return any.custom_fields[k];
-  }
-  return undefined;
-}
+  const topic = (payload.topic || payload.group || "").toLowerCase();
+  let group = "Onbekend";
 
-export function mapMailblueToDomain(payload) {
-  // Vaak zit contact info op payload.contact of direct op payload
-  const contact = payload.contact || payload || {};
-  const email = (contact.email || "").trim();
-  const firstName = contact.first_name || contact.firstname || contact.voornaam || "";
-  const lastName = contact.last_name || contact.lastname || contact.achternaam || "";
-  const phone = pluck(contact, CFG.fields.phone) || "";
+  if (topic.includes("puppy")) group = "Puppy";
+  else if (topic.includes("puber")) group = "Puber";
+  else if (topic.includes("basis")) group = "Basis";
 
-  const dogName = pluck(payload, CFG.fields.dogName);
-  const dogBreed = pluck(payload, CFG.fields.dogBreed);
-  const dogBirth = pluck(payload, CFG.fields.dogBirth);
-  const credits = Number(pluck(payload, CFG.fields.credits) || 0);
-  const lessonType = pluck(payload, CFG.fields.lessonType) || null;
-
-  const domain = {
-    customer: {
-      email,
-      firstName,
-      lastName,
-      phone
-    }
+  return {
+    naam: payload.name || payload.fullName || "",
+    email: payload.email || "",
+    telefoon: payload.phone || "",
+    hond: payload.dog || "",
+    geboortedatum_hond: payload.dogBirth || "",
+    groep: group,
+    bron: payload.source || "onbekend",
+    raw: payload
   };
-
-  if (dogName) {
-    domain.dog = {
-      name: String(dogName),
-      breed: dogBreed || null,
-      birthDate: dogBirth || null
-    };
-  }
-
-  if (credits && credits > 0) {
-    domain.credit = {
-      amount: credits,
-      reason: lessonType ? `Aankoop credits voor ${lessonType}` : "Aankoop credits",
-      source: "mailblue"
-    };
-  }
-
-  return domain;
 }
+
+module.exports = { mapPayload };

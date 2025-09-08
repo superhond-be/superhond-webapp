@@ -1,31 +1,47 @@
-# Superhond Forwarder Testpack
+# Superhond Endpoint Mapper
 
-Dit pakket bevat een eenvoudig script om je forwarder op Render te testen.
-
-## Inhoud
-- `test-forwarder.sh` — Bash script met 3 tests + health check
+Dit pakket bevat `services/mapper.js`, een eenvoudige mapper die inkomende payloads van de forwarder omzet naar een gestandaardiseerd formaat voor je Superhond API.
 
 ## Gebruik
-1. Pas bovenaan in `test-forwarder.sh` de variabelen aan:
-   - `BASE_URL` = jouw forwarder URL op Render (bijv. https://superhond-forwarder.onrender.com)
-   - `SECRET` = dezelfde waarde als `SH_SHARED_SECRET` die je in Render hebt ingesteld
+1. Plaats `services/mapper.js` in je bestaande Superhond API project (bijv. in de `services/` map).
+2. In je endpoint code (`routes/...`), importeer de mapper:
 
-2. Maak het script uitvoerbaar (eenmalig):
-   ```bash
-   chmod +x test-forwarder.sh
-   ```
+```js
+const { mapPayload } = require('../services/mapper');
 
-3. Voer het script uit:
-   ```bash
-   ./test-forwarder.sh
-   ```
+app.post('/ingest', (req, res) => {
+  const mapped = mapPayload(req.body);
+  // Doe hier iets met de gemapte data, bijvoorbeeld opslaan in DB
+  console.log("Ontvangen en gemapt:", mapped);
+  res.json({ ok: true, data: mapped });
+});
+```
 
-## Output
-- Test 1: Toegelaten payload → forwarded (ok:true, forwarded:true)
-- Test 2: Topic niet toegestaan → gefilterd (ok:true, forwarded:false)
-- Test 3: Fout shared secret → geweigerd (ok:false, error:"Bad shared secret")
-- Health check → ok:true
+## Output voorbeeld
+Inkomende payload:
+```json
+{
+  "email": "jan@example.com",
+  "name": "Jan",
+  "dog": "Bobby",
+  "topic": "Puppy"
+}
+```
 
-## Vereisten
-- `curl`
-- `jq` (voor nette JSON output)
+Gemapte output:
+```json
+{
+  "naam": "Jan",
+  "email": "jan@example.com",
+  "telefoon": "",
+  "hond": "Bobby",
+  "geboortedatum_hond": "",
+  "groep": "Puppy",
+  "bron": "onbekend",
+  "raw": { ...originele payload... }
+}
+```
+
+## Opmerking
+- Je kan de mapping zelf uitbreiden of aanpassen aan je database-schema.
+- `groep` wordt automatisch gekozen op basis van het topic (Puppy, Puber, Basis).
