@@ -1,28 +1,16 @@
 {
   "name": "superhond-webapp",
   "version": "1.0.0",
-  "description": "Superhond webapplicatie met dashboard, admin en klantenportaal",
+  "description": "Superhond webapp (public + API)",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "nodemon server/index.js",
-    "postinstall": "echo 'Postinstall running...'"
-  },
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-session": "^1.17.3",
-    "uuid": "^9.0.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
+    "start": "node server/index.js"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=18"
   },
-  "author": "Superhond",
-  "license": "MIT"
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.17.3"
+  }
 }
