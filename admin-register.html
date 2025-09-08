@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Register</title>
+  <link rel="stylesheet" href="/public/css/app.css" />
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div style="font-weight:800">Superhond Dashboard</div>
+    <div class="small">•</div>
+    <a class="link" href="/public/index.html">Dashboard</a>
+    <a class="link" href="/public/admin-login.html">Admin Login</a>
+    <a class="link" href="/public/admin-register.html">Admin Register</a>
+    <a class="link" href="/public/admin-users.html">Admin Users</a>
+  </div>
+</header>
+<main>
+
+  <div class="card" style="max-width:620px">
+    <h2>Nieuwe admin</h2>
+    <form id="regForm">
+      <label>Naam</label>
+      <input id="name" type="text" required />
+      <label>E-mail</label>
+      <input id="email" type="email" required />
+      <label>Wachtwoord</label>
+      <input id="pass" type="password" required />
+      <label>Rol</label>
+      <select id="role">
+        <option value="admin">admin</option>
+        <option value="superadmin">superadmin</option>
+      </select>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button type="submit">Toevoegen</button>
+        <a class="link" href="/public/admin-users.html">Overzicht</a>
+      </div>
+      <div id="out" class="small" style="margin-top:8px"></div>
+    </form>
+  </div>
+
+</main>
+<footer>Made with ❤️ for Superhond</footer>
+
+<script src="/public/js/admin-register.js"></script>
+</body>
+</html>

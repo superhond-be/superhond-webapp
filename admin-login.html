@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard</title>
+  <title>Admin Login</title>
   <link rel="stylesheet" href="/public/css/app.css" />
 </head>
 <body>
@@ -20,18 +20,24 @@
 </header>
 <main>
 
-  <div class="card">
-    <h2>Admin status</h2>
-    <p class="small">Bekijk hoeveel admins geregistreerd zijn en of de SETUP_TOKEN aanwezig is.</p>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button id="check" style="width:auto">Check status</button>
-      <div id="out" class="small">Klik op <kbd>Check status</kbd></div>
-    </div>
+  <div class="card" style="max-width:520px">
+    <h2>Admin login</h2>
+    <form id="loginForm">
+      <label>E-mail</label>
+      <input id="user" type="email" required />
+      <label>Wachtwoord</label>
+      <input id="pass" type="password" required />
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button type="submit">Login</button>
+        <a class="link" href="/public/admin-register.html">Nog geen account?</a>
+      </div>
+      <div id="err" class="small err" style="margin-top:8px"></div>
+    </form>
   </div>
 
 </main>
 <footer>Made with ❤️ for Superhond</footer>
 
-<script src="/public/js/dashboard.js"></script>
+<script src="/public/js/admin-login.js"></script>
 </body>
 </html>
