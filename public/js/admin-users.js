@@ -1,27 +1,41 @@
-
-// Load users from API using auth token + client-side filter
-document.addEventListener('DOMContentLoaded', () => {
-  requireAuth();
-  const input = document.getElementById('userSearch');
-  const tbody = document.querySelector('#usersTable tbody');
-  async function loadUsers(){
-    try{
-      const res = await fetch('/api/admin-users', { headers: { ...authHeaders() } });
-      if(!res.ok){ throw new Error('Kon gebruikers niet laden'); }
-      const users = await res.json();
-      tbody.innerHTML = users.map(u => 
-        `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.role||''}</td><td><button class="link">Bewerk</button></td></tr>`
-      ).join('');
-    }catch(e){
-      tbody.innerHTML = `<tr><td colspan="4">Fout: ${e.message}</td></tr>`;
+// Admin Users page logic
+document.addEventListener('DOMContentLoaded', async () => {
+  const tableBody = document.querySelector('#users-table tbody');
+  async function loadUsers() {
+    try {
+      const res = await fetch('/api/users');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      tableBody.innerHTML = data.map(u => `<tr>
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.role || ''}</td>
+      </tr>`).join('');
+    } catch (e) {
+      tableBody.innerHTML = `<tr><td colspan="4">Kon niet laden: ${e.message}. Staat de server aan?</td></tr>`;
     }
   }
-  loadUsers();
-  input?.addEventListener('input', () => {
-    const q = input.value.toLowerCase();
-    tbody.querySelectorAll('tr').forEach(r => {
-      const text = r.innerText.toLowerCase();
-      r.style.display = text.includes(q) ? '' : 'none';
+  await loadUsers();
+
+  const form = document.getElementById('add-user-form');
+  if (form) {
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const formData = new FormData(form);
+      const body = Object.fromEntries(formData.entries());
+      try {
+        const res = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        form.reset();
+        await loadUsers();
+      } catch (e) {
+        alert('Toevoegen mislukt: ' + e.message);
+      }
     });
-  });
+  }
 });
