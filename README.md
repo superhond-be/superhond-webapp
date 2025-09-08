@@ -1,41 +1,40 @@
-# Superhond – MailBlue Webhook → Directe koppeling
+# Superhond – Voorbeeld API endpoint
 
-Deze versie stuurt elke ontvangen webhook **onmiddellijk** door naar jouw
-**Superhond API** en bevat:
+Dit is een **voorbeeld** van het endpoint dat de forwarder aanroept:
+- Route: `POST /external/mailblue`
+- Ontvangt body van de forwarder: `{ source, receivedAt, storedFile, payload }`
+- Slaat de ruwe payload op in `data/raw/`
+- Map naar domein: **klant**, optioneel **hond**, optioneel **credits**
+- Upsert klant/hond en voegt credits toe in `data/db/*.json`
 
-- Exponentiële **retry** (tot 5x direct), logging in `data/forwarder.log`
-- **Persistente queue** in `data/queue/` als doorsturen tijdelijk faalt
-- Automatische **background worker** die queued items herprobeert
-- Health endpoint (`/health`) en eenvoudige HMAC‑check (optioneel)
-
-## Configuratie
-Vul `.env` in op basis van `.env.example`:
-- `SUPERHOND_API_URL` → jouw endpoint dat de payload verwacht (POST JSON)
-- `SUPERHOND_API_KEY` → optioneel, wordt als `Authorization: Bearer <key>` meegestuurd
-- `WEBHOOK_SECRET` → optioneel, HMAC‑check voor inkomende webhooks
-
-## Start
+## Snel starten
 ```bash
 npm install
+cp .env.example .env
 npm run dev   # of: npm start
 ```
 
-## Testen
-1) Health check: `http://localhost:3000/health`  
-2) Simuleer een event:
-```bash
-curl -X POST http://localhost:3000/webhook     -H "Content-Type: application/json"     -d '{"type":"subscribe","contact":{"email":"demo@superhond.be","first_name":"Demo"}}'
-```
-- Je ziet logs in `data/forwarder.log` en, bij falen, JSON-bestanden in `data/queue/`.
+Health: `http://localhost:4000/health`
 
-## Superhond API contract (voorbeeld)
-Het forward‑body formaat is:
-```json
-{
-  "source": "mailblue",
-  "receivedAt": "2025-09-08T12:00:00.000Z",
-  "storedFile": "data/webhooks/2025-09-08T12-00-00-000Z.json",
-  "payload": { ...originele MailBlue data... }
-}
+## Handmatige test (zonder forwarder)
+```bash
+curl -X POST http://localhost:4000/external/mailblue     -H "Content-Type: application/json"     -d '{
+    "source":"mailblue",
+    "receivedAt":"2025-09-08T12:00:00.000Z",
+    "payload": {
+      "contact": { "email": "demo@superhond.be", "first_name": "Demo", "last_name": "Klant", "phone": "0485 12 34 56" },
+      "fields": { "hond": "Bobby", "ras": "Border Collie", "aantal_credits": 9, "lestype": "Puppy" }
+    }
+  }'
 ```
-Pas je backend aan om dit te verwerken (b.v. contact aanmaken, credits toewijzen).
+→ Resultaat bevat aangemaakte of geüpdatete klant/hond en eventuele credits.
+
+## Data-bestanden
+- `data/db/customers.json`
+- `data/db/dogs.json`
+- `data/db/credits.json`
+- `data/raw/*.json` (ruwe inkomende payloads)
+
+## Aanpassen van mapping
+In `services/mapper.js` kan je de sleutel-namen van je MailBlue custom fields aanpassen
+(bv. `hond`, `ras`, `aantal_credits`, `lestype`, ...).
