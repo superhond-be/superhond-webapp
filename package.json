@@ -1,7 +1,7 @@
 {
-  "name": "superhond-mailblue-webhook",
-  "version": "1.0.0",
-  "description": "Webhook listener voor MailBlue/ActiveCampaign \u2192 Superhond registratiesysteem",
+  "name": "superhond-mailblue-webhook-forward",
+  "version": "1.1.0",
+  "description": "Webhook voor MailBlue/ActiveCampaign die payloads direct doorstuurt naar Superhond API met retry & logging.",
   "main": "server/index.js",
   "type": "module",
   "scripts": {
@@ -9,10 +9,11 @@
     "dev": "node --watch server/index.js"
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "morgan": "^1.10.0",
+    "fs-extra": "^11.2.0",
     "helmet": "^7.1.0",
-    "fs-extra": "^11.2.0"
+    "morgan": "^1.10.0"
   }
 }
