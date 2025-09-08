@@ -304,3 +304,22 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     window.__attachDayPanel = renderPanel;
   }
 })();
+
+// --- Booking inschrijven knop ---
+document.addEventListener('click', async (ev)=>{
+  const btn = ev.target.closest('.day-item button[data-lesson]');
+  if(!btn) return;
+  const lessonId = btn.dataset.lesson;
+  try{
+    const res = await fetch('/api/bookings', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ klantId:1, lessonId })
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    btn.textContent='Ingeschreven ✅';
+    btn.disabled=true;
+  }catch(e){
+    alert('Inschrijven mislukt: '+e.message);
+  }
+});
