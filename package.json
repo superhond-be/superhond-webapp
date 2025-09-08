@@ -1,19 +1,22 @@
 {
-  "name": "superhond-mailblue-forwarder",
-  "version": "2.2.0",
-  "description": "MailBlue \u2192 Superhond forwarder (welkomstpagina, tagfilter, betaald-check, uitgebreide logging).",
+  "name": "superhond-forwarder",
+  "version": "1.0.1",
+  "description": "HTTP forwarder with welcome page, logging, and payload filters for Superhond",
   "main": "server/index.js",
-  "type": "module",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "dev": "node server/index.js"
   },
   "dependencies": {
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "fs-extra": "^11.2.0",
+    "morgan": "^1.10.0",
     "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "rate-limiter-flexible": "^5.0.3",
+    "express-async-errors": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
