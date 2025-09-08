@@ -1,1 +1,1 @@
-console.log("Superhond script geladen.");
+// script.js placeholder
