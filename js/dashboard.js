@@ -1,0 +1,1 @@
+document.getElementById('check')?.addEventListener('click',async()=>{let out=document.getElementById('out');out.textContent='Laden...';try{let r=await fetch('/api/admin/users/status');let j=await r.json();out.textContent=JSON.stringify(j,null,2);}catch(e){out.textContent='Fout:'+e;}});
