@@ -1,0 +1,1 @@
+console.log('Superhond public JS geladen.');

@@ -1,13 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="css/app.css">
-</head>
+<head><meta charset="utf-8"><title>Superhond – Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="/public/css/app.css" rel="stylesheet"></head>
 <body>
-  <h1>📊 Dashboard</h1>
-  <p>Statusoverzicht en grafieken komen hier.</p>
-  <script src="js/dashboard.js"></script>
-</body>
-</html>
+<header><div class="brand">Superhond – Dashboard</div></header>
+<section class="card"><h2>Admin status</h2>
+<p>Bekijk hoeveel admins geregistreerd zijn.</p>
+<button id="check">Check status</button>
+<pre id="out">{ "info": "Klik op \"Check\"." }</pre></section>
+<script>
+document.getElementById('check').addEventListener('click', async () => {
+  const r = await fetch('/api/admin/status');
+  const j = await r.json();
+  document.getElementById('out').textContent = JSON.stringify(j, null, 2);
+});
+</script>
+</body></html>

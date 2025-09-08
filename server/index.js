@@ -1,31 +1,30 @@
-// server/index.js
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const adminUsers = require('../routes/admin-users');
 
 const app = express();
-
-// simpele security hardening
 app.disable('x-powered-by');
-
-// body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// sessions (MemoryStore volstaat hier op Render free tier)
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret',
-  resave: false,
+  secret: process.env.SESSION_SECRET || 'dev-secret-superhond',
   saveUninitialized: true,
+  resave: false,
   cookie: { sameSite: 'lax' }
 }));
 
-// API-routes
-app.use('/api/admin/users', require('./routes/admin-users'));
+app.use('/public', express.static(path.join(__dirname, '..', 'public')));
+app.use('/api/admin', adminUsers);
 
-// statische site (public/)
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 
-// start
+app.get('/healthz', (_req, res) => res.json({ ok: true }));
+
 const port = process.env.PORT || 10000;
-app.listen(port, () => console.log(`Superhond server luistert op ${port}`));
+app.listen(port, () => {
+  console.log(`Superhond server running on :${port}`);
+});
