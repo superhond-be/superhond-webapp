@@ -17,74 +17,93 @@
   <main class="content" style="padding:1rem;">
     <div class="card">
       <div class="tabs">
-        <button class="tab-btn active" data-tab="types">Les Type</button>
+        <button class="tab-btn active" data-tab="sessies">Sessies</button>
+        <button class="tab-btn" data-tab="types">Les Type</button>
         <button class="tab-btn" data-tab="thema">Les Thema</button>
         <button class="tab-btn" data-tab="locatie">Les Locatie</button>
         <button class="tab-btn" data-tab="trainers">Les Trainers</button>
       </div>
 
-      <section class="tab-pane active" id="types">
-        <h2>Les Type</h2>
-        <form class="form-grid">
-          <label>Naam les type
-            <input type="text" placeholder="Puppy / Puber / Volwassen">
+      <section class="tab-pane active" id="sessies">
+        <h2>Overzicht sessies</h2>
+        <div class="table-tools">
+          <input id="filter-locatie" class="input" placeholder="Filter op locatie…">
+          <input id="filter-type" class="input" placeholder="Filter op type…">
+          <button id="btn-refresh" class="btn">Vernieuwen</button>
+        </div>
+        <table class="table" id="lessons-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Datum</th>
+              <th>Tijd</th>
+              <th>Type</th>
+              <th>Thema</th>
+              <th>Locatie</th>
+              <th>Trainer</th>
+              <th>Credits</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="9">Laden…</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Nieuwe / Wijzig sessie</h3>
+        <form class="form-grid" id="lesson-form">
+          <input type="hidden" name="id" id="lf-id">
+          <label>Type
+            <input type="text" name="type" id="lf-type" placeholder="Puppy / Puber / Volwassen" required>
           </label>
-          <label>Beschrijving
-            <input type="text" placeholder="Korte uitleg">
+          <label>Thema
+            <input type="text" name="thema" id="lf-thema" placeholder="Socialisatie / Recall" required>
+          </label>
+          <label>Locatie
+            <input type="text" name="locatie" id="lf-locatie" placeholder="Retie / Mol / Dessel" required>
+          </label>
+          <label>Trainer
+            <input type="text" name="trainer" id="lf-trainer" placeholder="Paul / Nancy" required>
+          </label>
+          <label>Datum
+            <input type="date" name="datum" id="lf-datum">
+          </label>
+          <label>Tijd
+            <input type="time" name="tijd" id="lf-tijd">
+          </label>
+          <label>Credits
+            <input type="number" name="credits" id="lf-credits" min="1" value="1">
           </label>
           <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
+            <button class="btn" type="submit" id="btn-save">Opslaan</button>
+            <button class="btn btn-ghost" type="button" id="btn-reset">Reset</button>
           </div>
         </form>
+      </section>
+
+      <section class="tab-pane" id="types">
+        <h2>Les Type</h2>
+        <p class="muted">Beheer van types volgt later (structuur staat klaar).</p>
       </section>
 
       <section class="tab-pane" id="thema">
         <h2>Les Thema</h2>
-        <form class="form-grid">
-          <label>Thema
-            <input type="text" placeholder="Socialisatie / Recall / Impulscontrole">
-          </label>
-          <label>Beschrijving
-            <input type="text" placeholder="Korte omschrijving">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
+        <p class="muted">Beheer van thema's volgt later.</p>
       </section>
 
       <section class="tab-pane" id="locatie">
         <h2>Les Locatie</h2>
-        <form class="form-grid">
-          <label>Locatie
-            <input type="text" placeholder="Retie / Mol / Dessel">
-          </label>
-          <label>Adres
-            <input type="text" placeholder="Straat, nr, gemeente">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
+        <p class="muted">Beheer van locaties volgt later.</p>
       </section>
 
       <section class="tab-pane" id="trainers">
         <h2>Les Trainers</h2>
-        <form class="form-grid">
-          <label>Naam trainer
-            <input type="text" placeholder="Paul Thijs">
-          </label>
-          <label>E-mail
-            <input type="email" placeholder="trainer@example.com">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
+        <p class="muted">Beheer van trainers volgt later.</p>
       </section>
     </div>
   </main>
 
   <script src="/js/dashboard.js" defer></script>
+  <script src="/js/lessenbeheer.js" defer></script>
 </body>
 </html>
