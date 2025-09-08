@@ -20,7 +20,7 @@ app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-// ✅ Vriendelijke rootpagina
+// Welkomstpagina
 app.get("/", (req, res) => {
   res.type("text/plain").send(
     "✅ Superhond Forwarder draait!\n" +
@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
   );
 });
 
-// Optioneel: GET op /webhook netjes afvangen
+// Hint voor GET /webhook
 app.get("/webhook", (req, res) => {
   res.status(405).json({ error: "Use POST for /webhook" });
 });

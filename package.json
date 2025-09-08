@@ -1,7 +1,7 @@
 {
   "name": "superhond-mailblue-forwarder",
-  "version": "2.1.1",
-  "description": "MailBlue \u2192 Superhond forwarder (met welkomstpagina op /, tagfilter en betaald-check).",
+  "version": "2.2.0",
+  "description": "MailBlue \u2192 Superhond forwarder (welkomstpagina, tagfilter, betaald-check, uitgebreide logging).",
   "main": "server/index.js",
   "type": "module",
   "scripts": {
