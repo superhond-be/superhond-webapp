@@ -1,54 +1,33 @@
 <!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond Forwarder</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 1.25rem; max-width: 800px; }
-    h1 { margin-top: 0; }
-    code, pre { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: .5rem; display: block; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .badge { display: inline-block; padding: .25rem .5rem; border-radius: 999px; border: 1px solid #ddd; font-size: .8rem; }
-  </style>
-</head>
+<html lang="nl"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Superhond Forwarder (Debug)</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:2rem}
+.card{border:1px solid #ddd;border-radius:12px;padding:1.25rem;max-width:900px}
+h1{margin-top:0}code,pre{background:#fafafa;border:1px solid #eee;border-radius:8px;padding:.5rem;display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.badge{display:inline-block;padding:.25rem .5rem;border-radius:999px;border:1px solid #ddd;font-size:.8rem}
+.muted{color:#888}
+</style></head>
 <body>
-  <div class="card">
-    <h1>🐾 Superhond Forwarder</h1>
-    <p>Welkom! Deze service ontvangt webhooks, filtert payloads en stuurt ze door naar je interne Superhond API.</p>
-    <div class="grid">
-      <div>
-        <h3>Status</h3>
-        <ul>
-          <li>Health: <a href="/health" target="_blank"><span class="badge">/health</span></a></li>
-          <li>Intake endpoint: <code>POST /hook</code></li>
-          <li>Log-niveau: <code id="logLevel"></code></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Environment</h3>
-        <ul>
-          <li>Target URL: <code id="targetUrl"></code></li>
-          <li>CORS origin: <code id="cors"></code></li>
-        </ul>
-      </div>
-    </div>
-    <h3>Voorbeeld cURL</h3>
-    <pre>curl -X POST "$ORIGIN/hook" \
-  -H "Content-Type: application/json" \
-  -H "X-Source: mailblue" \
-  -H "X-Topic: Puppy" \
-  -H "X-Signature: test" \
-  -H "X-Shared-Secret: $SH_SHARED_SECRET" \
-  -d '{"email":"piet@example.com","name":"Piet"}'</pre>
-  </div>
-  <script>
-    fetch('/about').then(r=>r.json()).then(d=>{
-      document.getElementById('logLevel').textContent = d.logLevel;
-      document.getElementById('targetUrl').textContent = d.targetUrl || '(niet ingesteld)';
-      document.getElementById('cors').textContent = d.corsOrigin || '*';
-    }).catch(()=>{});
-  </script>
-</body>
-</html>
+<div class="card">
+<h1>🐾 Superhond Forwarder — Debug build</h1>
+<p>Deze build heeft <b>geen rate limiter</b> en een <code>/debug</code> endpoint voor snelle diagnose.</p>
+<div class="grid"><div><h3>Status</h3><ul>
+<li>Health: <a href="/health" target="_blank"><span class="badge">/health</span></a></li>
+<li>Intake endpoint: <code>POST /hook</code></li>
+<li>Log-niveau: <code id="logLevel" class="muted"></code></li>
+</ul></div><div><h3>Environment</h3><ul>
+<li>Target URL: <code id="targetUrl" class="muted"></code></li>
+<li>CORS origin: <code id="cors" class="muted"></code></li>
+</ul></div></div>
+<p>Debug endpoint: <a href="/debug" target="_blank"><span class="badge">/debug</span></a> (laatste logs)</p>
+</div>
+<script>
+fetch('/about').then(r=>r.json()).then(d=>{
+document.getElementById('logLevel').textContent=d.logLevel||'(nvt)';
+document.getElementById('targetUrl').textContent=d.targetUrl||'(niet ingesteld)';
+document.getElementById('cors').textContent=d.corsOrigin||'*';
+}).catch(()=>{});
+</script>
+</body></html>

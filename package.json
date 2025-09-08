@@ -1,19 +1,16 @@
 {
-  "name": "superhond-forwarder",
-  "version": "1.0.1",
-  "description": "HTTP forwarder with welcome page, logging, and payload filters for Superhond",
+  "name": "superhond-forwarder-debug",
+  "version": "1.2.0",
+  "description": "Superhond forwarder with /debug endpoint and no rate limiter (diagnostic build)",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "node server/index.js"
+    "start": "node server/index.js"
   },
   "dependencies": {
     "express": "^4.19.2",
     "morgan": "^1.10.0",
     "helmet": "^7.1.0",
     "cors": "^2.8.5",
-    "crypto-js": "^4.2.0",
-    "rate-limiter-flexible": "^5.0.3",
     "express-async-errors": "^3.1.1"
   },
   "engines": {

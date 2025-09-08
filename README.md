@@ -1,29 +1,20 @@
-# Superhond Forwarder (filtered + welcome + logs)
+# Superhond Forwarder — Option B (Debug build)
+- Geen rate limiter
+- `/debug` endpoint met laatste 50 logregels
+- `/about` toont ingelezen ENV
+- `/health` voor healthchecks
+- `POST /hook` voor intake en forwarding
 
-Een kleine Node.js/Express service die webhooks ontvangt, filtert (bron/topic/email) en doorstuurt naar je interne Superhond API. 
-Bevat:
-- Welkomstpagina (`/`)
-- Health endpoint (`/health`)
-- Logging (morgan)
-- Filters en (optioneel) signature-check
-- Rate limiting
+## Render
+Build: `npm install`
+Start: `node server/index.js`
+Health: `/health`
 
-## Quick start (lokaal)
-```bash
-cp .env.example .env
-npm install
-node server/index.js
-```
-
-Ga naar: `http://localhost:10000/` en test `POST /hook`.
-
-## Render instellingen
-- **Build Command:** `npm install`
-- **Start Command:** `node server/index.js`
-- **Health Check Path:** `/health`
-
-## Environment variables (voorbeeld)
-Zie `.env.example` in dit pakket. Belangrijk: `TARGET_URL` en `SH_SHARED_SECRET` invullen.
-
-## Testen
-Gebruik het aparte `superhond-forwarder-testpack.zip` met `test-forwarder.sh`.
+## Environment (minimaal)
+PORT=10000
+TARGET_URL=https://httpbin.org/post
+SH_SHARED_SECRET=TestSecret123!
+LOG_LEVEL=debug
+CORS_ORIGIN=*
+ALLOWED_SOURCES=mailblue,anyday,manual
+FILTER_TOPICS=Puppy,Puber,Basis
