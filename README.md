@@ -1,23 +1,31 @@
-# Superhond – MailBlue Forwarder (welkomstpagina + uitgebreide logging)
+# Superhond Forwarder Testpack
 
-- `/` toont een korte status-tekst
-- `/health` geeft JSON status
-- `POST /webhook` ontvangt MailBlue webhooks
-- Filtert op `SUPERHOND_ALLOWED_TAGS` en controleert betaling via `PAID_TAGS` als `REQUIRE_PAID=true`
-- **Uitgebreide logging**: logt de ontvangen tags en of het event is forwarded, skipped of unpaid
+Dit pakket bevat een eenvoudig script om je forwarder op Render te testen.
 
-## Quick start
-```bash
-npm install
-cp .env.example .env   # pas URL en tags aan
-npm run dev
-```
+## Inhoud
+- `test-forwarder.sh` — Bash script met 3 tests + health check
 
-## Logs
-- Console logs (Render runtime) laten zien: ontvangen tags, reden van skip/unpaid en of forwarding gelukt is
-- Bestanden:
-  - `data/webhooks/` — alle ruwe payloads
-  - `data/skipped-non-superhond/` — geen toegestane tag
-  - `data/pending-unpaid/` — geen betaald-indicator
-  - `data/queue/` — retry queue
-  - `data/forwarder.log` — best-effort logboek
+## Gebruik
+1. Pas bovenaan in `test-forwarder.sh` de variabelen aan:
+   - `BASE_URL` = jouw forwarder URL op Render (bijv. https://superhond-forwarder.onrender.com)
+   - `SECRET` = dezelfde waarde als `SH_SHARED_SECRET` die je in Render hebt ingesteld
+
+2. Maak het script uitvoerbaar (eenmalig):
+   ```bash
+   chmod +x test-forwarder.sh
+   ```
+
+3. Voer het script uit:
+   ```bash
+   ./test-forwarder.sh
+   ```
+
+## Output
+- Test 1: Toegelaten payload → forwarded (ok:true, forwarded:true)
+- Test 2: Topic niet toegestaan → gefilterd (ok:true, forwarded:false)
+- Test 3: Fout shared secret → geweigerd (ok:false, error:"Bad shared secret")
+- Health check → ok:true
+
+## Vereisten
+- `curl`
+- `jq` (voor nette JSON output)
