@@ -1,12 +1,12 @@
 {
   "name": "superhond-webapp",
   "version": "1.0.0",
+  "description": "Superhond.be Admin Portaal",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "express-session": "^1.17.3"
+    "express": "^4.19.2"
   }
 }

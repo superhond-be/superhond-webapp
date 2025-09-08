@@ -1,1 +1,51 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Dashboard</title><link rel='stylesheet' href='/public/css/app.css'></head><body><h1>Superhond Dashboard</h1><ul><li><a href='/public/admin-login.html'>Admin Login</a></li><li><a href='/public/admin-register.html'>Admin Register</a></li><li><a href='/public/admin-users.html'>Admin Users</a></li><li><a href='/public/klantenportaal.html'>Klantenportaal</a></li><li><a href='/public/lessenbeheer.html'>Lessenbeheer</a></li></ul></body></html>
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Superhond | Dashboard</title>
+  <link rel="stylesheet" href="./css/app.css">
+  <script defer src="./js/common.js"></script>
+  <script src="./js/dashboard.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">🐾 Superhond.be <span class="muted">Admin portaal</span></div>
+      <nav class="topnav">
+        <a href="./index.html">Dashboard</a>
+        <a href="./admin-users.html">Gebruikers</a>
+        <a href="./lessenbeheer.html">Lessen</a>
+        <a href="./klantenportaal.html">Klantenportaal</a>
+        <a href="./admin-login.html" class="right">Login</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+
+<h1>Dashboard</h1>
+<section class="tiles">
+  <a class="tile" href="./admin-users.html">
+    <span class="tile-title">Gebruikersbeheer</span>
+    <span class="tile-desc">Maak, bekijk en beheer admins</span>
+  </a>
+  <a class="tile" href="./lessenbeheer.html">
+    <span class="tile-title">Lessenbeheer</span>
+    <span class="tile-desc">Types, thema’s, locaties, trainers</span>
+  </a>
+  <a class="tile" href="./klantenportaal.html">
+    <span class="tile-title">Klantenportaal</span>
+    <span class="tile-desc">Overzicht klant/hond en boekingen</span>
+  </a>
+  <a class="tile" href="./admin-register.html">
+    <span class="tile-title">Nieuwe admin registreren</span>
+    <span class="tile-desc">Account aanmaken</span>
+  </a>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="container">© Superhond — Superhond.be</div>
+  </footer>
+</body>
+</html>
