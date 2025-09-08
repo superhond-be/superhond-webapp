@@ -1,36 +1,9 @@
-<!doctype html>
-<html lang="nl">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Lessenbeheer</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="/public/css/app.css">
+    <title>lessenbeheer.html</title>
 </head>
 <body>
-<header><a class="back" href="/public/index.html">← Terug</a><div class="brand">📚 Lessenbeheer</div></header>
-<main class="card">
-  <h2>Lessenbeheer</h2>
-  <p>Hier kan de admin later lessen toevoegen, goedkeuren of verlengen.</p>
-  <form id="lesForm">
-    <label>Lestype <input id="lestype" placeholder="Puppy, Puber, ..." required></label>
-    <label>Beschrijving <textarea id="beschrijving"></textarea></label>
-    <label>Aantal lessen <input id="aantal" type="number" value="9"></label>
-    <label>Geldigheid (maanden) <input id="geldigheid" type="number" value="6"></label>
-    <button type="submit">Toevoegen</button>
-  </form>
-  <pre id="lesOut">{ "info":"Nog geen lessen." }</pre>
-</main>
-<script>
-document.getElementById('lesForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const data = {
-    lestype: document.getElementById('lestype').value.trim(),
-    beschrijving: document.getElementById('beschrijving').value.trim(),
-    aantal: document.getElementById('aantal').value,
-    geldigheid: document.getElementById('geldigheid').value
-  };
-  document.getElementById('lesOut').textContent = JSON.stringify(data,null,2);
-});
-</script>
+    <h1>lessenbeheer.html (lege basis)</h1>
 </body>
 </html>
