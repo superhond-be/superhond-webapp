@@ -1,14 +1,9 @@
 [
   {
     "id": 1,
-    "externalId": "EXT-1001",
-    "name": "Voorbeeld Klant",
+    "name": "Test Klant",
     "email": "klant@example.com",
-    "phone": "",
-    "address": "",
-    "dogName": "D.Va",
-    "dogBreed": "Dobermann",
-    "dogBirthdate": "",
-    "requires_profile": true
+    "phone": "0477123456",
+    "requires_profile": false
   }
 ]
