@@ -1,5 +1,6 @@
 const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args));
+const lessonsRouter = require('./routes/lessons');
 const app = express();
 
 app.use(express.json());
@@ -10,17 +11,18 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 const LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 const SH_SHARED_SECRET = process.env.SH_SHARED_SECRET || '';
 
-// Simple CORS (development friendly)
+// CORS
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', CORS_ORIGIN);
-  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, X-SH-Shared-Secret');
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
+// Basic routes
 app.get('/', (_req, res) => {
-  res.send('<h1>Superhond Forwarder SelfTest ✅</h1><p>Routes: /health, /about, /selftest, /hook</p>');
+  res.send('<h1>Superhond Forwarder + Lessen ✅</h1><p>Routes: /health, /about, /selftest, /hook, /lessons</p>');
 });
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
@@ -50,12 +52,14 @@ app.get('/selftest', async (_req, res) => {
 });
 
 app.post('/hook', (req, res) => {
-  // Optional shared-secret check
   const hdr = req.get('X-SH-Shared-Secret') || '';
   if (SH_SHARED_SECRET && hdr !== SH_SHARED_SECRET) {
     return res.status(401).json({ ok: false, error: 'unauthorized' });
   }
   res.json({ ok: true, received: req.body });
 });
+
+// Lessons API
+app.use('/lessons', lessonsRouter);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
