@@ -1,10 +1,18 @@
-# Superhond Mapper (simple)
+# Superhond Forwarder SelfTest (Render-ready)
 
-Dit script normaliseert varianten van Puppy Pack naar één canoniek type.
+Minimal Node/Express service with routes:
+- `/`        → welcome
+- `/health`  → ok:true
+- `/about`   → shows env values (targetUrl, corsOrigin, logLevel, sharedSecretSet)
+- `/selftest`→ POSTs to TARGET_URL (default httpbin) and returns upstream status
+- `/hook`    → demo webhook intake with optional X-SH-Shared-Secret
 
-- "Puppy Pack Online"  → canonical = `puppy_pack`, variant = `online`
-- "Puppy Pack Connect" → canonical = `puppy_pack`, variant = `connect`
-- Fallback: als het woord "puppy" voorkomt, canonical = `puppy_pack`, variant = `unspecified`
+## Required env (Render → Environment)
+- TARGET_URL = https://httpbin.org/post
+- CORS_ORIGIN = *
+- LOG_LEVEL = debug
+- SH_SHARED_SECRET = TestSecret123!   (optional but recommended)
 
-Gebruik: plaats `services/mapper.js` in je project en importeer `mapPayload(payload)`.
-
+## Start
+npm install
+npm start
