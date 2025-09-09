@@ -7,7 +7,6 @@ let lessons = [
   { id: 2, type: 'Puber', theme: 'Sociaal leren', location: 'Mol', date: '2025-09-21', time: '11:00', trainer: 'Paul' },
   { id: 3, type: 'Basis', theme: 'Basisoefeningen', location: 'Retie', date: '2025-09-22', time: '18:30', trainer: 'Sofie' }
 ];
-
 let nextId = 4;
 
 function validateLesson(b) {

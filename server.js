@@ -1,6 +1,7 @@
 const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args));
 const lessonsRouter = require('./routes/lessons');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
@@ -20,27 +21,23 @@ app.use((req, res, next) => {
   next();
 });
 
+// Static admin UI
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Basic routes
 app.get('/', (_req, res) => {
-  res.send('<h1>Superhond Forwarder + Lessen ✅</h1><p>Routes: /health, /about, /selftest, /hook, /lessons</p>');
+  res.send('<h1>Superhond Forwarder + Lessen ✅</h1><p>Routes: /health, /about, /selftest, /hook, /lessons — UI: <a href="/lessenbeheer.html">lessenbeheer.html</a></p>');
 });
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
-
-app.get('/about', (_req, res) => {
-  res.json({
-    targetUrl: TARGET_URL,
-    corsOrigin: CORS_ORIGIN,
-    logLevel: LOG_LEVEL,
-    sharedSecretSet: Boolean(SH_SHARED_SECRET)
-  });
-});
+app.get('/about', (_req, res) => res.json({
+  targetUrl: TARGET_URL, corsOrigin: CORS_ORIGIN, logLevel: LOG_LEVEL, sharedSecretSet: Boolean(SH_SHARED_SECRET)
+}));
 
 app.get('/selftest', async (_req, res) => {
   try {
     const r = await fetch(TARGET_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ping: 'selftest', ts: Date.now() })
     });
     const sample = await r.text();
@@ -53,10 +50,8 @@ app.get('/selftest', async (_req, res) => {
 
 app.post('/hook', (req, res) => {
   const hdr = req.get('X-SH-Shared-Secret') || '';
-  if (SH_SHARED_SECRET && hdr !== SH_SHARED_SECRET) {
-    return res.status(401).json({ ok: false, error: 'unauthorized' });
-  }
-  res.json({ ok: true, received: req.body });
+  if (SH_SHARED_SECRET && hdr !== SH_SHARED_SECRET) return res.status(401).json({ ok:false, error:'unauthorized' });
+  res.json({ ok:true, received: req.body });
 });
 
 // Lessons API

@@ -1,5 +1,5 @@
-# Superhond Forwarder + Lessen (Render Node 18)
+# Superhond Lessenbeheer (Compact UI)
 
-- `engines.node = 18.x` zodat Render Node 18 gebruikt.
-- Start: `npm start` (node server.js)
-- Routes: `/health`, `/about`, `/selftest`, `/hook`, `/lessons`
+- Filters zijn **inklapbaar**.
+- Formulier opent als **dialoog** pas bij **Nieuwe les** of **Wijzig**.
+- Open na deploy: `/lessenbeheer.html`.

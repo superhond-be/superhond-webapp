@@ -1,179 +1,31 @@
-/* Basis */
-:root{
-  --yellow:#ffcc00;
-  --public:#1e88e5; /* blauw */
-  --admin:#e53935;  /* rood */
-  --bg:#f7f7f7;
-  --tile:#fff;
-  --muted:#6b7280;
-  --border:#e5e7eb;
+* { box-sizing: border-box; }
+:root { --brand:#ffd84d; --ink:#222; --line:#e5e5e5; }
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; color: var(--ink); background: #fafafa; }
+header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 14px 16px; background: var(--brand); border-bottom: 2px solid #f0c62e; }
+h1 { margin: 0; font-size: 20px; }
+.actions-right { display:flex; gap:8px; }
+button { border: 1px solid #333; background:#333; color:#fff; border-radius:6px; padding:8px 12px; cursor:pointer; }
+button.ghost { background: #fff; color:#333; border-color:#bbb; }
+button.primary { background:#333; }
+main { padding: 14px 16px; display:grid; gap:12px; }
+.filters.hidden { display:none; }
+.filters label { margin-right: 8px; display: inline-flex; gap: 6px; align-items: center; }
+.filters input, .filters select { padding: 6px 8px; }
+.list table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); }
+th, td { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; font-size:14px; }
+th { background: #f6f6f6; }
+.badge { padding: 2px 6px; border-radius: 3px; font-size: 12px; background: #eef; border: 1px solid #ccd; }
+.action-btn { padding: 6px 8px; border-radius: 4px; border: 1px solid #aaa; background: #fff; }
+.action-btn.delete { border-color: #b00; color: #b00; }
+.action-btn.edit { border-color: #005bbb; color: #005bbb; }
+dialog::backdrop { background: rgba(0,0,0,.35); }
+dialog { border:none; border-radius:10px; padding:0; }
+dialog .form { background:#fff; padding:16px; min-width: min(680px, 92vw); }
+.form h2 { margin:0 0 10px 0; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; }
+label { display:grid; gap:6px; }
+menu { display:flex; justify-content:flex-end; gap:8px; padding:0; margin-top:10px; }
+footer { padding: 14px 16px; color:#666; }
+@media (max-width: 720px) {
+  th:nth-child(1), td:nth-child(1) { display:none; } /* hide ID on small screens */
 }
-
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-  background:var(--bg);
-  color:#111;
-}
-
-/* Topbar */
-.topbar{
-  position:sticky; top:0; z-index:10;
-  display:flex; align-items:center; justify-content:space-between;
-  background:var(--yellow);
-  padding:.8rem 1rem;
-  border-bottom:1px solid rgba(0,0,0,.06);
-}
-.brand{font-weight:600}
-.session{display:flex; gap:.5rem; align-items:center}
-.badge{background:#fff;padding:.25rem .5rem;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
-
-.btn{padding:.55rem .8rem;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer}
-.btn-ghost{background:transparent;border-color:rgba(0,0,0,.15)}
-
-/* Layout */
-.layout{display:grid; grid-template-columns: 220px 1fr; gap:1rem; padding:1rem}
-.rail{
-  position:sticky; top:64px;
-  align-self:start;
-  background:#fff; border:1px solid var(--border); border-radius:12px;
-  padding:1rem;
-}
-.rail-title{font-weight:600;margin-bottom:.5rem}
-
-/* Content */
-.content{display:flex; flex-direction:column; gap:1.5rem}
-
-.section{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:1rem;
-}
-.section h2{
-  margin:.2rem 0 1rem;
-  display:flex; align-items:center; gap:.5rem;
-  font-size:1.2rem;
-}
-.section h2 small{font-weight:400;color:var(--muted)}
-
-/* Tiles */
-.tiles{
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
-  gap:1rem;
-}
-.tile{
-  display:block;
-  background:var(--tile);
-  border:2px solid var(--border);
-  border-radius:14px;
-  padding:1rem;
-  text-decoration:none;
-  color:inherit;
-  min-height:110px;
-  box-shadow:0 2px 6px rgba(0,0,0,.04);
-  transition:transform .06s ease, box-shadow .06s ease, border-color .06s ease;
-}
-.tile small{display:block; margin-top:.4rem; color:var(--muted); line-height:1.25}
-.tile:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.05)}
-
-/* Kleuraccenten per segment */
-.section--public{border-color: color-mix(in oklab, var(--public) 25%, white)}
-.section--admin{border-color: color-mix(in oklab, var(--admin) 25%, white)}
-
-.tile--public{border-color: color-mix(in oklab, var(--public) 40%, white)}
-.tile--public:hover{border-color: var(--public)}
-
-.tile--admin{border-color: color-mix(in oklab, var(--admin) 40%, white)}
-.tile--admin:hover{border-color: var(--admin)}
-
-/* Responsive */
-@media (max-width: 900px){
-  .layout{grid-template-columns: 1fr}
-  .rail{position:static; order:2}
-  .content{order:1}
-}
-
-/* --- Klantenportaal --- */
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem}
-.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
-.tab-btn{padding:.5rem .8rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
-.tab-btn.active{border-color:var(--public);box-shadow:0 0 0 2px color-mix(in oklab, var(--public) 20%, transparent)}
-
-.tab-pane{display:none}
-.tab-pane.active{display:block}
-
-.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.table th,.table td{padding:.6rem .75rem;border-bottom:1px solid var(--border)}
-.table thead th{background:#fafafa;text-align:left}
-
-.stat-cards{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0}
-.stat{flex:0 0 160px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
-.stat-num{font-size:1.6rem;font-weight:700}
-.stat-label{color:var(--muted)}
-
-.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
-.form-grid label{display:flex;flex-direction:column;gap:.3rem}
-.form-grid input{padding:.55rem .6rem;border:1px solid var(--border);border-radius:8px}
-.form-actions{margin-top:.5rem}
-.muted{color:var(--muted)}
-
-/* --- Lessenbeheer helpers --- */
-.table-tools{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 1rem}
-.input{padding:.5rem .6rem;border:1px solid var(--border);border-radius:8px}
-.btn-row{display:flex;gap:.35rem}
-.btn-xs{padding:.3rem .5rem;font-size:.85rem}
-.btn-danger{border-color:#ef4444}
-
-/* --- Tiles met iconen --- */
-.tile { position: relative; padding-left: 3.2rem; }
-.tile-ico{
-  position:absolute; left:1rem; top:1rem; font-size:1.6rem; line-height:1;
-}
-
-/* --- Kalender widget --- */
-.calendar{padding:.6rem}
-.cal-head{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:.4rem;
-  font-weight:600;
-}
-#calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-cell{
-  text-align:center; padding:.35rem 0; background:#fff; border:1px solid var(--border);
-  border-radius:6px; font-size:.9rem;
-}
-.cal-dow{background:#fafafa; font-weight:600}
-.cal-today{outline:2px solid var(--public); font-weight:700}
-.cal-muted{color:var(--muted); background:#fcfcfc}
-
-.cal-haslesson{background:#e3f2fd; cursor:pointer; position:relative}
-.cal-haslesson::after{
-  content:''; position:absolute; bottom:3px; left:50%; width:6px; height:6px;
-  background:var(--public); border-radius:50%; transform:translateX(-50%);
-}
-
-#day-panel{margin-top:.5rem; font-size:.9rem}
-.daypanel{border-top:1px solid var(--border); padding-top:.5rem}
-.daypanel h4{margin:.2rem 0;font-size:1rem}
-.daylesson{background:#fff;border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem;margin-bottom:.3rem}
-.daylesson strong{color:#111}
-
-/* --- Agenda dagoverzicht --- */
-.day-panel{margin-top:.6rem; border:1px solid var(--border); border-radius:10px; background:#fff; padding:.6rem}
-.day-panel h4{margin:.2rem 0 .6rem; font-size:1rem}
-.day-list{display:flex; flex-direction:column; gap:.35rem}
-.day-item{display:flex; align-items:center; justify-content:space-between; gap:.6rem; border:1px solid var(--border); border-radius:8px; padding:.45rem .6rem}
-.day-meta{display:flex; gap:.6rem; align-items:center; color:#111}
-.badge-type{padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); font-size:.8rem}
-.badge-time{font-variant-numeric: tabular-nums; color:var(--muted)}
-.badge-loc{color:var(--muted)}
-.btn-mini{padding:.35rem .55rem; font-size:.85rem}
-
-/* type kleuren (optioneel zacht) */
-.type-Puppy{background:#e0f2fe;border-color:#badefd}
-.type-Puber{background:#fff7ed;border-color:#fde1c4}
-.type-Volwassen{background:#e8f5e9;border-color:#cfead2}
