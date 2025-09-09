@@ -1,7 +1,7 @@
 {
-  "name": "superhond-forwarder-lessons-admin-compact",
+  "name": "superhond-forwarder",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
     "start": "node server.js"
