@@ -1,12 +1,5 @@
-# Superhond Forwarder + Lessen (Render-ready)
+# Superhond Forwarder + Lessen (Render Node 18)
 
-Routes:
-- `/` → welkom
-- `/health` → ok:true
-- `/about` → env-waarden
-- `/selftest` → test POST naar TARGET_URL
-- `/hook` → intake endpoint (met X-SH-Shared-Secret)
-- `/lessons` → lesbeheer API (GET/POST/PUT/DELETE)
-
-## Testscript
-Zie `test.sh` voor een bash-script om alle routes snel te testen.
+- `engines.node = 18.x` zodat Render Node 18 gebruikt.
+- Start: `npm start` (node server.js)
+- Routes: `/health`, `/about`, `/selftest`, `/hook`, `/lessons`
