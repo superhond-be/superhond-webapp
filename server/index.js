@@ -1,36 +1,15 @@
 const express = require('express');
-const path = require('path');
-
 const app = express();
 
-// Middleware
-app.use(express.json());
+// Render geeft de poort door via environment variable
+const PORT = process.env.PORT || 10000;
 
-// Static files from /public
-app.use(express.static(path.join(__dirname, '..', 'public')));
-
-// Health check
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', app: 'superhond-webapp', time: new Date().toISOString() });
+// Eenvoudige testroute
+app.get('/', (req, res) => {
+  res.send('🚀 Superhond server is running on Render!');
 });
 
-// API routes
-const usersRouter = require('../routes/admin-users');
-const lessonsRouter = require('../routes/lessons');
-app.use('/api/users', usersRouter);
-app.use('/api/lessons', lessonsRouter);
-
-// Fallback to index.html for root
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-});
-
-// 404 for API
-app.use('/api', (_req, res) => {
-  res.status(404).json({ error: 'Not found' });
-});
-
-const PORT = process.env.PORT || 3000;
+// Start server
 app.listen(PORT, () => {
   console.log(`✅ Superhond server running at http://localhost:${PORT}`);
 });
