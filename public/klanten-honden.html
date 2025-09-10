@@ -1,72 +1,123 @@
-<!doctype html><html lang="nl"><head><meta charset="utf-8">
-<title>Klanten & Honden</title><link rel="stylesheet" href="css/app.css"></head>
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Klanten & Honden – Superhond</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
 <body>
-<h1>Klanten & Honden</h1>
-<table class="table"><thead><tr><th>Klant</th><th>E-mail</th><th>Telefoon</th><th>Honden</th><th>Acties</th></tr></thead>
-<tbody id="custRows"></tbody></table>
-<div class="version">Superhond Webapp – v11</div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="paw">🐾</span>
+      <span class="title"><strong>Superhond</strong> – Klanten &amp; Honden</span>
+    </div>
+    <div class="session">
+      <span class="badge">Ingelogd: <strong>admin</strong></span>
+      <a href="index.html" class="btn btn-outline">Dashboard</a>
+    </div>
+  </header>
 
-<div class="modal" id="blockerModal"><div class="modal-card">
-<div class="modal-header"><h3 id="blkTitle">Verwijderen geblokkeerd</h3><button id="blkClose" class="btn">Sluiten</button></div>
-<div id="blkBody"></div><div class="modal-actions">
-<button id="blkOk" class="btn">Ok</button>
-<button id="forceArchive" class="btn">Archiveer</button></div></div></div>
+  <main class="layout" style="max-width:1100px;">
+    <section class="content">
+      <h1 style="margin-top:0;">Klanten &amp; Honden</h1>
+      <div class="kol">
+        <div>
+          <div class="searchbar">
+            <input id="search" type="text" placeholder="Zoeken op klant, e-mail, telefoon of hond…" />
+            <button id="btnNewCust" class="btn btn-primary">+ Nieuwe klant</button>
+          </div>
 
-<script src="js/data.js"></script>
-<script>
-const el = s => document.querySelector(s); const els = s => Array.from(document.querySelectorAll(s));
-function remaining(card){ return Math.max(0,(card.total||0)-(card.used||0)); }
+          <table class="list" aria-label="Overzicht klanten en honden">
+            <thead>
+              <tr>
+                <th>Klant</th>
+                <th>E-mail</th>
+                <th>Telefoon</th>
+                <th>Honden</th>
+                <th>Acties</th>
+              </tr>
+            </thead>
+            <tbody id="custRows"></tbody>
+          </table>
+        </div>
 
-function render(){
-  const tb = el('#custRows'); tb.innerHTML='';
-  window.SH.customers.forEach(c=>{
-    const dogs = (c.dogs||[]).map(d=>\`\${d.name} <button class='btn-small' data-dogdel="\${d.id}" data-cust="\${c.id}">×</button>\`).join(', ');
-    const tr=document.createElement('tr');
-    tr.innerHTML=\`<td>\${c.name}</td><td>\${c.email}</td><td>\${c.phone}</td><td>\${dogs}</td>
-      <td><div class="actions"><button class="btn-small" data-cdel="\${c.id}">Verwijder klant</button></div></td>\`;
-    tb.appendChild(tr);
-  });
-  tb.querySelectorAll('button[data-cdel]').forEach(b=>b.onclick=()=>tryDeleteCustomer(b.getAttribute('data-cdel')));
-  tb.querySelectorAll('button[data-dogdel]').forEach(b=>b.onclick=()=>tryDeleteDog(b.getAttribute('data-cust'), b.getAttribute('data-dogdel')));
-}
+        <aside class="sidecard">
+          <div class="card">
+            <h3 class="card-title">Snelkoppelingen</h3>
+            <p class="small">Hier kunnen later bulk-acties komen (import, export, koppelen met MailBlue/API, …).</p>
+            <a class="btn" href="lessenbeheer.html">Ga naar Lessenbeheer</a>
+            <div style="height:8px"></div>
+            <a class="btn" href="strippenkaarten.html">Ga naar Strippenkaarten</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
 
-function blockersForDog(dogId){
-  const today=window.SH.today();
-  const bookings=window.SH.bookings.filter(b=>b.dogId===dogId && b.date>=today);
-  const cards=window.SH.cards.filter(s=>s.dogId===dogId && remaining(s)>0);
-  return {bookings,cards};
-}
+  <!-- Modal: klant -->
+  <div class="modal" id="custModal" role="dialog" aria-modal="true" aria-labelledby="custTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="custTitle">Klant bewerken/toevoegen</h3>
+        <button id="custCancel" class="btn btn-outline">Sluiten</button>
+      </div>
+      <form id="custForm">
+        <input type="hidden" id="c-id" />
+        <div class="form-row">
+          <label for="c-name">Naam</label>
+          <input type="text" id="c-name" required />
+        </div>
+        <div class="form-row">
+          <label for="c-email">E-mail</label>
+          <input type="text" id="c-email" placeholder="klant@voorbeeld.be" />
+        </div>
+        <div class="form-row">
+          <label for="c-phone">Telefoon</label>
+          <input type="text" id="c-phone" placeholder="+32 ..." />
+        </div>
+        <div class="form-row">
+          <label>Honden</label>
+          <div id="c-dogs" class="dogs"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-function showBlockers(title, blocks, onArchive){
-  const m=el('#blockerModal'); el('#blkTitle').textContent=title;
-  const b=el('#blkBody'); b.innerHTML='';
-  if(blocks.bookings.length){ b.innerHTML+='<div class="blockers"><h4>Actieve boekingen</h4><ul>'+blocks.bookings.map(x=>'<li>'+x.date+' '+x.title+'</li>').join('')+'</ul></div>'; }
-  if(blocks.cards.length){ b.innerHTML+='<div class="blockers"><h4>Actieve strippenkaarten</h4><ul>'+blocks.cards.map(x=>'<li>'+x.type+' resterend '+remaining(x)+'</li>').join('')+'</ul></div>'; }
-  el('#blkOk').onclick=()=>m.removeAttribute('open');
-  el('#blkClose').onclick=()=>m.removeAttribute('open');
-  el('#forceArchive').onclick=()=>{ onArchive(); m.removeAttribute('open'); render(); };
-  m.setAttribute('open','');
-}
+  <!-- Modal: hond toevoegen -->
+  <div class="modal" id="dogModal" role="dialog" aria-modal="true" aria-labelledby="dogTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="dogTitle">Hond toevoegen aan <span id="d-for"></span></h3>
+        <button id="dogCancel" class="btn btn-outline">Sluiten</button>
+      </div>
+      <form id="dogForm">
+        <div class="form-row">
+          <label for="d-name">Naam</label>
+          <input type="text" id="d-name" required />
+        </div>
+        <div class="form-row">
+          <label for="d-breed">Ras</label>
+          <input type="text" id="d-breed" />
+        </div>
+        <div class="form-row">
+          <label for="d-birth">Geboortedatum</label>
+          <input type="date" id="d-birth" />
+        </div>
+        <div class="form-row">
+          <label for="d-notes">Notities</label>
+          <textarea id="d-notes" placeholder="bv. vaccinaties, gevoeligheden…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-function tryDeleteCustomer(cid){
-  const cust=window.SH.customers.find(x=>x.id===cid); if(!cust) return;
-  const dogIds=new Set((cust.dogs||[]).map(d=>d.id));
-  const bookings=window.SH.bookings.filter(b=>dogIds.has(b.dogId) && b.date>=window.SH.today());
-  const cards=window.SH.cards.filter(s=>dogIds.has(s.dogId) && remaining(s)>0);
-  if(bookings.length||cards.length){ showBlockers('Klant kan niet verwijderd', {bookings,cards}, ()=>{ window.SH.archived.customers.push(cust); window.SH.customers=window.SH.customers.filter(x=>x.id!==cid); }); return; }
-  if(confirm('Definitief verwijderen?')){ window.SH.customers=window.SH.customers.filter(x=>x.id!==cid); }
-  render();
-}
-
-function tryDeleteDog(cid,did){
-  const cust=window.SH.customers.find(x=>x.id===cid); if(!cust) return;
-  const dog=cust.dogs.find(d=>d.id===did); if(!dog) return;
-  const bl=blockersForDog(did);
-  if(bl.bookings.length||bl.cards.length){ showBlockers('Hond kan niet verwijderd', bl, ()=>{ window.SH.archived.dogs.push(dog); cust.dogs=cust.dogs.filter(d=>d.id!==did); }); return; }
-  if(confirm('Hond verwijderen?')){ cust.dogs=cust.dogs.filter(d=>d.id!==did); }
-  render();
-}
-
-document.addEventListener('DOMContentLoaded', render);
-</script>
-</body></html>
+  <script src="js/clients.js"></script>
+</body>
+</html>
