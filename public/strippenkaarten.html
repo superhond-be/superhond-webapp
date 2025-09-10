@@ -18,12 +18,74 @@
     </div>
   </header>
 
-  <main class="layout" style="max-width:900px;">
+  <main class="layout" style="max-width:1200px;">
     <section class="content">
-      <h1>Strippenkaarten</h1>
-      <p>⚠️ Deze pagina is nog leeg. Hier komt later de functionaliteit van <em>Strippenkaarten</em>.</p>
-      <p><a href="index.html" class="btn btn-primary">⬅ Terug naar dashboard</a></p>
+      <h1 style="margin-top:0;">Strippenkaarten (per hond)</h1>
+      <div class="kol2">
+        <div>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px">
+            <input id="search" type="text" placeholder="Zoek op klant, hond of type kaart…" style="flex:1" />
+            <button id="btnNew" class="btn btn-primary">+ Nieuwe strippenkaart</button>
+          </div>
+
+          <table class="table table-compact" aria-label="Overzicht strippenkaarten per hond">
+            <thead>
+              <tr>
+                <th>Klant</th>
+                <th>Hond</th>
+                <th>Type</th>
+                <th>Totaal</th>
+                <th>Verbruikt</th>
+                <th>Resterend</th>
+                <th>Acties</th>
+              </tr>
+            </thead>
+            <tbody id="cardRows"></tbody>
+          </table>
+        </div>
+
+        <aside class="side">
+          <div id="sideLog"></div>
+        </aside>
+      </div>
     </section>
   </main>
+
+  <!-- Nieuwe kaart modal -->
+  <div class="modal" id="newModal" role="dialog" aria-modal="true" aria-labelledby="newTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="newTitle">Nieuwe strippenkaart</h3>
+        <button id="newCancel" class="btn btn-outline">Sluiten</button>
+      </div>
+      <form id="newForm">
+        <div class="form-row">
+          <label for="n-customer">Klant</label>
+          <select id="n-customer"></select>
+        </div>
+        <div class="form-row">
+          <label for="n-dog">Hond</label>
+          <select id="n-dog"></select>
+        </div>
+        <div class="form-row">
+          <label for="n-type">Kaarttype</label>
+          <input id="n-type" type="text" placeholder="bv. Puppy Pack 10" />
+        </div>
+        <div class="form-row">
+          <label for="n-total">Aantal beurten</label>
+          <input id="n-total" type="number" min="1" value="10" />
+        </div>
+        <div class="form-row">
+          <label for="n-start">Startdatum</label>
+          <input id="n-start" type="date" />
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Aanmaken</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/credits.js"></script>
 </body>
 </html>

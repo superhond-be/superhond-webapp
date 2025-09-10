@@ -69,3 +69,68 @@ a{color:inherit;text-decoration:none}
 @media (max-width: 640px){
   .tile-grid{grid-template-columns:1fr}
 }
+
+
+/* --- Lessenbeheer extras --- */
+.table{width:100%; border-collapse:separate; border-spacing:0 8px}
+.table th, .table td{padding:10px 12px; text-align:left; background:#fff; border-top:1px solid #e6eaf3; border-bottom:1px solid #e6eaf3}
+.table th:first-child, .table td:first-child{border-left:1px solid #e6eaf3; border-top-left-radius:12px; border-bottom-left-radius:12px}
+.table th:last-child, .table td:last-child{border-right:1px solid #e6eaf3; border-top-right-radius:12px; border-bottom-right-radius:12px}
+.actions{display:flex; gap:8px}
+.btn-small{padding:.35rem .6rem; font-size:.9rem; border-radius:8px}
+
+.tag{display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border:1px solid #dbe2ef; border-radius:999px; background:#f7f9ff; font-size:.85rem; margin:2px 6px 2px 0}
+.tag button{border:none; background:transparent; cursor:pointer; font-size:1rem; line-height:1;}
+
+.form-row{display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:12px}
+input[type="text"], input[type="date"], input[type="time"], select, textarea{
+  width:100%; padding:10px 12px; border:1px solid #cfd8ea; border-radius:10px; background:#fff;
+}
+textarea{min-height:80px; resize:vertical}
+
+.modal{
+  position:fixed; inset:0; background:rgba(0,0,0,.25); display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal[open]{display:flex}
+.modal-card{width:min(720px, 96vw); background:#fff; border:1px solid #e6eaf3; border-radius:16px; box-shadow:var(--tile-hover); padding:16px}
+.modal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+.modal-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:10px}
+.help{color:var(--muted); font-size:.92rem}
+    
+
+/* --- Klanten & Honden extras --- */
+.kol{display:grid; grid-template-columns:2fr 1fr; gap:18px}
+@media (max-width: 980px){ .kol{grid-template-columns:1fr} }
+.searchbar{display:flex; gap:8px; align-items:center}
+.searchbar input{flex:1}
+
+.list{width:100%; border-collapse:separate; border-spacing:0 8px}
+.list th, .list td{padding:10px 12px; text-align:left; background:#fff; border-top:1px solid #e6eaf3; border-bottom:1px solid #e6eaf3}
+.list th:first-child, .list td:first-child{border-left:1px solid #e6eaf3; border-top-left-radius:12px; border-bottom-left-radius:12px}
+.list th:last-child, .list td:last-child{border-right:1px solid #e6eaf3; border-top-right-radius:12px; border-bottom-right-radius:12px}
+
+.dogs{display:flex; flex-wrap:wrap; gap:6px}
+.dog{display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border:1px solid #dbe2ef; border-radius:999px; background:#f7f9ff; font-size:.85rem}
+.dog button{border:none;background:transparent;cursor:pointer;font-size:1rem;line-height:1}
+
+.sidecard .card-title{margin-top:0}
+.sidecard .btn{width:100%}
+.small{font-size:.9rem; color:var(--muted)}
+    
+
+/* --- Strippenkaarten extras --- */
+.history{margin-top:12px;border-top:1px solid #e6eaf3;padding-top:8px}
+.history-item{font-size:.9rem;color:var(--muted);margin-bottom:4px}
+    
+
+/* --- Strippenkaarten extras --- */
+.kol2{display:grid; grid-template-columns:1fr 320px; gap:18px}
+@media (max-width: 1080px){ .kol2{grid-template-columns:1fr} }
+.table-compact th, .table-compact td{padding:8px 10px}
+.badge-num{display:inline-block; padding:2px 8px; border:1px solid #e1e7f5; border-radius:999px; background:#fafcff; font-weight:700}
+.side .card{position:sticky; top:78px}
+.log{max-height:420px; overflow:auto; border:1px solid #e6eaf3; border-radius:12px; background:#fff}
+.log-item{display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0f3fa}
+.log-item:last-child{border-bottom:none}
+.log-item .when{color:var(--muted); font-size:.9rem}
+    

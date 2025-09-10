@@ -10,7 +10,7 @@
   <header class="topbar">
     <div class="brand">
       <span class="paw">🐾</span>
-      <span class="title"><strong>Superhond</strong> – Klanten & Honden</span>
+      <span class="title"><strong>Superhond</strong> – Klanten &amp; Honden</span>
     </div>
     <div class="session">
       <span class="badge">Ingelogd: <strong>admin</strong></span>
@@ -18,12 +18,106 @@
     </div>
   </header>
 
-  <main class="layout" style="max-width:900px;">
+  <main class="layout" style="max-width:1100px;">
     <section class="content">
-      <h1>Klanten & Honden</h1>
-      <p>⚠️ Deze pagina is nog leeg. Hier komt later de functionaliteit van <em>Klanten & Honden</em>.</p>
-      <p><a href="index.html" class="btn btn-primary">⬅ Terug naar dashboard</a></p>
+      <h1 style="margin-top:0;">Klanten &amp; Honden</h1>
+      <div class="kol">
+        <div>
+          <div class="searchbar">
+            <input id="search" type="text" placeholder="Zoeken op klant, e-mail, telefoon of hond…" />
+            <button id="btnNewCust" class="btn btn-primary">+ Nieuwe klant</button>
+          </div>
+
+          <table class="list" aria-label="Overzicht klanten en honden">
+            <thead>
+              <tr>
+                <th>Klant</th>
+                <th>E-mail</th>
+                <th>Telefoon</th>
+                <th>Honden</th>
+                <th>Acties</th>
+              </tr>
+            </thead>
+            <tbody id="custRows"></tbody>
+          </table>
+        </div>
+
+        <aside class="sidecard">
+          <div class="card">
+            <h3 class="card-title">Snelkoppelingen</h3>
+            <p class="small">Hier kunnen later bulk-acties komen (import, export, koppelen met MailBlue/API, …).</p>
+            <a class="btn" href="lessenbeheer.html">Ga naar Lessenbeheer</a>
+            <div style="height:8px"></div>
+            <a class="btn" href="strippenkaarten.html">Ga naar Strippenkaarten</a>
+          </div>
+        </aside>
+      </div>
     </section>
   </main>
+
+  <!-- Modal: klant -->
+  <div class="modal" id="custModal" role="dialog" aria-modal="true" aria-labelledby="custTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="custTitle">Klant bewerken/toevoegen</h3>
+        <button id="custCancel" class="btn btn-outline">Sluiten</button>
+      </div>
+      <form id="custForm">
+        <input type="hidden" id="c-id" />
+        <div class="form-row">
+          <label for="c-name">Naam</label>
+          <input type="text" id="c-name" required />
+        </div>
+        <div class="form-row">
+          <label for="c-email">E-mail</label>
+          <input type="text" id="c-email" placeholder="klant@voorbeeld.be" />
+        </div>
+        <div class="form-row">
+          <label for="c-phone">Telefoon</label>
+          <input type="text" id="c-phone" placeholder="+32 ..." />
+        </div>
+        <div class="form-row">
+          <label>Honden</label>
+          <div id="c-dogs" class="dogs"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: hond toevoegen -->
+  <div class="modal" id="dogModal" role="dialog" aria-modal="true" aria-labelledby="dogTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="dogTitle">Hond toevoegen aan <span id="d-for"></span></h3>
+        <button id="dogCancel" class="btn btn-outline">Sluiten</button>
+      </div>
+      <form id="dogForm">
+        <div class="form-row">
+          <label for="d-name">Naam</label>
+          <input type="text" id="d-name" required />
+        </div>
+        <div class="form-row">
+          <label for="d-breed">Ras</label>
+          <input type="text" id="d-breed" />
+        </div>
+        <div class="form-row">
+          <label for="d-birth">Geboortedatum</label>
+          <input type="date" id="d-birth" />
+        </div>
+        <div class="form-row">
+          <label for="d-notes">Notities</label>
+          <textarea id="d-notes" placeholder="bv. vaccinaties, gevoeligheden…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/clients.js"></script>
 </body>
 </html>
