@@ -1,1 +1,2 @@
-document.getElementById('regForm')?.addEventListener('submit',async(e)=>{e.preventDefault();let nm=name.value,em=email.value,pw=password.value,rl=role.value;let out=document.getElementById('out');out.textContent='Bezig...';let r=await fetch('/api/admin/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,password:pw,role:rl})});let j=await r.json();out.textContent=JSON.stringify(j,null,2);});
+// JS voor Admin Register
+console.log('Admin Register geladen');
