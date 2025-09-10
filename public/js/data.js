@@ -1,5 +1,6 @@
 
 window.SH = {
+  customers:[], dogs:[], cards:[],
   archived:{
     customers:[{id:'c1',name:'An De Smet'},{id:'c2',name:'Tom Janssens'}],
     dogs:[{id:'d1',name:'Loki'},{id:'d2',name:'Nala'}],

@@ -1,8 +1,8 @@
-Superhond Webapp – Version v13
+Superhond Webapp – Version v12
 
-Nieuw in v13:
-- Exportfunctie in Archief: CSV en Excel (.xlsx).
-- Export respecteert zoekfilter (alleen zichtbare resultaten).
-- Excel-export gebruikt xlsx.js library en maakt aparte tabbladen voor Klanten, Honden en Strippenkaarten.
+Nieuw in v12:
+- Zoekbalk in Archief (case-insensitive). Filtert klanten, honden en strippenkaarten tegelijk.
+- Sorteren A–Z per sectie via knop.
+- Tellers bij sectie-koppen: toont aantal resultaten per sectie.
 
-Volgende stap: meer opmaak toevoegen in Excel (vet headers, kolombreedte auto).
+Opzet blijft demo, klaar voor uitrol naar grotere datasets.
