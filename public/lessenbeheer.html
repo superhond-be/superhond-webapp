@@ -3,86 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lessenbeheer – Superhond</title>
+  <title>Lessenbeheer - Superhond</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">🐾 Superhond – <strong>Lessenbeheer</strong></div>
-    <div class="session">
-      <a class="btn btn-ghost" href="index.html">Dashboard</a>
-    </div>
+  <header>
+    <h1>Lessenbeheer</h1>
   </header>
 
-  <main class="content" style="padding:1rem;">
-    <div class="card">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="types">Les Type</button>
-        <button class="tab-btn" data-tab="thema">Les Thema</button>
-        <button class="tab-btn" data-tab="locatie">Les Locatie</button>
-        <button class="tab-btn" data-tab="trainers">Les Trainers</button>
-      </div>
+  <main>
+    <form>
+      <label for="type">Les type:</label>
+      <input type="text" id="type" name="type" placeholder="bv. Puppy les">
 
-      <section class="tab-pane active" id="types">
-        <h2>Les Type</h2>
-        <form class="form-grid">
-          <label>Naam les type
-            <input type="text" placeholder="Puppy / Puber / Volwassen">
-          </label>
-          <label>Beschrijving
-            <input type="text" placeholder="Korte uitleg">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
-      </section>
+      <label for="thema">Les thema:</label>
+      <input type="text" id="thema" name="thema" placeholder="bv. Socialisatie">
 
-      <section class="tab-pane" id="thema">
-        <h2>Les Thema</h2>
-        <form class="form-grid">
-          <label>Thema
-            <input type="text" placeholder="Socialisatie / Recall / Impulscontrole">
-          </label>
-          <label>Beschrijving
-            <input type="text" placeholder="Korte omschrijving">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
-      </section>
+      <label for="locatie">Les locatie:</label>
+      <input type="text" id="locatie" name="locatie" placeholder="bv. Retie">
 
-      <section class="tab-pane" id="locatie">
-        <h2>Les Locatie</h2>
-        <form class="form-grid">
-          <label>Locatie
-            <input type="text" placeholder="Retie / Mol / Dessel">
-          </label>
-          <label>Adres
-            <input type="text" placeholder="Straat, nr, gemeente">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
-      </section>
+      <label for="trainer">Trainer:</label>
+      <input type="text" id="trainer" name="trainer" placeholder="bv. Paul Thijs">
 
-      <section class="tab-pane" id="trainers">
-        <h2>Les Trainers</h2>
-        <form class="form-grid">
-          <label>Naam trainer
-            <input type="text" placeholder="Paul Thijs">
-          </label>
-          <label>E-mail
-            <input type="email" placeholder="trainer@example.com">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="button" onclick="alert('Opslaan volgt')">Opslaan</button>
-          </div>
-        </form>
-      </section>
-    </div>
+      <button type="submit">Opslaan</button>
+    </form>
   </main>
 
   <script src="/js/dashboard.js" defer></script>
