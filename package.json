@@ -1,15 +1,16 @@
 {
-  "name": "superhond-webapp",
+  "name": "superhond-forwarder",
+  "private": true,
   "version": "1.0.0",
-  "description": "Superhond.be Admin Portaal",
-  "main": "server/index.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
   },
   "engines": {
-    "node": ">=18"
+    "node": "18.x"
   }
 }

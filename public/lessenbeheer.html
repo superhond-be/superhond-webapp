@@ -1,109 +1,36 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lessenbeheer – Superhond</title>
-  <link rel="stylesheet" href="/css/app.css">
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">🐾 Superhond – <strong>Lessenbeheer</strong></div>
-    <div class="session">
-      <a class="btn btn-ghost" href="index.html">Dashboard</a>
-    </div>
-  </header>
 
-  <main class="content" style="padding:1rem;">
-    <div class="card">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="sessies">Sessies</button>
-        <button class="tab-btn" data-tab="types">Les Type</button>
-        <button class="tab-btn" data-tab="thema">Les Thema</button>
-        <button class="tab-btn" data-tab="locatie">Les Locatie</button>
-        <button class="tab-btn" data-tab="trainers">Les Trainers</button>
-      </div>
-
-      <section class="tab-pane active" id="sessies">
-        <h2>Overzicht sessies</h2>
-        <div class="table-tools">
-          <input id="filter-locatie" class="input" placeholder="Filter op locatie…">
-          <input id="filter-type" class="input" placeholder="Filter op type…">
-          <button id="btn-refresh" class="btn">Vernieuwen</button>
-        </div>
-        <table class="table" id="lessons-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Datum</th>
-              <th>Tijd</th>
-              <th>Type</th>
-              <th>Thema</th>
-              <th>Locatie</th>
-              <th>Trainer</th>
-              <th>Credits</th>
-              <th>Acties</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="9">Laden…</td></tr>
-          </tbody>
-        </table>
-
-        <h3>Nieuwe / Wijzig sessie</h3>
-        <form class="form-grid" id="lesson-form">
-          <input type="hidden" name="id" id="lf-id">
-          <label>Type
-            <input type="text" name="type" id="lf-type" placeholder="Puppy / Puber / Volwassen" required>
-          </label>
-          <label>Thema
-            <input type="text" name="thema" id="lf-thema" placeholder="Socialisatie / Recall" required>
-          </label>
-          <label>Locatie
-            <input type="text" name="locatie" id="lf-locatie" placeholder="Retie / Mol / Dessel" required>
-          </label>
-          <label>Trainer
-            <input type="text" name="trainer" id="lf-trainer" placeholder="Paul / Nancy" required>
-          </label>
-          <label>Datum
-            <input type="date" name="datum" id="lf-datum">
-          </label>
-          <label>Tijd
-            <input type="time" name="tijd" id="lf-tijd">
-          </label>
-          <label>Credits
-            <input type="number" name="credits" id="lf-credits" min="1" value="1">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="submit" id="btn-save">Opslaan</button>
-            <button class="btn btn-ghost" type="button" id="btn-reset">Reset</button>
-          </div>
-        </form>
-      </section>
-
-      <section class="tab-pane" id="types">
-        <h2>Les Type</h2>
-        <p class="muted">Beheer van types volgt later (structuur staat klaar).</p>
-      </section>
-
-      <section class="tab-pane" id="thema">
-        <h2>Les Thema</h2>
-        <p class="muted">Beheer van thema's volgt later.</p>
-      </section>
-
-      <section class="tab-pane" id="locatie">
-        <h2>Les Locatie</h2>
-        <p class="muted">Beheer van locaties volgt later.</p>
-      </section>
-
-      <section class="tab-pane" id="trainers">
-        <h2>Les Trainers</h2>
-        <p class="muted">Beheer van trainers volgt later.</p>
-      </section>
-    </div>
-  </main>
-
-  <script src="/js/dashboard.js" defer></script>
-  <script src="/js/lessenbeheer.js" defer></script>
-</body>
-</html>
+<!doctype html><html lang="nl"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Superhond • Lessenbeheer</title>
+<link rel="stylesheet" href="/css/app.css"></head><body>
+<header><h1>Superhond – Lessenbeheer</h1>
+<div class="actions-right"><button id="btnToggleFilters" class="ghost">Filters</button>
+<button id="btnNew">Nieuwe les</button></div></header>
+<main>
+<section id="filters" class="filters hidden">
+<label>Type <select id="filterType"><option value="">Alle</option><option>Puppy</option><option>Puber</option><option>Basis</option></select></label>
+<label>Locatie <input id="filterLocation" placeholder="bv. Retie"></label>
+<label>Vanaf <input id="filterFrom" type="date"></label>
+<label>Tot <input id="filterTo" type="date"></label>
+<button id="btnFilter">Toepassen</button><button id="btnReset" class="ghost">Reset</button>
+</section>
+<section class="list">
+<table id="tbl"><thead><tr>
+<th>ID</th><th>Type</th><th>Thema</th><th>Locatie</th><th>Datum</th><th>Tijd</th><th>Trainer</th><th></th>
+</tr></thead><tbody></tbody></table>
+</section>
+<dialog id="dlgForm"><form method="dialog" class="form">
+<h2 id="formTitle">Les</h2>
+<div class="grid">
+<label>Type <select id="type"><option>Puppy</option><option>Puber</option><option>Basis</option></select></label>
+<label>Thema <input id="theme" required></label>
+<label>Locatie <input id="location" required></label>
+<label>Datum <input id="date" required type="date"></label>
+<label>Tijd <input id="time" required type="time"></label>
+<label>Trainer <input id="trainer" required></label>
+</div>
+<menu><button value="cancel" class="ghost">Annuleren</button><button id="btnSave" value="default">Opslaan</button></menu>
+<input type="hidden" id="lessonId"></form></dialog>
+</main>
+<footer><small>UI • API: /lessons</small></footer>
+<script src="/js/lessenbeheer.js"></script></body></html>
