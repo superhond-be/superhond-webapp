@@ -1,43 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Login</title>
-  <link rel="stylesheet" href="/public/css/app.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Superhond</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+  <header>
+    <h1>Admin Login</h1>
+  </header>
 
-<header>
-  <div class="nav">
-    <div style="font-weight:800">Superhond Dashboard</div>
-    <div class="small">•</div>
-    <a class="link" href="/public/index.html">Dashboard</a>
-    <a class="link" href="/public/admin-login.html">Admin Login</a>
-    <a class="link" href="/public/admin-register.html">Admin Register</a>
-    <a class="link" href="/public/admin-users.html">Admin Users</a>
-  </div>
-</header>
-<main>
+  <main>
+    <form class="login-form">
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email" required>
 
-  <div class="card" style="max-width:520px">
-    <h2>Admin login</h2>
-    <form id="loginForm">
-      <label>E-mail</label>
-      <input id="user" type="email" required />
-      <label>Wachtwoord</label>
-      <input id="pass" type="password" required />
-      <div style="margin-top:14px;display:flex;gap:10px">
-        <button type="submit">Login</button>
-        <a class="link" href="/public/admin-register.html">Nog geen account?</a>
-      </div>
-      <div id="err" class="small err" style="margin-top:8px"></div>
+      <label for="password">Wachtwoord:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Inloggen</button>
     </form>
-  </div>
+  </main>
 
-</main>
-<footer>Made with ❤️ for Superhond</footer>
-
-<script src="/public/js/admin-login.js"></script>
+  <script src="/js/dashboard.js" defer></script>
 </body>
 </html>

@@ -1,14 +1,11 @@
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Superhond Dashboard geladen ✅");
 
-(async function(){
-  const btn = document.getElementById('check');
-  const out = document.getElementById('out');
-  btn?.addEventListener('click', async()=>{
-    out.textContent = "Bezig…";
-    try{
-      const data = await sh.$json('/api/admin/users/status');
-      out.innerText = JSON.stringify(data);
-    }catch(err){
-      out.innerText = 'Fout: ' + err.message;
-    }
-  });
-})();
+  const form = document.querySelector(".login-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Login functionaliteit volgt nog!");
+    });
+  }
+});

@@ -1,52 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Users</title>
-  <link rel="stylesheet" href="/public/css/app.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gebruikersbeheer - Superhond</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+  <header>
+    <h1>Gebruikersbeheer</h1>
+  </header>
 
-<header>
-  <div class="nav">
-    <div style="font-weight:800">Superhond Dashboard</div>
-    <div class="small">•</div>
-    <a class="link" href="/public/index.html">Dashboard</a>
-    <a class="link" href="/public/admin-login.html">Admin Login</a>
-    <a class="link" href="/public/admin-register.html">Admin Register</a>
-    <a class="link" href="/public/admin-users.html">Admin Users</a>
-  </div>
-</header>
-<main>
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Email</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jan Jansen</td>
+          <td>jan@example.com</td>
+          <td>Trainer</td>
+        </tr>
+        <tr>
+          <td>Piet Peeters</td>
+          <td>piet@example.com</td>
+          <td>Admin</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
 
-  <div class="card">
-    <h2>Bestaande gebruikers</h2>
-    <div id="list" class="list small">Laden…</div>
-  </div>
-
-  <div class="card" style="margin-top:18px">
-    <h2>Nieuwe gebruiker toevoegen</h2>
-    <form id="newForm" class="list">
-      <div class="row">
-        <input id="n_name" placeholder="Naam" required />
-        <input id="n_email" type="email" placeholder="E-mail" required />
-        <input id="n_pass" type="password" placeholder="Wachtwoord" required />
-        <select id="n_role">
-          <option value="admin">admin</option>
-          <option value="superadmin">superadmin</option>
-        </select>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <button type="submit" style="width:auto">+ Toevoegen</button>
-        <div id="info" class="small">{"info":"Resultaat verschijnt hier."}</div>
-      </div>
-    </form>
-  </div>
-
-</main>
-<footer>Made with ❤️ for Superhond</footer>
-
-<script src="/public/js/admin-users.js"></script>
+  <script src="/js/dashboard.js" defer></script>
 </body>
 </html>
