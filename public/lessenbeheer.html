@@ -1,36 +1,34 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lessenbeheer - Superhond</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <header>
+    <h1>Lessenbeheer</h1>
+  </header>
 
-<!doctype html><html lang="nl"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Superhond • Lessenbeheer</title>
-<link rel="stylesheet" href="/css/app.css"></head><body>
-<header><h1>Superhond – Lessenbeheer</h1>
-<div class="actions-right"><button id="btnToggleFilters" class="ghost">Filters</button>
-<button id="btnNew">Nieuwe les</button></div></header>
-<main>
-<section id="filters" class="filters hidden">
-<label>Type <select id="filterType"><option value="">Alle</option><option>Puppy</option><option>Puber</option><option>Basis</option></select></label>
-<label>Locatie <input id="filterLocation" placeholder="bv. Retie"></label>
-<label>Vanaf <input id="filterFrom" type="date"></label>
-<label>Tot <input id="filterTo" type="date"></label>
-<button id="btnFilter">Toepassen</button><button id="btnReset" class="ghost">Reset</button>
-</section>
-<section class="list">
-<table id="tbl"><thead><tr>
-<th>ID</th><th>Type</th><th>Thema</th><th>Locatie</th><th>Datum</th><th>Tijd</th><th>Trainer</th><th></th>
-</tr></thead><tbody></tbody></table>
-</section>
-<dialog id="dlgForm"><form method="dialog" class="form">
-<h2 id="formTitle">Les</h2>
-<div class="grid">
-<label>Type <select id="type"><option>Puppy</option><option>Puber</option><option>Basis</option></select></label>
-<label>Thema <input id="theme" required></label>
-<label>Locatie <input id="location" required></label>
-<label>Datum <input id="date" required type="date"></label>
-<label>Tijd <input id="time" required type="time"></label>
-<label>Trainer <input id="trainer" required></label>
-</div>
-<menu><button value="cancel" class="ghost">Annuleren</button><button id="btnSave" value="default">Opslaan</button></menu>
-<input type="hidden" id="lessonId"></form></dialog>
-</main>
-<footer><small>UI • API: /lessons</small></footer>
-<script src="/js/lessenbeheer.js"></script></body></html>
+  <main>
+    <form>
+      <label for="type">Les type:</label>
+      <input type="text" id="type" name="type" placeholder="bv. Puppy les">
+
+      <label for="thema">Les thema:</label>
+      <input type="text" id="thema" name="thema" placeholder="bv. Socialisatie">
+
+      <label for="locatie">Les locatie:</label>
+      <input type="text" id="locatie" name="locatie" placeholder="bv. Retie">
+
+      <label for="trainer">Trainer:</label>
+      <input type="text" id="trainer" name="trainer" placeholder="bv. Paul Thijs">
+
+      <button type="submit">Opslaan</button>
+    </form>
+  </main>
+
+  <script src="/js/dashboard.js" defer></script>
+</body>
+</html>
