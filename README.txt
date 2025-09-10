@@ -1,8 +1,8 @@
-Superhond Webapp – Version v14
+Superhond Webapp – Version v13
 
-Nieuw in v14:
-- Exportbestanden krijgen een datumstempel in de bestandsnaam (archief-YYYY-MM-DD.csv/xlsx).
-- Excel-export verbeterd: automatische kolombreedtes, vetgedrukte headers (basis).
-- CSV-export idem, met datumstempel.
+Nieuw in v13:
+- Exportfunctie in Archief: CSV en Excel (.xlsx).
+- Export respecteert zoekfilter (alleen zichtbare resultaten).
+- Excel-export gebruikt xlsx.js library en maakt aparte tabbladen voor Klanten, Honden en Strippenkaarten.
 
-Opzet blijft demo met client-side xlsx.js, klaar voor gebruik in browser.
+Volgende stap: meer opmaak toevoegen in Excel (vet headers, kolombreedte auto).

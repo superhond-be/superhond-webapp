@@ -23,7 +23,7 @@
   <ul id="archCard"></ul>
 </div>
 
-<div class="version">Superhond Webapp – v14</div>
+<div class="version">Superhond Webapp – v13</div>
 
 <script src="js/data.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -44,8 +44,6 @@ function refresh(){
   document.querySelector('#cardHead').textContent='Strippenkaarten ('+window.filtered.cards.length+')';
 }
 
-function dateStamp(){ const d=new Date(); return d.toISOString().split('T')[0]; }
-
 function exportCSV(){
   let rows=[];
   rows.push(['--- Klanten ---']); rows=rows.concat(window.filtered.customers.map(c=>[c.id,c.name]));
@@ -53,21 +51,18 @@ function exportCSV(){
   rows.push([]); rows.push(['--- Strippenkaarten ---']); rows=rows.concat(window.filtered.cards.map(c=>[c.id,c.type,c.dogId]));
   let csv=rows.map(r=>r.join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='archief-'+dateStamp()+'.csv'; a.click();
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='archief.csv'; a.click();
 }
-
-function autoWidth(ws){ const cols=[]; const data=XLSX.utils.sheet_to_json(ws,{header:1}); data.forEach(r=>r.forEach((v,i)=>{ const len=String(v||'').length; cols[i]=Math.max(cols[i]||10,len); })); ws['!cols']=cols.map(w=>({wch:w+2})); }
 
 function exportXLSX(){
   const wb=XLSX.utils.book_new();
   const ws1=XLSX.utils.json_to_sheet(window.filtered.customers);
   const ws2=XLSX.utils.json_to_sheet(window.filtered.dogs);
   const ws3=XLSX.utils.json_to_sheet(window.filtered.cards);
-  autoWidth(ws1); autoWidth(ws2); autoWidth(ws3);
   XLSX.utils.book_append_sheet(wb,ws1,'Klanten');
   XLSX.utils.book_append_sheet(wb,ws2,'Honden');
   XLSX.utils.book_append_sheet(wb,ws3,'Strippenkaarten');
-  XLSX.writeFile(wb,'archief-'+dateStamp()+'.xlsx');
+  XLSX.writeFile(wb,'archief.xlsx');
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
