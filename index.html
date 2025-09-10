@@ -1,21 +1,37 @@
-<!-- Superhond public scaffold: replace placeholder content with your real files. -->
-
 <!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Superhond – Dashboard</title>
-  <link rel="stylesheet" href="./css/app.css" />
+  <link rel="stylesheet" href="/public/css/app.css" />
 </head>
 <body>
-  <header><h1>Superhond Dashboard</h1></header>
-  <main class="tiles">
-    <a class="tile" href="./dashboard.html">📊 Dashboard</a>
-    <a class="tile" href="./admin-login/admin-login.html">🔑 Admin Login</a>
-    <a class="tile" href="./admin-register/admin-register.html">📝 Admin Register</a>
-    <a class="tile" href="./admin-users/admin-users.html">👤 Admin Users</a>
-  </main>
-  <script src="./js/app.js"></script>
+
+<header>
+  <div class="nav">
+    <div style="font-weight:800">Superhond Dashboard</div>
+    <div class="small">•</div>
+    <a class="link" href="/public/index.html">Dashboard</a>
+    <a class="link" href="/public/admin-login.html">Admin Login</a>
+    <a class="link" href="/public/admin-register.html">Admin Register</a>
+    <a class="link" href="/public/admin-users.html">Admin Users</a>
+  </div>
+</header>
+<main>
+
+  <h1>Welkom 👋</h1>
+  <p class="small">Kies wat je wil doen.</p>
+  <div class="tiles">
+    <a class="tile" href="/public/dashboard.html"><span class="icon">📊</span> <div><strong>Dashboard</strong><div class="small">Overzicht</div></div></a>
+    <a class="tile" href="/public/admin-login.html"><span class="icon">🔑</span> <div><strong>Admin Login</strong><div class="small">Aanmelden als admin</div></div></a>
+    <a class="tile" href="/public/admin-register.html"><span class="icon">📝</span> <div><strong>Admin Register</strong><div class="small">Nieuwe admin aanmaken</div></div></a>
+    <a class="tile" href="/public/admin-users.html"><span class="icon">👤</span> <div><strong>Admin Users</strong><div class="small">Beheer accounts</div></div></a>
+  </div>
+
+</main>
+<footer>Made with ❤️ for Superhond</footer>
+
+<script src="/public/js/app.js"></script>
 </body>
 </html>
