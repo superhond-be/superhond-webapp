@@ -1,51 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Superhond | Dashboard</title>
-  <link rel="stylesheet" href="./css/app.css">
-  <script defer src="./js/common.js"></script>
-  <script src="./js/dashboard.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superhond – Dashboard</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
   <header class="topbar">
-    <div class="container">
-      <div class="brand">🐾 Superhond.be <span class="muted">Admin portaal</span></div>
-      <nav class="topnav">
-        <a href="./index.html">Dashboard</a>
-        <a href="./admin-users.html">Gebruikers</a>
-        <a href="./lessenbeheer.html">Lessen</a>
-        <a href="./klantenportaal.html">Klantenportaal</a>
-        <a href="./admin-login.html" class="right">Login</a>
-      </nav>
+    <div class="brand">🐾 Superhond – <strong>Dashboard</strong></div>
+    <div class="session">
+      <span class="badge">Ingelogd: <b>admin</b></span>
+      <button class="btn btn-ghost" onclick="alert('Logout volgt')">Logout</button>
     </div>
   </header>
-  <main class="container">
 
-<h1>Dashboard</h1>
-<section class="tiles">
-  <a class="tile" href="./admin-users.html">
-    <span class="tile-title">Gebruikersbeheer</span>
-    <span class="tile-desc">Maak, bekijk en beheer admins</span>
-  </a>
-  <a class="tile" href="./lessenbeheer.html">
-    <span class="tile-title">Lessenbeheer</span>
-    <span class="tile-desc">Types, thema’s, locaties, trainers</span>
-  </a>
-  <a class="tile" href="./klantenportaal.html">
-    <span class="tile-title">Klantenportaal</span>
-    <span class="tile-desc">Overzicht klant/hond en boekingen</span>
-  </a>
-  <a class="tile" href="./admin-register.html">
-    <span class="tile-title">Nieuwe admin registreren</span>
-    <span class="tile-desc">Account aanmaken</span>
-  </a>
-</section>
+  <div class="layout">
+    <aside class="rail">
+      <div class="rail-title">Snel naar cursus</div>
+      <button class="btn" onclick="location.href='klantenportaal.html'">Open inschrijving</button>
 
-  </main>
-  <footer class="footer">
-    <div class="container">© Superhond — Superhond.be</div>
-  </footer>
+      <div class="calendar card" style="margin-top:1rem;">
+        <div class="cal-head">
+          <button class="btn btn-xs" id="cal-prev" aria-label="Vorige maand">◀</button>
+          <div id="cal-title"></div>
+          <button class="btn btn-xs" id="cal-next" aria-label="Volgende maand">▶</button>
+        </div>
+        <div id="calendar"></div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="section section--public">
+        <h2>Publiek <small>voor klanten – publiek toegankelijk</small></h2>
+        <div class="tiles">
+          <a class="tile tile--public" href="klantenportaal.html">
+            <span class="tile-ico">📝</span>
+            Publieke inschrijving
+            <small>Schrijf in op klas/sessie (live beschikbaarheid).</small>
+          </a>
+
+          <a class="tile tile--public" href="#">
+            <span class="tile-ico">🎟️</span>
+            Onboarding na betaling
+            <small>Activeer toegang / QR-tickets.</small>
+          </a>
+
+          <a class="tile tile--public" href="/api/health" target="_blank">
+            <span class="tile-ico">🛠️</span>
+            API test
+            <small>Check backend status.</small>
+          </a>
+
+          <a class="tile tile--public" href="README.md" target="_blank">
+            <span class="tile-ico">📘</span>
+            Documentatie
+            <small>Overzicht Admin • Publiek • API.</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="section section--admin">
+        <h2>Admin <small>Alleen voor administratie – inloggen vereist</small></h2>
+        <div class="tiles">
+          <a class="tile tile--admin" href="lessenbeheer.html">
+            <span class="tile-ico">📅</span>
+            Lessenbeheer
+            <small>Maak/beheer klassen en sessies.</small>
+          </a>
+
+          <a class="tile tile--admin" href="admin-users.html">
+            <span class="tile-ico">👤</span>
+            Admin gebruikers
+            <small>Beheer admin-accounts.</small>
+          </a>
+
+          <a class="tile tile--admin" href="klantenportaal.html">
+            <span class="tile-ico">🐶</span>
+            Klanten &amp; Honden
+            <small>Beheer baasjes en honden.</small>
+          </a>
+
+          <a class="tile tile--admin" href="#">
+            <span class="tile-ico">🎫</span>
+            Strippenkaarten
+            <small>Beheer beurten/credits.</small>
+          </a>
+
+          <a class="tile tile--admin" href="#">
+            <span class="tile-ico">📨</span>
+            Aanvragen
+            <small>Memberships goedkeuren (na betaling).</small>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js" defer></script>
 </body>
 </html>
