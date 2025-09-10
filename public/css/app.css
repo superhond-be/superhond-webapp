@@ -120,10 +120,3 @@ body{
 .form-grid input{padding:.55rem .6rem;border:1px solid var(--border);border-radius:8px}
 .form-actions{margin-top:.5rem}
 .muted{color:var(--muted)}
-
-/* --- Lessenbeheer helpers --- */
-.table-tools{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 1rem}
-.input{padding:.5rem .6rem;border:1px solid var(--border);border-radius:8px}
-.btn-row{display:flex;gap:.35rem}
-.btn-xs{padding:.3rem .5rem;font-size:.85rem}
-.btn-danger{border-color:#ef4444}
