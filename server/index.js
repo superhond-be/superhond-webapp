@@ -5,8 +5,8 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // Eenvoudige testroute
-app.get('/', (req, res) => {
-  res.send('🚀 Superhond server is running on Render!');
+//app.get('/', (req, res) => {
+//  res.send('🚀 Superhond server is running on Render!');
 });
 
 // Start server
