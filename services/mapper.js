@@ -1,46 +1,67 @@
-// services/mapper.js
-/**
- * Twee identieke les-types met verschillende namen:
- *  - "Puppy Pack Online"  -> canonical: "puppy_pack", variant: "online"
- *  - "Puppy Pack Connect" -> canonical: "puppy_pack", variant: "connect"
- * Beide worden behandeld als 1 en hetzelfde type in je backend.
- */
+// Eenvoudige mapper van MailBlue/ActiveCampaign payload naar ons domeinmodel.
+// Past aan met eigen custom field sleutels of pipelines.
 
-const ALIASES = [
-  { re: /puppy\s*pack\s*online/i,  canonical: "puppy_pack", variant: "online",  group: "Puppy" },
-  { re: /puppy\s*pack\s*connect/i, canonical: "puppy_pack", variant: "connect", group: "Puppy" },
-];
+const CFG = {
+  // Pas deze sleutel-namen aan op basis van je MailBlue custom fields
+  fields: {
+    phone: ["phone", "tel", "gsm", "phone_number"],
+    dogName: ["dog_name", "hond", "hondnaam"],
+    dogBreed: ["dog_breed", "ras"],
+    dogBirth: ["dog_birth", "geboortedatum_hond"],
+    credits: ["credits", "aantal_credits"],
+    lessonType: ["lesson_type", "les_type", "lestype"],
+  }
+};
 
-function resolveAlias(name) {
-  const s = String(name || "");
-  for (const a of ALIASES) if (a.re.test(s)) return a;
-  // fallback: als het woord "puppy" voorkomt, behandel als puppy_pack zonder variant
-  if (/\bpuppy\b/i.test(s)) return { canonical: "puppy_pack", variant: "unspecified", group: "Puppy" };
-  return { canonical: "unknown", variant: "unspecified", group: "Onbekend" };
+function pluck(any, keys) {
+  if (!any || typeof any !== "object") return undefined;
+  for (const k of keys) {
+    if (any[k] != null) return any[k];
+    // probeer nested fields
+    if (any.fields && any.fields[k] != null) return any.fields[k];
+    if (any.custom_fields && any.custom_fields[k] != null) return any.custom_fields[k];
+  }
+  return undefined;
 }
 
-function mapPayload(payload = {}) {
-  const rawName = payload.productName || payload.courseName || payload.topic || payload.title || "";
-  const alias   = resolveAlias(rawName);
+export function mapMailblueToDomain(payload) {
+  // Vaak zit contact info op payload.contact of direct op payload
+  const contact = payload.contact || payload || {};
+  const email = (contact.email || "").trim();
+  const firstName = contact.first_name || contact.firstname || contact.voornaam || "";
+  const lastName = contact.last_name || contact.lastname || contact.achternaam || "";
+  const phone = pluck(contact, CFG.fields.phone) || "";
 
-  return {
-    // basis
-    naam:  payload.name || payload.fullName || "",
-    email: payload.email || "",
-    telefoon: payload.phone || "",
-    hond: payload.dog || "",
-    geboortedatum_hond: payload.dogBirth || "",
+  const dogName = pluck(payload, CFG.fields.dogName);
+  const dogBreed = pluck(payload, CFG.fields.dogBreed);
+  const dogBirth = pluck(payload, CFG.fields.dogBirth);
+  const credits = Number(pluck(payload, CFG.fields.credits) || 0);
+  const lessonType = pluck(payload, CFG.fields.lessonType) || null;
 
-    // normalisatie
-    group: alias.group,                 // "Puppy"
-    canonical: alias.canonical,         // "puppy_pack"
-    variant: alias.variant,             // "online" | "connect" | "unspecified"
-
-    // trace
-    rawProductName: rawName,
-    bron: payload.source || "onbekend",
-    raw: payload
+  const domain = {
+    customer: {
+      email,
+      firstName,
+      lastName,
+      phone
+    }
   };
-}
 
-module.exports = { mapPayload };
+  if (dogName) {
+    domain.dog = {
+      name: String(dogName),
+      breed: dogBreed || null,
+      birthDate: dogBirth || null
+    };
+  }
+
+  if (credits && credits > 0) {
+    domain.credit = {
+      amount: credits,
+      reason: lessonType ? `Aankoop credits voor ${lessonType}` : "Aankoop credits",
+      source: "mailblue"
+    };
+  }
+
+  return domain;
+}

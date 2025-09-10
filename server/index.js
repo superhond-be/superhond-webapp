@@ -1,34 +1,36 @@
-const express = require('express');
-const path = require('path');
+import express from "express";
+import morgan from "morgan";
+import helmet from "helmet";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import externalRouter from "../routes/external.js";
+import { ensureDataDirs } from "../services/store.js";
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = process.env.PORT || 4000;
 
-// Middleware
-app.use(express.json());
+app.use(helmet());
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
 
-// Static files from /public
-app.use(express.static(path.join(__dirname, '..', 'public')));
-
-// Health check
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', app: 'superhond-webapp', time: new Date().toISOString() });
+app.get("/health", (req, res) => {
+  res.json({ ok: true, ts: new Date().toISOString() });
 });
 
-// API routes
-const usersRouter = require('../routes/admin-users');
-app.use('/api/users', usersRouter);
+app.use("/external", externalRouter);
 
-// Fallback to index.html for root
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found" });
 });
 
-// 404 for API
-app.use('/api', (_req, res) => {
-  res.status(404).json({ error: 'Not found' });
-});
-
-const PORT = process.env.PORT || 3000;
+ensureDataDirs();
 app.listen(PORT, () => {
-  console.log(`✅ Superhond server running at http://localhost:${PORT}`);
+  console.log(`✅ Superhond API draait op http://localhost:${PORT}`);
 });
