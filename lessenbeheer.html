@@ -1,34 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lessenbeheer - Superhond</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lessenbeheer – Superhond</title>
+  <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-  <header>
-    <h1>Lessenbeheer</h1>
+  <header class="topbar">
+    <div class="brand">
+      <span class="paw">🐾</span>
+      <span class="title"><strong>Superhond</strong> – Lessenbeheer</span>
+    </div>
+    <div class="session">
+      <span class="badge">Ingelogd: <strong>admin</strong></span>
+      <a href="index.html" class="btn btn-outline">Dashboard</a>
+    </div>
   </header>
 
-  <main>
-    <form>
-      <label for="type">Les type:</label>
-      <input type="text" id="type" name="type" placeholder="bv. Puppy les">
+  <main class="layout" style="max-width:1100px;">
+    <section class="content">
+      <h1 style="margin-top:0;">Lessenbeheer</h1>
+      <p class="help">Beheer klassen en sessies. Een les kan meerdere trainers bevatten.</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0 14px 0">
+        <div></div>
+        <button id="btnNew" class="btn btn-primary">+ Nieuwe les toevoegen</button>
+      </div>
 
-      <label for="thema">Les thema:</label>
-      <input type="text" id="thema" name="thema" placeholder="bv. Socialisatie">
-
-      <label for="locatie">Les locatie:</label>
-      <input type="text" id="locatie" name="locatie" placeholder="bv. Retie">
-
-      <label for="trainer">Trainer:</label>
-      <input type="text" id="trainer" name="trainer" placeholder="bv. Paul Thijs">
-
-      <button type="submit">Opslaan</button>
-    </form>
+      <table class="table" aria-label="Overzicht lessen">
+        <thead>
+          <tr>
+            <th>Les</th>
+            <th>Locatie</th>
+            <th>Datum &amp; tijd</th>
+            <th>Trainers</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+        <tbody id="lessonRows"></tbody>
+      </table>
+    </section>
   </main>
 
-  <script src="/js/dashboard.js" defer></script>
+  <!-- Modal -->
+  <div class="modal" id="lessonModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Les bewerken/toevoegen</h3>
+        <button id="btnCancel" class="btn btn-outline">Sluiten</button>
+      </div>
+      <form id="lessonForm">
+        <input type="hidden" id="m-id" />
+        <div class="form-row">
+          <label for="m-name">Naam les</label>
+          <input type="text" id="m-name" placeholder="bv. Puppy Pack — Instap" required />
+        </div>
+        <div class="form-row">
+          <label for="m-location">Locatie</label>
+          <input type="text" id="m-location" placeholder="bv. Retie" />
+        </div>
+        <div class="form-row">
+          <label>Datum &amp; tijd</label>
+          <div style="display:flex; gap:8px;">
+            <input type="date" id="m-date" />
+            <input type="time" id="m-start" />
+            <input type="time" id="m-end" />
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Trainers (meerdere mogelijk)</label>
+          <div id="m-trainers"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/lessons.js"></script>
 </body>
 </html>

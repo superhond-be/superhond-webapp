@@ -1,25 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superhond Dashboard</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superhond – Dashboard</title>
+  <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-  <header>
-    <h1>Superhond.be Admin Portaal</h1>
+  <header class="topbar">
+    <div class="brand">
+      <span class="paw">🐾</span>
+      <span class="title"><strong>Superhond</strong> – Dashboard</span>
+    </div>
+    <div class="session">
+      <span class="badge">Ingelogd: <strong>admin</strong></span>
+      <button class="btn btn-outline" onclick="alert('Logout… (placeholder)')">Logout</button>
+    </div>
   </header>
 
-  <main>
-    <div class="tiles">
-      <a href="admin-login.html" class="tile">Admin Login</a>
-      <a href="admin-users.html" class="tile">Gebruikersbeheer</a>
-      <a href="klantenportaal.html" class="tile">Klantenportaal</a>
-      <a href="lessenbeheer.html" class="tile">Lessenbeheer</a>
-    </div>
+  <main class="layout">
+    <!-- Left: quick nav / calendar -->
+    <aside class="sidebar">
+      <div class="card">
+        <h3 class="card-title">Snel naar cursus</h3>
+        <button class="btn btn-primary" onclick="location.href='open-inschrijving.html'">Open inschrijving</button>
+      </div>
+      <div class="card calendar">
+        <div class="cal-header">
+          <button id="prevMonth" aria-label="Vorige maand">◀</button>
+          <div id="calTitle">maand</div>
+          <button id="nextMonth" aria-label="Volgende maand">▶</button>
+        </div>
+        <div class="cal-grid" id="calGrid" aria-label="Kalender"></div>
+      </div>
+    </aside>
+
+    <!-- Right: content tiles -->
+    <section class="content">
+      <h2 class="section-title">Publiek <span class="muted">voor klanten – publiek toegankelijk</span></h2>
+      <div class="tile-grid tile-grid--public">
+        <a class="tile tile--public" href="publieke-inschrijving.html">
+          <div class="tile-emoji">📒</div>
+          <div class="tile-title">Publieke inschrijving</div>
+          <div class="tile-desc">Schrijf in op klas/sessie (live beschikbaarheid).</div>
+        </a>
+        <a class="tile tile--public" href="onboarding-na-betaling.html">
+          <div class="tile-emoji">🎟️</div>
+          <div class="tile-title">Onboarding na betaling</div>
+          <div class="tile-desc">Activeer toegang / QR-tickets.</div>
+        </a>
+        <a class="tile tile--public" href="api-test.html">
+          <div class="tile-emoji">🛠️</div>
+          <div class="tile-title">API test</div>
+          <div class="tile-desc">Check backend status.</div>
+        </a>
+        <a class="tile tile--public" href="documentatie.html">
+          <div class="tile-emoji">📘</div>
+          <div class="tile-title">Documentatie</div>
+          <div class="tile-desc">Overzicht Admin · Publiek · API.</div>
+        </a>
+      </div>
+
+      <h2 class="section-title">Admin <span class="muted">Alleen voor administratie – inloggen vereist</span></h2>
+      <div class="tile-grid tile-grid--admin">
+        <a class="tile tile--admin" href="lessenbeheer.html">
+          <div class="tile-emoji">📅</div>
+          <div class="tile-title">Lessenbeheer</div>
+          <div class="tile-desc">Maak/beheer klassen en sessies.</div>
+        </a>
+        <a class="tile tile--admin" href="admin-gebruikers.html">
+          <div class="tile-emoji">👤</div>
+          <div class="tile-title">Admin gebruikers</div>
+          <div class="tile-desc">Beheer admin-accounts.</div>
+        </a>
+        <a class="tile tile--admin" href="klanten-honden.html">
+          <div class="tile-emoji">🐶</div>
+          <div class="tile-title">Klanten &amp; Honden</div>
+          <div class="tile-desc">Beheer baasjes en honden.</div>
+        </a>
+        <a class="tile tile--admin" href="strippenkaarten.html">
+          <div class="tile-emoji">🎫</div>
+          <div class="tile-title">Strippenkaarten</div>
+          <div class="tile-desc">Beheer beurten/credits.</div>
+        </a>
+        <a class="tile tile--admin" href="aanvragen.html">
+          <div class="tile-emoji">📩</div>
+          <div class="tile-title">Aanvragen</div>
+          <div class="tile-desc">Memberships goedkeuren (na betaling).</div>
+        </a>
+      </div>
+    </section>
   </main>
 
-  <script src="/js/dashboard.js" defer></script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
