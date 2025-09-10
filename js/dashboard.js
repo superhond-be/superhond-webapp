@@ -1,14 +1,1 @@
-
-(async function(){
-  const btn = document.getElementById('check');
-  const out = document.getElementById('out');
-  btn?.addEventListener('click', async()=>{
-    out.textContent = "Bezig…";
-    try{
-      const data = await sh.$json('/api/admin/users/status');
-      out.innerText = JSON.stringify(data);
-    }catch(err){
-      out.innerText = 'Fout: ' + err.message;
-    }
-  });
-})();
+document.getElementById('check')?.addEventListener('click',async()=>{let out=document.getElementById('out');out.textContent='Laden...';try{let r=await fetch('/api/admin/users/status');let j=await r.json();out.textContent=JSON.stringify(j,null,2);}catch(e){out.textContent='Fout:'+e;}});

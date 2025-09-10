@@ -1,16 +1,1 @@
-
-document.getElementById('regForm')?.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const body = {
-    name:  document.getElementById('name').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    password: document.getElementById('pass').value,
-    role: document.getElementById('role').value
-  };
-  const out = document.getElementById('out');
-  out.textContent = 'Bezig…';
-  const res = await sh.$json('/api/admin/users', {
-    method:'POST', body: JSON.stringify(body)
-  });
-  out.textContent = JSON.stringify(res, null, 2);
-});
+document.getElementById('regForm')?.addEventListener('submit',async(e)=>{e.preventDefault();let nm=name.value,em=email.value,pw=password.value,rl=role.value;let out=document.getElementById('out');out.textContent='Bezig...';let r=await fetch('/api/admin/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,password:pw,role:rl})});let j=await r.json();out.textContent=JSON.stringify(j,null,2);});
