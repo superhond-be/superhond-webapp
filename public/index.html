@@ -18,27 +18,44 @@
   <div class="layout">
     <aside class="rail">
       <div class="rail-title">Snel naar cursus</div>
-      <button class="btn" onclick="alert('Open inschrijving volgt')">Open inschrijving</button>
+      <button class="btn" onclick="location.href='klantenportaal.html'">Open inschrijving</button>
+
+      <div class="calendar card" style="margin-top:1rem;">
+        <div class="cal-head">
+          <button class="btn btn-xs" id="cal-prev" aria-label="Vorige maand">◀</button>
+          <div id="cal-title"></div>
+          <button class="btn btn-xs" id="cal-next" aria-label="Volgende maand">▶</button>
+        </div>
+        <div id="calendar"></div>
+      </div>
     </aside>
 
     <main class="content">
       <section class="section section--public">
         <h2>Publiek <small>voor klanten – publiek toegankelijk</small></h2>
         <div class="tiles">
-          <a class="tile tile--public" href="#">Publieke inschrijving
-            <small>Schrijf in op markt/klas, toon (live) beschikbare sessies.</small>
+          <a class="tile tile--public" href="klantenportaal.html">
+            <span class="tile-ico">📝</span>
+            Publieke inschrijving
+            <small>Schrijf in op klas/sessie (live beschikbaarheid).</small>
           </a>
 
-          <a class="tile tile--public" href="#">Onboarding na betaling
-            <small>Rond onboarding af met tokens / QR tickets…</small>
+          <a class="tile tile--public" href="#">
+            <span class="tile-ico">🎟️</span>
+            Onboarding na betaling
+            <small>Activeer toegang / QR-tickets.</small>
           </a>
 
-          <a class="tile tile--public" href="#">API test
-            <small>Snelle testknop om de backend te checken.</small>
+          <a class="tile tile--public" href="/api/health" target="_blank">
+            <span class="tile-ico">🛠️</span>
+            API test
+            <small>Check backend status.</small>
           </a>
 
-          <a class="tile tile--public" href="#">Documentatie
-            <small>Overzicht Admin + Publiek + API cheatsheet.</small>
+          <a class="tile tile--public" href="README.md" target="_blank">
+            <span class="tile-ico">📘</span>
+            Documentatie
+            <small>Overzicht Admin • Publiek • API.</small>
           </a>
         </div>
       </section>
@@ -46,24 +63,34 @@
       <section class="section section--admin">
         <h2>Admin <small>Alleen voor administratie – inloggen vereist</small></h2>
         <div class="tiles">
-          <a class="tile tile--admin" href="lessenbeheer.html">Lessenbeheer
+          <a class="tile tile--admin" href="lessenbeheer.html">
+            <span class="tile-ico">📅</span>
+            Lessenbeheer
             <small>Maak/beheer klassen en sessies.</small>
           </a>
 
-          <a class="tile tile--admin" href="admin-users.html">Admin gebruikers
-            <small>Beheer admin-accounts (toevoegen/verwijderen).</small>
+          <a class="tile tile--admin" href="admin-users.html">
+            <span class="tile-ico">👤</span>
+            Admin gebruikers
+            <small>Beheer admin-accounts.</small>
           </a>
 
-          <a class="tile tile--admin" href="klantenportaal.html">Klanten &amp; Honden
-            <small>Beheer baasjes en hun honden.</small>
+          <a class="tile tile--admin" href="klantenportaal.html">
+            <span class="tile-ico">🐶</span>
+            Klanten &amp; Honden
+            <small>Beheer baasjes en honden.</small>
           </a>
 
-          <a class="tile tile--admin" href="#">Strippenkaarten
-            <small>Uitgifte en beheer van beurten/credits.</small>
+          <a class="tile tile--admin" href="#">
+            <span class="tile-ico">🎫</span>
+            Strippenkaarten
+            <small>Beheer beurten/credits.</small>
           </a>
 
-          <a class="tile tile--admin" href="#">Aanvragen
-            <small>Memberships goedkeuren/weigeren (na betaling).</small>
+          <a class="tile tile--admin" href="#">
+            <span class="tile-ico">📨</span>
+            Aanvragen
+            <small>Memberships goedkeuren (na betaling).</small>
           </a>
         </div>
       </section>

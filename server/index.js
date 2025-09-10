@@ -16,7 +16,9 @@ app.get('/api/health', (_req, res) => {
 
 // API routes
 const usersRouter = require('../routes/admin-users');
+const lessonsRouter = require('../routes/lessons');
 app.use('/api/users', usersRouter);
+app.use('/api/lessons', lessonsRouter);
 
 // Fallback to index.html for root
 app.get('/', (_req, res) => {

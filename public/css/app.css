@@ -96,3 +96,62 @@ body{
   .rail{position:static; order:2}
   .content{order:1}
 }
+
+/* --- Klantenportaal --- */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem}
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.tab-btn{padding:.5rem .8rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+.tab-btn.active{border-color:var(--public);box-shadow:0 0 0 2px color-mix(in oklab, var(--public) 20%, transparent)}
+
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table th,.table td{padding:.6rem .75rem;border-bottom:1px solid var(--border)}
+.table thead th{background:#fafafa;text-align:left}
+
+.stat-cards{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0}
+.stat{flex:0 0 160px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
+.stat-num{font-size:1.6rem;font-weight:700}
+.stat-label{color:var(--muted)}
+
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.form-grid label{display:flex;flex-direction:column;gap:.3rem}
+.form-grid input{padding:.55rem .6rem;border:1px solid var(--border);border-radius:8px}
+.form-actions{margin-top:.5rem}
+.muted{color:var(--muted)}
+
+/* --- Lessenbeheer helpers --- */
+.table-tools{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 1rem}
+.input{padding:.5rem .6rem;border:1px solid var(--border);border-radius:8px}
+.btn-row{display:flex;gap:.35rem}
+.btn-xs{padding:.3rem .5rem;font-size:.85rem}
+.btn-danger{border-color:#ef4444}
+
+/* --- Tiles met iconen --- */
+.tile { position: relative; padding-left: 3.2rem; }
+.tile-ico{
+  position:absolute; left:1rem; top:1rem; font-size:1.6rem; line-height:1;
+}
+
+/* --- Kalender widget --- */
+.calendar{padding:.6rem}
+.cal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:.4rem;
+  font-weight:600;
+}
+#calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{
+  text-align:center; padding:.35rem 0; background:#fff; border:1px solid var(--border);
+  border-radius:6px; font-size:.9rem;
+}
+.cal-dow{background:#fafafa; font-weight:600}
+.cal-today{outline:2px solid var(--public); font-weight:700}
+.cal-muted{color:var(--muted); background:#fcfcfc}
+
+.cal-haslesson{background:#e3f2fd; cursor:pointer; position:relative}
+.cal-haslesson::after{
+  content:''; position:absolute; bottom:3px; left:50%; width:6px; height:6px;
+  background:var(--public); border-radius:50%; transform:translateX(-50%);
+}
