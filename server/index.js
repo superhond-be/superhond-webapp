@@ -1,30 +1,34 @@
-const path = require('path');
 const express = require('express');
-const session = require('express-session');
-const adminUsers = require('../routes/admin-users');
+const path = require('path');
 
 const app = express();
-app.disable('x-powered-by');
+
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret-superhond',
-  saveUninitialized: true,
-  resave: false,
-  cookie: { sameSite: 'lax' }
-}));
+// Static files from /public
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.use('/public', express.static(path.join(__dirname, '..', 'public')));
-app.use('/api/admin', adminUsers);
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', app: 'superhond-webapp', time: new Date().toISOString() });
+});
 
+// API routes
+const usersRouter = require('../routes/admin-users');
+app.use('/api/users', usersRouter);
+
+// Fallback to index.html for root
 app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
-app.get('/healthz', (_req, res) => res.json({ ok: true }));
+// 404 for API
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
 
-const port = process.env.PORT || 10000;
-app.listen(port, () => {
-  console.log(`Superhond server running on :${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Superhond server running at http://localhost:${PORT}`);
 });

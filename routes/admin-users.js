@@ -1,47 +1,51 @@
 const express = require('express');
-const fs = require('fs').promises;
-const path = require('path');
-
 const router = express.Router();
-const STORE = path.join(__dirname, '..', 'server', 'store.json');
 
-async function readStore() {
-  try {
-    const raw = await fs.readFile(STORE, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return { users: [] };
-  }
-}
-async function writeStore(data) {
-  await fs.mkdir(path.dirname(STORE), { recursive: true });
-  await fs.writeFile(STORE, JSON.stringify(data, null, 2), 'utf8');
-}
+// In-memory demo data
+let users = [
+  { id: 1, name: 'Jan Jansen', email: 'jan@example.com', role: 'Trainer' },
+  { id: 2, name: 'Piet Peeters', email: 'piet@example.com', role: 'Admin' },
+];
 
-router.get('/status', async (_req, res) => {
-  const { users } = await readStore();
-  res.json({ ok: true, count: users.length, hasSetupToken: !!process.env.SETUP_TOKEN });
+// GET /api/users
+router.get('/', (req, res) => {
+  res.json(users);
 });
 
-router.get('/users', async (_req, res) => {
-  const { users } = await readStore();
-  res.json({ ok: true, users });
+// GET /api/users/:id
+router.get('/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const user = users.find(u => u.id === id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user);
 });
 
-router.post('/users', async (req, res) => {
-  const { name, email, pass, role } = req.body || {};
-  if (!name || !email || !pass) return res.status(400).json({ ok: false, error: 'Ontbrekende velden' });
+// POST /api/users
+router.post('/', (req, res) => {
+  const { name, email, role } = req.body || {};
+  if (!name || !email) return res.status(400).json({ error: 'name and email are required' });
+  const id = users.length ? Math.max(...users.map(u => u.id)) + 1 : 1;
+  const user = { id, name, email, role: role || 'Trainer' };
+  users.push(user);
+  res.status(201).json(user);
+});
 
-  const data = await readStore();
-  if (data.users.find(u => u.email.toLowerCase() === email.toLowerCase()))
-    return res.status(409).json({ ok: false, error: 'E-mail bestaat al' });
+// PUT /api/users/:id
+router.put('/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const idx = users.findIndex(u => u.id === id);
+  if (idx === -1) return res.status(404).json({ error: 'User not found' });
+  users[idx] = { ...users[idx], ...req.body, id };
+  res.json(users[idx]);
+});
 
-  const user = { id: 'adm_' + Date.now().toString(36), name, email, pass,
-    role: role === 'superadmin' ? 'superadmin' : 'admin',
-    createdAt: new Date().toISOString() };
-  data.users.push(user);
-  await writeStore(data);
-  res.json({ ok: true, user });
+// DELETE /api/users/:id
+router.delete('/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const exists = users.some(u => u.id === id);
+  if (!exists) return res.status(404).json({ error: 'User not found' });
+  users = users.filter(u => u.id !== id);
+  res.status(204).send();
 });
 
 module.exports = router;
