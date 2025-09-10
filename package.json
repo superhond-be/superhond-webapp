@@ -1,19 +1,15 @@
 {
-  "name": "superhond-mailblue-forwarder",
-  "version": "2.1.1",
-  "description": "MailBlue \u2192 Superhond forwarder (met welkomstpagina op /, tagfilter en betaald-check).",
+  "name": "superhond-webapp",
+  "version": "1.0.0",
+  "description": "Superhond.be Admin Portaal",
   "main": "server/index.js",
-  "type": "module",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "start": "node server/index.js"
   },
   "dependencies": {
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "fs-extra": "^11.2.0",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

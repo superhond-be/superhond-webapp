@@ -1,50 +1,36 @@
-import express from "express";
-import morgan from "morgan";
-import helmet from "helmet";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-import webhookRouter from "../routes/webhook.js";
-import { startQueueWorker } from "../lib/forwarder.js";
-
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const path = require('path');
 
 const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Static files from /public
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', app: 'superhond-webapp', time: new Date().toISOString() });
+});
+
+// API routes
+const usersRouter = require('../routes/admin-users');
+const lessonsRouter = require('../routes/lessons');
+app.use('/api/users', usersRouter);
+app.use('/api/lessons', lessonsRouter);
+
+// Fallback to index.html for root
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+// 404 for API
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
 const PORT = process.env.PORT || 3000;
-
-app.use(helmet());
-app.use(express.json({ limit: "2mb" }));
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
-
-// ✅ Vriendelijke rootpagina
-app.get("/", (req, res) => {
-  res.type("text/plain").send(
-    "✅ Superhond Forwarder draait!\n" +
-    "Health check: /health\n" +
-    "Webhook: POST /webhook\n"
-  );
-});
-
-// Optioneel: GET op /webhook netjes afvangen
-app.get("/webhook", (req, res) => {
-  res.status(405).json({ error: "Use POST for /webhook" });
-});
-
-app.get("/health", (req, res) => {
-  res.json({ ok: true, ts: new Date().toISOString() });
-});
-
-app.use("/webhook", webhookRouter);
-
-app.use((req, res) => {
-  res.status(404).json({ error: "Not found" });
-});
-
 app.listen(PORT, () => {
-  console.log(`✅ Forwarder draait op http://localhost:${PORT}`);
-  startQueueWorker();
+  console.log(`✅ Superhond server running at http://localhost:${PORT}`);
 });
