@@ -2,25 +2,82 @@
 <title>Archief</title><link rel="stylesheet" href="css/app.css"></head>
 <body>
 <h1>Archief</h1>
-<h2>Klanten</h2><ul id="archCust"></ul>
-<h2>Honden</h2><ul id="archDog"></ul>
-<h2>Strippenkaarten</h2><ul id="archCard"></ul>
-<div class="version">Superhond Webapp – v11</div>
+<input id="searchBar" type="text" placeholder="Zoek in archief...">
+<div class="exportRow">
+  <button class="btn" id="exportCSV">Export CSV</button>
+  <button class="btn" id="exportXLSX">Export Excel</button>
+</div>
+
+<div class="section">
+  <div class="section-header"><h2 id="custHead">Klanten</h2><button class="btn-small" id="sortCust">Sorteer A–Z</button></div>
+  <ul id="archCust"></ul>
+</div>
+
+<div class="section">
+  <div class="section-header"><h2 id="dogHead">Honden</h2><button class="btn-small" id="sortDog">Sorteer A–Z</button></div>
+  <ul id="archDog"></ul>
+</div>
+
+<div class="section">
+  <div class="section-header"><h2 id="cardHead">Strippenkaarten</h2><button class="btn-small" id="sortCard">Sorteer A–Z</button></div>
+  <ul id="archCard"></ul>
+</div>
+
+<div class="version">Superhond Webapp – v14</div>
+
 <script src="js/data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
-function render(){
-  const ac=document.querySelector('#archCust'); const ad=document.querySelector('#archDog'); const ar=document.querySelector('#archCard');
-  ac.innerHTML=window.SH.archived.customers.map(c=>'<li>'+c.name+' <button class="btn-small restore" data-type="cust" data-id="'+c.id+'">Herstel</button></li>').join('')||'<li class="small">Geen</li>';
-  ad.innerHTML=window.SH.archived.dogs.map(d=>'<li>'+d.name+' <button class="btn-small restore" data-type="dog" data-id="'+d.id+'">Herstel</button></li>').join('')||'<li class="small">Geen</li>';
-  ar.innerHTML=window.SH.archived.cards.map(c=>'<li>'+c.type+' ('+c.dogId+') <button class="btn-small restore" data-type="card" data-id="'+c.id+'">Herstel</button></li>').join('')||'<li class="small">Geen</li>';
-  document.querySelectorAll('.restore').forEach(b=>b.onclick=()=>{
-    const t=b.getAttribute('data-type'), id=b.getAttribute('data-id');
-    if(t==='cust'){ const c=window.SH.archived.customers.find(x=>x.id===id); if(c){ window.SH.customers.push(c); window.SH.archived.customers=window.SH.archived.customers.filter(x=>x.id!==id);} }
-    if(t==='dog'){ const d=window.SH.archived.dogs.find(x=>x.id===id); if(d){ const c=window.SH.customers[0]; c.dogs.push(d); window.SH.archived.dogs=window.SH.archived.dogs.filter(x=>x.id!==id);} }
-    if(t==='card'){ const c=window.SH.archived.cards.find(x=>x.id===id); if(c){ window.SH.cards.push(c); window.SH.archived.cards=window.SH.archived.cards.filter(x=>x.id!==id);} }
-    render();
-  });
+function render(list,el,fmt){ el.innerHTML=list.map(fmt).join('') || '<li class="small">Geen</li>'; }
+
+function refresh(){
+  const q=document.querySelector('#searchBar').value.toLowerCase();
+  window.filtered={};
+  window.filtered.customers=window.SH.archived.customers.filter(c=>c.name.toLowerCase().includes(q));
+  window.filtered.dogs=window.SH.archived.dogs.filter(d=>d.name.toLowerCase().includes(q));
+  window.filtered.cards=window.SH.archived.cards.filter(c=>(c.type+' '+c.dogId).toLowerCase().includes(q));
+  render(window.filtered.customers,document.querySelector('#archCust'),c=>'<li>'+c.name+'</li>');
+  render(window.filtered.dogs,document.querySelector('#archDog'),d=>'<li>'+d.name+'</li>');
+  render(window.filtered.cards,document.querySelector('#archCard'),c=>'<li>'+c.type+' ('+c.dogId+')</li>');
+  document.querySelector('#custHead').textContent='Klanten ('+window.filtered.customers.length+')';
+  document.querySelector('#dogHead').textContent='Honden ('+window.filtered.dogs.length+')';
+  document.querySelector('#cardHead').textContent='Strippenkaarten ('+window.filtered.cards.length+')';
 }
-document.addEventListener('DOMContentLoaded',render);
+
+function dateStamp(){ const d=new Date(); return d.toISOString().split('T')[0]; }
+
+function exportCSV(){
+  let rows=[];
+  rows.push(['--- Klanten ---']); rows=rows.concat(window.filtered.customers.map(c=>[c.id,c.name]));
+  rows.push([]); rows.push(['--- Honden ---']); rows=rows.concat(window.filtered.dogs.map(d=>[d.id,d.name]));
+  rows.push([]); rows.push(['--- Strippenkaarten ---']); rows=rows.concat(window.filtered.cards.map(c=>[c.id,c.type,c.dogId]));
+  let csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='archief-'+dateStamp()+'.csv'; a.click();
+}
+
+function autoWidth(ws){ const cols=[]; const data=XLSX.utils.sheet_to_json(ws,{header:1}); data.forEach(r=>r.forEach((v,i)=>{ const len=String(v||'').length; cols[i]=Math.max(cols[i]||10,len); })); ws['!cols']=cols.map(w=>({wch:w+2})); }
+
+function exportXLSX(){
+  const wb=XLSX.utils.book_new();
+  const ws1=XLSX.utils.json_to_sheet(window.filtered.customers);
+  const ws2=XLSX.utils.json_to_sheet(window.filtered.dogs);
+  const ws3=XLSX.utils.json_to_sheet(window.filtered.cards);
+  autoWidth(ws1); autoWidth(ws2); autoWidth(ws3);
+  XLSX.utils.book_append_sheet(wb,ws1,'Klanten');
+  XLSX.utils.book_append_sheet(wb,ws2,'Honden');
+  XLSX.utils.book_append_sheet(wb,ws3,'Strippenkaarten');
+  XLSX.writeFile(wb,'archief-'+dateStamp()+'.xlsx');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  refresh();
+  document.querySelector('#searchBar').addEventListener('input',refresh);
+  document.querySelector('#sortCust').addEventListener('click',()=>{window.SH.archived.customers.sort((a,b)=>a.name.localeCompare(b.name,'nl'));refresh();});
+  document.querySelector('#sortDog').addEventListener('click',()=>{window.SH.archived.dogs.sort((a,b)=>a.name.localeCompare(b.name,'nl'));refresh();});
+  document.querySelector('#sortCard').addEventListener('click',()=>{window.SH.archived.cards.sort((a,b)=>a.type.localeCompare(b.type,'nl'));refresh();});
+  document.querySelector('#exportCSV').addEventListener('click',exportCSV);
+  document.querySelector('#exportXLSX').addEventListener('click',exportXLSX);
+});
 </script>
 </body></html>
