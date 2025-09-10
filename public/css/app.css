@@ -1,157 +1,71 @@
-/* Basis */
+
 :root{
-  --yellow:#ffcc00;
-  --public:#1e88e5; /* blauw */
-  --admin:#e53935;  /* rood */
-  --bg:#f7f7f7;
-  --tile:#fff;
+  --yellow:#FFD131;
+  --bg:#f6f7fb;
+  --text:#1f2937;
   --muted:#6b7280;
-  --border:#e5e7eb;
+  --tile-border:#d8e0ee;
+  --tile-shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(29,33,41,.06);
+  --tile-hover:0 1px 3px rgba(0,0,0,.08), 0 10px 30px rgba(29,33,41,.10);
+  --admin-accent:#fcedef;
+  --public-accent:#eaf3ff;
 }
-
 *{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-  background:var(--bg);
-  color:#111;
-}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
 
-/* Topbar */
 .topbar{
-  position:sticky; top:0; z-index:10;
-  display:flex; align-items:center; justify-content:space-between;
-  background:var(--yellow);
-  padding:.8rem 1rem;
-  border-bottom:1px solid rgba(0,0,0,.06);
+  position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:var(--yellow);border-bottom:1px solid rgba(0,0,0,.08);
 }
-.brand{font-weight:600}
-.session{display:flex; gap:.5rem; align-items:center}
-.badge{background:#fff;padding:.25rem .5rem;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
+.brand{display:flex;align-items:center;gap:.5rem;font-size:1.1rem}
+.brand .paw{font-size:1.2rem}
+.session{display:flex;align-items:center;gap:.75rem}
+.badge{background:#fff;padding:.35rem .6rem;border-radius:8px;border:1px solid rgba(0,0,0,.08)}
 
-.btn{padding:.55rem .8rem;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer}
-.btn-ghost{background:transparent;border-color:rgba(0,0,0,.15)}
-
-/* Layout */
-.layout{display:grid; grid-template-columns: 220px 1fr; gap:1rem; padding:1rem}
-.rail{
-  position:sticky; top:64px;
-  align-self:start;
-  background:#fff; border:1px solid var(--border); border-radius:12px;
-  padding:1rem;
+.btn{
+  border:1px solid rgba(0,0,0,.2);padding:.45rem .75rem;border-radius:10px;
+  background:#fff;cursor:pointer;font-weight:600;
 }
-.rail-title{font-weight:600;margin-bottom:.5rem}
+.btn-outline{background:transparent}
+.btn-primary{background:#fff;border-color:#cfd8ea;box-shadow:var(--tile-shadow)}
+.btn-primary:active{transform:translateY(1px)}
 
-/* Content */
-.content{display:flex; flex-direction:column; gap:1.5rem}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:20px;max-width:1180px;margin:18px auto;padding:0 16px}
+.sidebar{display:flex;flex-direction:column;gap:16px}
 
-.section{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:1rem;
-}
-.section h2{
-  margin:.2rem 0 1rem;
-  display:flex; align-items:center; gap:.5rem;
-  font-size:1.2rem;
-}
-.section h2 small{font-weight:400;color:var(--muted)}
+.card{background:#fff;border:1px solid #e6eaf3;border-radius:16px;box-shadow:var(--tile-shadow);padding:16px}
+.card-title{margin:0 0 10px 0;font-size:1rem}
 
-/* Tiles */
-.tiles{
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
-  gap:1rem;
-}
-.tile{
-  display:block;
-  background:var(--tile);
-  border:2px solid var(--border);
-  border-radius:14px;
-  padding:1rem;
-  text-decoration:none;
-  color:inherit;
-  min-height:110px;
-  box-shadow:0 2px 6px rgba(0,0,0,.04);
-  transition:transform .06s ease, box-shadow .06s ease, border-color .06s ease;
-}
-.tile small{display:block; margin-top:.4rem; color:var(--muted); line-height:1.25}
-.tile:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.05)}
+.calendar .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.calendar #calTitle{font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-grid .dow{font-weight:700;font-size:.82rem;color:var(--muted);text-align:center;padding:6px 0}
+.cal-grid .day{height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid #eef1f6;background:#fafbfe}
+.cal-grid .day.is-today{outline:2px solid #2b7fff}
+.cal-grid .day.is-other{opacity:.45}
 
-/* Kleuraccenten per segment */
-.section--public{border-color: color-mix(in oklab, var(--public) 25%, white)}
-.section--admin{border-color: color-mix(in oklab, var(--admin) 25%, white)}
+.content{display:block}
+.section-title{margin:4px 0 10px 0}
+.section-title .muted{color:var(--muted);font-weight:500}
 
-.tile--public{border-color: color-mix(in oklab, var(--public) 40%, white)}
-.tile--public:hover{border-color: var(--public)}
+.tile-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.tile{display:block;background:#fff;border:1px solid var(--tile-border);border-radius:16px;box-shadow:var(--tile-shadow);padding:16px;min-height:110px;transition:box-shadow .15s, transform .15s}
+.tile:hover{box-shadow:var(--tile-hover);transform:translateY(-1px)}
+.tile-emoji{font-size:28px;margin-bottom:6px}
+.tile-title{font-weight:800;margin-bottom:4px}
+.tile-desc{color:var(--muted)}
 
-.tile--admin{border-color: color-mix(in oklab, var(--admin) 40%, white)}
-.tile--admin:hover{border-color: var(--admin)}
+.tile--admin{background:linear-gradient(0deg, var(--admin-accent), var(--admin-accent))}
+.tile--public{background:linear-gradient(0deg, var(--public-accent), var(--public-accent))}
 
-/* Responsive */
-@media (max-width: 900px){
-  .layout{grid-template-columns: 1fr}
-  .rail{position:static; order:2}
+@media (max-width: 980px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{order:2}
   .content{order:1}
+  .tile-grid{grid-template-columns:repeat(2,minmax(200px,1fr))}
 }
-
-/* --- Klantenportaal --- */
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem}
-.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
-.tab-btn{padding:.5rem .8rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
-.tab-btn.active{border-color:var(--public);box-shadow:0 0 0 2px color-mix(in oklab, var(--public) 20%, transparent)}
-
-.tab-pane{display:none}
-.tab-pane.active{display:block}
-
-.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.table th,.table td{padding:.6rem .75rem;border-bottom:1px solid var(--border)}
-.table thead th{background:#fafafa;text-align:left}
-
-.stat-cards{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0}
-.stat{flex:0 0 160px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
-.stat-num{font-size:1.6rem;font-weight:700}
-.stat-label{color:var(--muted)}
-
-.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
-.form-grid label{display:flex;flex-direction:column;gap:.3rem}
-.form-grid input{padding:.55rem .6rem;border:1px solid var(--border);border-radius:8px}
-.form-actions{margin-top:.5rem}
-.muted{color:var(--muted)}
-
-/* --- Lessenbeheer helpers --- */
-.table-tools{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 1rem}
-.input{padding:.5rem .6rem;border:1px solid var(--border);border-radius:8px}
-.btn-row{display:flex;gap:.35rem}
-.btn-xs{padding:.3rem .5rem;font-size:.85rem}
-.btn-danger{border-color:#ef4444}
-
-/* --- Tiles met iconen --- */
-.tile { position: relative; padding-left: 3.2rem; }
-.tile-ico{
-  position:absolute; left:1rem; top:1rem; font-size:1.6rem; line-height:1;
-}
-
-/* --- Kalender widget --- */
-.calendar{padding:.6rem}
-.cal-head{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:.4rem;
-  font-weight:600;
-}
-#calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-cell{
-  text-align:center; padding:.35rem 0; background:#fff; border:1px solid var(--border);
-  border-radius:6px; font-size:.9rem;
-}
-.cal-dow{background:#fafafa; font-weight:600}
-.cal-today{outline:2px solid var(--public); font-weight:700}
-.cal-muted{color:var(--muted); background:#fcfcfc}
-
-.cal-haslesson{background:#e3f2fd; cursor:pointer; position:relative}
-.cal-haslesson::after{
-  content:''; position:absolute; bottom:3px; left:50%; width:6px; height:6px;
-  background:var(--public); border-radius:50%; transform:translateX(-50%);
+@media (max-width: 640px){
+  .tile-grid{grid-template-columns:1fr}
 }
