@@ -1,2 +1,4 @@
-/* Basis CSS voor Superhond */
-body { font-family: Arial, sans-serif; }
+body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
+header { background:#ffcc00; padding:15px; text-align:center; font-weight:bold; }
+.tiles { display:flex; justify-content:center; flex-wrap:wrap; gap:20px; margin-top:40px; }
+.tile { background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-decoration:none; color:#333; box-shadow:2px 2px 5px rgba(0,0,0,0.1); }

@@ -1,2 +1,1 @@
-// JS voor Admin Login
-console.log('Admin Login geladen');
+console.log('Admin login script geladen');

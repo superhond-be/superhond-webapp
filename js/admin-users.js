@@ -1,2 +1,1 @@
-// JS voor Admin Users
-console.log('Admin Users geladen');
+console.log('Admin users script geladen');

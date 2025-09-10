@@ -1,2 +1,1 @@
-// JS voor Lessenbeheer
-console.log('Lessenbeheer geladen');
+console.log('Lessenbeheer script geladen');

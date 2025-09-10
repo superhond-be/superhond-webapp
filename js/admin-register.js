@@ -1,2 +1,1 @@
-// JS voor Admin Register
-console.log('Admin Register geladen');
+console.log('Admin register script geladen');

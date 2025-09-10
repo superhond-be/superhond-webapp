@@ -1,2 +1,1 @@
-// JS voor Klantenportaal
-console.log('Klantenportaal geladen');
+console.log('Klantenportaal script geladen');
