@@ -127,25 +127,3 @@ body{
 .btn-row{display:flex;gap:.35rem}
 .btn-xs{padding:.3rem .5rem;font-size:.85rem}
 .btn-danger{border-color:#ef4444}
-
-/* --- Tiles met iconen --- */
-.tile { position: relative; padding-left: 3.2rem; }
-.tile-ico{
-  position:absolute; left:1rem; top:1rem; font-size:1.6rem; line-height:1;
-}
-
-/* --- Kalender widget --- */
-.calendar{padding:.6rem}
-.cal-head{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:.4rem;
-  font-weight:600;
-}
-#calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-cell{
-  text-align:center; padding:.35rem 0; background:#fff; border:1px solid var(--border);
-  border-radius:6px; font-size:.9rem;
-}
-.cal-dow{background:#fafafa; font-weight:600}
-.cal-today{outline:2px solid var(--public); font-weight:700}
-.cal-muted{color:var(--muted); background:#fcfcfc}
