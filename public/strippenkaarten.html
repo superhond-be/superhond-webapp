@@ -1,91 +1,40 @@
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Strippenkaarten – Superhond</title>
-  <link rel="stylesheet" href="css/app.css" />
-</head>
+<!doctype html><html lang="nl"><head><meta charset="utf-8">
+<title>Strippenkaarten</title><link rel="stylesheet" href="css/app.css"></head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="paw">🐾</span>
-      <span class="title"><strong>Superhond</strong> – Strippenkaarten</span>
-    </div>
-    <div class="session">
-      <span class="badge">Ingelogd: <strong>admin</strong></span>
-      <a href="index.html" class="btn btn-outline">Dashboard</a>
-    </div>
-  </header>
+<h1>Strippenkaarten</h1>
+<table class="table"><thead><tr><th>Hond</th><th>Type</th><th>Gebruikt/Totaal</th><th>Acties</th></tr></thead>
+<tbody id="cardRows"></tbody></table>
+<div class="version">Superhond Webapp – v11</div>
 
-  <main class="layout" style="max-width:1200px;">
-    <section class="content">
-      <h1 style="margin-top:0;">Strippenkaarten (per hond)</h1>
-      <div class="kol2">
-        <div>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px">
-            <input id="search" type="text" placeholder="Zoek op klant, hond of type kaart…" style="flex:1" />
-            <button id="btnNew" class="btn btn-primary">+ Nieuwe strippenkaart</button>
-          </div>
+<div class="modal" id="blkModal"><div class="modal-card"><div class="modal-header">
+<h3 id="blkTitle">Verwijderen geblokkeerd</h3><button id="blkClose" class="btn">Sluiten</button></div>
+<div id="blkBody"></div><div class="modal-actions">
+<button id="blkOk" class="btn">Ok</button><button id="forceArch" class="btn">Archiveer</button></div></div></div>
 
-          <table class="table table-compact" aria-label="Overzicht strippenkaarten per hond">
-            <thead>
-              <tr>
-                <th>Klant</th>
-                <th>Hond</th>
-                <th>Type</th>
-                <th>Totaal</th>
-                <th>Verbruikt</th>
-                <th>Resterend</th>
-                <th>Acties</th>
-              </tr>
-            </thead>
-            <tbody id="cardRows"></tbody>
-          </table>
-        </div>
-
-        <aside class="side">
-          <div id="sideLog"></div>
-        </aside>
-      </div>
-    </section>
-  </main>
-
-  <!-- Nieuwe kaart modal -->
-  <div class="modal" id="newModal" role="dialog" aria-modal="true" aria-labelledby="newTitle">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="newTitle">Nieuwe strippenkaart</h3>
-        <button id="newCancel" class="btn btn-outline">Sluiten</button>
-      </div>
-      <form id="newForm">
-        <div class="form-row">
-          <label for="n-customer">Klant</label>
-          <select id="n-customer"></select>
-        </div>
-        <div class="form-row">
-          <label for="n-dog">Hond</label>
-          <select id="n-dog"></select>
-        </div>
-        <div class="form-row">
-          <label for="n-type">Kaarttype</label>
-          <input id="n-type" type="text" placeholder="bv. Puppy Pack 10" />
-        </div>
-        <div class="form-row">
-          <label for="n-total">Aantal beurten</label>
-          <input id="n-total" type="number" min="1" value="10" />
-        </div>
-        <div class="form-row">
-          <label for="n-start">Startdatum</label>
-          <input id="n-start" type="date" />
-        </div>
-        <div class="modal-actions">
-          <button type="submit" class="btn btn-primary">Aanmaken</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script src="js/credits.js"></script>
-</body>
-</html>
+<script src="js/data.js"></script>
+<script>
+const el=s=>document.querySelector(s); const els=s=>Array.from(document.querySelectorAll(s));
+function remaining(c){return Math.max(0,(c.total||0)-(c.used||0));}
+function render(){
+  const tb=el('#cardRows'); tb.innerHTML='';
+  window.SH.cards.forEach(c=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=\`<td>\${c.dogId}</td><td>\${c.type}</td><td>\${c.used}/\${c.total} (rest \${remaining(c)})</td><td><button class='btn-small' data-del='\${c.id}'>Verwijder</button></td>\`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('button[data-del]').forEach(b=>b.onclick=()=>tryDeleteCard(b.getAttribute('data-del')));
+}
+function tryDeleteCard(id){
+  const card=window.SH.cards.find(x=>x.id===id); if(!card)return;
+  const bl={bookings:window.SH.bookings.filter(b=>b.dogId===card.dogId && b.date>=window.SH.today()), cards:remaining(card)>0?[card]:[]};
+  if(bl.bookings.length||bl.cards.length){ const m=el('#blkModal'); const body=el('#blkBody'); body.innerHTML='';
+    if(bl.bookings.length){ body.innerHTML+='<div class="blockers"><h4>Actieve boekingen</h4><ul>'+bl.bookings.map(b=>'<li>'+b.date+' '+b.title+'</li>').join('')+'</ul></div>'; }
+    if(bl.cards.length){ body.innerHTML+='<div class="blockers"><h4>Resterend saldo</h4><ul><li>'+card.type+' rest '+remaining(card)+'</li></ul></div>'; }
+    el('#blkOk').onclick=()=>m.removeAttribute('open'); el('#blkClose').onclick=()=>m.removeAttribute('open');
+    el('#forceArch').onclick=()=>{ window.SH.archived.cards.push(card); window.SH.cards=window.SH.cards.filter(x=>x.id!==id); m.removeAttribute('open'); render(); };
+    m.setAttribute('open',''); return; }
+  if(confirm('Kaart verwijderen?')){ window.SH.cards=window.SH.cards.filter(x=>x.id!==id); render(); }
+}
+document.addEventListener('DOMContentLoaded',render);
+</script>
+</body></html>

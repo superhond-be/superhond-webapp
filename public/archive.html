@@ -2,48 +2,25 @@
 <title>Archief</title><link rel="stylesheet" href="css/app.css"></head>
 <body>
 <h1>Archief</h1>
-<input id="searchBar" type="text" placeholder="Zoek in archief...">
-
-<div class="section">
-  <div class="section-header"><h2 id="custHead">Klanten</h2><button class="btn-small" id="sortCust">Sorteer A–Z</button></div>
-  <ul id="archCust"></ul>
-</div>
-
-<div class="section">
-  <div class="section-header"><h2 id="dogHead">Honden</h2><button class="btn-small" id="sortDog">Sorteer A–Z</button></div>
-  <ul id="archDog"></ul>
-</div>
-
-<div class="section">
-  <div class="section-header"><h2 id="cardHead">Strippenkaarten</h2><button class="btn-small" id="sortCard">Sorteer A–Z</button></div>
-  <ul id="archCard"></ul>
-</div>
-
-<div class="version">Superhond Webapp – v12</div>
-
+<h2>Klanten</h2><ul id="archCust"></ul>
+<h2>Honden</h2><ul id="archDog"></ul>
+<h2>Strippenkaarten</h2><ul id="archCard"></ul>
+<div class="version">Superhond Webapp – v11</div>
 <script src="js/data.js"></script>
 <script>
-function render(list,el,fmt){ el.innerHTML=list.map(fmt).join('') || '<li class="small">Geen</li>'; }
-
-function refresh(){
-  const q=document.querySelector('#searchBar').value.toLowerCase();
-  let cust=window.SH.archived.customers.filter(c=>c.name.toLowerCase().includes(q));
-  let dog=window.SH.archived.dogs.filter(d=>d.name.toLowerCase().includes(q));
-  let card=window.SH.archived.cards.filter(c=>(c.type+' '+c.dogId).toLowerCase().includes(q));
-  render(cust,document.querySelector('#archCust'),c=>'<li>'+c.name+' <button class="btn-small restore">Herstel</button></li>');
-  render(dog,document.querySelector('#archDog'),d=>'<li>'+d.name+' <button class="btn-small restore">Herstel</button></li>');
-  render(card,document.querySelector('#archCard'),c=>'<li>'+c.type+' ('+c.dogId+') <button class="btn-small restore">Herstel</button></li>');
-  document.querySelector('#custHead').textContent='Klanten ('+cust.length+')';
-  document.querySelector('#dogHead').textContent='Honden ('+dog.length+')';
-  document.querySelector('#cardHead').textContent='Strippenkaarten ('+card.length+')';
+function render(){
+  const ac=document.querySelector('#archCust'); const ad=document.querySelector('#archDog'); const ar=document.querySelector('#archCard');
+  ac.innerHTML=window.SH.archived.customers.map(c=>'<li>'+c.name+' <button class="btn-small restore" data-type="cust" data-id="'+c.id+'">Herstel</button></li>').join('')||'<li class="small">Geen</li>';
+  ad.innerHTML=window.SH.archived.dogs.map(d=>'<li>'+d.name+' <button class="btn-small restore" data-type="dog" data-id="'+d.id+'">Herstel</button></li>').join('')||'<li class="small">Geen</li>';
+  ar.innerHTML=window.SH.archived.cards.map(c=>'<li>'+c.type+' ('+c.dogId+') <button class="btn-small restore" data-type="card" data-id="'+c.id+'">Herstel</button></li>').join('')||'<li class="small">Geen</li>';
+  document.querySelectorAll('.restore').forEach(b=>b.onclick=()=>{
+    const t=b.getAttribute('data-type'), id=b.getAttribute('data-id');
+    if(t==='cust'){ const c=window.SH.archived.customers.find(x=>x.id===id); if(c){ window.SH.customers.push(c); window.SH.archived.customers=window.SH.archived.customers.filter(x=>x.id!==id);} }
+    if(t==='dog'){ const d=window.SH.archived.dogs.find(x=>x.id===id); if(d){ const c=window.SH.customers[0]; c.dogs.push(d); window.SH.archived.dogs=window.SH.archived.dogs.filter(x=>x.id!==id);} }
+    if(t==='card'){ const c=window.SH.archived.cards.find(x=>x.id===id); if(c){ window.SH.cards.push(c); window.SH.archived.cards=window.SH.archived.cards.filter(x=>x.id!==id);} }
+    render();
+  });
 }
-
-document.addEventListener('DOMContentLoaded',()=>{
-  refresh();
-  document.querySelector('#searchBar').addEventListener('input',refresh);
-  document.querySelector('#sortCust').addEventListener('click',()=>{window.SH.archived.customers.sort((a,b)=>a.name.localeCompare(b.name,'nl'));refresh();});
-  document.querySelector('#sortDog').addEventListener('click',()=>{window.SH.archived.dogs.sort((a,b)=>a.name.localeCompare(b.name,'nl'));refresh();});
-  document.querySelector('#sortCard').addEventListener('click',()=>{window.SH.archived.cards.sort((a,b)=>a.type.localeCompare(b.type,'nl'));refresh();});
-});
+document.addEventListener('DOMContentLoaded',render);
 </script>
 </body></html>
