@@ -20,19 +20,11 @@ router.post("/", async (req, res) => {
   const saved = path.join(DATA_DIR, `${stamp}.json`);
   await fs.writeJSON(saved, payload, { spaces: 2 });
 
-  // 🔎 Log alle tags die we aantreffen
-  const tags = [
-    ...(Array.isArray(payload.tags) ? payload.tags : []),
-    ...(Array.isArray(payload?.contact?.tags) ? payload.contact.tags : []),
-  ];
-  console.log("📩 Webhook ontvangen → tags:", tags.length ? tags.join(", ") : "(geen tags)");
-
-  // 1) Filter: alleen Superhond-tags doorsturen
+  // 1) Alleen Superhond-tags doorsturen
   const allowedInfo = isAllowedForSuperhond(payload);
   if (!allowedInfo.allowed) {
     const skipFile = path.join(SKIPPED_DIR, `${stamp}.json`);
     await fs.writeJSON(skipFile, { payload, reason: allowedInfo.reason }, { spaces: 2 });
-    console.log(`⏭️  SKIPPED (geen toegestane tag). reason="${allowedInfo.reason}" saved="${skipFile}"`);
     return res.status(202).json({
       ok: true,
       forwarded: false,
@@ -48,7 +40,6 @@ router.post("/", async (req, res) => {
   if (requirePaid && !paidInfo.isPaid) {
     const unpaidFile = path.join(UNPAID_DIR, `${stamp}.json`);
     await fs.writeJSON(unpaidFile, { payload, reason: paidInfo.reason }, { spaces: 2 });
-    console.log(`🕐 UNPAID (betaal-indicator ontbreekt). reason="${paidInfo.reason}" saved="${unpaidFile}"`);
     return res.status(202).json({
       ok: true,
       forwarded: false,
@@ -58,7 +49,7 @@ router.post("/", async (req, res) => {
     });
   }
 
-  // 3) Forward
+  // 3) Forward naar Superhond API
   try {
     const result = await forwardToSuperhond(payload, {
       source: "mailblue",
@@ -67,7 +58,6 @@ router.post("/", async (req, res) => {
       paid: paidInfo.isPaid,
       tagMatched: allowedInfo.tagMatched
     });
-    console.log(`✅ FORWARDED tagMatched="${allowedInfo.tagMatched || '-'}" paid=${paidInfo.isPaid}`);
     return res.status(200).json({ ok: true, forwarded: true, result, paid: paidInfo, allowed: allowedInfo });
   } catch (err) {
     const pendingPath = await savePending(payload, {
@@ -77,7 +67,6 @@ router.post("/", async (req, res) => {
       paid: paidInfo.isPaid,
       tagMatched: allowedInfo.tagMatched
     });
-    console.log(`📦 QUEUED (forward failed). error="${err.message}" file="${pendingPath}"`);
     return res.status(202).json({ ok: true, forwarded: false, pending: pendingPath, paid: paidInfo, allowed: allowedInfo });
   }
 });

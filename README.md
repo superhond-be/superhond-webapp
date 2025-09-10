@@ -1,20 +1,13 @@
-# Superhond Webapp (Basis)
+# Superhond – MailBlue Forwarder (met welkomstpagina)
 
-**Afspraak gerespecteerd:** alle CSS/JS staan onder `public/` en worden gelinkt als `/css/...` en `/js/...`.
+- `/` toont een korte status-tekst (geen 'Not found' meer)
+- `/health` geeft JSON status
+- `POST /webhook` ontvangt MailBlue webhooks
+- Filtert op `SUPERHOND_ALLOWED_TAGS` en controleert betaling via `PAID_TAGS` als `REQUIRE_PAID=true`
 
-## Starten
+## Quick start
 ```bash
 npm install
-npm start
-# opent op http://localhost:3000
+cp .env.example .env   # pas URL en tags aan
+npm run dev
 ```
-
-## API
-- `GET /api/health` — status
-- `GET /api/users` — lijst gebruikers
-- `POST /api/users` — gebruiker toevoegen `{ name, email, role }`
-- `GET /api/users/:id`
-- `PUT /api/users/:id`
-- `DELETE /api/users/:id`
-
-> Data staat voorlopig in-memory (demo). Later vervangen we dit door echte opslag.
