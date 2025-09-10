@@ -1,9 +1,37 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="nl">
 <head>
-    <title>dashboard.html</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/public/css/app.css" />
 </head>
 <body>
-    <h1>dashboard.html (lege basis)</h1>
+
+<header>
+  <div class="nav">
+    <div style="font-weight:800">Superhond Dashboard</div>
+    <div class="small">•</div>
+    <a class="link" href="/public/index.html">Dashboard</a>
+    <a class="link" href="/public/admin-login.html">Admin Login</a>
+    <a class="link" href="/public/admin-register.html">Admin Register</a>
+    <a class="link" href="/public/admin-users.html">Admin Users</a>
+  </div>
+</header>
+<main>
+
+  <div class="card">
+    <h2>Admin status</h2>
+    <p class="small">Bekijk hoeveel admins geregistreerd zijn en of de SETUP_TOKEN aanwezig is.</p>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button id="check" style="width:auto">Check status</button>
+      <div id="out" class="small">Klik op <kbd>Check status</kbd></div>
+    </div>
+  </div>
+
+</main>
+<footer>Made with ❤️ for Superhond</footer>
+
+<script src="/public/js/dashboard.js"></script>
 </body>
 </html>

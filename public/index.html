@@ -1,1 +1,75 @@
-<h1>Superhond Forwarder SelfTest</h1><p>/selftest doet een test-forward in 1 klik.</p>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superhond – Dashboard</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🐾 Superhond – <strong>Dashboard</strong></div>
+    <div class="session">
+      <span class="badge">Ingelogd: <b>admin</b></span>
+      <button class="btn btn-ghost" onclick="alert('Logout volgt')">Logout</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="rail">
+      <div class="rail-title">Snel naar cursus</div>
+      <button class="btn" onclick="alert('Open inschrijving volgt')">Open inschrijving</button>
+    </aside>
+
+    <main class="content">
+      <section class="section section--public">
+        <h2>Publiek <small>voor klanten – publiek toegankelijk</small></h2>
+        <div class="tiles">
+          <a class="tile tile--public" href="#">Publieke inschrijving
+            <small>Schrijf in op markt/klas, toon (live) beschikbare sessies.</small>
+          </a>
+
+          <a class="tile tile--public" href="#">Onboarding na betaling
+            <small>Rond onboarding af met tokens / QR tickets…</small>
+          </a>
+
+          <a class="tile tile--public" href="#">API test
+            <small>Snelle testknop om de backend te checken.</small>
+          </a>
+
+          <a class="tile tile--public" href="#">Documentatie
+            <small>Overzicht Admin + Publiek + API cheatsheet.</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="section section--admin">
+        <h2>Admin <small>Alleen voor administratie – inloggen vereist</small></h2>
+        <div class="tiles">
+          <a class="tile tile--admin" href="lessenbeheer.html">Lessenbeheer
+            <small>Maak/beheer klassen en sessies.</small>
+          </a>
+
+          <a class="tile tile--admin" href="admin-users.html">Admin gebruikers
+            <small>Beheer admin-accounts (toevoegen/verwijderen).</small>
+          </a>
+
+          <a class="tile tile--admin" href="klantenportaal.html">Klanten &amp; Honden
+            <small>Beheer baasjes en hun honden.</small>
+          </a>
+
+          <a class="tile tile--admin" href="#">Strippenkaarten
+            <small>Uitgifte en beheer van beurten/credits.</small>
+          </a>
+
+          <a class="tile tile--admin" href="#">Aanvragen
+            <small>Memberships goedkeuren/weigeren (na betaling).</small>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js" defer></script>
+</body>
+</html>

@@ -1,11 +1,36 @@
-const express=require('express'); const helmet=require('helmet'); const cors=require('cors'); const morgan=require('morgan'); const path=require('path'); const {postJson}=require('../services/forward');
-const app=express(); const PORT=process.env.PORT||10000;
-app.use(helmet()); app.use(cors({origin:process.env.CORS_ORIGIN||'*'})); app.use(morgan('combined')); app.use(express.static(path.join(__dirname,'..','public')));
-app.get('/about',(req,res)=>res.json({ok:true,targetUrl:(process.env.TARGET_URL||'').trim(),corsOrigin:process.env.CORS_ORIGIN||'*'}));
-app.get('/health',(req,res)=>res.json({ok:true,status:'healthy',time:new Date().toISOString()}));
-app.get('/selftest', async (req,res)=>{ const target=(process.env.TARGET_URL||'').trim(); if(!target) return res.status(500).json({ok:false,error:'TARGET_URL not set'});
-  const sample={email:'selftest@superhond.be',name:'Self Test'}; try{ const up=await postJson(target,sample,{}); return res.status(200).json({ok:true,forwarded:true,upstreamStatus:up.status,upstreamBody:up.body}); } catch(e){ return res.status(502).json({ok:false,error:'Upstream error',detail:String(e && (e.message||e))}); }});
-app.post('/hook', express.json({limit:'2mb'}), async (req,res)=>{ const target=(process.env.TARGET_URL||'').trim(); if(!target) return res.status(500).json({ok:false,error:'TARGET_URL not set'});
-  try{ const up=await postJson(target,req.body,{}); return res.status(200).json({ok:true,forwarded:true,upstreamStatus:up.status,upstreamBody:up.body}); } catch(e){ return res.status(502).json({ok:false,error:'Upstream error',detail:String(e && (e.message||e))}); }});
-app.use((err,req,res,next)=>{ console.error('[SELFTEST ERROR]', err && (err.stack||err.message)||String(err)); res.status(500).json({ok:false,error:'Internal error'}); });
-app.listen(PORT,()=>console.log('SelfTest forwarder listening on',PORT));
+const express = require('express');
+const path = require('path');
+
+const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Static files from /public
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', app: 'superhond-webapp', time: new Date().toISOString() });
+});
+
+// API routes
+const usersRouter = require('../routes/admin-users');
+const lessonsRouter = require('../routes/lessons');
+app.use('/api/users', usersRouter);
+app.use('/api/lessons', lessonsRouter);
+
+// Fallback to index.html for root
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+// 404 for API
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Superhond server running at http://localhost:${PORT}`);
+});

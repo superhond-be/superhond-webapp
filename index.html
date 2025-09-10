@@ -1,25 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superhond Dashboard</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond – Dashboard</title>
+  <link rel="stylesheet" href="/public/css/app.css" />
 </head>
 <body>
-  <header>
-    <h1>Superhond.be Admin Portaal</h1>
-  </header>
 
-  <main>
-    <div class="tiles">
-      <a href="admin-login.html" class="tile">Admin Login</a>
-      <a href="admin-users.html" class="tile">Gebruikersbeheer</a>
-      <a href="klantenportaal.html" class="tile">Klantenportaal</a>
-      <a href="lessenbeheer.html" class="tile">Lessenbeheer</a>
-    </div>
-  </main>
+<header>
+  <div class="nav">
+    <div style="font-weight:800">Superhond Dashboard</div>
+    <div class="small">•</div>
+    <a class="link" href="/public/index.html">Dashboard</a>
+    <a class="link" href="/public/admin-login.html">Admin Login</a>
+    <a class="link" href="/public/admin-register.html">Admin Register</a>
+    <a class="link" href="/public/admin-users.html">Admin Users</a>
+  </div>
+</header>
+<main>
 
-  <script src="/js/dashboard.js" defer></script>
+  <h1>Welkom 👋</h1>
+  <p class="small">Kies wat je wil doen.</p>
+  <div class="tiles">
+    <a class="tile" href="/public/dashboard.html"><span class="icon">📊</span> <div><strong>Dashboard</strong><div class="small">Overzicht</div></div></a>
+    <a class="tile" href="/public/admin-login.html"><span class="icon">🔑</span> <div><strong>Admin Login</strong><div class="small">Aanmelden als admin</div></div></a>
+    <a class="tile" href="/public/admin-register.html"><span class="icon">📝</span> <div><strong>Admin Register</strong><div class="small">Nieuwe admin aanmaken</div></div></a>
+    <a class="tile" href="/public/admin-users.html"><span class="icon">👤</span> <div><strong>Admin Users</strong><div class="small">Beheer accounts</div></div></a>
+  </div>
+
+</main>
+<footer>Made with ❤️ for Superhond</footer>
+
+<script src="/public/js/app.js"></script>
 </body>
 </html>
