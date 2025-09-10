@@ -3,63 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin gebruikers – Superhond</title>
+  <title>Gebruikersbeheer - Superhond</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">🐾 Superhond – <strong>Admin gebruikers</strong></div>
-    <div class="session">
-      <a class="btn btn-ghost" href="index.html">Dashboard</a>
-    </div>
+  <header>
+    <h1>Gebruikersbeheer</h1>
   </header>
 
-  <main class="content" style="padding:1rem;">
-    <div class="card">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="overzicht">Overzicht</button>
-        <button class="tab-btn" data-tab="toevoegen">Toevoegen</button>
-      </div>
-
-      <section class="tab-pane active" id="overzicht">
-        <h2>Beheerders</h2>
-        <p class="muted">Data wordt geladen van <code>/api/users</code> (indien server draait).</p>
-        <table class="table" id="users-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Naam</th>
-              <th>Email</th>
-              <th>Rol</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="4">Laden…</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="tab-pane" id="toevoegen">
-        <h2>Gebruiker toevoegen</h2>
-        <form class="form-grid" id="add-user-form">
-          <label>Naam
-            <input name="name" type="text" placeholder="Voornaam Achternaam" required>
-          </label>
-          <label>E-mail
-            <input name="email" type="email" placeholder="naam@example.com" required>
-          </label>
-          <label>Rol
-            <input name="role" type="text" placeholder="Admin / Trainer">
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="submit">Toevoegen</button>
-          </div>
-        </form>
-      </section>
-    </div>
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Email</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jan Jansen</td>
+          <td>jan@example.com</td>
+          <td>Trainer</td>
+        </tr>
+        <tr>
+          <td>Piet Peeters</td>
+          <td>piet@example.com</td>
+          <td>Admin</td>
+        </tr>
+      </tbody>
+    </table>
   </main>
 
   <script src="/js/dashboard.js" defer></script>
-  <script src="/js/admin-users.js" defer></script>
 </body>
 </html>
