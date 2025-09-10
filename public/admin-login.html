@@ -1,28 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login - Superhond</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Superhond | Admin Login</title>
+  <link rel="stylesheet" href="./css/app.css">
+  <script defer src="./js/common.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Admin Login</h1>
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">🐾 Superhond.be <span class="muted">Admin portaal</span></div>
+      <nav class="topnav">
+        <a href="./index.html">Dashboard</a>
+        <a href="./admin-users.html">Gebruikers</a>
+        <a href="./lessenbeheer.html">Lessen</a>
+        <a href="./klantenportaal.html">Klantenportaal</a>
+        <a href="./admin-login.html" class="right">Login</a>
+      </nav>
+    </div>
   </header>
+  <main class="container">
 
-  <main>
-    <form class="login-form">
-      <label for="email">E-mail:</label>
-      <input type="email" id="email" name="email" required>
+<h1>Admin Login</h1>
+<form id="loginForm" class="card">
+  <label>E‑mail
+    <input type="email" name="email" required placeholder="admin@superhond.be">
+  </label>
+  <label>Wachtwoord
+    <input type="password" name="password" required placeholder="••••••••">
+  </label>
+  <button type="submit">Inloggen</button>
+  <p class="help">Nog geen account? <a href="./admin-register.html">Registreer</a></p>
+</form>
 
-      <label for="password">Wachtwoord:</label>
-      <input type="password" id="password" name="password" required>
-
-      <button type="submit">Inloggen</button>
-    </form>
   </main>
-
-  <script src="/js/dashboard.js" defer></script>
+  <footer class="footer">
+    <div class="container">© Superhond — Superhond.be</div>
+  </footer>
 </body>
 </html>
