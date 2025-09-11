@@ -3,19 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mijn boekingen — Superhond</title>
+  <title>Superhond — Mijn boekingen (v28)</title>
   <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th,td { border:1px solid #ddd; padding:6px; text-align:left; }
+    th { background:#f9f9f9; }
+    .status { font-weight:700; }
+    .status.active { color:green; }
+    .status.cancelled { color:#888; }
+  </style>
 </head>
 <body>
   <script src="/js/ui-config.js"></script>
-  <script src="/js/header.js" data-section="boekingen"></script>
+  <script src="/js/header.js" data-section="dashboard"></script>
 
   <main class="wrap">
     <section class="card">
       <h2>Mijn boekingen</h2>
-      <table id="tblBookings" border="1" cellpadding="6" style="width:100%">
+      <table id="tblBookings">
         <thead>
-          <tr><th>Lesnaam</th><th>Type</th><th>Datum</th><th>Tijd</th><th>Locatie</th><th>Hond</th><th>Status</th><th>Acties</th></tr>
+          <tr>
+            <th>Hond</th>
+            <th>Lesnaam</th>
+            <th>Lestype</th>
+            <th>Datum</th>
+            <th>Tijd</th>
+            <th>Locatie</th>
+            <th>Status</th>
+            <th>Acties</th>
+          </tr>
         </thead>
         <tbody></tbody>
       </table>

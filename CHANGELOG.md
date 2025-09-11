@@ -1,5 +1,4 @@
 # Changelog
-## v27
-- Dashboard: tegel Mijn boekingen toegevoegd
-- Nieuwe pagina mijn-boekingen.html + mijn-boekingen.js
-- Nieuwe API route mybookings.js
+## v28
+- admin-lessen.html: secties Algemeen, Planning, Kostprijs & credits, Beschrijving
+- mijn-boekingen.html: visuele polish en statuskleur

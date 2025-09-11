@@ -1,23 +1,19 @@
-# Superhond Webapp — v27 (Upgrade Pack)
+# Superhond Webapp — v28 (UI polish)
 Release date: 2025-09-11
 
-## Wat is nieuw in v27
-- **Dashboard**: nieuwe tegel "Mijn boekingen" zichtbaar voor alle gebruikers.
-- **Nieuwe pagina**: `mijn-boekingen.html` met tabel van alle boekingen van ingelogde gebruiker.
-- **Nieuwe API**: `server/routes/mybookings.js`
-  - `GET /api/bookings/mine` → lijst eigen boekingen met les- en hondinfo.
-  - `DELETE /api/bookings/:id` → annuleer eigen boeking (credits worden teruggegeven aan hond).
+## Wat is nieuw in v28
+- **admin-lessen.html** opnieuw opgebouwd met duidelijke secties:
+  - Algemeen
+  - Planning
+  - Kostprijs & credits
+  - Beschrijving
+- Tabellen voorzien van strakkere layout (kopregel, borders).
+- **mijn-boekingen.html** statusweergave verbeterd:
+  - Actief = groen
+  - Geannuleerd = grijs
+- Version.json opgehoogd naar v28
 
-## Installatie
-1. Mount de nieuwe route in `server/index.js`:
-   ```js
-   app.use('/api/bookings', require('./routes/mybookings'));
-   ```
-2. Vervang `dashboard.html` door de v27-versie.
-3. Voeg de nieuwe pagina en JS toe.
-
-## Testflow
-1. Log in als gewone gebruiker.
-2. Boek een les voor je hond (via v22/v24 flow).
-3. Ga naar `/mijn-boekingen.html` → je ziet de lijst.
-4. Klik "Annuleren" → status wordt "cancelled" en credits keren terug.
+## Gebruik
+1. Vervang je `public/admin-lessen.html` door de nieuwe versie.
+2. Vervang je `public/mijn-boekingen.html` door de nieuwe versie.
+3. Herstart je server en open de pagina's opnieuw (hard refresh).
