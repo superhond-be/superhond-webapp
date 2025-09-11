@@ -1,0 +1,31 @@
+:root{ --brand:#FFD42A; --ink:#222; --line:#e6e6e6; --bg:#fff; --muted:#777; }
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.4}
+.sh-wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.sh-header{background:var(--brand);border-bottom:1px solid #e6c216}
+.sh-header h1{margin:0;padding:14px 0;font-size:18px}
+.sh-main{padding:20px 0}
+.sh-footer{background:#fafafa;border-top:1px solid var(--line);padding:12px 0;margin-top:24px;font-size:14px;color:#555;text-align:center}
+
+.tabs{display:flex;gap:8px;padding:12px 0 0;flex-wrap:wrap}
+.tab-button{appearance:none;border:1px solid var(--line);background:#f4f4f4;padding:10px 14px;border-top-left-radius:8px;border-top-right-radius:8px;cursor:pointer;font-weight:600}
+.tab-button.active{background:#fff;border-bottom-color:#fff}
+.tab-content{display:none;border:1px solid var(--line);border-top:none;padding:16px 20px 24px;background:#fff}
+.tab-content.active{display:block}
+
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}
+.controls-trainers{align-items:flex-start}
+.controls select{min-width:240px}
+.primary{padding:10px 14px;border:1px solid #cfcfcf;border-radius:6px;background:#fff;font-weight:700;cursor:pointer}
+.btn{display:inline-block;padding:10px 12px;border:1px solid #cfcfcf;border-radius:6px;background:#fff;text-decoration:none;cursor:pointer}
+.hint{color:#666;font-size:12px}
+
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-row{display:flex;flex-direction:column;gap:6px}
+.form-row span{font-size:12px;color:var(--muted)}
+.form-row.span-2{grid-column:1/-1}
+
+.preview{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{border:1px solid var(--line);padding:8px;text-align:left}
+@media (max-width:700px){ .form-grid{grid-template-columns:1fr} }

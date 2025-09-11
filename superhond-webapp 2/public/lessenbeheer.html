@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Superhond — Lessenbeheer</title>
+  <link rel="stylesheet" href="/css/app.css?v=20250911" />
+  <script src="/js/lessenbeheer.js" defer></script>
+</head>
+<body>
+  <header class="sh-header" role="banner">
+    <div class="sh-wrap">
+      <h1>🐾 Superhond — Lessenbeheer</h1>
+    </div>
+  </header>
+
+  <main class="sh-main sh-wrap">
+    <nav class="tabs" role="tablist" aria-label="Lessenbeheer tabs">
+      <button class="tab-button active" data-tab="naam" aria-selected="true">Naam</button>
+      <button class="tab-button" data-tab="type" aria-selected="false">Type</button>
+      <button class="tab-button" data-tab="locatie" aria-selected="false">Locatie</button>
+      <button class="tab-button" data-tab="lesgevers" aria-selected="false">Lesgevers</button>
+    </nav>
+
+    <!-- TAB: NAAM -->
+    <section class="tab-content active" id="naam" role="tabpanel">
+      <h2>Lesnaam</h2>
+      <div class="controls">
+        <select id="sel-lesnaam" aria-label="Kies lesnaam"></select>
+        <input id="inp-nieuwe-naam" type="text" placeholder="Nieuwe lesnaam">
+        <button class="primary" id="btn-add-naam">Toevoegen</button>
+      </div>
+      <p class="hint">Kies een bestaande lesnaam of voeg er eentje toe.</p>
+    </section>
+
+    <!-- TAB: TYPE -->
+    <section class="tab-content" id="type" role="tabpanel">
+      <h2>Lestype & details</h2>
+      <div class="controls">
+        <select id="sel-lestype" aria-label="Kies lestype"></select>
+        <input id="inp-nieuw-type" type="text" placeholder="Nieuw lestype">
+        <button class="primary" id="btn-add-type">Toevoegen</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="inp-kenmerk">Kenmerk</label>
+          <input id="inp-kenmerk" type="text" placeholder="bv. V01 of V...">
+        </div>
+        <div class="form-row">
+          <label for="inp-max">Maximum deelnemers</label>
+          <input id="inp-max" type="number" min="1" step="1" placeholder="bv. 8">
+        </div>
+        <div class="form-row">
+          <label for="inp-prijs">Prijs (€)</label>
+          <input id="inp-prijs" type="number" min="0" step="0.01" placeholder="bv. 149.00">
+        </div>
+        <div class="form-row">
+          <label for="inp-strips">Aantal strippen</label>
+          <input id="inp-strips" type="number" min="1" step="1" placeholder="bv. 9">
+        </div>
+        <div class="form-row">
+          <label for="inp-lesuur">Lesuur</label>
+          <input id="inp-lesuur" type="time">
+        </div>
+        <div class="form-row">
+          <label for="inp-start">Startdatum</label>
+          <input id="inp-start" type="date">
+        </div>
+        <div class="form-row span-2">
+          <label for="inp-beschrijving">Beschrijving</label>
+          <textarea id="inp-beschrijving" rows="3" placeholder="Korte omschrijving"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: LOCATIE -->
+    <section class="tab-content" id="locatie" role="tabpanel">
+      <h2>Locatie</h2>
+      <div class="controls">
+        <select id="sel-locatie" aria-label="Kies locatie"></select>
+        <input id="inp-nieuwe-loc" type="text" placeholder="Nieuwe locatie (bv. Retie)">
+        <button class="primary" id="btn-add-loc">Toevoegen</button>
+      </div>
+    </section>
+
+    <!-- TAB: LESGEVERS -->
+    <section class="tab-content" id="lesgevers" role="tabpanel">
+      <h2>Lesgevers</h2>
+      <div class="controls controls-trainers">
+        <select id="sel-trainers" multiple size="6" aria-label="Kies één of meerdere trainers"></select>
+        <div class="stack">
+          <input id="inp-nieuwe-trainer" type="text" placeholder="Nieuwe trainer">
+          <button class="primary" id="btn-add-trainer">Toevoegen</button>
+          <small class="hint">Houd Ctrl/⌘ ingedrukt om meerdere trainers te selecteren.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREVIEW + OPSLAAN -->
+    <section class="card">
+      <h3>Voorbeeld / Samenvatting</h3>
+      <div id="preview" class="preview">Nog geen voorbeeld.</div>
+      <div class="form-actions">
+        <button class="btn" id="btn-preview">Bekijk voorbeeld</button>
+        <button class="primary" id="btn-save">Opslaan</button>
+      </div>
+    </section>
+
+    <!-- OVERZICHT -->
+    <section class="card">
+      <h3>Opgestelde lessen (in-memory)</h3>
+      <table class="table" id="tbl-lessen">
+        <thead><tr>
+          <th>Kenmerk</th>
+          <th>Naam</th>
+          <th>Type</th>
+          <th>Locatie</th>
+          <th>Lesgevers</th>
+          <th>Max</th>
+          <th>€</th>
+          <th>Strippen</th>
+          <th>Uur</th>
+          <th>Start</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="sh-footer" role="contentinfo">
+    <div class="sh-wrap"><p>© Superhond</p></div>
+  </footer>
+</body>
+</html>
