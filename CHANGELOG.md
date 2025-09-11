@@ -1,3 +1,5 @@
 # Changelog
-## v25
-- Dashboard: tegel "Instellingen Lessen" toegevoegd (admin-only)
+## v27
+- Dashboard: tegel Mijn boekingen toegevoegd
+- Nieuwe pagina mijn-boekingen.html + mijn-boekingen.js
+- Nieuwe API route mybookings.js
