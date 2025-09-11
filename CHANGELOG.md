@@ -1,6 +1,4 @@
 # Changelog
-## v22
-- Credits per hond toegevoegd
-- Nieuwe routes /api/dogs
-- Bookings koppelen aan dog_id i.p.v. alleen user
-- Nieuwe pagina hondenbeheer.html
+## v24
+- admin-lessen.html aangepast: selectboxen voor naam, lestype, locatie, lesgever
+- lessen-v24.js toegevoegd

@@ -1,32 +1,22 @@
-# Superhond Webapp — v22 (Upgrade Pack)
+# Superhond Webapp — v24 (Upgrade Pack)
 Release date: 2025-09-11
 
-## Wat is nieuw in v22
-- **Credits per hond** toegevoegd
-  - Nieuwe tabel `dogs` (naam, ras, geboortedatum, credits, gekoppeld aan eigenaar)
-  - Nieuwe route `/api/dogs` (GET lijst eigen honden, POST nieuwe hond)
-  - `bookings`-tabel uitgebreid met `dog_id`
-  - Boeken en annuleren van lessen gebruiken nu **hond-credits** i.p.v. user-credits
-- **UI**
-  - Nieuwe pagina `hondenbeheer.html` met formulier + lijst honden + creditsaldo
-  - JS: `hondenbeheer.js`
-- **API-wijzigingen**
-  - `POST /api/lessen/:id/book` → vereist `dog_id`, controleert creditsaldo van die hond
-  - `DELETE /api/lessen/:id/book` → idem
-  - Admin `GET /api/lessen/:id/bookings` → toont ook hond-informatie
+## Wat is nieuw in v24
+- **admin-lessen.html** aangepast:
+  - Velden Naam, Lestype, Locatie, Lesgever zijn nu **selectboxen**
+  - Deze worden gevuld vanuit de lijsten die je in v23 beheert (via /api/lookup)
+- **Nieuw script** `public/js/lessen-v24.js` voor deze functionaliteit
+- Overige velden (strippen, max deelnemers, startdatum, etc.) werken zoals voorheen
 
 ## Installatie
-1. Mount nieuwe routes in `server/index.js`:
+1. Plaats bestanden uit deze zip in je project.
+2. Zorg dat `server/index.js` de route heeft:
    ```js
-   app.use('/api/dogs', require('./routes/dogs'));
-   app.use('/api/lessen', require('./routes/lessen'));
+   app.use('/api/lookup', require('./routes/lookup'));
    ```
-2. Plaats bestanden uit deze zip in je project.
-3. Test de hondenbeheer-pagina op `/hondenbeheer.html`.
+3. Herstart de server.
 
-## Testflow
-1. Log in met een gebruiker.
-2. Ga naar `/hondenbeheer.html` en voeg een hond toe (met startcredits).
-3. Maak een les in `/admin-lessen.html`.
-4. Boek de les voor een hond (`dog_id` wordt meegegeven).
-5. Credits van die hond verminderen; bij annuleren keren ze terug.
+## Testen
+1. Ga als admin naar `/admin-lessen-config.html` en leg waarden vast.
+2. Open `/admin-lessen.html` en maak een nieuwe les — selectboxen zijn gevuld met deze waarden.
+3. Check dat de nieuwe les correct in de lijst verschijnt.

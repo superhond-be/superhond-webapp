@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superhond — Lessenbeheer (v24)</title>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body>
+  <script src="/js/ui-config.js"></script>
+  <script src="/js/header.js" data-section="lessen"></script>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>Nieuwe les aanmaken</h2>
+      <form id="formCreate">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <label>Lesnaam<br><select name="naam" id="sel-naam"></select></label>
+          <label>Lestype<br><select name="lestype" id="sel-lestype"></select></label>
+          <label>Locatie<br><select name="locatie" id="sel-locatie"></select></label>
+          <label>Lesgever<br><select name="lesgevers" id="sel-lesgever"></select></label>
+          <label>Strippen<br><input type="number" name="strippen" min="1" value="1"></label>
+          <label>Max deelnemers<br><input type="number" name="max_deelnemers" min="0"></label>
+          <label>Startdatum<br><input type="date" name="startdatum"></label>
+          <label>Les datum<br><input type="date" name="les_datum"></label>
+          <label>Les tijd<br><input type="time" name="les_tijd"></label>
+        </div>
+        <label>Beschrijving<br><textarea name="beschrijving" rows="3" style="width:100%"></textarea></label>
+        <button type="submit" style="margin-top:10px">Opslaan</button>
+      </form>
+    </section>
+
+    <section class="card" style="margin-top:20px">
+      <h2>Lessenlijst</h2>
+      <table id="tblLessons" border="1" cellpadding="6" style="width:100%">
+        <thead><tr>
+          <th>ID</th><th>Naam</th><th>Type</th><th>Locatie</th><th>Lesgever</th>
+          <th>Strippen</th><th>Max</th><th>Startdatum</th><th>Acties</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/js/lessen-v24.js"></script>
+  <script src="/js/footer-version.js"></script>
+</body>
+</html>
