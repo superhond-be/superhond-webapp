@@ -1,35 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Superhond — Dashboard (v28.2)</title>
-  <link rel="stylesheet" href="/css/app.css" />
-  <style>
-    .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:20px}
-    .tile{display:block;padding:18px;border:1px solid #ccc;border-radius:10px;background:#fafafa;
-          text-decoration:none;color:#000}
-    .tile h3{margin:0 0 6px 0;font-size:18px}
-    .tile p{margin:0;color:#555}
-    .tile:hover{background:#f0f0f0}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superhond - Dashboard</title>
+  <link rel="stylesheet" href="/css/app.css?v=20250911">
+  <script src="/js/dashboard.js" defer></script>
 </head>
 <body>
-  <script src="/js/ui-config.js"></script>
-  <script src="/js/header.js" data-section="dashboard"></script>
-
-  <main class="wrap">
-    <h2>Dashboard</h2>
-    <div class="tiles">
-      <a class="tile" href="/mijn-boekingen.html"><h3>Mijn boekingen</h3><p>Overzicht & annuleren</p></a>
-      <a class="tile" href="/admin-lessen.html"><h3>Lessenbeheer</h3><p>Nieuwe lesmomenten plannen</p></a>
-      <a class="tile" href="/hondenbeheer.html"><h3>Hondenbeheer</h3><p>Dossiers & credits</p></a>
-      <a class="tile" href="/admin-users.html"><h3>Gebruikersbeheer</h3><p>Admins & gebruikers</p></a>
-      <a class="tile" href="/admin-lessen-config.html"><h3>Instellingen Lessen</h3><p>Namen, types, locaties, lesgevers</p></a>
-      <a class="tile" href="/import.html"><h3>Import (CSV/XLSX)</h3><p>Bestanden uploaden & importeren</p></a>
+  <header class="sh-header">
+    <div class="sh-wrap">
+      <h1>🐾 Superhond — Dashboard</h1>
+      <div class="sh-user">Ingelogd: <strong>admin</strong> <a class="btn" href="/logout">Logout</a></div>
     </div>
+  </header>
+
+  <main class="sh-main sh-wrap">
+    <section class="card">
+      <div class="cal-header">
+        <button class="btn btn-nav" data-cal="prev" aria-label="Vorige maand">◀</button>
+        <h2 id="cal-title" class="cal-title">Kalender</h2>
+        <button class="btn btn-nav" data-cal="next" aria-label="Volgende maand">▶</button>
+      </div>
+      <div class="cal-weekdays" aria-hidden="true">
+        <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
+      </div>
+      <div id="cal-grid" class="cal-grid" role="grid" aria-labelledby="cal-title"></div>
+
+      <div class="cal-legend">
+        <span class="dot dot-lesson"></span> Les
+        <span class="dot dot-full"></span> Vol
+        <span class="dot dot-today"></span> Vandaag
+      </div>
+    </section>
   </main>
 
-  <script src="/js/footer-version.js"></script>
+  <footer class="sh-footer">
+    <div class="sh-wrap"><p>© Superhond</p></div>
+  </footer>
 </body>
 </html>
