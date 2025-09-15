@@ -1,88 +1,45 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Superhond — Lessenbeheer</title>
-  <link rel="stylesheet" href="css/app.css" />
-  <script src="js/app.js" defer></script>
+<meta charset="UTF-8">
+<title>Lessenbeheer</title>
+<link rel="stylesheet" href="css/app.css">
+<script src="js/app.js" defer></script>
 </head>
 <body>
-<header class="sh-header"><h1>🐾 Superhond — Lessenbeheer</h1></header>
-<main class="sh-main">
+<h1>🐾 Superhond — Lessenbeheer</h1>
 <nav class="tabs">
   <button class="tab-button active" data-tab="naam">Naam</button>
-  <button class="tab-button" data-tab="type">Type</button>
-  <button class="tab-button" data-tab="locatie">Locatie</button>
-  <button class="tab-button" data-tab="lesgevers">Lesgevers</button>
 </nav>
-
 <section class="tab-content active" id="naam">
-  <h2>Lesnaam</h2>
+  <h2>Lesnaam + waarden</h2>
   <div class="controls">
     <select id="sel-lesnaam"></select>
     <input id="inp-nieuwe-naam" placeholder="Nieuwe lesnaam">
-    <button class="primary" id="btn-add-naam">Toevoegen</button>
-  </div>
-</section>
-
-<section class="tab-content" id="type">
-  <h2>Lestype & details</h2>
-  <div class="controls">
-    <select id="sel-lestype"></select>
-    <input id="inp-nieuw-type" placeholder="Nieuw lestype">
-    <button class="primary" id="btn-add-type">Toevoegen</button>
+    <button id="btn-add-naam">Toevoegen</button>
   </div>
   <div class="form-grid">
-    <div class="form-row"><label>Kenmerk</label><input id="inp-kenmerk"></div>
-    <div class="form-row"><label>Max deelnemers</label><input id="inp-max" type="number"></div>
-    <div class="form-row"><label>Prijs (€)</label><input id="inp-prijs" type="number" step="0.01"></div>
-    <div class="form-row"><label>Strippen</label><input id="inp-strips" type="number"></div>
-    <div class="form-row"><label>Lesuur</label><input id="inp-lesuur" type="time"></div>
-    <div class="form-row"><label>Startdatum</label><input id="inp-start" type="date"></div>
-    <div class="form-row"><label>MailBlue = Type</label><input id="inp-mailblue" type="text" placeholder="MailBlue type of ID"></div>
-    <div class="form-row span-2"><label>Beschrijving</label><textarea id="inp-beschrijving"></textarea></div>
+    <div><label>Prijs (€)</label><input id="inp-prijs-naam" type="number" step="0.01"></div>
+    <div><label>Aantal strippen</label><input id="inp-strips-naam" type="number"></div>
+    <div><label>Max deelnemers</label><input id="inp-max-naam" type="number"></div>
+    <div><label>Thema</label><input id="inp-thema" type="text"></div>
+    <div><label>Lesduur</label><input id="inp-duur" type="text"></div>
+    <div><label>MailBlue</label><input id="inp-mailblue-naam" type="text"></div>
   </div>
 </section>
-
-<section class="tab-content" id="locatie">
-  <h2>Locatie</h2>
-  <div class="controls">
-    <select id="sel-locatie"></select>
-    <input id="inp-nieuwe-loc" placeholder="Nieuwe locatie">
-    <button class="primary" id="btn-add-loc">Toevoegen</button>
-  </div>
-</section>
-
-<section class="tab-content" id="lesgevers">
-  <h2>Lesgevers</h2>
-  <div class="controls">
-    <select id="sel-trainers" multiple size="5"></select>
-    <input id="inp-nieuwe-trainer" placeholder="Nieuwe trainer">
-    <button class="primary" id="btn-add-trainer">Toevoegen</button>
-  </div>
-</section>
-
 <section class="card">
-  <h3>Voorbeeld / Samenvatting</h3>
-  <div id="preview" class="preview">Nog geen voorbeeld.</div>
-  <div class="form-actions">
-    <button class="btn" id="btn-preview">Bekijk voorbeeld</button>
-    <button class="primary" id="btn-save">Opslaan</button>
-  </div>
+  <h3>Preview</h3>
+  <div id="preview">Nog geen preview</div>
+  <button id="btn-preview">Bekijk voorbeeld</button>
+  <button id="btn-save">Opslaan</button>
 </section>
-
 <section class="card">
-  <h3>Opgestelde lessen (in-memory)</h3>
-  <table class="table" id="tbl-lessen">
-    <thead><tr>
-      <th>Kenmerk</th><th>Naam</th><th>Type</th><th>Locatie</th>
-      <th>Lesgevers</th><th>Max</th><th>€</th><th>Strippen</th>
-      <th>Uur</th><th>Start</th><th>MailBlue</th>
-    </tr></thead>
+  <h3>Lessen tabel</h3>
+  <table id="tbl-lessen" border="1">
+    <thead><tr><th>Naam</th><th>Prijs</th><th>Strippen</th><th>Max</th><th>Thema</th><th>Duur</th><th>MailBlue</th></tr></thead>
     <tbody></tbody>
   </table>
 </section>
-</main>
-<footer class="sh-footer"><p id="version-lessen"></p></footer>
-</body></html>
+<footer><p id="version-lessen"></p></footer>
+</body>
+</html>
