@@ -1,0 +1,8 @@
+{
+  "name": "lessen",
+  "version": "0.1.0",
+  "mountPath": "/m/lessen",
+  "apiPath": "/api/lessen",
+  "publicDir": "public",
+  "serverEntry": "server/index.js"
+}
