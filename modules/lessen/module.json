@@ -1,6 +1,6 @@
 {
   "name": "lessen",
-  "version": "0.0.2",
+  "version": "0.3.3",
   "mountPath": "/m/lessen",
   "apiPath": "/api/lessen",
   "publicDir": "public",
