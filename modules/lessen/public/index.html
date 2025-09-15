@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Superhond — Lessenbeheer Module</title>
-  <link rel="stylesheet" href="css/app.css?v=20250911" />
-  <script src="js/app.js" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Lessenbeheer</title>
+  <style>body{font-family:sans-serif;margin:24px} .muted{color:#666}</style>
 </head>
 <body>
-  <header class="sh-header"><h1>🐾 Superhond — Lessenbeheer</h1></header>
-  <main class="sh-main">
-    <h2>Lessenbeheer Module</h2>
-    <p>Dit is de frontend van de lessen-module.</p>
-    <p>Probeer de API: <code>/api/lessen/items</code></p>
-  </main>
+  <h1>🐾 Lessenbeheer (module)</h1>
+  <p class="muted">Als je dit ziet, laadt de module correct.</p>
+  <p id="version">Versie laden…</p>
+  <script>
+    fetch('/api/lessen/version')
+      .then(r=>r.json())
+      .then(v=>{document.getElementById('version').textContent = v.name + ' v' + v.version;})
+      .catch(e=>{document.getElementById('version').textContent='(geen versie)'; console.error(e)});
+  </script>
 </body>
 </html>
