@@ -2,44 +2,53 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Lessenbeheer</title>
+<title>Superhond — Lessenbeheer</title>
 <link rel="stylesheet" href="css/app.css">
 <script src="js/app.js" defer></script>
 </head>
 <body>
-<h1>🐾 Superhond — Lessenbeheer</h1>
+<header class="sh-header"><h1>🐾 Superhond — Lessenbeheer</h1></header>
+<main class="sh-main">
 <nav class="tabs">
   <button class="tab-button active" data-tab="naam">Naam</button>
+  <button class="tab-button" data-tab="type">Type</button>
+  <button class="tab-button" data-tab="locatie">Locatie</button>
+  <button class="tab-button" data-tab="lesgevers">Lesgevers</button>
+  <button class="tab-button" data-tab="beheer">Beheer</button>
 </nav>
+
 <section class="tab-content active" id="naam">
-  <h2>Lesnaam + waarden</h2>
-  <div class="controls">
-    <select id="sel-lesnaam"></select>
-    <input id="inp-nieuwe-naam" placeholder="Nieuwe lesnaam">
-    <button id="btn-add-naam">Toevoegen</button>
-  </div>
-  <div class="form-grid">
-    <div><label>Prijs (€)</label><input id="inp-prijs-naam" type="number" step="0.01"></div>
-    <div><label>Aantal strippen</label><input id="inp-strips-naam" type="number"></div>
-    <div><label>Max deelnemers</label><input id="inp-max-naam" type="number"></div>
-    <div><label>Thema</label><input id="inp-thema" type="text"></div>
-    <div><label>Lesduur</label><input id="inp-duur" type="text"></div>
-    <div><label>MailBlue</label><input id="inp-mailblue-naam" type="text"></div>
-  </div>
+  <h2>Lesnaam</h2>
+  <input id="inp-naam" placeholder="Naam les">
 </section>
-<section class="card">
-  <h3>Preview</h3>
-  <div id="preview">Nog geen preview</div>
-  <button id="btn-preview">Bekijk voorbeeld</button>
-  <button id="btn-save">Opslaan</button>
+
+<section class="tab-content" id="type">
+  <h2>Lestype</h2>
+  <input id="inp-type" placeholder="Type les">
 </section>
-<section class="card">
-  <h3>Lessen tabel</h3>
-  <table id="tbl-lessen" border="1">
-    <thead><tr><th>Naam</th><th>Prijs</th><th>Strippen</th><th>Max</th><th>Thema</th><th>Duur</th><th>MailBlue</th></tr></thead>
+
+<section class="tab-content" id="locatie">
+  <h2>Locatie</h2>
+  <input id="inp-locatie" placeholder="Locatie">
+</section>
+
+<section class="tab-content" id="lesgevers">
+  <h2>Lesgevers</h2>
+  <input id="inp-lesgevers" placeholder="Lesgevers">
+</section>
+
+<section class="tab-content" id="beheer">
+  <h2>Beheer lessen</h2>
+  <table class="table" id="tbl-lessen">
+    <thead>
+      <tr>
+        <th>Naam</th><th>Type</th><th>Locatie</th><th>Lesgevers</th><th>Acties</th>
+      </tr>
+    </thead>
     <tbody></tbody>
   </table>
 </section>
-<footer><p id="version-lessen"></p></footer>
+</main>
+<footer class="sh-footer"><p id="version-lessen"></p></footer>
 </body>
 </html>
