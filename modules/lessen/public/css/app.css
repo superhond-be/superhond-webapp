@@ -1,13 +1,19 @@
-.sh-header{background:#FFD42A;padding:10px;font-weight:bold}
+.sh-header{background:#FFD42A;padding:10px 16px;font-weight:700}
 .sh-main{padding:16px}
-.tabs{display:flex;gap:8px;margin-bottom:8px}
-.tab-button{padding:8px 12px;border:1px solid #ccc;background:#eee;cursor:pointer}
+.tabs{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.tab-button{padding:8px 12px;border:1px solid #ccc;background:#eee;cursor:pointer;border-radius:6px 6px 0 0}
 .tab-button.active{background:#fff;border-bottom-color:#fff}
-.tab-content{display:none;border:1px solid #ccc;padding:12px;background:#fff}
+.tab-content{display:none;border:1px solid #ccc;padding:12px;background:#fff;border-radius:0 6px 6px 6px}
 .tab-content.active{display:block}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.form-actions{margin-top:10px}
+.primary,.btn{padding:8px 12px;border:1px solid #cfcfcf;background:#fff;border-radius:6px;cursor:pointer}
+.btn.small{padding:6px 8px;font-size:12px}
 .table{border-collapse:collapse;width:100%}
-.table th,.table td{border:1px solid #ccc;padding:6px;text-align:left}
-.btn-action{padding:4px 8px;margin:0 2px;border:none;border-radius:4px;cursor:pointer}
-.btn-edit{background:#FFD42A}
-.btn-del{background:#f55;color:#fff}
-.sh-footer{border-top:1px solid #eee;padding:8px;color:#555}
+.table th,.table td{border:1px solid #ddd;padding:8px;text-align:left}
+.card{border:1px solid #eee;background:#fafafa;border-radius:8px;padding:12px;margin:12px 0}
+fieldset.defaults{border:1px solid #eee;border-radius:8px;margin:12px 0;padding:8px 12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.form-row{display:flex;flex-direction:column;gap:6px}
+.sh-footer{border-top:1px solid #eee;padding:8px 16px;color:#555}
+@media (max-width:800px){ .form-grid{grid-template-columns:1fr} }

@@ -13,9 +13,9 @@ if (fs.existsSync(modulesDir)) {
     if (fs.existsSync(pub)) app.use(man.mountPath, express.static(pub));
     const entry = path.join(modulesDir, mod, man.serverEntry);
     if (fs.existsSync(entry)) app.use(man.apiPath, require(entry));
-    console.log('Loaded '+man.name+' v'+man.version);
+    console.log('🔌 Loaded '+man.name+' v'+man.version);
   });
 }
 app.get('/health',(req,res)=>res.json({status:'ok'}));
 const PORT=process.env.PORT||3000;
-app.listen(PORT,()=>console.log('Server on '+PORT));
+app.listen(PORT,()=>console.log('✅ Server on http://localhost:'+PORT));
