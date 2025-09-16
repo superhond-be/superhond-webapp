@@ -2,32 +2,26 @@ const express = require('express');
 const router = express.Router();
 const man = require('../module.json');
 
+function buildMapsUrl(loc){
+  const q = encodeURIComponent([loc.adres, loc.postcode, loc.plaats, loc.land].filter(Boolean).join(', '));
+  return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+
 const store = {
-  items: [],
+  items: [
+    { id:1, naam:'Puppy Start', type:'PuppyPack', locatie:'Retie', trainers:[{naam:'Sofie',functie:'Hoofdtrainer'}],
+      meta:{prijs:149,strippen:9,max:8,lesduurMin:90,mailblue:'PUPPY'} }
+  ],
   settings: {
-    // Namen with defaults per name
-    namen: [
-      { naam: 'Puppy Start', prijs: 149, strippen: 9, max: 8, lesduurMin: 90, mailblue: 'PUPPY' },
-      { naam: 'Pubergroep',  prijs: 169, strippen: 10, max: 8, lesduurMin: 90, mailblue: 'PUBER' }
-    ],
-    types: [{naam:'PuppyPack', beschrijving:'Voor pups'}, {naam:'Basisgroep', beschrijving:'Basistraining'}],
+    namen: [{ naam: 'Puppy Start', prijs: 149, strippen: 9, max: 8, lesduurMin: 90, mailblue: 'PUPPY' }],
+    types: [{naam:'PuppyPack', beschrijving:'Voor pups'}],
     locaties: [
-      {naam:'Retie', adres:'', postcode:'2470', plaats:'Retie', beschrijving:''},
-      {naam:'Dessel', adres:'', postcode:'2480', plaats:'Dessel', beschrijving:''}
+      {naam:'Retie', adres:'Markt 1', postcode:'2470', plaats:'Retie', land:'België', beschrijving:'',
+       googleMapsUrl:'https://www.google.com/maps/search/?api=1&query=Markt%201,2470%20Retie,België'}
     ],
-    themas: [{naam:'Gehoorzaamheid', beschrijving:'Basis'}, {naam:'Wandelen', beschrijving:'Rustig wandelen'}],
-    trainers: [
-      { naam: 'Sofie', functie: 'Hoofdtrainer' },
-      { naam: 'Paul', functie: 'Trainer' }
-    ],
-    groups: {
-      // Naam-groups for fallback defaults
-      naam: {
-        'Puppy': { values: ['Puppy Start'], defaults: { prijs: 149, strippen: 9, max: 8, lesduurMin: 90, mailblue: 'PUPPY' } },
-        'Puber': { values: ['Pubergroep'],  defaults: { prijs: 169, strippen: 10, max: 8, lesduurMin: 90, mailblue: 'PUBER' } }
-      },
-      trainer: { 'Superhond trainers': ['Sofie','Paul'] }
-    }
+    themas: [],
+    trainers: [{ naam:'Sofie', functie:'Hoofdtrainer' }],
+    groups: { naam:{}, trainer:{} }
   }
 };
 
@@ -44,58 +38,16 @@ router.post('/settings', express.json(), (req,res)=>{
   const s = req.body || {};
   const normStr = v => String(v||'').trim();
   const normNum = v => (v===null||v===undefined||v==='') ? null : Number(v);
-
-  // Namen as objects with defaults
-  s.namen = Array.isArray(s.namen) ? s.namen.map(n=>({
-    naam: normStr(n.naam),
-    prijs: normNum(n.prijs),
-    strippen: normNum(n.strippen),
-    max: normNum(n.max),
-    lesduurMin: normNum(n.lesduurMin),
-    mailblue: normStr(n.mailblue)
-  })).filter(n=>n.naam) : [];
-
-  // Types/Locaties/Themas/Trainers
-  s.types = Array.isArray(s.types) ? s.types.map(t=>({naam:normStr(t.naam), beschrijving:normStr(t.beschrijving)})).filter(t=>t.naam) : [];
-  s.locaties = Array.isArray(s.locaties) ? s.locaties.map(l=>({
-    naam:normStr(l.naam), adres:normStr(l.adres), postcode:normStr(l.postcode), plaats:normStr(l.plaats), beschrijving:normStr(l.beschrijving)
-  })).filter(l=>l.naam) : [];
-  s.themas = Array.isArray(s.themas) ? s.themas.map(t=>({naam:normStr(t.naam), beschrijving:normStr(t.beschrijving)})).filter(t=>t.naam) : [];
-  s.trainers = Array.isArray(s.trainers) ? s.trainers.map(t=>({naam:normStr(t.naam), functie:normStr(t.functie)})).filter(t=>t.naam) : [];
-
-  // Groups
-  const normList = a => Array.isArray(a) ? a.map(v=>normStr(v)).filter(Boolean) : [];
-  const normNaamGroups = g => {
-    const out = {};
-    if (g && typeof g==='object'){
-      for (const k of Object.keys(g)){
-        const entry = g[k];
-        if (Array.isArray(entry)) out[k] = { values: normList(entry), defaults: { prijs:null, strippen:null, max:null, lesduurMin:null, mailblue:'' } };
-        else if (entry && typeof entry==='object'){
-          out[k] = {
-            values: normList(entry.values||[]),
-            defaults: {
-              prijs: normNum(entry.defaults?.prijs),
-              strippen: normNum(entry.defaults?.strippen),
-              max: normNum(entry.defaults?.max),
-              lesduurMin: normNum(entry.defaults?.lesduurMin),
-              mailblue: normStr(entry.defaults?.mailblue)
-            }
-          };
-        }
-      }
-    }
-    return out;
-  };
-  const normTrainerGroups = g => {
-    const out={}; if (g && typeof g==='object'){ for (const k of Object.keys(g)){ out[k]=normList(g[k]); } } return out;
-  };
-
-  s.groups = s.groups || {};
-  s.groups.naam = normNaamGroups(s.groups.naam);
-  s.groups.trainer = normTrainerGroups(s.groups.trainer);
-
-  store.settings = s;
+  s.locaties = Array.isArray(s.locaties) ? s.locaties.map(l=>{
+    const obj = {
+      naam:normStr(l.naam), adres:normStr(l.adres), postcode:normStr(l.postcode),
+      plaats:normStr(l.plaats), land:normStr(l.land), beschrijving:normStr(l.beschrijving),
+      googleMapsUrl: normStr(l.googleMapsUrl)
+    };
+    if(!obj.googleMapsUrl && (obj.adres||obj.plaats)) obj.googleMapsUrl = buildMapsUrl(obj);
+    return obj;
+  }).filter(l=>l.naam) : [];
+  store.settings.locaties = s.locaties;
   res.json(store.settings);
 });
 
