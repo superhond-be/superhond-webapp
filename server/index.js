@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const app = express();
+app.use(express.json());
 app.get('/', (req,res)=>res.redirect('/m/lessen/'));
 const modulesDir = path.join(__dirname, '../modules');
 if (fs.existsSync(modulesDir)) {
