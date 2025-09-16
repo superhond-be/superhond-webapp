@@ -17,6 +17,8 @@ if (fs.existsSync(modulesDir)) {
     console.log('🔌 Loaded '+man.name+' v'+man.version);
   });
 }
+const styleDir = path.join(__dirname,'../superhond-style');
+if(fs.existsSync(styleDir)) app.use('/style', express.static(styleDir));
 app.get('/health',(req,res)=>res.json({status:'ok'}));
 const PORT=process.env.PORT||3000;
 app.listen(PORT,()=>console.log('✅ Server on http://localhost:'+PORT));
