@@ -1,1 +1,1 @@
-console.log('Superhond Lessenbeheer v0.11.2 loaded');
+console.log('Superhond v0.11.2b loaded');

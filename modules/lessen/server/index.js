@@ -3,52 +3,38 @@ const router = express.Router();
 const man = require('../module.json');
 
 function buildMapsUrl(loc){
-  const q = encodeURIComponent([loc.adres, loc.postcode, loc.plaats, loc.land].filter(Boolean).join(', '));
-  return `https://www.google.com/maps/search/?api=1&query=${q}`;
+  const parts = [loc.adres, loc.postcode, loc.plaats, loc.land].filter(Boolean).join(', ');
+  return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(parts);
 }
 
 const store = {
   items: [
-    { id:1, naam:'Puppy Start', type:'PuppyPack', locatie:'Retie', trainers:[{naam:'Sofie',functie:'Hoofdtrainer'}],
-      meta:{prijs:149,strippen:9,max:8,lesduurMin:90,mailblue:'PUPPY'} }
+    { id:1, naam:'Puppy Start', type:'PuppyPack', locatie:'Retie',
+      trainers:[{naam:'Sofie',functie:'Hoofdtrainer'}],
+      meta:{prijs:149,strippen:9,max:8,lesduurMin:90,mailblue:'PUPPY'} },
+    { id:2, naam:'Pubergroep', type:'Basisgroep', locatie:'Dessel',
+      trainers:[{naam:'Paul',functie:'Trainer'}],
+      meta:{prijs:169,strippen:10,max:8,lesduurMin:90,mailblue:'PUBER'} }
   ],
   settings: {
-    namen: [{ naam: 'Puppy Start', prijs: 149, strippen: 9, max: 8, lesduurMin: 90, mailblue: 'PUPPY' }],
-    types: [{naam:'PuppyPack', beschrijving:'Voor pups'}],
+    namen: [
+      { naam: 'Puppy Start', prijs: 149, strippen: 9, max: 8, lesduurMin: 90, mailblue: 'PUPPY' },
+      { naam: 'Pubergroep',  prijs: 169, strippen:10, max: 8, lesduurMin: 90, mailblue: 'PUBER' }
+    ],
+    types: [{naam:'PuppyPack', beschrijving:'Voor pups'}, {naam:'Basisgroep', beschrijving:'Basistraining'}],
     locaties: [
       {naam:'Retie', adres:'Markt 1', postcode:'2470', plaats:'Retie', land:'België', beschrijving:'',
-       googleMapsUrl:'https://www.google.com/maps/search/?api=1&query=Markt%201,2470%20Retie,België'}
+       googleMapsUrl: buildMapsUrl({adres:'Markt 1',postcode:'2470',plaats:'Retie',land:'België'})},
+      {naam:'Dessel', adres:'Kerkstraat 5', postcode:'2480', plaats:'Dessel', land:'België', beschrijving:'',
+       googleMapsUrl: buildMapsUrl({adres:'Kerkstraat 5',postcode:'2480',plaats:'Dessel',land:'België'})}
     ],
-    themas: [],
-    trainers: [{ naam:'Sofie', functie:'Hoofdtrainer' }],
-    groups: { naam:{}, trainer:{} }
+    themas: [{naam:'Gehoorzaamheid', beschrijving:'Basis'}],
+    trainers: [{ naam:'Sofie', functie:'Hoofdtrainer' }, {naam:'Paul', functie:'Trainer'}],
+    groups: { trainer: { 'Superhond trainers': ['Sofie','Paul'] } }
   }
 };
 
 router.get('/version',(req,res)=>res.json({name:'🐾 Superhond Lessenbeheer',version:man.version}));
 router.get('/items',(req,res)=>res.json(store.items));
-router.post('/items', express.json(), (req,res)=>{
-  const item = {id: Date.now(), ...req.body};
-  store.items.push(item);
-  res.status(201).json(item);
-});
-
 router.get('/settings',(req,res)=>res.json(store.settings));
-router.post('/settings', express.json(), (req,res)=>{
-  const s = req.body || {};
-  const normStr = v => String(v||'').trim();
-  const normNum = v => (v===null||v===undefined||v==='') ? null : Number(v);
-  s.locaties = Array.isArray(s.locaties) ? s.locaties.map(l=>{
-    const obj = {
-      naam:normStr(l.naam), adres:normStr(l.adres), postcode:normStr(l.postcode),
-      plaats:normStr(l.plaats), land:normStr(l.land), beschrijving:normStr(l.beschrijving),
-      googleMapsUrl: normStr(l.googleMapsUrl)
-    };
-    if(!obj.googleMapsUrl && (obj.adres||obj.plaats)) obj.googleMapsUrl = buildMapsUrl(obj);
-    return obj;
-  }).filter(l=>l.naam) : [];
-  store.settings.locaties = s.locaties;
-  res.json(store.settings);
-});
-
 module.exports = router;
