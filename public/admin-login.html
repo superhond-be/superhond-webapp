@@ -2,27 +2,13 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login - Superhond</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <title>Admin Login — Superhond</title>
+  <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-  <header>
-    <h1>Admin Login</h1>
-  </header>
-
-  <main>
-    <form class="login-form">
-      <label for="email">E-mail:</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="password">Wachtwoord:</label>
-      <input type="password" id="password" name="password" required>
-
-      <button type="submit">Inloggen</button>
-    </form>
-  </main>
-
-  <script src="/js/dashboard.js" defer></script>
+  <header class="sh-header">Admin Login</header>
+  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('login')">Login</button></nav>
+  <main><section id="login" class="tab-content"><h2>Login</h2><p>Voorbeeld inhoud Login.</p></section></main>
+  <script src="./js/dashboard.js"></script>
 </body>
 </html>

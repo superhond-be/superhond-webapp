@@ -1,44 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Superhond | Admin Registratie</title>
+  <meta charset="UTF-8">
+  <title>Admin Register — Superhond</title>
   <link rel="stylesheet" href="./css/app.css">
-  <script defer src="./js/common.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="container">
-      <div class="brand">🐾 Superhond.be <span class="muted">Admin portaal</span></div>
-      <nav class="topnav">
-        <a href="./index.html">Dashboard</a>
-        <a href="./admin-users.html">Gebruikers</a>
-        <a href="./lessenbeheer.html">Lessen</a>
-        <a href="./klantenportaal.html">Klantenportaal</a>
-        <a href="./admin-login.html" class="right">Login</a>
-      </nav>
-    </div>
-  </header>
-  <main class="container">
-
-<h1>Admin Registreren</h1>
-<form id="registerForm" class="card">
-  <label>Naam
-    <input type="text" name="name" required placeholder="Voornaam Achternaam">
-  </label>
-  <label>E‑mail
-    <input type="email" name="email" required placeholder="admin@superhond.be">
-  </label>
-  <label>Wachtwoord
-    <input type="password" name="password" required placeholder="Min. 8 tekens">
-  </label>
-  <button type="submit">Account aanmaken</button>
-</form>
-
-  </main>
-  <footer class="footer">
-    <div class="container">© Superhond — Superhond.be</div>
-  </footer>
+  <header class="sh-header">Admin Register</header>
+  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('register')">Register</button></nav>
+  <main><section id="register" class="tab-content"><h2>Register</h2><p>Voorbeeld inhoud Register.</p></section></main>
+  <script src="./js/dashboard.js"></script>
 </body>
 </html>

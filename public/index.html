@@ -1,1 +1,14 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Test</title></head><body><h1>Superhond Testpagina</h1><p>Server is online.</p></body></html>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard — Superhond</title>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  <header class="sh-header">Dashboard</header>
+  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('start')">Start</button><button class="tab-btn" onclick="openTab('overzicht')">Overzicht</button></nav>
+  <main><section id="start" class="tab-content"><h2>Start</h2><p>Voorbeeld inhoud Start.</p></section><section id="overzicht" class="tab-content" style="display:none;"><h2>Overzicht</h2><p>Voorbeeld inhoud Overzicht.</p></section></main>
+  <script src="./js/dashboard.js"></script>
+</body>
+</html>

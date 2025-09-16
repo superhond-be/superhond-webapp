@@ -1,75 +1,14 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Superhond - Lessenbeheer</title>
-  <link rel="stylesheet" href="css/app.css" />
-  <script src="js/lessenbeheer.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Lessenbeheer — Superhond</title>
+  <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-  <header class="sh-header" role="banner">
-    <h1>Superhond.be Admin Portaal</h1>
-    <h2>Lessenbeheer</h2>
-  </header>
-
-  <nav class="tabs" aria-label="Lessenbeheer tabs" role="tablist">
-    <button class="tab-button active" role="tab" aria-selected="true" aria-controls="panel-lesnaam" id="tab-lesnaam" data-tab="lesnaam">Lesnaam</button>
-    <button class="tab-button" role="tab" aria-selected="false" aria-controls="panel-lestype" id="tab-lestype" data-tab="lestype">Lestype</button>
-    <button class="tab-button" role="tab" aria-selected="false" aria-controls="panel-locatie" id="tab-locatie" data-tab="locatie">Locatie</button>
-    <button class="tab-button" role="tab" aria-selected="false" aria-controls="panel-trainers" id="tab-trainers" data-tab="trainers">Trainers</button>
-  </nav>
-
-  <section class="tab-content active" id="lesnaam" role="tabpanel" aria-labelledby="tab-lesnaam">
-    <h3>Lesnamen beheren</h3>
-    <div class="controls">
-      <input type="text" id="input-lesnaam" placeholder="Nieuwe lesnaam" aria-label="Nieuwe lesnaam"/>
-      <button class="primary" data-add="lesnaam">Toevoegen</button>
-    </div>
-    <ul id="list-lesnaam" class="sh-list">
-      <li>Puppy Start</li>
-      <li>Pubergroep</li>
-    </ul>
-  </section>
-
-  <section class="tab-content" id="lestype" role="tabpanel" aria-labelledby="tab-lestype">
-    <h3>Lestypes beheren</h3>
-    <div class="controls">
-      <input type="text" id="input-lestype" placeholder="Nieuw lestype" aria-label="Nieuw lestype"/>
-      <button class="primary" data-add="lestype">Toevoegen</button>
-    </div>
-    <ul id="list-lestype" class="sh-list">
-      <li>PuppyPack</li>
-      <li>Basisgroep</li>
-    </ul>
-  </section>
-
-  <section class="tab-content" id="locatie" role="tabpanel" aria-labelledby="tab-locatie">
-    <h3>Leslocaties beheren</h3>
-    <div class="controls">
-      <input type="text" id="input-locatie" placeholder="Nieuwe locatie" aria-label="Nieuwe locatie"/>
-      <button class="primary" data-add="locatie">Toevoegen</button>
-    </div>
-    <ul id="list-locatie" class="sh-list">
-      <li>Retie</li>
-      <li>Dessel</li>
-    </ul>
-  </section>
-
-  <section class="tab-content" id="trainers" role="tabpanel" aria-labelledby="tab-trainers">
-    <h3>Trainers beheren</h3>
-    <div class="controls">
-      <input type="text" id="input-trainers" placeholder="Nieuwe trainer" aria-label="Nieuwe trainer"/>
-      <button class="primary" data-add="trainers">Toevoegen</button>
-    </div>
-    <ul id="list-trainers" class="sh-list">
-      <li>Trainer 1</li>
-      <li>Trainer 2</li>
-    </ul>
-  </section>
-
-  <footer class="sh-footer" role="contentinfo">
-    <p>© Superhond</p>
-  </footer>
+  <header class="sh-header">Lessenbeheer</header>
+  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('namen')">Namen</button><button class="tab-btn" onclick="openTab('types')">Types</button><button class="tab-btn" onclick="openTab('locaties')">Locaties</button><button class="tab-btn" onclick="openTab('thema’s')">Thema’s</button><button class="tab-btn" onclick="openTab('trainers')">Trainers</button><button class="tab-btn" onclick="openTab('beheer')">Beheer</button></nav>
+  <main><section id="namen" class="tab-content"><h2>Namen</h2><p>Voorbeeld inhoud Namen.</p></section><section id="types" class="tab-content" style="display:none;"><h2>Types</h2><p>Voorbeeld inhoud Types.</p></section><section id="locaties" class="tab-content" style="display:none;"><h2>Locaties</h2><p>Voorbeeld inhoud Locaties.</p></section><section id="thema’s" class="tab-content" style="display:none;"><h2>Thema’s</h2><p>Voorbeeld inhoud Thema’s.</p></section><section id="trainers" class="tab-content" style="display:none;"><h2>Trainers</h2><p>Voorbeeld inhoud Trainers.</p></section><section id="beheer" class="tab-content" style="display:none;"><h2>Beheer</h2><p>Voorbeeld inhoud Beheer.</p></section></main>
+  <script src="./js/dashboard.js"></script>
 </body>
 </html>
