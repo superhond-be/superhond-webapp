@@ -1,1 +1,1 @@
-console.log('Superhond v0.11.2b loaded');
+console.log('Superhond v0.11.3 loaded');

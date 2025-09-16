@@ -9,12 +9,8 @@ function buildMapsUrl(loc){
 
 const store = {
   items: [
-    { id:1, naam:'Puppy Start', type:'PuppyPack', locatie:'Retie',
-      trainers:[{naam:'Sofie',functie:'Hoofdtrainer'}],
-      meta:{prijs:149,strippen:9,max:8,lesduurMin:90,mailblue:'PUPPY'} },
-    { id:2, naam:'Pubergroep', type:'Basisgroep', locatie:'Dessel',
-      trainers:[{naam:'Paul',functie:'Trainer'}],
-      meta:{prijs:169,strippen:10,max:8,lesduurMin:90,mailblue:'PUBER'} }
+    { id:1, naam:'Puppy Start', type:'PuppyPack', locatie:{naam:'Retie', googleMapsUrl:buildMapsUrl({adres:'Markt 1',postcode:'2470',plaats:'Retie',land:'België'})} },
+    { id:2, naam:'Pubergroep', type:'Basisgroep', locatie:{naam:'Dessel', googleMapsUrl:buildMapsUrl({adres:'Kerkstraat 5',postcode:'2480',plaats:'Dessel',land:'België'})} }
   ],
   settings: {
     namen: [
