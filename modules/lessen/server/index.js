@@ -8,21 +8,27 @@ const store = {
     namen: ['Puppy Start','Pubergroep'],
     types: ['PuppyPack','Basisgroep'],
     locaties: ['Retie','Dessel'],
-    trainers: ['Trainer 1','Trainer 2'],
+    // Trainers now have name + functie
+    trainers: [
+      { naam: 'Trainer 1', functie: 'Hoofdtrainer' },
+      { naam: 'Trainer 2', functie: 'Assistent' }
+    ],
     groups: {
       // Naam-groepen met defaults
       naam: {
         'Puppy': { values: ['Puppy Start'], defaults: { prijs: 149, strippen: 9, max: 8, lesduur: '1u30', mailblue: 'PUPPY' } },
         'Puber': { values: ['Pubergroep'],  defaults: { prijs: 169, strippen: 10, max: 8, lesduur: '1u30', mailblue: 'PUBER' } }
       },
-      type:   { 'Basistraining': ['Basisgroep'], 'Pakket': ['PuppyPack'] },
-      locatie:{ 'Kempen': ['Retie','Dessel'] },
-      trainer:{ 'Team A': ['Trainer 1'], 'Team B': ['Trainer 2'] }
+      type:    { 'Basistraining': ['Basisgroep'], 'Pakket': ['PuppyPack'] },
+      locatie: { 'Kempen': ['Retie','Dessel'] },
+      // Trainer-groepen referencen op trainer-NAAM
+      trainer: { 'Team A': ['Trainer 1'], 'Team B': ['Trainer 2'] }
     }
   }
 };
 
 router.get('/version',(req,res)=>res.json({name:man.name,version:man.version}));
+
 router.get('/items',(req,res)=>res.json(store.items));
 router.post('/items', express.json(), (req,res)=>{
   const item = {id: Date.now(), ...req.body};
@@ -37,9 +43,12 @@ router.post('/settings', express.json(), (req,res)=>{
   s.namen    = normList(s.namen);
   s.types    = normList(s.types);
   s.locaties = normList(s.locaties);
-  s.trainers = normList(s.trainers);
+  // Trainers: array of objects {naam, functie}
+  s.trainers = Array.isArray(s.trainers) ? s.trainers.map(t=>({
+    naam: String(t.naam||'').trim(),
+    functie: String(t.functie||'').trim()
+  })).filter(t=>t.naam) : [];
 
-  // Naam-groepen: { groupName: { values:[...], defaults:{...} } } of array fallback
   const normNaamGroups = g => {
     const out = {};
     if (g && typeof g === 'object'){
@@ -77,6 +86,7 @@ router.post('/settings', express.json(), (req,res)=>{
   s.groups.naam    = normNaamGroups(s.groups.naam);
   s.groups.type    = normSimpleGroups(s.groups.type);
   s.groups.locatie = normSimpleGroups(s.groups.locatie);
+  // Trainer-groepen blijven lijsten met trainer-namen
   s.groups.trainer = normSimpleGroups(s.groups.trainer);
 
   store.settings = s;
