@@ -4,15 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — Lessenmodule v0.12.9</title>
+  <title>Superhond — Lessenmodule v0.13.0 Fulltest</title>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
   <header class="sh-header">
-    <div>🐾 Superhond — Lessenmodule <strong>v0.12.9</strong></div>
+    <div>🐾 Superhond — Lessenmodule <strong>v0.13.0 Fulltest</strong></div>
     <div class="sh-actions">
-      <button id="btn-export-json" class="btn primary">⬇︎ Export gefilterd (JSON)</button>
-      <button id="btn-export-csv" class="btn ok">⬇︎ Export gefilterd (CSV)</button>
+      <button id="btn-export-json" class="btn primary">⬇︎ Export JSON</button>
+      <button id="btn-export-csv" class="btn ok">⬇︎ Export CSV</button>
     </div>
   </header>
   <nav class="sh-tabs">
@@ -24,29 +24,19 @@
     <button class="tab-btn" data-target="beheer">Beheer</button>
   </nav>
   <main class="container">
-    <section id="namen" class="section tab-content"><h2>Namen</h2><p>Tab met pakketten/lesnamen (CRUD)</p></section>
-    <section id="types" class="section tab-content" hidden><h2>Types</h2><p>Tab met les-types (CRUD)</p></section>
-    <section id="locaties" class="section tab-content" hidden><h2>Locaties</h2><p>Tab met locaties (CRUD)</p></section>
-    <section id="themas" class="section tab-content" hidden><h2>Thema’s</h2><p>Tab met thema’s (CRUD)</p></section>
-    <section id="trainers" class="section tab-content" hidden><h2>Trainers</h2><p>Tab met trainers (CRUD)</p></section>
+    <section id="namen" class="section tab-content"><h2>Namen</h2><table><tbody id="tbl-namen"></tbody></table></section>
+    <section id="types" class="section tab-content" hidden><h2>Types</h2><table><tbody id="tbl-types"></tbody></table></section>
+    <section id="locaties" class="section tab-content" hidden><h2>Locaties</h2><table><tbody id="tbl-locaties"></tbody></table></section>
+    <section id="themas" class="section tab-content" hidden><h2>Thema’s</h2><table><tbody id="tbl-themas"></tbody></table></section>
+    <section id="trainers" class="section tab-content" hidden><h2>Trainers</h2><table><tbody id="tbl-trainers"></tbody></table></section>
     <section id="beheer" class="section tab-content" hidden>
       <h2>Beheer</h2>
       <div id="beheer-filters"></div>
       <table class="table">
         <thead id="tbl-head">
           <tr>
-            <th class="sortable" data-col="naam">Naam <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="type">Type <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="locatie">Locatie <span class="arrow">↕</span></th>
-            <th>Adres</th>
-            <th>Plaats</th>
-            <th>Land</th>
-            <th class="sortable" data-col="thema">Thema <span class="arrow">↕</span></th>
-            <th>Trainers</th>
-            <th class="sortable" data-col="datum">Datum <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="tijd">Begintijd <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="eindtijd">Eindtijd <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="cap">Capaciteit <span class="arrow">↕</span></th>
+            <th>Naam</th><th>Type</th><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Land</th>
+            <th>Thema</th><th>Trainers</th><th>Datum</th><th>Begintijd</th><th>Eindtijd</th><th>Capaciteit</th>
           </tr>
         </thead>
         <tbody id="tbl-lessen"></tbody>
@@ -54,8 +44,8 @@
     </section>
   </main>
   <script src="js/data.js"></script>
-  <script src="js/filterbar.js"></script>
-  <script src="js/beheer.js"></script>
   <script src="js/tabs.js"></script>
+  <script src="js/crud.js"></script>
+  <script src="js/beheer.js"></script>
 </body>
 </html>
