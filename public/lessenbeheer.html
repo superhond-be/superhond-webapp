@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — Lessenbeheer v0.12.0 (standalone)</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <title>Superhond — Lessenbeheer v0.12.0</title>
+  <link rel="stylesheet" href="/css/app.css?v=0120">
 </head>
 <body>
-  <header class="sh-header">🐾 Superhond — Lessenbeheer <strong>v0.12.0 (standalone)</strong></header>
+  <header class="sh-header">🐾 Superhond — Lessenbeheer <strong>v0.12.0</strong></header>
   <nav class="sh-tabs">
     <button class="tab-btn" data-target="namen">Namen</button>
     <button class="tab-btn" data-target="types">Types</button>
     <button class="tab-btn" data-target="locaties">Locaties</button>
-    <button class="tab-btn" data-target="themas">Thema's</button>
+    <button class="tab-btn" data-target="themas">Thema’s</button>
     <button class="tab-btn" data-target="trainers">Trainers</button>
     <button class="tab-btn" data-target="beheer">Beheer</button>
   </nav>
@@ -21,7 +21,10 @@
     <section id="namen" class="section tab-content">
       <h2>Namen</h2>
       <table class="table">
-        <thead><tr><th>Naam</th><th class="hide-sm">Prijs</th><th>Strippen</th><th class="hide-sm">Max</th><th class="hide-sm">Lesduur</th><th class="hide-sm">MailBlue</th><th class="hide-sm">Geldigheid</th><th>Acties</th></tr></thead>
+        <thead><tr>
+          <th>Naam</th><th class="hide-sm">Prijs</th><th>Strippen</th><th class="hide-sm">Max</th>
+          <th class="hide-sm">Lesduur</th><th class="hide-sm">MailBlue</th><th class="hide-sm">Geldigheid</th><th>Acties</th>
+        </tr></thead>
         <tbody id="tbl-namen"></tbody>
       </table>
       <p><button class="btn">+ Naam</button></p>
@@ -46,7 +49,7 @@
     </section>
 
     <section id="themas" class="section tab-content" hidden>
-      <h2>Thema's</h2>
+      <h2>Thema’s</h2>
       <table class="table">
         <thead><tr><th>Naam</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
         <tbody id="tbl-themas"></tbody>
@@ -64,17 +67,17 @@
     </section>
 
     <section id="beheer" class="section tab-content" hidden>
-      <h2>Beheer (voorbeeld)</h2>
-      <p>Puppy Start — Retie — Sofie — Zat 10:00</p>
+      <h2>Beheer</h2>
+      <p>Voorbeeldles: Puppy Start — Retie — Sofie — Zat 10:00</p>
       <div class="actions">
-        <button class="btn">Deelnemers</button>
+        <button class="btn primary">Deelnemers</button>
         <button class="btn">Aanwezig</button>
         <button class="btn">Annuleer</button>
       </div>
     </section>
   </main>
 
-  <script src="/js/tabs.js"></script>
-  <script src="/js/lessen.js"></script>
+  <script src="/js/tabs.js?v=0120"></script>
+  <script src="/js/lessen-data.js?v=0120"></script>
 </body>
 </html>

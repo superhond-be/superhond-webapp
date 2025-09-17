@@ -1,24 +1,10 @@
-# Superhond v0.12.0-prep
+# Superhond — Lessenbeheer v0.12.0 (module update)
 
-In deze versie zijn ALLE HTML-schermen gelijkgetrokken naar één uniforme Superhond-style.
+Dit pakket bevat **enkel de Lessenbeheer-module** in Superhond-style, met alle tabs:
+Namen, Types, Locaties, Thema’s, Trainers, Beheer.
 
-📂 Bestanden in /public:
-- index.html (Dashboard)
-- admin-login.html
-- admin-register.html
-- admin-users.html
-- klantenportaal.html
-- lessenbeheer.html
-
-📂 CSS en JS:
-- public/css/app.css  → centrale Superhond-style
-- public/js/dashboard.js → tabs wisselen
-
-✅ Overal dezelfde header, tabs en layout
-✅ Correcte koppelingen naar css/js
-✅ Responsief getest
-
-Gebruik:
-1. Kopieer de inhoud van `public/` naar je project.
-2. Force-refresh in je browser (Ctrl+F5 of Cmd+Shift+R).
-
+Installeren (Render/Express):
+1) Kopieer `public/lessenbeheer.html`, `public/css/app.css`, `public/js/tabs.js`, `public/js/lessen-data.js`.
+2) HTML linkt met absolute paden: `/css/app.css?v=0120` en `/js/...`. 
+3) Open `/lessenbeheer.html` of routeer `/lessenbeheer` naar dit bestand.
+4) Force-refresh op iPad/iPhone indien nodig.
