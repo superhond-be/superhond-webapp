@@ -1,10 +1,10 @@
-# Superhond — Lessenbeheer v0.12.0 (module update)
+# Superhond — Lessenbeheer v0.12.1-testdata
 
-Dit pakket bevat **enkel de Lessenbeheer-module** in Superhond-style, met alle tabs:
-Namen, Types, Locaties, Thema’s, Trainers, Beheer.
+Deze versie vult alle tabellen met meerdere voorbeelddata zodat je uitgebreid kunt testen.
 
-Installeren (Render/Express):
-1) Kopieer `public/lessenbeheer.html`, `public/css/app.css`, `public/js/tabs.js`, `public/js/lessen-data.js`.
-2) HTML linkt met absolute paden: `/css/app.css?v=0120` en `/js/...`. 
-3) Open `/lessenbeheer.html` of routeer `/lessenbeheer` naar dit bestand.
-4) Force-refresh op iPad/iPhone indien nodig.
+Tabs aanwezig: Namen, Types, Locaties, Thema’s, Trainers, Beheer.
+
+Gebruik:
+1. Plaats `lessenbeheer.html`, `css/app.css`, `js/tabs.js`, `js/lessen-data.js` in je `public/` map.
+2. Open `/lessenbeheer.html?v=0121` in je browser.
+3. Je ziet "Superhond — Lessenbeheer v0.12.1-testdata" in de header + tabellen vol data.
