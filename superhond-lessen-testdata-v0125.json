@@ -1,0 +1,266 @@
+{
+  "namen": [
+    {
+      "id": "nm_ppcon",
+      "naam": "Puppy Pack Connect",
+      "prijs": 149,
+      "strippen": 9,
+      "max": 12,
+      "lesduur": 60,
+      "mailblue": "MB-PPCON",
+      "geldigheid": "12 weken"
+    },
+    {
+      "id": "nm_ppspec",
+      "naam": "Puppy Pack Special",
+      "prijs": 199,
+      "strippen": 12,
+      "max": 14,
+      "lesduur": 75,
+      "mailblue": "MB-PPSPEC",
+      "geldigheid": "16 weken"
+    },
+    {
+      "id": "nm_basis",
+      "naam": "Basisgroep",
+      "prijs": 135,
+      "strippen": 8,
+      "max": 10,
+      "lesduur": 60,
+      "mailblue": "MB-BASIS",
+      "geldigheid": "10 weken"
+    },
+    {
+      "id": "nm_pub",
+      "naam": "Pubergroep",
+      "prijs": 155,
+      "strippen": 10,
+      "max": 12,
+      "lesduur": 60,
+      "mailblue": "MB-PUBER",
+      "geldigheid": "12 weken"
+    },
+    {
+      "id": "nm_prive",
+      "naam": "Privé Coaching",
+      "prijs": 60,
+      "strippen": 1,
+      "max": 1,
+      "lesduur": 45,
+      "mailblue": "MB-PRIVE",
+      "geldigheid": "1 week"
+    },
+    {
+      "id": "nm_work",
+      "naam": "Agility Workshop",
+      "prijs": 49,
+      "strippen": 1,
+      "max": 16,
+      "lesduur": 90,
+      "mailblue": "MB-AGI",
+      "geldigheid": "1 week"
+    }
+  ],
+  "types": [
+    {
+      "id": "tp_groep",
+      "type": "Groep",
+      "beschrijving": "Les in kleine groep"
+    },
+    {
+      "id": "tp_prive",
+      "type": "Privé",
+      "beschrijving": "Individuele coaching"
+    },
+    {
+      "id": "tp_work",
+      "type": "Workshop",
+      "beschrijving": "Eenmalige intensieve sessie"
+    }
+  ],
+  "locaties": [
+    {
+      "id": "loc_retie",
+      "naam": "Retie Terrein",
+      "adres": "Kerkhofstraat 1",
+      "plaats": "Retie",
+      "land": "BE",
+      "beschrijving": "Buitenterrein"
+    },
+    {
+      "id": "loc_mol",
+      "naam": "Mol Bospark",
+      "adres": "Bospad 12",
+      "plaats": "Mol",
+      "land": "BE",
+      "beschrijving": "Parklocatie"
+    },
+    {
+      "id": "loc_dessel",
+      "naam": "Dessel Sporthal",
+      "adres": "Sportlaan 5",
+      "plaats": "Dessel",
+      "land": "BE",
+      "beschrijving": "Indoor ruimte"
+    },
+    {
+      "id": "loc_geel",
+      "naam": "Geel Centrum",
+      "adres": "Markt 1",
+      "plaats": "Geel",
+      "land": "BE",
+      "beschrijving": "Stadsplein"
+    },
+    {
+      "id": "loc_turn",
+      "naam": "Turnhout Polder",
+      "adres": "Polderweg 8",
+      "plaats": "Turnhout",
+      "land": "BE",
+      "beschrijving": "Weide"
+    }
+  ],
+  "themas": [
+    {
+      "id": "th_start",
+      "naam": "Start",
+      "beschrijving": "Basisvaardigheden"
+    },
+    {
+      "id": "th_geh",
+      "naam": "Gehoorzaamheid",
+      "beschrijving": "Luisteren en volgen"
+    },
+    {
+      "id": "th_soc",
+      "naam": "Socialisatie",
+      "beschrijving": "Met andere honden en mensen"
+    },
+    {
+      "id": "th_ag",
+      "naam": "Agility",
+      "beschrijving": "Behendigheid en sport"
+    },
+    {
+      "id": "th_nose",
+      "naam": "Nosework",
+      "beschrijving": "Zoek- en reukwerk"
+    }
+  ],
+  "trainers": [
+    {
+      "id": "tr_sofie",
+      "naam": "Sofie",
+      "functie": "Coach"
+    },
+    {
+      "id": "tr_jan",
+      "naam": "Jan",
+      "functie": "Hoofdtrainer"
+    },
+    {
+      "id": "tr_lotte",
+      "naam": "Lotte",
+      "functie": "Assistent"
+    },
+    {
+      "id": "tr_tom",
+      "naam": "Tom",
+      "functie": "Trainer"
+    },
+    {
+      "id": "tr_ina",
+      "naam": "Ina",
+      "functie": "Gastdocent"
+    }
+  ],
+  "lessen": [
+    {
+      "id": "ls_1",
+      "naamId": "nm_ppcon",
+      "typeId": "tp_groep",
+      "locatieId": "loc_retie",
+      "themaId": "th_start",
+      "trainerIds": [
+        "tr_sofie",
+        "tr_jan"
+      ],
+      "datum": "2025-09-20",
+      "tijd": "10:00",
+      "eindtijd": "11:00",
+      "capaciteit": 10
+    },
+    {
+      "id": "ls_2",
+      "naamId": "nm_ppspec",
+      "typeId": "tp_groep",
+      "locatieId": "loc_mol",
+      "themaId": "th_start",
+      "trainerIds": [
+        "tr_lotte"
+      ],
+      "datum": "2025-09-21",
+      "tijd": "11:15",
+      "eindtijd": "12:30",
+      "capaciteit": 12
+    },
+    {
+      "id": "ls_3",
+      "naamId": "nm_basis",
+      "typeId": "tp_groep",
+      "locatieId": "loc_dessel",
+      "themaId": "th_geh",
+      "trainerIds": [
+        "tr_jan"
+      ],
+      "datum": "2025-09-22",
+      "tijd": "18:00",
+      "eindtijd": "19:00",
+      "capaciteit": 8
+    },
+    {
+      "id": "ls_4",
+      "naamId": "nm_pub",
+      "typeId": "tp_groep",
+      "locatieId": "loc_geel",
+      "themaId": "th_soc",
+      "trainerIds": [
+        "tr_sofie",
+        "tr_lotte"
+      ],
+      "datum": "2025-09-23",
+      "tijd": "09:30",
+      "eindtijd": "10:30",
+      "capaciteit": 12
+    },
+    {
+      "id": "ls_5",
+      "naamId": "nm_prive",
+      "typeId": "tp_prive",
+      "locatieId": "loc_turn",
+      "themaId": "th_nose",
+      "trainerIds": [
+        "tr_tom"
+      ],
+      "datum": "2025-09-24",
+      "tijd": "14:00",
+      "eindtijd": "14:45",
+      "capaciteit": 1
+    },
+    {
+      "id": "ls_6",
+      "naamId": "nm_work",
+      "typeId": "tp_work",
+      "locatieId": "loc_retie",
+      "themaId": "th_ag",
+      "trainerIds": [
+        "tr_ina",
+        "tr_tom"
+      ],
+      "datum": "2025-09-25",
+      "tijd": "16:00",
+      "eindtijd": "17:30",
+      "capaciteit": 16
+    }
+  ]
+}
