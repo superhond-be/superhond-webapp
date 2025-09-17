@@ -1,10 +1,15 @@
-# Superhond — Lessenbeheer v0.12.1-testdata
+# Superhond — Lessenbeheer v0.12.3-export
 
-Deze versie vult alle tabellen met meerdere voorbeelddata zodat je uitgebreid kunt testen.
+Nieuw:
+- **Export JSON**: download alle data (namen, types, locaties, thema’s, trainers, lessen).
+- **Import JSON**: laad een eerder bestand terug in (overschrijft localStorage).
 
-Tabs aanwezig: Namen, Types, Locaties, Thema’s, Trainers, Beheer.
+Verder:
+- Bewerkbare tabellen met 💾 opslaan / 🗑️ verwijderen / + toevoegen.
+- Beheer-tab om lessen samen te stellen en te bewaren.
+- Alles werkt zonder backend (localStorage).
 
-Gebruik:
-1. Plaats `lessenbeheer.html`, `css/app.css`, `js/tabs.js`, `js/lessen-data.js` in je `public/` map.
-2. Open `/lessenbeheer.html?v=0121` in je browser.
-3. Je ziet "Superhond — Lessenbeheer v0.12.1-testdata" in de header + tabellen vol data.
+Installatie:
+1) Kopieer `public/` naar je project.
+2) Open `/lessenbeheer.html?v=0123`.
+3) Test export/import rechtsboven in de gele header.
