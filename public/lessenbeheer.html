@@ -1,14 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Lessenbeheer — Superhond</title>
-  <link rel="stylesheet" href="./css/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Superhond — Lessenbeheer v0.12.0 (standalone)</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-  <header class="sh-header">Lessenbeheer</header>
-  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('namen')">Namen</button><button class="tab-btn" onclick="openTab('types')">Types</button><button class="tab-btn" onclick="openTab('locaties')">Locaties</button><button class="tab-btn" onclick="openTab('thema’s')">Thema’s</button><button class="tab-btn" onclick="openTab('trainers')">Trainers</button><button class="tab-btn" onclick="openTab('beheer')">Beheer</button></nav>
-  <main><section id="namen" class="tab-content"><h2>Namen</h2><p>Voorbeeld inhoud Namen.</p></section><section id="types" class="tab-content" style="display:none;"><h2>Types</h2><p>Voorbeeld inhoud Types.</p></section><section id="locaties" class="tab-content" style="display:none;"><h2>Locaties</h2><p>Voorbeeld inhoud Locaties.</p></section><section id="thema’s" class="tab-content" style="display:none;"><h2>Thema’s</h2><p>Voorbeeld inhoud Thema’s.</p></section><section id="trainers" class="tab-content" style="display:none;"><h2>Trainers</h2><p>Voorbeeld inhoud Trainers.</p></section><section id="beheer" class="tab-content" style="display:none;"><h2>Beheer</h2><p>Voorbeeld inhoud Beheer.</p></section></main>
-  <script src="./js/dashboard.js"></script>
+  <header class="sh-header">🐾 Superhond — Lessenbeheer <strong>v0.12.0 (standalone)</strong></header>
+  <nav class="sh-tabs">
+    <button class="tab-btn" data-target="namen">Namen</button>
+    <button class="tab-btn" data-target="types">Types</button>
+    <button class="tab-btn" data-target="locaties">Locaties</button>
+    <button class="tab-btn" data-target="themas">Thema's</button>
+    <button class="tab-btn" data-target="trainers">Trainers</button>
+    <button class="tab-btn" data-target="beheer">Beheer</button>
+  </nav>
+
+  <main class="container">
+    <section id="namen" class="section tab-content">
+      <h2>Namen</h2>
+      <table class="table">
+        <thead><tr><th>Naam</th><th class="hide-sm">Prijs</th><th>Strippen</th><th class="hide-sm">Max</th><th class="hide-sm">Lesduur</th><th class="hide-sm">MailBlue</th><th class="hide-sm">Geldigheid</th><th>Acties</th></tr></thead>
+        <tbody id="tbl-namen"></tbody>
+      </table>
+      <p><button class="btn">+ Naam</button></p>
+    </section>
+
+    <section id="types" class="section tab-content" hidden>
+      <h2>Types</h2>
+      <table class="table">
+        <thead><tr><th>Type</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
+        <tbody id="tbl-types"></tbody>
+      </table>
+      <p><button class="btn">+ Type</button></p>
+    </section>
+
+    <section id="locaties" class="section tab-content" hidden>
+      <h2>Locaties</h2>
+      <table class="table">
+        <thead><tr><th>Naam</th><th class="hide-sm">Adres</th><th class="hide-sm">Plaats</th><th class="hide-sm">Land</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
+        <tbody id="tbl-locaties"></tbody>
+      </table>
+      <p><button class="btn">+ Locatie</button></p>
+    </section>
+
+    <section id="themas" class="section tab-content" hidden>
+      <h2>Thema's</h2>
+      <table class="table">
+        <thead><tr><th>Naam</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
+        <tbody id="tbl-themas"></tbody>
+      </table>
+      <p><button class="btn">+ Thema</button></p>
+    </section>
+
+    <section id="trainers" class="section tab-content" hidden>
+      <h2>Trainers</h2>
+      <table class="table">
+        <thead><tr><th>Naam</th><th class="hide-sm">Functie</th><th>Acties</th></tr></thead>
+        <tbody id="tbl-trainers"></tbody>
+      </table>
+      <p><button class="btn">+ Trainer</button></p>
+    </section>
+
+    <section id="beheer" class="section tab-content" hidden>
+      <h2>Beheer (voorbeeld)</h2>
+      <p>Puppy Start — Retie — Sofie — Zat 10:00</p>
+      <div class="actions">
+        <button class="btn">Deelnemers</button>
+        <button class="btn">Aanwezig</button>
+        <button class="btn">Annuleer</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/tabs.js"></script>
+  <script src="/js/lessen.js"></script>
 </body>
 </html>

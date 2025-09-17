@@ -1,12 +1,14 @@
 {
-  "name": "superhond-lessenbeheer",
-  "version": "0.11.9",
-  "private": true,
-  "type": "commonjs",
+  "name": "superhond-lessen-standalone",
+  "version": "0.12.0",
+  "description": "Standalone Lessenbeheer module (los te testen)",
+  "type": "module",
+  "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2"
   }
 }
