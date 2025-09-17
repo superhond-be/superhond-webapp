@@ -1,0 +1,61 @@
+{
+  "namen": [
+    {
+      "id": "nm_ppcon",
+      "naam": "Puppy Pack Connect",
+      "prijs": 149,
+      "strippen": 9,
+      "max": 12,
+      "lesduur": 60,
+      "mailblue": "MB-PPCON",
+      "geldigheid": "12 weken"
+    }
+  ],
+  "types": [
+    {
+      "id": "tp_groep",
+      "type": "Groep",
+      "beschrijving": "Les in kleine groep"
+    }
+  ],
+  "locaties": [
+    {
+      "id": "loc_retie",
+      "naam": "Retie Terrein",
+      "adres": "Kerkhofstraat 1",
+      "plaats": "Retie",
+      "land": "BE",
+      "beschrijving": "Buitenterrein"
+    }
+  ],
+  "themas": [
+    {
+      "id": "th_start",
+      "naam": "Start",
+      "beschrijving": "Basisvaardigheden"
+    }
+  ],
+  "trainers": [
+    {
+      "id": "tr_sofie",
+      "naam": "Sofie",
+      "functie": "Coach"
+    }
+  ],
+  "lessen": [
+    {
+      "id": "ls_1",
+      "naamId": "nm_ppcon",
+      "typeId": "tp_groep",
+      "locatieId": "loc_retie",
+      "themaId": "th_start",
+      "trainerIds": [
+        "tr_sofie"
+      ],
+      "datum": "2025-09-20",
+      "tijd": "10:00",
+      "eindtijd": "11:00",
+      "capaciteit": 10
+    }
+  ]
+}
