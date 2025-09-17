@@ -1,4 +1,5 @@
-const KEY='SH_LESSEN_DB_v0128';
+
+const KEY='SH_LESSEN_DB_v0132';
 
 function addMinutesToTime(timeStr, minutes){
   const [h,m] = (timeStr||'00:00').split(':').map(x=>parseInt(x,10)||0);
@@ -10,69 +11,47 @@ function addMinutesToTime(timeStr, minutes){
 
 const SH_SEED = {
   namen:[
-    {id:'nm_ppcon', naam:'Puppy Pack Connect', lesduur:60},
-    {id:'nm_ppspec', naam:'Puppy Pack Special', lesduur:75},
-    {id:'nm_basis', naam:'Basisgroep', lesduur:60},
-    {id:'nm_pub',   naam:'Pubergroep', lesduur:60},
-    {id:'nm_prive', naam:'Privé Coaching', lesduur:45},
-    {id:'nm_work',  naam:'Agility Workshop', lesduur:90}
+    {id:'nm_ppcon', naam:'Puppy Pack Connect', prijs:149, strippen:9, max:12, lesduur:60, mailblue:'MB-PPCON', geldigheid:'12 weken'},
+    {id:'nm_ppspec', naam:'Puppy Pack Special', prijs:199, strippen:12, max:14, lesduur:75, mailblue:'MB-PPSPEC', geldigheid:'16 weken'},
+    {id:'nm_basis', naam:'Basisgroep', prijs:135, strippen:8, max:10, lesduur:60, mailblue:'MB-BASIS', geldigheid:'10 weken'}
   ],
   types:[
-    {id:'tp_groep', type:'Groep'},
-    {id:'tp_prive', type:'Privé'},
-    {id:'tp_work',  type:'Workshop'}
+    {id:'tp_groep', type:'Groep', beschrijving:'Les in kleine groep'},
+    {id:'tp_prive', type:'Privé', beschrijving:'Individuele coaching'},
+    {id:'tp_work',  type:'Workshop', beschrijving:'Eenmalige intensieve sessie'}
   ],
   locaties:[
     {id:'loc_retie','naam':'Retie Terrein','adres':'Kerkhofstraat 1','plaats':'Retie','land':'BE'},
     {id:'loc_mol','naam':'Mol Bospark','adres':'Bospad 12','plaats':'Mol','land':'BE'},
-    {id:'loc_dessel','naam':'Dessel Sporthal','adres':'Sportlaan 5','plaats':'Dessel','land':'BE'},
-    {id:'loc_geel','naam':'Geel Centrum','adres':'Markt 1','plaats':'Geel','land':'BE'},
-    {id:'loc_turn','naam':'Turnhout Polder','adres':'Polderweg 8','plaats':'Turnhout','land':'BE'}
+    {id:'loc_dessel','naam':'Dessel Sporthal','adres':'Sportlaan 5','plaats':'Dessel','land':'BE'}
   ],
   themas:[
     {id:'th_start','naam':'Start'},
     {id:'th_geh','naam':'Gehoorzaamheid'},
-    {id:'th_soc','naam':'Socialisatie'},
-    {id:'th_ag','naam':'Agility'},
-    {id:'th_nose','naam':'Nosework'}
+    {id:'th_ag','naam':'Agility'}
   ],
   trainers:[
     {id:'tr_sofie','naam':'Sofie'},
     {id:'tr_jan','naam':'Jan'},
-    {id:'tr_lotte','naam':'Lotte'},
-    {id:'tr_tom','naam':'Tom'},
-    {id:'tr_ina','naam':'Ina'}
+    {id:'tr_lotte','naam':'Lotte'}
   ],
   lessen:[]
 };
 
 (function seedLessons(){
-  function rng(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-  const names = SH_SEED.namen, types = SH_SEED.types, locs = SH_SEED.locaties, themas = SH_SEED.themas, trs = SH_SEED.trainers;
-  const baseDate = new Date('2025-09-18');
-  const count = 12;
-  for(let i=0;i<count;i++){
-    const name = names[rng(0,names.length-1)];
-    const type = (name.id==='nm_work')? types.find(t=>t.id==='tp_work') : (name.id==='nm_prive'? types.find(t=>t.id==='tp_prive') : types.find(t=>t.id==='tp_groep'));
-    const loc = locs[rng(0,locs.length-1)];
-    const th = themas[rng(0,themas.length-1)];
-    const dayOffset = rng(0,14);
-    const d = new Date(baseDate.getTime()+dayOffset*24*3600*1000);
-    const hh = rng(8,19);
-    const mm = [0,15,30,45][rng(0,3)];
-    const start = String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-    const duration = name.lesduur||60;
-    const end = addMinutesToTime(start, duration);
-    const trainerCount = rng(1,2);
-    const trainerIds = [];
-    for(let t=0;t<trainerCount;t++){
-      const pick = trs[rng(0,trs.length-1)].id;
-      if(!trainerIds.includes(pick)) trainerIds.push(pick);
-    }
-    const id = 'ls_'+(i+1);
+  const names = SH_SEED.namen, types=SH_SEED.types, locs=SH_SEED.locaties, th=SH_SEED.themas, trs=SH_SEED.trainers;
+  const base = new Date('2025-09-20');
+  for(let i=0;i<12;i++){
+    const name = names[i%names.length];
+    const type = (name.id==='nm_ppcon'||name.id==='nm_ppspec')? types[0] : (name.id==='nm_basis'? types[0] : types[1]);
+    const loc  = locs[i%locs.length];
+    const thema= th[i%th.length];
+    const d = new Date(base.getTime()+i*24*3600*1000);
     const datum = d.toISOString().slice(0,10);
-    const cap = (type.id==='tp_prive')? 1 : (type.id==='tp_work'? 16 : rng(8,14));
-    SH_SEED.lessen.push({id, naamId:name.id, typeId:type.id, locatieId:loc.id, themaId:th.id, trainerIds, datum, tijd:start, eindtijd:end, capaciteit:cap});
+    const tijd = (8 + (i%10)).toString().padStart(2,'0')+':00';
+    const eind = addMinutesToTime(tijd, name.lesduur||60);
+    const trainerIds = [trs[i%trs.length].id];
+    SH_SEED.lessen.push({id:'ls_'+(i+1), naamId:name.id, typeId:type.id, locatieId:loc.id, themaId:thema.id, trainerIds, datum, tijd, eindtijd:eind, capaciteit: (type.id==='tp_prive'?1:10)});
   }
 })();
 

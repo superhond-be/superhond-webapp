@@ -1,14 +1,73 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard — Superhond</title>
-  <link rel="stylesheet" href="./css/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Superhond — Lessenmodule v0.13.2 (CRUD working)</title>
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <header class="sh-header">Dashboard</header>
-  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('start')">Start</button><button class="tab-btn" onclick="openTab('overzicht')">Overzicht</button></nav>
-  <main><section id="start" class="tab-content"><h2>Start</h2><p>Voorbeeld inhoud Start.</p></section><section id="overzicht" class="tab-content" style="display:none;"><h2>Overzicht</h2><p>Voorbeeld inhoud Overzicht.</p></section></main>
-  <script src="./js/dashboard.js"></script>
+  <header class="sh-header">
+    <div>🐾 Superhond — Lessenmodule <strong>v0.13.2 (CRUD)</strong></div>
+  </header>
+  <nav class="sh-tabs">
+    <button class="tab-btn" data-target="namen">Namen</button>
+    <button class="tab-btn" data-target="types">Types</button>
+    <button class="tab-btn" data-target="locaties">Locaties</button>
+    <button class="tab-btn" data-target="themas">Thema’s</button>
+    <button class="tab-btn" data-target="trainers">Trainers</button>
+    <button class="tab-btn" data-target="beheer">Beheer</button>
+  </nav>
+  <main class="container">
+    <section id="namen" class="section tab-content">
+      <h2>Namen</h2>
+      <button id="add-naam" class="btn ok">➕ Nieuw</button>
+      <table class="table">
+        <thead><tr><th>Naam</th><th>Prijs</th><th>Strippen</th><th>Max</th><th>Lesduur</th><th>MailBlue</th><th>Geldigheid</th><th>Acties</th></tr></thead>
+        <tbody id="tbl-namen"></tbody>
+      </table>
+    </section>
+
+    <section id="types" class="section tab-content" hidden>
+      <h2>Types</h2>
+      <button id="add-type" class="btn ok">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Type</th><th>Beschrijving</th><th>Acties</th></tr></thead><tbody id="tbl-types"></tbody></table>
+    </section>
+
+    <section id="locaties" class="section tab-content" hidden>
+      <h2>Locaties</h2>
+      <button id="add-loc" class="btn ok">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th>Adres</th><th>Plaats</th><th>Land</th><th>Acties</th></tr></thead><tbody id="tbl-locaties"></tbody></table>
+    </section>
+
+    <section id="themas" class="section tab-content" hidden>
+      <h2>Thema’s</h2>
+      <button id="add-th" class="btn ok">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th>Acties</th></tr></thead><tbody id="tbl-themas"></tbody></table>
+    </section>
+
+    <section id="trainers" class="section tab-content" hidden>
+      <h2>Trainers</h2>
+      <button id="add-tr" class="btn ok">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th>Acties</th></tr></thead><tbody id="tbl-trainers"></tbody></table>
+    </section>
+
+    <section id="beheer" class="section tab-content" hidden>
+      <h2>Beheer</h2>
+      <div class="helper">Deze lijst wordt automatisch geüpdatet wanneer je iets wijzigt in de tabs hierboven.</div>
+      <table class="table">
+        <thead><tr>
+          <th>Naam</th><th>Type</th><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Land</th>
+          <th>Thema</th><th>Trainers</th><th>Datum</th><th>Begintijd</th><th>Eindtijd</th><th>Capaciteit</th>
+        </tr></thead>
+        <tbody id="tbl-lessen"></tbody>
+      </table>
+    </section>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/tabs.js"></script>
+  <script src="js/crud.js"></script>
+  <script src="js/beheer.js"></script>
 </body>
 </html>
