@@ -1,83 +1,138 @@
+let CURRENT_FILTERS = {};
+let SORT = JSON.parse(localStorage.getItem('SH_SORT_v0128')||'{"col":"datum","dir":"asc"}');
+
 function option(list, idKey, labelKey, selectedId){
   return list.map(it=>`<option value="${it[idKey]}" ${it[idKey]===selectedId?'selected':''}>${it[labelKey]}</option>`).join('');
 }
+function optionMulti(list, idKey, labelKey, selectedIds){
+  const set = new Set(selectedIds||[]);
+  return list.map(it=>`<option value="${it[idKey]}" ${set.has(it[idKey])?'selected':''}>${it[labelKey]}</option>`).join('');
+}
+
+function calcEndTime(db, naamId, startTime){
+  const pakket = (db.namen||[]).find(n=>n.id===naamId);
+  const dur = pakket?.lesduur ?? 60;
+  return SHDB.addMinutesToTime(startTime||'10:00', dur);
+}
+
+function normalizeRows(db){
+  return (db.lessen||[]).map(ls=>{
+    const naam = db.namen.find(n=>n.id===ls.naamId)?.naam||'';
+    const type = db.types.find(t=>t.id===ls.typeId)?.type||'';
+    const loc  = db.locaties.find(l=>l.id===ls.locatieId)||{};
+    const thema= db.themas.find(t=>t.id===ls.themaId)?.naam||'';
+    const trainers = (ls.trainerIds||[]).map(id=> db.trainers.find(t=>t.id===id)?.naam).filter(Boolean);
+    const eind = calcEndTime(db, ls.naamId, ls.tijd);
+    return { ...ls, _naam:naam, _type:type, _locnaam:loc.naam||'', _adres:loc.adres||'', _plaats:loc.plaats||'', _land:loc.land||'BE', _thema:thema, _trainers:trainers, _eindtijd:eind };
+  });
+}
+
+function applyFilters(rows){
+  let r = rows;
+  const { q, dateFrom, dateTo, locatieId, trainerIds } = CURRENT_FILTERS||{};
+  if(q){
+    const qlc = q.toLowerCase();
+    r = r.filter(x => x._naam.toLowerCase().includes(qlc) || x._thema.toLowerCase().includes(qlc));
+  }
+  if(dateFrom){ r = r.filter(x => x.datum >= dateFrom); }
+  if(dateTo){ r = r.filter(x => x.datum <= dateTo); }
+  if(locatieId){ r = r.filter(x => x.locatieId === locatieId); }
+  if(trainerIds && trainerIds.length){ r = r.filter(x => (x.trainerIds||[]).some(id=> trainerIds.includes(id))); }
+  return r;
+}
+
+function applySort(rows){
+  const dir = SORT.dir==='asc'? 1 : -1;
+  const col = SORT.col;
+  const get = (x)=>{
+    if(col==='naam') return x._naam;
+    if(col==='type') return x._type;
+    if(col==='locatie') return x._locnaam;
+    if(col==='thema') return x._thema;
+    if(col==='datum') return x.datum;
+    if(col==='tijd') return x.tijd;
+    if(col==='eindtijd') return x._eindtijd;
+    if(col==='cap') return x.capaciteit;
+    return x.datum;
+  };
+  return rows.slice().sort((a,b)=> (get(a)>get(b)?1:-1)*dir);
+}
+
 function renderBeheer(){
   const db = SHDB.loadDB();
   const tbody = document.getElementById('tbl-lessen');
-  tbody.innerHTML = (db.lessen||[]).map(ls=>`<tr data-id="${ls.id}">
-    <td><select>${option(db.namen,'id','naam',ls.naamId)}</select></td>
-    <td><select>${option(db.types,'id','type',ls.typeId)}</select></td>
-    <td><select>${option(db.locaties,'id','naam',ls.locatieId)}</select></td>
-    <td><select>${option(db.themas,'id','naam',ls.themaId)}</select></td>
-    <td><select>${option(db.trainers,'id','naam',ls.trainerId)}</select></td>
-    <td><input type="date" value="${ls.datum}"></td>
-    <td><input type="time" value="${ls.tijd}"></td>
-    <td><input type="number" min="1" value="${ls.capaciteit}"></td>
-    <td>
-      <div class="actions">
-        <button class="iconbtn" data-act="save" data-id="${ls.id}">💾</button>
-        <button class="iconbtn" data-act="del" data-id="${ls.id}">🗑️</button>
-      </div>
-    </td>
-  </tr>`).join('');
-}
-function addLes(){
-  const db = SHDB.loadDB();
-  const id = SHDB.uid('ls');
-  const d = new Date().toISOString().slice(0,10);
-  db.lessen = db.lessen||[];
-  db.lessen.push({id, naamId: db.namen[0]?.id, typeId: db.types[0]?.id, locatieId: db.locaties[0]?.id, themaId: db.themas[0]?.id, trainerId: db.trainers[0]?.id, datum:d, tijd:'10:00', capaciteit:8});
-  SHDB.saveDB(db);
-  renderBeheer();
-}
-function attachBeheerActions(){
-  const tbody = document.getElementById('tbl-lessen');
-  tbody.addEventListener('click', (e)=>{
-    const btn = e.target.closest('button.iconbtn'); if(!btn) return;
-    const id = btn.dataset.id; const act = btn.dataset.act;
-    const db = SHDB.loadDB();
-    if(act==='del'){
-      if(confirm('Les verwijderen?')){
-        db.lessen = db.lessen.filter(x=>x.id!==id);
-        SHDB.saveDB(db);
-        renderBeheer();
-      }
-      return;
-    }
-    if(act==='save'){
-      const tr = btn.closest('tr');
-      const [naamSel,typeSel,locSel,thSel,trSel,dateInp,timeInp,capInp] = tr.querySelectorAll('select,input');
-      const i = db.lessen.findIndex(x=>x.id===id); if(i<0) return;
-      db.lessen[i] = {...db.lessen[i],
-        naamId: naamSel.value, typeId: typeSel.value, locatieId: locSel.value, themaId: thSel.value, trainerId: trSel.value,
-        datum: dateInp.value, tijd: timeInp.value, capaciteit: Number(capInp.value||0)
-      };
-      SHDB.saveDB(db);
-    }
-  });
-}
-window.addEventListener('DOMContentLoaded', ()=>{
-  renderBeheer();
-  attachBeheerActions();
-  document.getElementById('add-les').addEventListener('click', addLes);
+  let rows = normalizeRows(db);
+  rows = applyFilters(rows);
+  rows = applySort(rows);
 
-  // Export/Import buttons
-  const ex = document.getElementById('btn-export');
-  const im = document.getElementById('btn-import');
-  const file = document.getElementById('file-import');
-  ex.addEventListener('click', ()=> SHDB.exportJSON());
-  im.addEventListener('click', ()=> file.click());
-  file.addEventListener('change', async (e)=>{
-    const f = e.target.files[0]; if(!f) return;
-    try{
-      await SHDB.importJSON(f);
-      SHCRUD.renderAll();
-      renderBeheer();
-      alert('Import gelukt ✅');
-    }catch(err){
-      alert('Import mislukt: '+ err.message);
-    }finally{
-      file.value = '';
-    }
+  tbody.innerHTML = rows.map(ls=>`<tr data-id="${ls.id}">
+    <td>${ls._naam}</td>
+    <td>${ls._type}</td>
+    <td>${ls._locnaam}</td>
+    <td>${ls._adres}</td>
+    <td>${ls._plaats}</td>
+    <td>${ls._land}</td>
+    <td>${ls._thema}</td>
+    <td>${ls._trainers.join(', ')}</td>
+    <td>${ls.datum}</td>
+    <td>${ls.tijd}</td>
+    <td>${ls._eindtijd}</td>
+    <td>${ls.capaciteit}</td>
+  </tr>`).join('');
+
+  // update header active arrows
+  document.querySelectorAll('th.sortable').forEach(th=> th.classList.toggle('active', th.dataset.col===SORT.col));
+  document.querySelectorAll('th.sortable .arrow').forEach(span=> span.textContent = (span.parentElement.dataset.col===SORT.col ? (SORT.dir==='asc'?'↑':'↓') : '↕'));
+}
+
+function onHeaderClick(e){
+  const th = e.target.closest('th.sortable');
+  if(!th) return;
+  const col = th.dataset.col;
+  if(SORT.col === col){ SORT.dir = (SORT.dir==='asc'?'desc':'asc'); }
+  else { SORT.col = col; SORT.dir = 'asc'; }
+  localStorage.setItem('SH_SORT_v0128', JSON.stringify(SORT));
+  renderBeheer();
+}
+
+function mountFilters(){
+  const db = SHDB.loadDB();
+  const host = document.getElementById('beheer-filters');
+  SHFilterBar.mount({ mount: host, trainers: db.trainers, locaties: db.locaties });
+  host.addEventListener('sh:filters:change', (e)=>{ CURRENT_FILTERS = e.detail; renderBeheer(); });
+}
+
+function toCSV(rows){
+  const headers = ['Naam','Type','Locatie','Adres','Plaats','Land','Thema','Trainers','Datum','Begintijd','Eindtijd','Capaciteit','Google Maps URL'];
+  const lines = [headers.join(';')];
+  rows.forEach(ls=>{
+    const addr = `${ls._adres}, ${ls._plaats}, ${ls._land}`;
+    const gmaps = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
+    const vals = [ls._naam, ls._type, ls._locnaam, ls._adres, ls._plaats, ls._land, ls._thema, ls._trainers.join(', '), ls.datum, ls.tijd, ls._eindtijd, String(ls.capaciteit), gmaps];
+    lines.push(vals.map(v => (String(v).includes(';')? ('"'+String(v).replace(/"/g,'""')+'"') : String(v))).join(';'));
   });
+  return lines.join('\n');
+}
+
+function exportFilteredJSON(){
+  const db = SHDB.loadDB();
+  let rows = applySort(applyFilters(normalizeRows(db)));
+  const blob = new Blob([JSON.stringify(rows, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lessen-export-gefilterd.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+
+function exportFilteredCSV(){
+  const db = SHDB.loadDB();
+  let rows = applySort(applyFilters(normalizeRows(db)));
+  const csv = toCSV(rows);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lessen-export-gefilterd.csv'; a.click(); URL.revokeObjectURL(a.href);
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  mountFilters();
+  renderBeheer();
+  document.getElementById('tbl-head').addEventListener('click', onHeaderClick);
+  document.getElementById('btn-export-json').addEventListener('click', exportFilteredJSON);
+  document.getElementById('btn-export-csv').addEventListener('click', exportFilteredCSV);
 });

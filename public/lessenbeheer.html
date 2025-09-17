@@ -3,110 +3,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — Lessenbeheer v0.12.3-export</title>
-  <link rel="stylesheet" href="/css/app.css?v=0123">
+  <title>Superhond — Lessenbeheer v0.12.8-structure</title>
+  <link rel="stylesheet" href="/css/app.css?v=0128">
 </head>
 <body>
   <header class="sh-header">
-    <div>🐾 Superhond — Lessenbeheer <strong>v0.12.3-export</strong></div>
+    <div>🐾 Superhond — Lessenbeheer <strong>v0.12.8-structure</strong></div>
     <div class="sh-actions">
-      <button id="btn-export" class="btn primary">⬇︎ Export JSON</button>
-      <button id="btn-import" class="btn ok">⬆︎ Import JSON</button>
-      <input id="file-import" type="file" accept="application/json" style="display:none">
-      <a class="link-btn" href="/index.html">↩︎ Dashboard</a>
+      <button id="btn-export-json" class="btn primary">⬇︎ Export gefilterd (JSON)</button>
+      <button id="btn-export-csv" class="btn ok">⬇︎ Export gefilterd (CSV)</button>
     </div>
   </header>
 
   <nav class="sh-tabs">
-    <button class="tab-btn" data-target="namen">Namen</button>
-    <button class="tab-btn" data-target="types">Types</button>
-    <button class="tab-btn" data-target="locaties">Locaties</button>
-    <button class="tab-btn" data-target="themas">Thema’s</button>
-    <button class="tab-btn" data-target="trainers">Trainers</button>
     <button class="tab-btn" data-target="beheer">Beheer</button>
   </nav>
 
   <main class="container">
-    <!-- Namen -->
-    <section id="namen" class="section tab-content">
-      <h2>Namen</h2>
-      <table class="table">
-        <thead><tr>
-          <th>Naam</th><th class="hide-sm">Prijs</th><th>Strippen</th><th class="hide-sm">Max</th>
-          <th class="hide-sm">Lesduur</th><th class="hide-sm">MailBlue</th><th class="hide-sm">Geldigheid</th><th>Acties</th>
-        </tr></thead>
-        <tbody id="tbl-namen"></tbody>
-      </table>
-      <p><button class="btn ok" onclick="SHCRUD.addRow('namen')">+ Naam</button></p>
-      <div class="helper">💾 slaat op in je browser (localStorage)</div>
-    </section>
+    <section id="beheer" class="section tab-content">
+      <h2>Beheer</h2>
 
-    <!-- Types -->
-    <section id="types" class="section tab-content" hidden>
-      <h2>Types</h2>
-      <table class="table">
-        <thead><tr><th>Type</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
-        <tbody id="tbl-types"></tbody>
-      </table>
-      <p><button class="btn ok" onclick="SHCRUD.addRow('types')">+ Type</button></p>
-    </section>
+      <div id="beheer-filters"></div>
 
-    <!-- Locaties -->
-    <section id="locaties" class="section tab-content" hidden>
-      <h2>Locaties</h2>
-      <table class="table">
-        <thead><tr><th>Naam</th><th class="hide-sm">Adres</th><th class="hide-sm">Plaats</th><th class="hide-sm">Land</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
-        <tbody id="tbl-locaties"></tbody>
-      </table>
-      <p><button class="btn ok" onclick="SHCRUD.addRow('locaties')">+ Locatie</button></p>
-    </section>
+      <div class="helper">Klik op de kolomtitel om te sorteren (↑↓). Sortering wordt onthouden.</div>
 
-    <!-- Thema's -->
-    <section id="themas" class="section tab-content" hidden>
-      <h2>Thema’s</h2>
       <table class="table">
-        <thead><tr><th>Naam</th><th class="hide-sm">Beschrijving</th><th>Acties</th></tr></thead>
-        <tbody id="tbl-themas"></tbody>
-      </table>
-      <p><button class="btn ok" onclick="SHCRUD.addRow('themas')">+ Thema</button></p>
-    </section>
-
-    <!-- Trainers -->
-    <section id="trainers" class="section tab-content" hidden>
-      <h2>Trainers</h2>
-      <table class="table">
-        <thead><tr><th>Naam</th><th class="hide-sm">Functie</th><th>Acties</th></tr></thead>
-        <tbody id="tbl-trainers"></tbody>
-      </table>
-      <p><button class="btn ok" onclick="SHCRUD.addRow('trainers')">+ Trainer</button></p>
-    </section>
-
-    <!-- Beheer -->
-    <section id="beheer" class="section tab-content" hidden>
-      <h2>Beheer (lessen samenstellen & bewerken)</h2>
-      <table class="table">
-        <thead>
+        <thead id="tbl-head">
           <tr>
-            <th>Naam</th><th>Type</th><th>Locatie</th><th>Thema</th><th>Trainer</th>
-            <th>Datum</th><th>Tijd</th><th>Capaciteit</th><th>Acties</th>
+            <th class="sortable" data-col="naam">Naam <span class="arrow">↕</span></th>
+            <th class="sortable" data-col="type">Type <span class="arrow">↕</span></th>
+            <th class="sortable" data-col="locatie">Locatie <span class="arrow">↕</span></th>
+            <th>Adres</th>
+            <th>Plaats</th>
+            <th>Land</th>
+            <th class="sortable" data-col="thema">Thema <span class="arrow">↕</span></th>
+            <th>Trainers</th>
+            <th class="sortable" data-col="datum">Datum <span class="arrow">↕</span></th>
+            <th class="sortable" data-col="tijd">Begintijd <span class="arrow">↕</span></th>
+            <th class="sortable" data-col="eindtijd">Eindtijd <span class="arrow">↕</span></th>
+            <th class="sortable" data-col="cap">Capaciteit <span class="arrow">↕</span></th>
           </tr>
         </thead>
         <tbody id="tbl-lessen"></tbody>
       </table>
-      <p><button id="add-les" class="btn ok">+ Les toevoegen</button></p>
-      <div class="helper">Gebruik Export/Import om je testdata te bewaren of te delen.</div>
     </section>
   </main>
 
-  <script src="/js/data.js?v=0123"></script>
-  <script src="/js/crud.js?v=0123"></script>
-  <script src="/js/beheer.js?v=0123"></script>
-  <script src="/js/tabs.js?v=0123"></script>
-  <script>
-    window.addEventListener('DOMContentLoaded', ()=>{
-      SHCRUD.renderAll();
-      ['tbl-namen','tbl-types','tbl-locaties','tbl-themas','tbl-trainers'].forEach(id=>SHCRUD.attachRowActions(id));
-    });
-  </script>
+  <script src="/js/data.js?v=0128"></script>
+  <script src="/js/filterbar.js?v=0128"></script>
+  <script src="/js/beheer.js?v=0128"></script>
+  <script src="/js/tabs.js?v=0128"></script>
 </body>
 </html>
