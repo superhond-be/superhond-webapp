@@ -4,12 +4,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — Lessenmodule v0.13.0 Fulltest</title>
+  <title>Superhond — Lessenmodule v0.13.1 CRUD</title>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
   <header class="sh-header">
-    <div>🐾 Superhond — Lessenmodule <strong>v0.13.0 Fulltest</strong></div>
+    <div>🐾 Superhond — Lessenmodule <strong>v0.13.1 CRUD</strong></div>
     <div class="sh-actions">
       <button id="btn-export-json" class="btn primary">⬇︎ Export JSON</button>
       <button id="btn-export-csv" class="btn ok">⬇︎ Export CSV</button>
@@ -24,11 +24,31 @@
     <button class="tab-btn" data-target="beheer">Beheer</button>
   </nav>
   <main class="container">
-    <section id="namen" class="section tab-content"><h2>Namen</h2><table><tbody id="tbl-namen"></tbody></table></section>
-    <section id="types" class="section tab-content" hidden><h2>Types</h2><table><tbody id="tbl-types"></tbody></table></section>
-    <section id="locaties" class="section tab-content" hidden><h2>Locaties</h2><table><tbody id="tbl-locaties"></tbody></table></section>
-    <section id="themas" class="section tab-content" hidden><h2>Thema’s</h2><table><tbody id="tbl-themas"></tbody></table></section>
-    <section id="trainers" class="section tab-content" hidden><h2>Trainers</h2><table><tbody id="tbl-trainers"></tbody></table></section>
+    <section id="namen" class="section tab-content">
+      <h2>Namen</h2>
+      <button id="add-naam">➕ Nieuw</button>
+      <table><tbody id="tbl-namen"></tbody></table>
+    </section>
+    <section id="types" class="section tab-content" hidden>
+      <h2>Types</h2>
+      <button id="add-type">➕ Nieuw</button>
+      <table><tbody id="tbl-types"></tbody></table>
+    </section>
+    <section id="locaties" class="section tab-content" hidden>
+      <h2>Locaties</h2>
+      <button id="add-loc">➕ Nieuw</button>
+      <table><tbody id="tbl-locaties"></tbody></table>
+    </section>
+    <section id="themas" class="section tab-content" hidden>
+      <h2>Thema’s</h2>
+      <button id="add-th">➕ Nieuw</button>
+      <table><tbody id="tbl-themas"></tbody></table>
+    </section>
+    <section id="trainers" class="section tab-content" hidden>
+      <h2>Trainers</h2>
+      <button id="add-tr">➕ Nieuw</button>
+      <table><tbody id="tbl-trainers"></tbody></table>
+    </section>
     <section id="beheer" class="section tab-content" hidden>
       <h2>Beheer</h2>
       <div id="beheer-filters"></div>
