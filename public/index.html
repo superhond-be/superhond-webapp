@@ -4,63 +4,65 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — v0.14.0 Complete Polish</title>
+  <title>Superhond — v0.14.6 Beheer (Filters & Sorteren)</title>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.14.0 Complete Polish</strong></header>
-  <nav class="sh-tabs">
-    <button class="tab-btn active" data-target="namen">Namen</button>
-    <button class="tab-btn" data-target="types">Types</button>
-    <button class="tab-btn" data-target="locaties">Locaties</button>
-    <button class="tab-btn" data-target="themas">Thema’s</button>
-    <button class="tab-btn" data-target="trainers">Trainers</button>
-    <button class="tab-btn" data-target="beheer">Beheer</button>
-  </nav>
+  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.14.6</strong> · Beheer met filters & sorteren</header>
   <main class="container">
-    <section id="namen" class="section tab-content">
-      <h2>Namen</h2>
-      <table class="table"><thead><tr><th>Naam</th><th>Prijs</th><th>Strippen</th><th>Max</th><th>Lesduur</th><th>Mailblue</th><th>Geldigheid</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-namen"></tbody></table>
-    </section>
-    <section id="types" class="section tab-content" hidden>
-      <h2>Types</h2>
-      <table class="table"><thead><tr><th>Type</th><th>Beschrijving</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-types"></tbody></table>
-    </section>
-    <section id="locaties" class="section tab-content" hidden>
-      <h2>Locaties</h2>
-      <table class="table"><thead><tr><th>Naam</th><th>Adres</th><th>Plaats</th><th>Land</th><th>Maps</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-locaties"></tbody></table>
-    </section>
-    <section id="themas" class="section tab-content" hidden>
-      <h2>Thema’s</h2>
-      <table class="table"><thead><tr><th>Naam</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-themas"></tbody></table>
-    </section>
-    <section id="trainers" class="section tab-content" hidden>
-      <h2>Trainers</h2>
-      <table class="table"><thead><tr><th>Naam</th><th>Functie</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-trainers"></tbody></table>
-    </section>
-    <section id="beheer" class="section tab-content" hidden>
+    <section class="section">
       <h2>Beheer</h2>
+      <form id="form-add" class="form-add">
+        <label>Nieuwe les toevoegen</label>
+        <select name="naam">
+          <option value="nm1">Puppy Start</option>
+          <option value="nm2">Basisgroep</option>
+          <option value="nm3">Pubergroep</option>
+        </select>
+        <select name="type">
+          <option value="tp1">Groep</option>
+          <option value="tp2">Workshop</option>
+        </select>
+        <select name="loc">
+          <option value="loc1">Retie Terrein</option>
+          <option value="loc2">Dessel Park</option>
+        </select>
+        <select name="thema">
+          <option value="th1">Start</option>
+          <option value="th2">Gevorderd</option>
+        </select>
+        <select name="trainer" multiple size="2">
+          <option value="tr1">Sofie</option>
+          <option value="tr2">Paul</option>
+          <option value="tr3">Nancy</option>
+        </select>
+        <input type="date" name="datum" required>
+        <input type="time" name="tijd" required>
+        <input type="number" name="cap" placeholder="Capaciteit">
+        <button class="btn ok" type="submit">➕ Toevoegen</button>
+      </form>
+
       <div class="filterbar">
         <input id="fName" placeholder="Filter naam">
-        <input id="fLoc" placeholder="Filter locatie">
+        <input id="fLoc" placeholder="Filter locatie (plaats)">
         <input id="fTrainer" placeholder="Filter trainer">
         <input id="fStart" type="date">
         <input id="fEnd" type="date">
-        <button id="btn-json" class="btn primary">Export JSON</button>
-        <button id="btn-csv" class="btn ok">Export CSV</button>
       </div>
+
       <table class="table">
         <thead><tr>
-          <th class="sortable" data-key="naam">Naam</th>
-          <th class="sortable" data-key="type">Type</th>
-          <th>Locatie</th><th>Adres</th><th>Plaats</th><th>Land</th>
-          <th>Thema</th><th class="sortable" data-key="trainer">Trainers</th>
-          <th class="sortable" data-key="datum">Datum</th><th>Begintijd</th><th>Eindtijd</th><th>Capaciteit</th><th>Maps</th>
+          <th class="sortable" data-key="naam">Naam <span class="sort-ind"></span></th>
+          <th>Type</th>
+          <th>Locatie</th><th>Adres</th><th class="sortable" data-key="plaats">Plaats <span class="sort-ind"></span></th><th>Land</th>
+          <th>Thema</th><th class="sortable" data-key="trainer">Trainers <span class="sort-ind"></span></th>
+          <th class="sortable" data-key="datum">Datum <span class="sort-ind"></span></th><th>Begintijd</th><th>Eindtijd</th><th>Capaciteit</th><th>Maps</th><th>Acties</th>
         </tr></thead>
         <tbody id="tbl-lessen"></tbody>
       </table>
     </section>
   </main>
-  <script src="js/tabs.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/beheer.js"></script>
 </body>
 </html>
