@@ -1,24 +1,17 @@
 
-/* Superhond Lessenmodule v0.15.8 — Klassen clean (zonder locatie/trainers) */
+/* Superhond Lessenmodule v0.16.7 — Lesdagen (edit datum+tijd, autosort) */
 body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#fafafa;color:#111}
-.sh-header{position:sticky;top:0;background:#ffd54d;padding:14px 16px;font-weight:800;box-shadow:0 1px 6px rgba(0,0,0,.08);}
-.badge{padding:2px 8px;border-radius:999px;background:#eef2ff;font-size:12px}
-.sh-tabs{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow-x:auto}
-.tab-btn{border:none;background:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);font-weight:700;cursor:pointer;font-size:15px}
-.tab-btn.active{outline:2px solid #111}
+.sh-header{position:sticky;top:0;background:#ffd54d;padding:14px 16px;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .container{max-width:1200px;margin:10px auto;padding:0 16px}
 .section{background:#fff;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.06);padding:16px;margin:16px 0}
-.table-wrapper{overflow-x:auto;background:#fff}
-.table{min-width:800px;width:100%;border-collapse:collapse;table-layout:fixed}
-.table th,.table td{padding:9px 10px;border-bottom:1px solid #eee;text-align:left;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.table-wrapper{overflow-x:auto}
+.table{min-width:1150px;width:100%;border-collapse:collapse}
+.table th,.table td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left;font-size:14px;white-space:nowrap}
 .table th{background:#f9fafb;font-weight:600;position:sticky;top:0}
-.table th.sortable{cursor:pointer}
-.table th.sortable .sort-ind{font-size:11px;opacity:.8;margin-left:6px}
-.iconbtn{border:none;background:#fff;padding:6px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer}
+.iconbtn{border:none;background:#fff;padding:6px;border-radius:6px;cursor:pointer}
 .iconbtn:hover{background:#f3f4f6}
-.btn{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.btn.ok{background:#10b981;color:#fff}
-.btn.muted{background:#f3f4f6}
-.form-add{margin:12px 0;padding:10px;background:#f3f4f6;border-radius:8px;display:flex;gap:8px;flex-wrap:wrap}
-.form-add select,.form-add input{flex:1}
-.small{font-size:13px;color:#374151}
+.status{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #e5e7eb}
+.status.active{background:#ecfee8;border-color:#bbf7d0}
+.status.cancelled{background:#fee2e2;border-color:#fecaca}
+.badge-mini{display:inline-block;padding:2px 6px;border:1px solid #e5e7eb;border-radius:999px;font-size:12px;background:#fafafa}
+.small{font-size:12px;color:#555}
