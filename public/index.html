@@ -4,35 +4,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — Klassen v0.15.6</title>
-  <link rel="stylesheet" href="css/app.css?v=0156">
+  <title>Superhond — v0.15.8 (Klassen clean)</title>
+  <link rel="stylesheet" href="css/app.css?v=0158">
 </head>
 <body>
-  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.15.6</strong> <span class="badge">Klassen (testdata)</span></header>
+  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.15.8</strong> <span class="badge">Klassen clean</span></header>
   <nav class="sh-tabs">
     <button class="tab-btn" data-target="klassen">Klassen</button>
   </nav>
+
   <main class="container">
     <section id="klassen" class="section tab-content">
-      <h2>Klassen</h2>
+      <h2>Klassen (zonder locatie/trainers)</h2>
       <form id="form-add-klas" class="form-add">
-        <label>Nieuwe klas toevoegen</label>
         <select name="naamId" required></select>
         <select name="typeId" required></select>
-        <select name="locatieId" required></select>
         <select name="themaId" required></select>
-        <select name="trainerIds" multiple required></select>
         <input type="number" name="capaciteit" placeholder="Capaciteit">
         <button class="btn ok" type="submit">➕ Toevoegen</button>
       </form>
       <div class="table-wrapper">
         <table class="table">
-          <thead><tr><th>Naam</th><th>Type</th><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Land</th><th>Thema</th><th>Trainers</th><th>Capaciteit</th><th>Maps</th><th>Acties</th></tr></thead>
+          <thead id="tbl-klassen-head"><tr>
+            <th class="sortable" data-key="naam">Naam <span class="sort-ind"></span></th>
+            <th class="sortable" data-key="type">Type <span class="sort-ind"></span></th>
+            <th class="sortable" data-key="thema">Thema <span class="sort-ind"></span></th>
+            <th class="sortable" data-key="capaciteit">Capaciteit <span class="sort-ind"></span></th>
+            <th>Acties</th>
+          </tr></thead>
           <tbody id="tbl-klassen"></tbody>
         </table>
       </div>
     </section>
   </main>
+
   <script src="js/data.js"></script>
   <script src="js/tabs.js"></script>
   <script src="js/klassen.js"></script>
