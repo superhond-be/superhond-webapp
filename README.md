@@ -1,16 +1,15 @@
-# Superhond Lessenmodule – v0.15.1 (Tab-fix PATCH)
+# Superhond — v0.15.4 Global Scroll Patch
 
-Deze patch maakt de tablabels breder en voorkomt dat tekst te vroeg wordt afgekapt.
+Maakt **alle tabellen** (Namen/Types/Locaties/Thema’s/Trainers/Beheer) horizontaal scrollbaar in Superhond-style.
 
 ## Installatie
-1. Open je bestaande map van **v0.15.0**.
-2. Kopieer **public/css/app.css** uit deze patch **over** de bestaande `public/css/app.css` (overschrijven).
-3. Ververs je browser (Cmd/Ctrl+R).
+1. Kopieer `public/css/app.css` over je bestaande CSS (of voeg de inhoud toe aan je huidige stylesheet).
+2. Voeg in je `index.html` **onderaan** toe (na je andere scripts):
 
-## Wat verandert er?
-- Tabs krijgen meer padding en mogen over 2 regels lopen op kleine schermen.
-- Max/min-breedte per tab om afkappen te voorkomen.
-- Horizontaal **swipen/scrollen** van de tabbalk wanneer het echt krap is.
-- Iets grotere lettermaat voor betere leesbaarheid.
+```html
+<script src="js/auto-table-wrapper.js"></script>
+```
 
-Werkt volledig in de bestaande **Superhond-style** en zonder wijzigingen aan je HTML/JS.
+Klaar. Alle `<table class="table">` krijgen automatisch een `.table-wrapper` en kunnen **links/rechts scrollen** op smalle schermen.
+
+> Tip: als je al handmatig een `.table-wrapper` rond een tabel hebt, dan doet het script niets (veilig).
