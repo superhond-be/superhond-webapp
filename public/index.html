@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — v0.16.8 Planner + Edit + Filters + Export</title>
-  <link rel="stylesheet" href="css/app.css?v=0168">
+  <title>Superhond — v0.17.0 Reeks Planner (met snelknoppen)</title>
+  <link rel="stylesheet" href="css/app.css?v=0170">
 </head>
 <body>
-  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.16.8</strong> <span class="badge">Planner • Bewerken • Filters • Export (;)</span></header>
+  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.17.0</strong> <span class="badge">Reeks only • Dagknoppen</span></header>
 
   <main class="container">
     <section class="section">
@@ -21,31 +21,25 @@
             <label>Van datum</label><input type="date" name="from" required>
             <label>Tot datum</label><input type="date" name="to" required>
             <label>Dag(en)</label>
-            <div>
-              <label><input type="checkbox" name="dow" value="1"> Ma</label>
-              <label><input type="checkbox" name="dow" value="2"> Di</label>
-              <label><input type="checkbox" name="dow" value="3"> Wo</label>
-              <label><input type="checkbox" name="dow" value="4"> Do</label>
-              <label><input type="checkbox" name="dow" value="5"> Vr</label>
-              <label><input type="checkbox" name="dow" value="6"> Za</label>
-              <label><input type="checkbox" name="dow" value="0"> Zo</label>
+            <div class="weekday-shortcuts">
+              <button type="button" class="btn blue" id="btn-weekdays">Ma–Vr</button>
+              <button type="button" class="btn blue" id="btn-weekend">Za–Zo</button>
+              <button type="button" class="btn muted" id="btn-clear">Wissen</button>
             </div>
+            <div class="weekdays">
+              <label class="weekday"><input type="checkbox" name="dow" value="1"> Ma</label>
+              <label class="weekday"><input type="checkbox" name="dow" value="2"> Di</label>
+              <label class="weekday"><input type="checkbox" name="dow" value="3"> Wo</label>
+              <label class="weekday"><input type="checkbox" name="dow" value="4"> Do</label>
+              <label class="weekday"><input type="checkbox" name="dow" value="5"> Vr</label>
+              <label class="weekday"><input type="checkbox" name="dow" value="6"> Za</label>
+              <label class="weekday"><input type="checkbox" name="dow" value="0"> Zo</label>
+            </div>
+            <div class="tip">Wil je één les plannen? Kies dezelfde datum bij Van en Tot en selecteer één dag.</div>
             <label>Begintijd</label><input type="time" name="start" required>
             <label>Locatie</label><select name="locatieId" required></select>
             <label>Trainers</label><select name="trainerIds" multiple required></select>
             <div></div><div class="actions"><button class="btn ok" type="submit">➕ Reeks toevoegen</button></div>
-          </form>
-
-          <div class="hr"></div>
-
-          <h3>Enkele les</h3>
-          <form id="form-les" class="kv">
-            <label>Klas</label><select name="klasId" required></select>
-            <label>Datum</label><input type="date" name="datum" required>
-            <label>Begintijd</label><input type="time" name="start" required>
-            <label>Locatie</label><select name="locatieId" required></select>
-            <label>Trainers</label><select name="trainerIds" multiple required></select>
-            <div></div><div class="actions"><button class="btn ok" type="submit">➕ Les toevoegen</button></div>
           </form>
         </div>
 
@@ -80,7 +74,7 @@
               <tbody id="tbl-lesdagen"></tbody>
             </table>
           </div>
-          <p class="small">Tip: kies meerdere trainers (Ctrl/Cmd-klik). Namen verschijnen onder de selectie. Eindtijd = start + lesduur van de Klas-Naam.</p>
+          <p class="small">Gebruik de blauwe knoppen voor snelle selectie. Toetsenbord: ← → om te bewegen, spatie = selecteren/deselecteren.</p>
         </div>
       </div>
     </section>
@@ -89,5 +83,22 @@
   <script src="js/utils.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // Extra JS for weekday shortcuts + keyboard nav
+    document.addEventListener('DOMContentLoaded',()=>{
+      const cbs=document.querySelectorAll('.weekdays input[type="checkbox"]');
+      document.getElementById('btn-weekdays').addEventListener('click',()=>{cbs.forEach(cb=>{cb.checked=['1','2','3','4','5'].includes(cb.value);});});
+      document.getElementById('btn-weekend').addEventListener('click',()=>{cbs.forEach(cb=>{cb.checked=['6','0'].includes(cb.value);});});
+      document.getElementById('btn-clear').addEventListener('click',()=>{cbs.forEach(cb=>cb.checked=false);});
+      // keyboard nav
+      cbs.forEach((cb,i)=>{
+        cb.addEventListener('keydown',(e)=>{
+          if(e.key==='ArrowRight'){ e.preventDefault(); cbs[(i+1)%cbs.length].focus(); }
+          if(e.key==='ArrowLeft'){ e.preventDefault(); cbs[(i-1+cbs.length)%cbs.length].focus(); }
+          if(e.key===' '||e.key==='Spacebar'){ e.preventDefault(); cb.checked=!cb.checked; }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
