@@ -1,12 +1,1 @@
-
-(function(){
-  const tabs = document.querySelectorAll('.tab-btn');
-  const sections = document.querySelectorAll('.tab-content');
-  function activate(id){
-    tabs.forEach(t=>t.classList.toggle('active', t.dataset.target===id));
-    sections.forEach(s=>{s.hidden = (s.id !== id)});
-    localStorage.setItem('sh_last_tab', id);
-  }
-  tabs.forEach(btn=>btn.addEventListener('click', ()=> activate(btn.dataset.target)));
-  activate(localStorage.getItem('sh_last_tab') || tabs[0]?.dataset.target);
-})();
+(function(){const t=document.querySelectorAll('.tab-btn'),s=document.querySelectorAll('.tab-content');function a(e){t.forEach(o=>o.classList.toggle('active',o.dataset.target===e)),s.forEach(o=>{o.hidden=o.id!==e}),localStorage.setItem('sh_last_tab',e)}t.forEach(o=>o.addEventListener('click',()=>a(o.dataset.target))),a(localStorage.getItem('sh_last_tab')||t[0]?.dataset.target)})();
