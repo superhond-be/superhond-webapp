@@ -4,25 +4,71 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — v0.15.3 Beheer (View-first)</title>
-  <link rel="stylesheet" href="css/app.css?v=0153">
+  <title>Superhond — Lessenmodule v0.15.4 COMPLETE</title>
+  <link rel="stylesheet" href="css/app.css?v=0154">
 </head>
 <body>
-  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.15.3</strong> <span class="badge">Beheer: leesbaar eerst</span></header>
+  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.15.4</strong> <span class="badge">Complete</span></header>
+
+  <nav class="sh-tabs">
+    <button class="tab-btn" data-target="namen">Namen</button>
+    <button class="tab-btn" data-target="types">Types</button>
+    <button class="tab-btn" data-target="locaties">Locaties</button>
+    <button class="tab-btn" data-target="themas">Thema’s</button>
+    <button class="tab-btn" data-target="trainers">Trainers</button>
+    <button class="tab-btn" data-target="beheer">Beheer</button>
+  </nav>
+
   <main class="container">
-    <section class="section">
+    <section id="namen" class="section tab-content">
+      <h2>Namen</h2>
+      <button id="add-naam" class="btn muted">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th>Prijs</th><th>Strippen</th><th>Max</th><th>Lesduur</th><th>MailBlue</th><th>Geldigheid</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-namen"></tbody></table>
+    </section>
+
+    <section id="types" class="section tab-content" hidden>
+      <h2>Types</h2>
+      <button id="add-type" class="btn muted">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Type</th><th>Beschrijving</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-types"></tbody></table>
+    </section>
+
+    <section id="locaties" class="section tab-content" hidden>
+      <h2>Locaties</h2>
+      <button id="add-loc" class="btn muted">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th>Adres</th><th>Plaats</th><th>Land</th><th>Maps</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-locaties"></tbody></table>
+    </section>
+
+    <section id="themas" class="section tab-content" hidden>
+      <h2>Thema’s</h2>
+      <button id="add-th" class="btn muted">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-themas"></tbody></table>
+    </section>
+
+    <section id="trainers" class="section tab-content" hidden>
+      <h2>Trainers</h2>
+      <button id="add-tr" class="btn muted">➕ Nieuw</button>
+      <table class="table"><thead><tr><th>Naam</th><th>Functie</th><th class="actions-cell">Acties</th></tr></thead><tbody id="tbl-trainers"></tbody></table>
+    </section>
+
+    <section id="beheer" class="section tab-content" hidden>
       <h2>Beheer</h2>
-      <table class="table">
-        <thead><tr>
-          <th>Naam</th><th>Type</th><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Land</th>
-          <th>Thema</th><th>Trainers</th><th>Datum</th><th>Begintijd</th><th>Eindtijd</th><th>Capaciteit</th><th>Maps</th><th>Acties</th>
-        </tr></thead>
-        <tbody id="tbl-lessen"></tbody>
-      </table>
-      <p class="small mono">Tip: klik ✏️ om te bewerken, 💾 om op te slaan, ↩︎ om te annuleren.</p>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>Naam</th><th>Type</th><th>Locatie</th><th>Adres</th><th>Plaats</th><th>Land</th>
+            <th>Thema</th><th>Trainers</th><th>Datum</th><th>Begintijd</th><th>Eindtijd</th><th>Capaciteit</th><th>Maps</th><th>Acties</th>
+          </tr></thead>
+          <tbody id="tbl-lessen"></tbody>
+        </table>
+      </div>
+      <p class="small mono">Swipe/scroll → om alle kolommen te zien. ✏️ bewerken, 💾 opslaan, ↩︎ annuleren.</p>
     </section>
   </main>
+
+  <script src="js/tabs.js"></script>
   <script src="js/data.js"></script>
+  <script src="js/crud.js"></script>
   <script src="js/beheer.js"></script>
+  <script src="js/auto-table-wrapper.js"></script>
 </body>
 </html>

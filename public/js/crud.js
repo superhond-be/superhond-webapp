@@ -15,6 +15,7 @@ function mountCRUD(){
   document.getElementById('tbl-themas').innerHTML=(db.themas||[]).map(rowThema).join('');
   document.getElementById('tbl-trainers').innerHTML=(db.trainers||[]).map(rowTrainer).join('');
 
+  // add buttons
   document.getElementById('add-naam').onclick=()=>{const d=SHDB.loadDB();d.namen.push({id:SHDB.uid('nm'),naam:'Nieuwe naam',lesduur:60,prijs:0,strippen:0,max:0,mailblue:'',geldigheid:0});SHDB.saveDB(d);mountCRUD();renderBeheer();};
   document.getElementById('add-type').onclick=()=>{const d=SHDB.loadDB();d.types.push({id:SHDB.uid('tp'),type:'Nieuw'});SHDB.saveDB(d);mountCRUD();renderBeheer();};
   document.getElementById('add-loc').onclick=()=>{const d=SHDB.loadDB();d.locaties.push({id:SHDB.uid('loc'),naam:'Nieuwe locatie',adres:'',plaats:'',land:'BE'});SHDB.saveDB(d);mountCRUD();renderBeheer();};
