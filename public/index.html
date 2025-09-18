@@ -4,26 +4,90 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — v0.16.7 Lesdagen (Datum+Tijd bewerken)</title>
-  <link rel="stylesheet" href="css/app.css?v=0167">
+  <title>Superhond — v0.16.8 Planner + Edit + Filters + Export</title>
+  <link rel="stylesheet" href="css/app.css?v=0168">
 </head>
 <body>
-  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.16.7</strong> <span class="badge">Datum+Tijd edit + autosort</span></header>
+  <header class="sh-header">🐾 Superhond — Lessenmodule <strong>v0.16.8</strong> <span class="badge">Planner • Bewerken • Filters • Export (;)</span></header>
+
   <main class="container">
     <section class="section">
-      <h2>Ingeplande lesdagen</h2>
-      <div class="table-wrapper">
-        <table class="table">
-          <thead><tr>
-            <th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th><th>Acties</th>
-          </tr></thead>
-          <tbody id="tbl-lesdagen"></tbody>
-        </table>
+      <div class="grid">
+        <!-- Planner links -->
+        <div class="card">
+          <h3>Reeks plannen</h3>
+          <form id="form-reeks" class="kv">
+            <label>Klas</label><select name="klasId" required></select>
+            <label>Van datum</label><input type="date" name="from" required>
+            <label>Tot datum</label><input type="date" name="to" required>
+            <label>Dag(en)</label>
+            <div>
+              <label><input type="checkbox" name="dow" value="1"> Ma</label>
+              <label><input type="checkbox" name="dow" value="2"> Di</label>
+              <label><input type="checkbox" name="dow" value="3"> Wo</label>
+              <label><input type="checkbox" name="dow" value="4"> Do</label>
+              <label><input type="checkbox" name="dow" value="5"> Vr</label>
+              <label><input type="checkbox" name="dow" value="6"> Za</label>
+              <label><input type="checkbox" name="dow" value="0"> Zo</label>
+            </div>
+            <label>Begintijd</label><input type="time" name="start" required>
+            <label>Locatie</label><select name="locatieId" required></select>
+            <label>Trainers</label><select name="trainerIds" multiple required></select>
+            <div></div><div class="actions"><button class="btn ok" type="submit">➕ Reeks toevoegen</button></div>
+          </form>
+
+          <div class="hr"></div>
+
+          <h3>Enkele les</h3>
+          <form id="form-les" class="kv">
+            <label>Klas</label><select name="klasId" required></select>
+            <label>Datum</label><input type="date" name="datum" required>
+            <label>Begintijd</label><input type="time" name="start" required>
+            <label>Locatie</label><select name="locatieId" required></select>
+            <label>Trainers</label><select name="trainerIds" multiple required></select>
+            <div></div><div class="actions"><button class="btn ok" type="submit">➕ Les toevoegen</button></div>
+          </form>
+        </div>
+
+        <!-- Tabel rechts -->
+        <div class="card">
+          <h3>Lessen — Overzicht & bewerken</h3>
+          <div class="filters">
+            <div class="group">
+              <label class="small">Klas</label><select id="filter-klas"></select>
+            </div>
+            <div class="group">
+              <label class="small">Trainer</label><select id="filter-trainer"></select>
+            </div>
+            <div class="group">
+              <label class="small">Maand</label><select id="filter-month"></select>
+            </div>
+            <div class="group">
+              <label class="small">Jaar</label><select id="filter-year"></select>
+            </div>
+            <div class="actions">
+              <button class="btn muted" id="btn-reset-filters">Reset</button>
+              <button class="btn" id="btn-export">⬇️ Export (CSV ;)</button>
+            </div>
+            <div class="group"><span class="small">Totaal: <strong id="count-lessen">0</strong></span></div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr>
+                <th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th><th>Acties</th>
+              </tr></thead>
+              <tbody id="tbl-lesdagen"></tbody>
+            </table>
+          </div>
+          <p class="small">Tip: kies meerdere trainers (Ctrl/Cmd-klik). Namen verschijnen onder de selectie. Eindtijd = start + lesduur van de Klas-Naam.</p>
+        </div>
       </div>
-      <p class="small">Je kan nu **Datum** en **Starttijd** aanpassen. De **Eindtijd** wordt automatisch berekend volgens de lesduur van de Klas. Tabel wordt telkens opnieuw chronologisch gesorteerd.</p>
     </section>
   </main>
+
+  <script src="js/utils.js"></script>
   <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
