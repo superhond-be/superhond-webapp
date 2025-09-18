@@ -1,88 +1,122 @@
 
-function getSort(){ return JSON.parse(localStorage.getItem('sh_sort')||'{}'); }
-function setSort(s){ localStorage.setItem('sh_sort', JSON.stringify(s)); }
-const byId=(list,id)=>list.find(x=>x.id===id)||{};
-const nameFrom=(list,id)=> (byId(list,id).naam||byId(list,id).type||'');
-const locObj=(db,id)=>byId(db.locaties,id);
+const byId=(arr,id)=>arr.find(x=>x.id===id)||{};
+const nameOf=(arr,id)=> (byId(arr,id).naam || byId(arr,id).type || '');
 
-function renderBeheer(){
+function renderRow(db, ls){
+  const loc=byId(db.locaties, ls.locatieId)||{};
+  const maps='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([loc.adres,loc.plaats,loc.land].filter(Boolean).join(', '));
+
+  const naamOpts = db.namen.map(x=>`<option value="${x.id}" ${x.id===ls.naamId?'selected':''}>${x.naam}</option>`).join('');
+  const typeOpts = db.types.map(x=>`<option value="${x.id}" ${x.id===ls.typeId?'selected':''}>${x.type}</option>`).join('');
+  const locOpts  = db.locaties.map(x=>`<option value="${x.id}" ${x.id===ls.locatieId?'selected':''}>${x.naam}</option>`).join('');
+  const thOpts   = db.themas.map(x=>`<option value="${x.id}" ${x.id===ls.themaId?'selected':''}>${x.naam}</option>`).join('');
+  const trOpts   = db.trainers.map(x=>`<option value="${x.id}" ${ls.trainerIds?.includes(x.id)?'selected':''}>${x.naam}</option>`).join('');
+
+  const trainersText = (ls.trainerIds||[]).map(id=>nameOf(db.trainers,id)).join(', ');
+
+  return `<tr data-id="${ls.id}">
+    <td>
+      <span class="view small">${nameOf(db.namen,ls.naamId)}</span>
+      <select class="edit" name="naamId">${naamOpts}</select>
+    </td>
+    <td>
+      <span class="view small">${nameOf(db.types,ls.typeId)}</span>
+      <select class="edit" name="typeId">${typeOpts}</select>
+    </td>
+    <td>
+      <span class="view small">${nameOf(db.locaties,ls.locatieId)}</span>
+      <select class="edit" name="locatieId">${locOpts}</select>
+    </td>
+    <td class="small">${loc.adres||''}</td>
+    <td class="small">${loc.plaats||''}</td>
+    <td class="mono">${loc.land||''}</td>
+    <td>
+      <span class="view small">${nameOf(db.themas,ls.themaId)}</span>
+      <select class="edit" name="themaId">${thOpts}</select>
+    </td>
+    <td>
+      <span class="view small">${trainersText}</span>
+      <select class="edit" name="trainerIds" multiple size="2">${trOpts}</select>
+    </td>
+    <td>
+      <span class="view small">${ls.datum||''}</span>
+      <input class="edit" name="datum" type="date" value="${ls.datum||''}">
+    </td>
+    <td>
+      <span class="view small">${ls.tijd||''}</span>
+      <input class="edit" name="tijd" type="time" value="${ls.tijd||''}">
+    </td>
+    <td class="small">${ls.eindtijd||''}</td>
+    <td>
+      <span class="view small">${ls.capaciteit??''}</span>
+      <input class="edit" name="capaciteit" type="number" value="${ls.capaciteit??''}">
+    </td>
+    <td><a href="${maps}" target="_blank">Maps</a></td>
+    <td class="actions-cell">
+      <div class="actions">
+        <button class="iconbtn act-edit"   title="Bewerken">✏️</button>
+        <button class="iconbtn act-save edit"   title="Opslaan">💾</button>
+        <button class="iconbtn act-cancel edit" title="Annuleren">↩︎</button>
+        <button class="iconbtn act-del"    title="Verwijderen">🗑️</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderTable(){
   const db=SHDB.loadDB();
-  const fName=document.getElementById('fName')?.value.toLowerCase()||'';
-  const fLoc=document.getElementById('fLoc')?.value.toLowerCase()||'';
-  const fTrainer=document.getElementById('fTrainer')?.value.toLowerCase()||'';
-  const fStart=document.getElementById('fStart')?.value||'';
-  const fEnd=document.getElementById('fEnd')?.value||'';
-  let rows=[...db.lessen];
-
-  rows=rows.filter(ls=>{
-    const naam=nameFrom(db.namen,ls.naamId).toLowerCase();
-    const plaats=(locObj(db,ls.locatieId).plaats||'').toLowerCase();
-    const trainers=(ls.trainerIds||[]).map(id=>nameFrom(db.trainers,id)).join(', ').toLowerCase();
-    if(fName && !naam.includes(fName)) return false;
-    if(fLoc && !plaats.includes(fLoc)) return false;
-    if(fTrainer && !trainers.includes(fTrainer)) return false;
-    if(fStart && (ls.datum||'')<fStart) return false;
-    if(fEnd && (ls.datum||'')>fEnd) return false;
-    return true;
-  });
-
-  const s=getSort();
-  if(s.key){
-    const key=s.key, dir=s.dir==='desc'?-1:1;
-    rows.sort((a,b)=>{
-      const val=(ls)=> key==='naam'?nameFrom(db.namen,ls.naamId): key==='trainer'?(ls.trainerIds||[]).map(id=>nameFrom(db.trainers,id)).join(', '): key==='datum'?ls.datum||'': key==='plaats'?(locObj(db,ls.locatieId).plaats||''):'';
-      const A=val(a),B=val(b); return A===B?0:(A>B?1:-1)*dir;
-    });
-  }
-
   const tbody=document.getElementById('tbl-lessen');
-  if(!tbody) return;
-  tbody.innerHTML=rows.map(ls=>{
-    const loc=locObj(db,ls.locatieId);
-    const maps='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((loc.adres||'')+', '+(loc.plaats||'')+', '+(loc.land||''));
-    return `<tr data-id="${ls.id}">
-      <td><input name="naamId" value="${ls.naamId}"></td>
-      <td><input name="typeId" value="${ls.typeId}"></td>
-      <td><input name="locatieId" value="${ls.locatieId}"></td>
-      <td>${loc.adres||''}</td><td>${loc.plaats||''}</td><td>${loc.land||''}</td>
-      <td><input name="themaId" value="${ls.themaId}"></td>
-      <td><input name="trainers" value="${(ls.trainerIds||[]).join(',')}"></td>
-      <td><input name="datum" type="date" value="${ls.datum||''}"></td>
-      <td><input name="tijd" type="time" value="${ls.tijd||''}"></td>
-      <td>${ls.eindtijd||''}</td>
-      <td><input name="capaciteit" type="number" value="${ls.capaciteit||''}"></td>
-      <td><a href="${maps}" target="_blank">Maps</a></td>
-      <td class="actions-cell"><div class="actions"><button class="iconbtn" data-act="save" data-id="${ls.id}">💾</button><button class="iconbtn" data-act="del" data-id="${ls.id}">🗑️</button></div></td>
-    </tr>`;
-  }).join('');
-
-  document.querySelectorAll('th.sortable .badge').forEach(b=>b.textContent='');
-  const s2=getSort(); if(s2.key){ const el=document.querySelector(`th.sortable[data-key="${s2.key}"] .badge`); if(el) el.textContent=s2.dir==='asc'?'▲':'▼'; }
+  tbody.innerHTML = (db.lessen||[]).map(ls=>renderRow(db,ls)).join('');
 }
 
-function setupBeheer(){
-  const form=document.getElementById('form-add');
-  if(form){
-    form.addEventListener('submit',e=>{
-      e.preventDefault();
-      const db=SHDB.loadDB();
-      const data=new FormData(form);
-      const naamId=data.get('naam'); const typeId=data.get('type'); const locId=data.get('loc'); const themaId=data.get('thema'); const trainerIds=data.getAll('trainer'); const datum=data.get('datum'); const tijd=data.get('tijd'); const cap=parseInt(data.get('cap'))||0;
-      const duur=(byId(db.namen,naamId).lesduur)||60; const eind=SHDB.addMinutesToTime(tijd,duur);
-      db.lessen.push({id:SHDB.uid('ls'),naamId,typeId,locatieId:locId,themaId,trainerIds,datum,tijd,eindtijd:eind,capaciteit:cap});
-      SHDB.saveDB(db); form.reset(); renderBeheer();
-    });
-  }
+function toggleEdit(tr, on){
+  tr.classList.toggle('editing', !!on);
+}
 
-  document.body.addEventListener('click',(e)=>{
-    const btn=e.target.closest('button.iconbtn'); if(!btn) return;
-    const act=btn.dataset.act; const id=btn.dataset.id; const db=SHDB.loadDB(); const i=db.lessen.findIndex(l=>l.id===id); if(i<0) return;
-    if(act==='del'){ if(confirm('Les verwijderen?')){ db.lessen.splice(i,1); SHDB.saveDB(db); renderBeheer(); } return; }
-    if(act==='save'){ const tr=btn.closest('tr'); const ls=db.lessen[i]; tr.querySelectorAll('input').forEach(inp=>{ if(inp.name==='trainers'){ ls.trainerIds=inp.value.split(',').map(s=>s.trim()).filter(Boolean);} else { ls[inp.name]=inp.value; } }); const duur=(byId(db.namen,ls.naamId).lesduur)||60; ls.eindtijd=SHDB.addMinutesToTime(ls.tijd,duur); SHDB.saveDB(db); renderBeheer(); }
+function collectRow(tr){
+  const out={};
+  tr.querySelectorAll('input,select').forEach(el=>{
+    if(el.name==='trainerIds'){ out.trainerIds = Array.from(el.selectedOptions).map(o=>o.value); }
+    else { out[el.name]=el.value; }
   });
-
-  document.querySelectorAll('.filterbar input,.filterbar select').forEach(el=>el.addEventListener('input',renderBeheer));
-  document.querySelectorAll('th.sortable').forEach(th=> th.addEventListener('click',()=>{const s=getSort();let dir='asc';if(s.key===th.dataset.key&&s.dir==='asc')dir='desc';setSort({key:th.dataset.key,dir});renderBeheer();}));
+  return out;
 }
 
-window.addEventListener('DOMContentLoaded',()=>{ renderBeheer(); setupBeheer(); });
+function attachEvents(){
+  document.getElementById('tbl-lessen').addEventListener('click', (e)=>{
+    const tr=e.target.closest('tr'); if(!tr) return;
+    const db=SHDB.loadDB();
+    const id=tr.dataset.id;
+    const idx=db.lessen.findIndex(x=>x.id===id); if(idx<0) return;
+
+    if(e.target.closest('.act-edit')){
+      toggleEdit(tr, true);
+    }
+    if(e.target.closest('.act-cancel')){
+      toggleEdit(tr, false);
+      renderTable(); // reset view
+    }
+    if(e.target.closest('.act-save')){
+      const patch=collectRow(tr);
+      const ls={...db.lessen[idx], ...patch};
+      const duur=(byId(db.namen,ls.naamId).lesduur)||60;
+      ls.eindtijd=SHDB.addMinutesToTime(ls.tijd,duur);
+      db.lessen[idx]=ls;
+      SHDB.saveDB(db);
+      toggleEdit(tr, false);
+      renderTable();
+    }
+    if(e.target.closest('.act-del')){
+      if(confirm('Les verwijderen?')){
+        db.lessen.splice(idx,1);
+        SHDB.saveDB(db);
+        renderTable();
+      }
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  renderTable();
+  attachEvents();
+});
