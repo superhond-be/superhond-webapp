@@ -1,5 +1,3 @@
-function openTab(tabId) {
-  const sections = document.querySelectorAll('.tab-content');
-  sections.forEach(sec => sec.style.display = 'none');
-  document.getElementById(tabId).style.display = 'block';
-}
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Superhond Dashboard v0.13.0 geladen');
+});
