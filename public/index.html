@@ -1,197 +1,28 @@
 
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — v0.17.1 Planner + Archief</title>
-  <link rel="stylesheet" href="css/app.css?v=0171">
-</head>
-<body>
-  <header class="sh-header">
-    🐾 Superhond — Lessenmodule <strong>v0.17.1</strong>
-    <div class="actions">
-      <button class="btn muted" id="btn-archive-today">Archiveer verlopen t/m vandaag</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <div class="tabs">
-      <button class="tabbtn active" data-tab="planner">Planner</button>
-      <button class="tabbtn" data-tab="archief">Archief</button>
-    </div>
-
-    <!-- PLANNER -->
-    <section id="planner" class="section">
-      <div class="grid">
-        <div class="card">
-          <h3>Reeks plannen</h3>
-          <form id="form-reeks" class="kv">
-            <label>Klas</label><select name="klasId" required></select>
-            <label>Van datum</label><input type="date" name="from" required>
-            <label>Tot datum</label><input type="date" name="to" required>
-            <label>Dag(en)</label>
-            <div class="weekday-shortcuts">
-              <button type="button" class="btn blue" id="btn-weekdays">Ma–Vr</button>
-              <button type="button" class="btn blue" id="btn-weekend">Za–Zo</button>
-              <button type="button" class="btn muted" id="btn-clear">Wissen</button>
-            </div>
-            <div class="weekdays">
-              <label class="weekday"><input type="checkbox" name="dow" value="1"> Ma</label>
-              <label class="weekday"><input type="checkbox" name="dow" value="2"> Di</label>
-              <label class="weekday"><input type="checkbox" name="dow" value="3"> Wo</label>
-              <label class="weekday"><input type="checkbox" name="dow" value="4"> Do</label>
-              <label class="weekday"><input type="checkbox" name="dow" value="5"> Vr</label>
-              <label class="weekday"><input type="checkbox" name="dow" value="6"> Za</label>
-              <label class="weekday"><input type="checkbox" name="dow" value="0"> Zo</label>
-            </div>
-            <div class="tip">Wil je één les plannen? Kies dezelfde datum bij Van en Tot en selecteer één dag.</div>
-            <label>Begintijd</label><input type="time" name="start" required>
-            <label>Locatie</label><select name="locatieId" required></select>
-            <label>Trainers</label><select name="trainerIds" multiple required></select>
-            <div></div><div class="actions"><button class="btn ok" type="submit">➕ Reeks toevoegen</button></div>
-          </form>
-        </div>
-
-        <div class="card">
-          <h3>Lessen — Overzicht & bewerken</h3>
-          <div class="filters">
-            <div class="group"><label class="small">Klas</label><select id="filter-klas"></select></div>
-            <div class="group"><label class="small">Trainer</label><select id="filter-trainer"></select></div>
-            <div class="group"><label class="small">Maand</label><select id="filter-month"></select></div>
-            <div class="group"><label class="small">Jaar</label><select id="filter-year"></select></div>
-            <div class="actions">
-              <button class="btn muted" id="btn-reset-filters">Reset</button>
-              <button class="btn" id="btn-export">⬇️ Export (CSV ;)</button>
-            </div>
-            <div class="group"><span class="small">Totaal: <strong id="count-lessen">0</strong></span></div>
-          </div>
-
-          <div class="table-wrapper">
-            <table class="table">
-              <thead><tr>
-                <th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th><th>Acties</th>
-              </tr></thead>
-              <tbody id="tbl-lesdagen"></tbody>
-            </table>
-          </div>
-          <p class="small">Gebruik de blauwe knoppen voor snelle selectie. Eindtijd = start + lesduur van de Klas-Naam.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ARCHIEF -->
-    <section id="archief" class="section hidden">
-      <div class="card">
-        <h3>Archief lessen</h3>
-        <div class="actions" style="margin-bottom:10px">
-          <button class="btn" id="btn-export-archief">⬇️ Export Archief (CSV ;)</button>
-        </div>
-        <div class="table-wrapper">
-          <table class="table">
-            <thead><tr>
-              <th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th>
-            </tr></thead>
-            <tbody id="tbl-archief"></tbody>
-          </table>
-        </div>
-        <p class="small">Lessen met *datum in het verleden* of die je handmatig archiveert komen hier terecht. Ze blijven raadpleegbaar en exporteerbaar.</p>
-      </div>
-    </section>
-  </main>
-
-  <script src="js/utils.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
-  <script>
-    // Tabs
-    document.querySelectorAll('.tabbtn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active', b===btn));
-        document.getElementById('planner').classList.toggle('hidden', btn.dataset.tab!=='planner');
-        document.getElementById('archief').classList.toggle('hidden', btn.dataset.tab!=='archief');
-        if(btn.dataset.tab==='archief'){ renderArchive(); }
-      });
-    });
-
-    // Weekday quick buttons and keyboard nav (copied from v0170)
-    document.addEventListener('DOMContentLoaded',()=>{
-      const cbs=document.querySelectorAll('.weekdays input[type="checkbox"]');
-      const week = ['1','2','3','4','5'], weekend=['6','0'];
-      const setVals=(vals)=>{ cbs.forEach(cb=>cb.checked = vals.includes(cb.value)); };
-      document.getElementById('btn-weekdays').addEventListener('click',()=>setVals(week));
-      document.getElementById('btn-weekend').addEventListener('click',()=>setVals(weekend));
-      document.getElementById('btn-clear').addEventListener('click',()=>setVals([]));
-      cbs.forEach((cb,i)=>cb.addEventListener('keydown',(e)=>{
-        if(e.key==='ArrowRight'){ e.preventDefault(); cbs[(i+1)%cbs.length].focus(); }
-        if(e.key==='ArrowLeft'){ e.preventDefault(); cbs[(i-1+cbs.length)%cbs.length].focus(); }
-        if(e.key===' '||e.key==='Spacebar'){ e.preventDefault(); cb.checked=!cb.checked; }
-      }));
-    });
-
-    // Archive helpers
-    function todayISO(){
-      const d=new Date(); const pad=n=>String(n).padStart(2,'0');
-      return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-    }
-    function archivePastUntil(dateISO){
-      const db = SHDB.loadDB();
-      db.lesdagen.forEach(l=>{
-        if((l.status==='active' || l.status==='cancelled') && l.datum < dateISO){ l.status='archived'; }
-      });
-      SHDB.saveDB(db);
-      if(!document.getElementById('archief').classList.contains('hidden')) renderArchive();
-      if(!document.getElementById('planner').classList.contains('hidden')) if(window.renderTable) renderTable();
-    }
-    document.getElementById('btn-archive-today').addEventListener('click',()=>archivePastUntil(todayISO()));
-
-    // Render archive table
-    function renderArchive(){
-      const db=SHDB.loadDB();
-      const arch = (db.lesdagen||[]).filter(l=>l.status==='archived').sort((a,b)=> (b.datum+b.start).localeCompare(a.datum+a.start));
-      const byId=(arr,id)=>arr.find(x=>x.id===id)||{};
-      const nameOf=(arr,id)=> (byId(arr,id).naam || byId(arr,id).type || '');
-      const tbody=document.getElementById('tbl-archief');
-      tbody.innerHTML = arch.map(l=>{
-        const klas=byId(db.klassen,l.klasId);
-        const naam=nameOf(db.namen,klas.naamId);
-        const loc=byId(db.locaties,l.locatieId)||{};
-        const trainers=(l.trainerIds||[]).map(id=>byId(db.trainers,id)?.naam).filter(Boolean).join(', ');
-        return `<tr>
-          <td><span class="status archived">Archief</span></td>
-          <td>${naam} <span class="badge-mini">${byId(db.themas,klas.themaId).naam}</span></td>
-          <td>${l.datum}</td>
-          <td>${l.start}</td>
-          <td>${l.einde}</td>
-          <td>${loc.naam||''}</td>
-          <td>${trainers}</td>
-        </tr>`;
-      }).join('');
-    }
-
-    // Export (planner table export exists in app.js). Add export for archive:
-    document.getElementById('btn-export-archief').addEventListener('click',()=>{
-      const db=SHDB.loadDB();
-      const rows=(db.lesdagen||[]).filter(l=>l.status==='archived').sort((a,b)=> (a.datum+a.start).localeCompare(b.datum+b.start));
-      const byId=(arr,id)=>arr.find(x=>x.id===id)||{};
-      const nameOf=(arr,id)=> (byId(arr,id).naam || byId(arr,id).type || '');
-      const sep=';'; const esc=s=>(''+(s??'')).replaceAll('"','""');
-      const header=['Datum','Start','Einde','Klas','Thema','Type','Locatie','Trainers','Status'];
-      const lines=[header.join(sep)];
-      rows.forEach(l=>{
-        const klas=byId(db.klassen,l.klasId);
-        const naam=nameOf(db.namen,klas.naamId);
-        const thema=byId(db.themas,klas.themaId).naam;
-        const type=byId(db.types,klas.typeId).type;
-        const loc=byId(db.locaties,l.locatieId).naam;
-        const trainers=(l.trainerIds||[]).map(id=>byId(db.trainers,id)?.naam).filter(Boolean).join(', ');
-        const status='Archief';
-        const row=[l.datum,l.start,l.einde,naam,thema,type,loc,trainers,status].map(v=>`"${esc(v)}"`).join(sep);
-        lines.push(row);
-      });
-      const csv=lines.join("\n");
-      const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='lessen_archief.csv'; a.style.display='none'; document.body.appendChild(a); a.click(); a.remove();
-    });
-  </script>
-</body>
-</html>
+<!doctype html><html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Superhond v0.17.2 redo</title>
+<link rel="stylesheet" href="css/app.css">
+</head><body>
+<header class="sh-header">🐾 Superhond — Lessenmodule v0.17.2 (redo)</header>
+<main class="container">
+<section class="section"><div class="grid">
+<div>
+<form class="kv" id="form-reeks">
+<label>Klas</label><select name="klasId"></select>
+<label>Van</label><input type="date" name="from"><span class="weekday-chip" id="chip-from">--</span>
+<label>Tot</label><input type="date" name="to"><span class="weekday-chip" id="chip-to">--</span>
+<label>Begintijd</label><input type="time" name="start">
+<label>Locatie</label><select name="locatieId"></select>
+<label>Trainers</label><select name="trainerIds" multiple></select>
+<button class="btn ok">Toevoegen</button>
+</form>
+</div>
+<div>
+<h3>Lessen</h3><p>Totaal: <span id="count-lessen">0</span></p>
+<table class="table"><thead><tr><th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th></tr></thead>
+<tbody id="tbl"></tbody></table>
+</div>
+</div></section></main>
+<script src="js/data.js"></script><script src="js/utils.js"></script><script src="js/app.js"></script>
+</body></html>

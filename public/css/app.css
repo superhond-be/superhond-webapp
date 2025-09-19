@@ -1,44 +1,22 @@
 
-/* Superhond Lessenmodule v0.17.1 — Archief lessen */
-*{box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#fafafa;color:#111}
-.sh-header{position:sticky;top:0;background:#ffd54d;padding:14px 16px;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2ff;font-size:12px}
-.container{max-width:1300px;margin:10px auto;padding:0 16px}
-.section{background:#fff;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.06);padding:16px;margin:16px 0}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.tabbtn{border:none;background:#fff;padding:10px 12px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:700;cursor:pointer}
-.tabbtn.active{outline:2px solid #111}
+/* v0.17.2 redo */
+body{font-family:sans-serif;margin:0;background:#fafafa;color:#111}
+.sh-header{background:#ffd54d;padding:14px;font-weight:800}
+.container{max-width:1200px;margin:0 auto;padding:16px}
+.section{background:#fff;padding:16px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .grid{display:grid;grid-template-columns:360px 1fr;gap:16px}
-@media (max-width:1100px){.grid{grid-template-columns:1fr}}
-.card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:12px}
-.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 12px}
-.kv label{font-weight:600}
-input,select{width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:14px}
-select[multiple]{height:2.6em}
-.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.btn{border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px}
+input,select{padding:6px;border:1px solid #ddd;border-radius:6px}
+.weekday-chip{display:inline-block;padding:2px 6px;border:1px solid #ccc;border-radius:999px;margin-left:6px;font-size:12px}
+.trainer-names{font-size:12px;color:#333;display:block;margin-top:4px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+.status{padding:2px 6px;border-radius:6px;font-size:12px}
+.status.active{background:#ecfee8;border:1px solid #bbf7d0}
+.status.cancelled{background:#fee2e2;border:1px solid #fecaca}
+.status.archived{background:#f3f4f6;border:1px solid #e5e7eb}
+.btn{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;font-weight:700}
 .btn.ok{background:#10b981;color:#fff}
 .btn.warn{background:#ef4444;color:#fff}
-.btn.muted{background:#f3f4f6}
-.btn.blue{background:#3b82f6;color:#fff}
-.small{font-size:12px;color:#555}
-.table-wrapper{overflow-x:auto}
-.table{min-width:1200px;width:100%;border-collapse:collapse}
-.table th,.table td{padding:9px 10px;border-bottom:1px solid #eee;text-align:left;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
-.table th{background:#f9fafb;font-weight:600;position:sticky;top:0}
-.status{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #e5e7eb}
-.status.active{background:#ecfee8;border-color:#bbf7d0}
-.status.cancelled{background:#fee2e2;border-color:#fecaca}
-.status.archived{background:#f3f4f6;border-color:#e5e7eb}
-.badge-mini{display:inline-block;padding:2px 6px;border:1px solid #e5e7eb;border-radius:999px;font-size:12px;background:#fafafa}
-.filters{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin:8px 0 12px}
-.filters .group{display:flex;flex-direction:column;gap:4px}
-.weekdays{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
-.weekday{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#f9fafb}
-.weekday input{margin:0}
-.weekday:hover{background:#eef2ff;border-color:#c7d2fe}
-.weekday-shortcuts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
-.weekday-shortcuts .btn{padding:4px 10px;font-size:12px}
-.tip{font-size:12px;color:#374151;margin-top:4px}
-.hidden{display:none}
+.btn.muted{background:#e5e7eb}
