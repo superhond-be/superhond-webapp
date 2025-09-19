@@ -4,12 +4,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Superhond — Dashboard v0.17.5</title>
-<link rel="stylesheet" href="css/app.css?v=0175">
+<title>Superhond — Dashboard v0.17.6</title>
+<link rel="stylesheet" href="css/app.css?v=0176">
 </head>
 <body>
 <header class="sh-header">
-  <div>🐾 Superhond — Dashboard <strong>v0.17.5</strong></div>
+  <div>🐾 Superhond — Dashboard <strong>v0.17.6</strong></div>
   <nav class="tabs">
     <a href="index.html">Lessen</a>
     <a href="dashboard.html" class="active">Dashboard</a>
@@ -34,17 +34,34 @@
         <div class="kpi" id="kpi-total">—</div>
         <div class="small">Actief + Archief</div>
       </div>
+      <div class="dash-card">
+        <h3>Lessen deze maand</h3>
+        <div class="kpi" id="kpi-month">—</div>
+        <div class="small">Alle actieve lessen in de huidige maand</div>
+      </div>
     </div>
 
-    <div class="card" style="margin-top:16px">
-      <h3>Volgende lessen</h3>
-      <div class="table-wrapper">
-        <table class="table">
-          <thead><tr><th>Datum</th><th>Start</th><th>Klas</th><th>Locatie</th><th>Trainers</th><th>Status</th></tr></thead>
-          <tbody id="tbl-upcoming"></tbody>
-        </table>
+    <div class="dashboard-grid" style="margin-top:0">
+      <div class="dash-card">
+        <h3>Volgende lessen</h3>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead><tr><th>Datum</th><th>Start</th><th>Klas</th><th>Locatie</th><th>Trainers</th><th>Status</th></tr></thead>
+            <tbody id="tbl-upcoming"></tbody>
+          </table>
+        </div>
+        <p class="small">Toont de eerstvolgende 5 lessen.</p>
       </div>
-      <p class="small">Toont de eerstvolgende 5 lessen (op basis van je echte data).</p>
+
+      <div class="dash-card">
+        <h3>Geannuleerde lessen</h3>
+        <ul class="list" id="list-cancelled"></ul>
+        <div class="actions">
+          <button class="btn muted" id="btn-more">Toon meer</button>
+          <button class="btn muted" id="btn-less">Toon minder</button>
+        </div>
+        <p class="small">Nieuwste eerst. Je kan meer/minder tonen zonder de pagina te verlaten.</p>
+      </div>
     </div>
   </section>
 </main>
@@ -52,14 +69,17 @@
 <script src="js/data.js"></script>
 <script src="js/utils.js"></script>
 <script>
+  const STATE = { cancelShown: 5 };
+
   function renderKPIs(){
-    // auto-archive first so counts are consistent
     autosArchivePast();
     const {active,archived,total} = getCounts();
     document.getElementById('kpi-active').textContent = active;
     document.getElementById('kpi-archived').textContent = archived;
     document.getElementById('kpi-total').textContent = total;
+    document.getElementById('kpi-month').textContent = countMonthActive();
   }
+
   function renderUpcoming(){
     const db = loadDB();
     const up = getUpcoming(5);
@@ -73,7 +93,30 @@
       return `<tr><td>${l.datum}</td><td>${l.start}</td><td>${naam.naam||''}</td><td>${loc.naam||''}</td><td>${trainers}</td><td><span class="status ${l.status}">${status}</span></td></tr>`;
     }).join('');
   }
-  document.addEventListener('DOMContentLoaded', ()=>{ renderKPIs(); renderUpcoming(); });
+
+  function renderCancelled(){
+    const db = loadDB();
+    const list = document.getElementById('list-cancelled');
+    const items = getCancelled().slice(0, STATE.cancelShown); // newest first
+    list.innerHTML = items.map(l=>{
+      const klas = (db.klassen||[]).find(k=>k.id===l.klasId) || {};
+      const naam = (db.namen||[]).find(n=>n.id===klas.naamId) || {};
+      const trainers = (l.trainerIds||[]).map(id=> (db.trainers||[]).find(t=>t.id===id)?.naam ).filter(Boolean).join(', ');
+      return `<li><strong>${l.datum}</strong> — ${naam.naam||''} — <span class="small">${trainers}</span></li>`;
+    }).join('');
+  }
+
+  function attachActions(){
+    document.getElementById('btn-more').addEventListener('click', ()=>{ STATE.cancelShown += 5; renderCancelled(); });
+    document.getElementById('btn-less').addEventListener('click', ()=>{ STATE.cancelShown = Math.max(5, STATE.cancelShown-5); renderCancelled(); });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    renderKPIs();
+    renderUpcoming();
+    renderCancelled();
+    attachActions();
+  });
 </script>
 </body>
 </html>

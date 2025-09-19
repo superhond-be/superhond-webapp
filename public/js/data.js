@@ -1,5 +1,4 @@
 
-// Stable DB loader that migrates older keys into a single v0175 key
 const KEY='SH_DB_V0175';
 const CANDIDATE_KEYS=[KEY,'SH_DB_V0173','SH_DB_V0172','SH_DB_V0168','SH_DB_V0167','SH_DB_V0166'];
 const SEED = {
@@ -20,7 +19,10 @@ const SEED = {
   lesdagen:[
     {id:'ld1',klasId:'kl1',datum:'2025-10-10',start:'10:00',einde:'11:00',locatieId:'loc1',trainerIds:['tr1'],status:'active'},
     {id:'ld2',klasId:'kl1',datum:'2025-10-17',start:'10:00',einde:'11:00',locatieId:'loc1',trainerIds:['tr1','tr2'],status:'active'},
-    {id:'ld3',klasId:'kl2',datum:'2025-09-25',start:'09:30',einde:'10:30',locatieId:'loc2',trainerIds:['tr2'],status:'archived'}
+    {id:'ld3',klasId:'kl2',datum:'2025-09-25',start:'09:30',einde:'10:30',locatieId:'loc2',trainerIds:['tr2'],status:'archived'},
+    {id:'ld4',klasId:'kl2',datum:'2025-10-05',start:'11:00',einde:'12:00',locatieId:'loc2',trainerIds:['tr2'],status:'cancelled'},
+    {id:'ld5',klasId:'kl3',datum:'2025-10-12',start:'18:00',einde:'19:30',locatieId:'loc3',trainerIds:['tr2','tr3'],status:'cancelled'},
+    {id:'ld6',klasId:'kl3',datum:'2025-11-02',start:'18:00',einde:'19:30',locatieId:'loc3',trainerIds:['tr3'],status:'active'}
   ]
 };
 function _tryLoad(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
