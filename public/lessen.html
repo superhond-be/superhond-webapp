@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="nl">
-<head><meta charset="UTF-8"><title>Klassen & lessen • v0.17.2</title>
-<link rel="stylesheet" href="css/app.css"><script defer src="js/lessen.js"></script></head>
+<head><meta charset="UTF-8"><title>Klassen & lessen • Demo v0.17.2</title>
+<link rel="stylesheet" href="css/app.css"><script defer src="js/seed.js"></script><script defer src="js/lessen.js"></script></head>
 <body>
 <header class="sh"><a href="index.html">⬅ Dashboard</a><span class="version">v0.17.2</span></header>
 <div class="container">
@@ -26,14 +26,10 @@
   </table>
 </div>
 
-<!-- Modal Klas + lessen -->
 <div class="modal" id="modalClass"><div class="card">
   <h3 id="classTitle">Nieuwe klas</h3>
   <div class="toolbar">
-    <input id="clsNaam" placeholder="Naam *">
-    <input id="clsType" placeholder="Type">
-    <input id="clsThemas" placeholder="Thema’s (komma‑gescheiden)">
-    <input id="clsCap" type="number" min="1" value="8" placeholder="Capaciteit">
+    <input id="clsNaam" placeholder="Naam *"><input id="clsType" placeholder="Type"><input id="clsThemas" placeholder="Thema’s"><input id="clsCap" type="number" min="1" value="8">
   </div>
   <h4>Lessen</h4>
   <table class="subtable" id="lessTbl"><thead><tr><th>Datum</th><th>Tijd</th><th>Locatie</th><th>Strippen</th><th>Acties</th></tr></thead><tbody></tbody></table>
@@ -41,18 +37,13 @@
   <div class="toolbar"><button id="btnCancelClass" class="btn">Annuleren</button><button id="btnSaveClass" class="btn btn-primary">Opslaan</button></div>
 </div></div>
 
-<!-- Modal Inschrijving -->
 <div class="modal" id="modalEnroll"><div class="card">
   <h3>Inschrijven (aanvraag)</h3>
-  <div class="toolbar">
-    <input id="enHond" disabled><input id="enKlant" disabled>
-    <select id="enClass"></select>
-  </div>
-  <div class="small">Aanvangsdatum = start van de **eerste les** (administratief, klant ziet dit niet). In <b>aanvraag</b> mag je lessen aanduiden; ze worden <span class="badge pending">in aanvraag</span> bewaard.</div>
+  <div class="toolbar"><input id="enHond" disabled><input id="enKlant" disabled><select id="enClass"></select></div>
+  <div class="small">Aanvang = start van de eerste les (administratief). In <b>aanvraag</b> mag je lessen aanduiden als <span class="badge pending">in aanvraag</span>.</div>
   <div class="toolbar"><button id="btnCancelEnroll" class="btn">Sluiten</button><button id="btnSaveEnroll" class="btn btn-primary">Opslaan</button></div>
 </div></div>
 
-<!-- Modal Les-reservaties -->
 <div class="modal" id="modalRes"><div class="card">
   <h3 id="resTitle">Lessen van klas</h3>
   <div id="resInfo" class="small"></div>

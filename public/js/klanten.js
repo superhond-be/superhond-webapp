@@ -1,12 +1,10 @@
 
-// Klanten v0.17.2 — klanten + honden (credits + geldigheid) + handoff
 const KEY='SH_CUSTOMERS', TMP='SH_SELECTED_DOG';
 const $=s=>document.querySelector(s);
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(_){return []}}
 function save(v){localStorage.setItem(KEY, JSON.stringify(v))}
 function uid(p='K'){return p+Math.random().toString(36).slice(2,10)}
 let all=load();
-
 document.addEventListener('DOMContentLoaded',()=>{
   render(all);
   $('#search').oninput=e=>{const q=e.target.value.toLowerCase(); render(all.filter(c=>JSON.stringify(c).toLowerCase().includes(q)));}
@@ -26,11 +24,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   };
 });
-
 function render(list){
   const tb=document.querySelector('#tbl tbody'); tb.innerHTML='';
   for(const c of list){
-    const honden=(c.honden||[]).map(h=>`<span class="tag">${h.naam||'🐶'} (${h.credits||0} / ${h.geldigheid||5}m) <button class="enroll" data-cid="${c.id}" data-hid="${h.id}">➕</button></span>`).join(' ');
+    const honden=(c.honden||[]).map(h=>`<span class="tag">${h.naam||'🐶'} (${h.credits||0}/${h.geldigheid||5}m) <button class="enroll" data-cid="${c.id}" data-hid="${h.id}">➕</button></span>`).join(' ');
     const tr=document.createElement('tr');
     tr.innerHTML=`<td>${c.voornaam||''} ${c.achternaam||''}</td><td>${c.email||''}</td><td>${c.telefoon||''}</td><td>${honden||'<em>Geen</em>'}</td>
       <td><button class="edit" data-id="${c.id}">✏️</button> <button class="del" data-id="${c.id}">🗑️</button></td>`;
@@ -38,17 +35,15 @@ function render(list){
   }
   document.getElementById('count').textContent=`${list.length} klanten`;
 }
-
 function openModal(c={id:uid('K'), honden:[]}){
   document.getElementById('modal').classList.add('active');
-  document.getElementById('modalTitle').textContent = all.find(x=>x.id===c.id)?'Klant bewerken':'Nieuwe klant';
+  document.getElementById('modalTitle').textContent = (all.find(x=>x.id===c.id)?'Klant bewerken':'Nieuwe klant');
   ['voornaam','achternaam','email','telefoon','adres','postcode','gemeente'].forEach(f=>document.getElementById(f).value=c[f]||'');
   document.getElementById('hondTbl').dataset.cid=c.id;
   renderHonden(c.honden||[]);
   document.getElementById('btnSave').dataset.id=c.id;
 }
 function closeModal(){ document.getElementById('modal').classList.remove('active'); }
-
 function renderHonden(list){
   const tb=document.querySelector('#hondTbl tbody'); tb.innerHTML='';
   for(const h of list){
@@ -83,11 +78,7 @@ function collectHonden(){
 }
 function saveModal(){
   const id=document.getElementById('btnSave').dataset.id;
-  const c={ id,
-    voornaam:voornaam.value, achternaam:achternaam.value, email:email.value, telefoon:telefoon.value,
-    adres:adres.value, postcode:postcode.value, gemeente:gemeente.value,
-    honden:collectHonden()
-  };
+  const c={ id, voornaam:voornaam.value, achternaam:achternaam.value, email:email.value, telefoon:telefoon.value, adres:adres.value, postcode:postcode.value, gemeente:gemeente.value, honden:collectHonden() };
   const idx=all.findIndex(x=>x.id===id); if(idx>-1) all[idx]=c; else all.push(c);
   save(all); render(all); closeModal();
 }
