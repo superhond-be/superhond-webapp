@@ -1,42 +1,40 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superhond - Dashboard</title>
-  <link rel="stylesheet" href="/css/app.css?v=20250911">
-  <script src="/js/dashboard.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Superhond — Dashboard v0.17.4</title>
+<link rel="stylesheet" href="css/app.css?v=0174">
 </head>
 <body>
-  <header class="sh-header">
-    <div class="sh-wrap">
-      <h1>🐾 Superhond — Dashboard</h1>
-      <div class="sh-user">Ingelogd: <strong>admin</strong> <a class="btn" href="/logout">Logout</a></div>
+<header class="sh-header">
+  <div>🐾 Superhond — Dashboard <strong>v0.17.4</strong></div>
+  <nav class="tabs">
+    <a href="index.html">Lessen</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+  </nav>
+</header>
+<main class="container">
+  <h2>Dashboard — in opbouw</h2>
+  <div class="dashboard-grid">
+    <div class="dash-card">
+      <h3>Actieve lessen</h3>
+      <p><strong>12</strong></p>
     </div>
-  </header>
-
-  <main class="sh-main sh-wrap">
-    <section class="card">
-      <div class="cal-header">
-        <button class="btn btn-nav" data-cal="prev" aria-label="Vorige maand">◀</button>
-        <h2 id="cal-title" class="cal-title">Kalender</h2>
-        <button class="btn btn-nav" data-cal="next" aria-label="Volgende maand">▶</button>
-      </div>
-      <div class="cal-weekdays" aria-hidden="true">
-        <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
-      </div>
-      <div id="cal-grid" class="cal-grid" role="grid" aria-labelledby="cal-title"></div>
-
-      <div class="cal-legend">
-        <span class="dot dot-lesson"></span> Les
-        <span class="dot dot-full"></span> Vol
-        <span class="dot dot-today"></span> Vandaag
-      </div>
-    </section>
-  </main>
-
-  <footer class="sh-footer">
-    <div class="sh-wrap"><p>© Superhond</p></div>
-  </footer>
+    <div class="dash-card">
+      <h3>Deelnemers totaal</h3>
+      <p><strong>48</strong></p>
+    </div>
+    <div class="dash-card">
+      <h3>Laatste boekingen</h3>
+      <ul>
+        <li>Puppy Start — Sofie</li>
+        <li>Basisgroep — Paul</li>
+        <li>Pubergroep — Nancy</li>
+      </ul>
+    </div>
+  </div>
+</main>
 </body>
 </html>
