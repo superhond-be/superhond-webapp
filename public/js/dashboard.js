@@ -1,1 +1,1 @@
-document.addEventListener('DOMContentLoaded',()=>console.log('Dashboard v0.14.0'));
+document.addEventListener('DOMContentLoaded',()=>console.log('Dashboard v0.15.0'));

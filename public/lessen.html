@@ -1,5 +1,82 @@
-<!DOCTYPE html><html lang='nl'><head><meta charset='UTF-8'><title>Lessenbeheer</title>
-<link rel='stylesheet' href='css/app.css'></head><body>
-<header class='sh-header'><a href='index.html'>⬅ Dashboard</a><span class='version'>v0.14.0</span></header>
-<div class='container'><h2>Lessenbeheer</h2><p>Wordt uitgewerkt…</p></div>
-</body></html>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Lessenbeheer • Superhond v0.15.0</title>
+  <link rel="stylesheet" href="css/app.css">
+  <script defer src="js/lessen.js"></script>
+</head>
+<body>
+<header class="sh-header">
+  <a href="index.html">⬅ Dashboard</a>
+  <span class="version">v0.15.0</span>
+</header>
+<div class="container">
+  <h2>📚 Lessenbeheer</h2>
+  <div class="toolbar">
+    <button id="btnAddClass" class="btn-primary">+ Nieuwe les/klas</button>
+    <select id="filterClass"><option value="">Filter: alle klassen</option></select>
+    <input id="filterText" type="text" placeholder="Zoek hond/eigenaar…">
+    <button id="btnExportEnroll">⬇️ Export inschrijvingen CSV</button>
+  </div>
+  <h3>Klassen</h3>
+  <table class="table" id="tblClasses">
+    <thead><tr><th>Naam</th><th>Type</th><th>Start</th><th>Capacity</th><th>Acties</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <hr>
+  <h3>Inschrijvingen</h3>
+  <table class="table" id="tblEnroll">
+    <thead><tr><th>Hond</th><th>Eigenaar</th><th>Klas</th><th>Aanvangsdatum</th><th>Status</th><th>Acties</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Modal Class -->
+<div class="modal" id="modalClass">
+  <div class="card">
+    <h3 id="classTitle">Nieuwe klas</h3>
+    <div class="grid">
+      <div><label>Naam *</label><input id="clsNaam"></div>
+      <div><label>Type</label><input id="clsType" placeholder="Puppypack, Basisgroep…"></div>
+      <div><label>Startdatum (optioneel)</label><input id="clsStart" type="date"></div>
+      <div><label>Capaciteit</label><input id="clsCap" type="number" min="1" value="8"></div>
+    </div>
+    <div class="footerbar">
+      <div class="small"></div>
+      <div>
+        <button id="btnCancelClass">Annuleren</button>
+        <button id="btnSaveClass" class="btn-primary">Opslaan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Enroll -->
+<div class="modal" id="modalEnroll">
+  <div class="card">
+    <h3 id="enrollTitle">Inschrijven</h3>
+    <div class="grid">
+      <div><label>Hond</label><input id="enHond" disabled></div>
+      <div><label>Eigenaar</label><input id="enKlant" disabled></div>
+      <div><label>Kies klas *</label><select id="enClass"></select></div>
+      <div><label>Aanvangsdatum *</label><input id="enStart" type="date"></div>
+      <div><label>Status</label>
+        <select id="enStatus">
+          <option value="ingeschreven">ingeschreven</option>
+          <option value="wachtlijst">wachtlijst</option>
+          <option value="geannuleerd">geannuleerd</option>
+        </select>
+      </div>
+    </div>
+    <div class="footerbar">
+      <div class="small" id="enInfo"></div>
+      <div>
+        <button id="btnCancelEnroll">Annuleren</button>
+        <button id="btnSaveEnroll" class="btn-primary">Opslaan</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
