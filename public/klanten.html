@@ -1,7 +1,22 @@
 <!DOCTYPE html><html lang="nl">
-<head><meta charset="UTF-8"><title>Klanten • v0.17.8</title>
-<link rel="stylesheet" href="css/app.css"><script defer src="js/seed.js"></script></head>
+<head><meta charset="UTF-8"><title>Klanten</title>
+<link rel="stylesheet" href="css/app.css"><script defer src="js/seed.js"></script><script defer src="js/klanten.js"></script></head>
 <body>
-<header class="sh"><a href="index.html">⬅ Dashboard</a><span class="version">v0.17.8</span></header>
-<div class="container"><h2>Klanten</h2><p>Demo-pagina (Klanten).</p></div>
+<header class="sh"><a href="index.html">⬅ Dashboard</a><span class="version">v0.17.9-base</span></header>
+<div class="container">
+  <h2>👤 Klanten</h2>
+  <button id="btnAdd" class="btn btn-primary">+ Nieuwe klant</button>
+  <table class="table" id="tbl"><thead><tr><th>Naam</th><th>Honden</th><th>Acties</th></tr></thead><tbody></tbody></table>
+</div>
+<div class="modal" id="modal" style="display:none">
+  <div class="container card">
+    <h3 id="modalTitle">Nieuwe klant</h3>
+    <input id="voornaam" placeholder="Voornaam"><input id="achternaam" placeholder="Achternaam">
+    <h4>🐶 Honden</h4>
+    <table class="table" id="hondTbl"><thead><tr><th>Naam</th><th>Ras</th><th>Credits</th><th>Geldigheid</th></tr></thead><tbody></tbody></table>
+    <button id="btnAddHond" class="btn">+ Hond</button>
+    <button id="btnSave" class="btn btn-primary">Opslaan</button>
+    <button id="btnCancel" class="btn">Sluiten</button>
+  </div>
+</div>
 </body></html>
