@@ -1,28 +1,87 @@
 
-<!doctype html><html lang="nl"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Superhond v0.17.2 redo</title>
-<link rel="stylesheet" href="css/app.css">
-</head><body>
-<header class="sh-header">🐾 Superhond — Lessenmodule v0.17.2 (redo)</header>
-<main class="container">
-<section class="section"><div class="grid">
-<div>
-<form class="kv" id="form-reeks">
-<label>Klas</label><select name="klasId"></select>
-<label>Van</label><input type="date" name="from"><span class="weekday-chip" id="chip-from">--</span>
-<label>Tot</label><input type="date" name="to"><span class="weekday-chip" id="chip-to">--</span>
-<label>Begintijd</label><input type="time" name="start">
-<label>Locatie</label><select name="locatieId"></select>
-<label>Trainers</label><select name="trainerIds" multiple></select>
-<button class="btn ok">Toevoegen</button>
-</form>
-</div>
-<div>
-<h3>Lessen</h3><p>Totaal: <span id="count-lessen">0</span></p>
-<table class="table"><thead><tr><th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th></tr></thead>
-<tbody id="tbl"></tbody></table>
-</div>
-</div></section></main>
-<script src="js/data.js"></script><script src="js/utils.js"></script><script src="js/app.js"></script>
-</body></html>
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Superhond — v0.17.3 Planner + Counters + Archief</title>
+  <link rel="stylesheet" href="css/app.css?v=0173">
+</head>
+<body>
+  <header class="sh-header">
+    <div>🐾 Superhond — Lessenmodule <strong>v0.17.3</strong></div>
+    <div class="pills">
+      <span class="pill blue">Toekomstig: <span id="cnt-future">0</span></span>
+      <span class="pill">Archief: <span id="cnt-arch">0</span></span>
+      <span class="pill">Totaal: <span id="cnt-total">0</span></span>
+      <button class="btn muted" id="btn-toggle-archief" onclick="document.getElementById('archief-wrap').classList.toggle('hidden')">Toon/Verberg archief</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <div class="grid">
+        <!-- Planner links -->
+        <div class="card">
+          <h3>Reeks plannen</h3>
+          <form id="form-reeks" class="kv">
+            <label>Klas</label>
+            <div>
+              <select name="klasId" required></select>
+              <div class="small">Thema: <strong id="hint-thema">—</strong></div>
+            </div>
+            <label>Van</label>
+            <div>
+              <input type="date" name="from" required>
+              <span class="weekday-chip" id="chip-from">--</span>
+            </div>
+            <label>Tot</label>
+            <div>
+              <input type="date" name="to" required>
+              <span class="weekday-chip" id="chip-to">--</span>
+              <div id="series-note" class="total-note"></div>
+            </div>
+            <label>Begintijd</label><input type="time" name="start" required>
+            <label>Locatie</label><select name="locatieId" required></select>
+            <label>Trainers</label><select name="trainerIds" multiple required></select>
+            <div></div><div class="actions"><button class="btn ok" type="submit">➕ Toevoegen</button></div>
+          </form>
+        </div>
+
+        <!-- Tabel rechts -->
+        <div class="card">
+          <h3>Lessen — Overzicht & bewerken</h3>
+          <div class="small">Totaal zichtbaar: <strong id="count-lessen">0</strong></div>
+          <div class="hr"></div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr>
+                <th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th><th>Acties</th>
+              </tr></thead>
+              <tbody id="tbl-lesdagen"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archief uitklapper -->
+      <div id="archief-wrap" class="archief hidden">
+        <div class="card">
+          <h3>Archief (verlopen lessen) — <span id="count-archief">0</span></h3>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Status</th><th>Klas</th><th>Datum</th><th>Start</th><th>Einde</th><th>Locatie</th><th>Trainers</th></tr></thead>
+              <tbody id="tbl-archief"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
