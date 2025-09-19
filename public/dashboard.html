@@ -4,37 +4,76 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Superhond — Dashboard v0.17.4</title>
-<link rel="stylesheet" href="css/app.css?v=0174">
+<title>Superhond — Dashboard v0.17.5</title>
+<link rel="stylesheet" href="css/app.css?v=0175">
 </head>
 <body>
 <header class="sh-header">
-  <div>🐾 Superhond — Dashboard <strong>v0.17.4</strong></div>
+  <div>🐾 Superhond — Dashboard <strong>v0.17.5</strong></div>
   <nav class="tabs">
     <a href="index.html">Lessen</a>
     <a href="dashboard.html" class="active">Dashboard</a>
   </nav>
 </header>
 <main class="container">
-  <h2>Dashboard — in opbouw</h2>
-  <div class="dashboard-grid">
-    <div class="dash-card">
-      <h3>Actieve lessen</h3>
-      <p><strong>12</strong></p>
+  <section class="section">
+    <h2>Overzicht</h2>
+    <div class="dashboard-grid">
+      <div class="dash-card">
+        <h3>Actieve lessen</h3>
+        <div class="kpi" id="kpi-active">—</div>
+        <div class="small">Niet-gearchiveerd</div>
+      </div>
+      <div class="dash-card">
+        <h3>Archief lessen</h3>
+        <div class="kpi" id="kpi-archived">—</div>
+        <div class="small">Automatisch gearchiveerd</div>
+      </div>
+      <div class="dash-card">
+        <h3>Totaal lessen</h3>
+        <div class="kpi" id="kpi-total">—</div>
+        <div class="small">Actief + Archief</div>
+      </div>
     </div>
-    <div class="dash-card">
-      <h3>Deelnemers totaal</h3>
-      <p><strong>48</strong></p>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Volgende lessen</h3>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead><tr><th>Datum</th><th>Start</th><th>Klas</th><th>Locatie</th><th>Trainers</th><th>Status</th></tr></thead>
+          <tbody id="tbl-upcoming"></tbody>
+        </table>
+      </div>
+      <p class="small">Toont de eerstvolgende 5 lessen (op basis van je echte data).</p>
     </div>
-    <div class="dash-card">
-      <h3>Laatste boekingen</h3>
-      <ul>
-        <li>Puppy Start — Sofie</li>
-        <li>Basisgroep — Paul</li>
-        <li>Pubergroep — Nancy</li>
-      </ul>
-    </div>
-  </div>
+  </section>
 </main>
+
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script>
+  function renderKPIs(){
+    // auto-archive first so counts are consistent
+    autosArchivePast();
+    const {active,archived,total} = getCounts();
+    document.getElementById('kpi-active').textContent = active;
+    document.getElementById('kpi-archived').textContent = archived;
+    document.getElementById('kpi-total').textContent = total;
+  }
+  function renderUpcoming(){
+    const db = loadDB();
+    const up = getUpcoming(5);
+    const tbody=document.getElementById('tbl-upcoming');
+    tbody.innerHTML = up.map(l=>{
+      const klas = (db.klassen||[]).find(k=>k.id===l.klasId) || {};
+      const naam = (db.namen||[]).find(n=>n.id===klas.naamId) || {};
+      const loc = (db.locaties||[]).find(x=>x.id===l.locatieId) || {};
+      const trainers = (l.trainerIds||[]).map(id=> (db.trainers||[]).find(t=>t.id===id)?.naam ).filter(Boolean).join(', ');
+      const status = l.status==='cancelled'?'Geannuleerd':'Actief';
+      return `<tr><td>${l.datum}</td><td>${l.start}</td><td>${naam.naam||''}</td><td>${loc.naam||''}</td><td>${trainers}</td><td><span class="status ${l.status}">${status}</span></td></tr>`;
+    }).join('');
+  }
+  document.addEventListener('DOMContentLoaded', ()=>{ renderKPIs(); renderUpcoming(); });
+</script>
 </body>
 </html>
