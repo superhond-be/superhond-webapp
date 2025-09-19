@@ -2,19 +2,19 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Klanten • Superhond v0.15.0</title>
+  <title>Klanten • Superhond v0.16.0</title>
   <link rel="stylesheet" href="css/app.css">
   <script defer src="js/klanten.js"></script>
 </head>
 <body>
 <header class="sh-header">
   <a href="index.html">⬅ Dashboard</a>
-  <span class="version">v0.15.0</span>
+  <span class="version">v0.16.0</span>
 </header>
 <div class="container">
   <h2>👤 Klanten</h2>
   <div class="toolbar">
-    <input id="search" type="text" placeholder="Zoeken op naam, e‑mail, telefoon, hond…">
+    <input id="search" type="text" placeholder="Zoeken op naam, e‑mail, hond…">
     <button id="btnAdd" class="btn-primary">+ Nieuwe klant</button>
     <button id="btnExport">⬇️ Export CSV</button>
     <label class="btn">
@@ -26,11 +26,7 @@
   <table class="table" id="tbl">
     <thead>
       <tr>
-        <th>Naam</th>
-        <th>E‑mail</th>
-        <th>Telefoon</th>
-        <th>Honden</th>
-        <th>Acties</th>
+        <th>Naam</th><th>E‑mail</th><th>Telefoon</th><th>Honden</th><th>Acties</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -51,9 +47,9 @@
       <div><label>Gemeente</label><input id="gemeente"></div>
     </div>
     <hr>
-    <h4>🐶 Honden</h4>
+    <h4>🐶 Honden (met credits)</h4>
     <table class="subtable" id="hondTbl">
-      <thead><tr><th>Naam</th><th>Ras</th><th>Geboortedatum</th><th>Notities</th><th>Acties</th></tr></thead>
+      <thead><tr><th>Naam</th><th>Ras</th><th>Geboorte</th><th>Credits</th><th>Notities</th><th>Acties</th></tr></thead>
       <tbody></tbody>
     </table>
     <button id="btnAddHond" class="btn">+ Hond toevoegen</button>

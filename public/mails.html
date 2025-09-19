@@ -1,5 +1,27 @@
-<!DOCTYPE html><html lang='nl'><head><meta charset='UTF-8'><title>Mails</title>
-<link rel='stylesheet' href='css/app.css'></head><body>
-<header class='sh-header'><a href='index.html'>⬅ Dashboard</a><span class='version'>v0.15.0</span></header>
-<div class='container'><h2>Mails</h2><p>Wordt uitgewerkt…</p></div>
-</body></html>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mail-log • Superhond v0.16.0</title>
+  <link rel="stylesheet" href="css/app.css">
+  <script defer src="js/mails.js"></script>
+</head>
+<body>
+<header class="sh-header">
+  <a href="index.html">⬅ Dashboard</a>
+  <span class="version">v0.16.0</span>
+</header>
+<div class="container">
+  <h2>📧 Mail-log (simulatie)</h2>
+  <div class="toolbar">
+    <select id="filterType"><option value="">Alle types</option><option value="inschrijving">inschrijving</option><option value="status-wijziging">status-wijziging</option></select>
+    <input id="filterText" type="text" placeholder="Zoek op hond, eigenaar, klas…">
+    <button id="btnClear">Log leegmaken</button>
+  </div>
+  <table class="table" id="tbl">
+    <thead><tr><th>Tijdstip</th><th>Type</th><th>Hond</th><th>Eigenaar</th><th>Klas</th><th>Details</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+</body>
+</html>
