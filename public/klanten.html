@@ -2,19 +2,19 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Klanten • Superhond v0.13.1</title>
+  <title>Klanten • Superhond v0.14.0</title>
   <link rel="stylesheet" href="css/app.css">
   <script defer src="js/klanten.js"></script>
 </head>
 <body>
 <header class="sh-header">
   <a href="index.html">⬅ Dashboard</a>
-  <span class="version">v0.13.1</span>
+  <span class="version">v0.14.0</span>
 </header>
 <div class="container">
   <h2>👤 Klanten</h2>
   <div class="toolbar">
-    <input id="search" type="text" placeholder="Zoeken op naam, e‑mail, telefoon…">
+    <input id="search" type="text" placeholder="Zoeken op naam, e‑mail, telefoon, hond…">
     <button id="btnAdd" class="btn-primary">+ Nieuwe klant</button>
     <button id="btnExport">⬇️ Export CSV</button>
     <label class="btn">
@@ -29,19 +29,12 @@
         <th>Naam</th>
         <th>E‑mail</th>
         <th>Telefoon</th>
-        <th>Locatie</th>
+        <th>Honden</th>
         <th>Acties</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
-  <div class="footerbar">
-    <span class="small">Datastore: localStorage • Sleutel: SH_CUSTOMERS</span>
-    <div>
-      <button id="btnSeed" class="small">Demo-data laden</button>
-      <button id="btnClear" class="small">Alle klanten wissen</button>
-    </div>
-  </div>
 </div>
 
 <!-- Modal -->
@@ -49,15 +42,22 @@
   <div class="card">
     <h3 id="modalTitle">Nieuwe klant</h3>
     <div class="grid">
-      <div><label>Voornaam</label><input id="voornaam" required></div>
-      <div><label>Achternaam</label><input id="achternaam" required></div>
+      <div><label>Voornaam *</label><input id="voornaam"></div>
+      <div><label>Achternaam *</label><input id="achternaam"></div>
       <div><label>E‑mail</label><input id="email" type="email"></div>
       <div><label>Telefoon</label><input id="telefoon"></div>
       <div><label>Adres</label><input id="adres"></div>
       <div><label>Postcode</label><input id="postcode"></div>
       <div><label>Gemeente</label><input id="gemeente"></div>
-      <div style="grid-column:1/-1"><label>Notities</label><textarea id="notes" rows="3"></textarea></div>
     </div>
+    <hr>
+    <h4>🐶 Honden</h4>
+    <table class="subtable" id="hondTbl">
+      <thead><tr><th>Naam</th><th>Ras</th><th>Geboortedatum</th><th>Notities</th><th>Acties</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="btnAddHond" class="btn">+ Hond toevoegen</button>
+    <hr>
     <div class="footerbar">
       <div class="small" id="meta"></div>
       <div>
