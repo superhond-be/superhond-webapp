@@ -1,118 +1,58 @@
 
-// Lessenbeheer (client-side demo, no backend)
-const state = {
-  trainers: [
-    { id: 't1', name: 'Leen' },
-    { id: 't2', name: 'Bart' },
-    { id: 't3', name: 'Sofie' },
-    { id: 't4', name: 'Jan' }
-  ],
-  lessons: [
-    { id: 'L001', name: 'Puppy Pack — Instap', location: 'Retie', date: '2025-09-17', start: '18:30', end: '19:30', trainers: ['t1','t3'] },
-    { id: 'L002', name: 'Basisgroep — Week 2', location: 'Mol',   date: '2025-09-18', start: '19:00', end: '20:00', trainers: ['t2'] },
-    { id: 'L003', name: 'Pubergroep — Social Walk', location: 'Dessel', date: '2025-09-19', start: '10:00', end: '11:00', trainers: ['t1','t2','t4'] }
-  ]
-};
+function renderLessons(){
+  const db=loadDB();
+  const rows=(db.lesdagen||[]).filter(l=>l.status!=='archived'); // alleen toekomstig/actief/geannuleerd zichtbaar hier
+  const tb=document.getElementById('tbl-lessen');
+  tb.innerHTML = rows.map(l=>{
+    const klas=byId(db.klassen,l.klasId), naam=nameOf(db.namen,klas.naamId);
+    const cap=klas.capaciteit||0; const cnt=(l.participants||[]).length;
+    const trainers=formatNames(l.trainerIds, db.trainers);
+    const loc=nameOf(db.locaties,l.locatieId);
+    const status = l.status==='cancelled' ? 'Geannuleerd' : 'Actief';
+    return `<tr data-id="${l.id}">
+      <td><span class="status ${l.status}">${status}</span></td>
+      <td>${l.datum}</td>
+      <td>${l.start}</td>
+      <td>${naam}</td>
+      <td>${loc}</td>
+      <td><span class="participant-names">${cnt}/${cap}</span> <button class="btn muted act-part">👥 Beheer</button></td>
+      <td class="small">${trainers}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cnt-lessen').textContent = rows.length;
+}
 
-const el = sel => document.querySelector(sel);
-const els = sel => Array.from(document.querySelectorAll(sel));
+function openParticipantsModal(lessonId){
+  const db=loadDB();
+  const l=db.lesdagen.find(x=>x.id===lessonId);
+  const klas=byId(db.klassen,l.klasId), cap=klas.capaciteit||0;
+  const sel = (db.klanten||[]).map(k=>`<option value="${k.id}" ${l.participants?.includes(k.id)?'selected':''}>${k.naam} — ${k.email||''}</option>`).join('');
+  document.getElementById('pm-title').textContent = `Deelnemers (${(l.participants||[]).length}/${cap}) — ${l.datum} ${l.start}`;
+  document.getElementById('pm-select').innerHTML = sel;
+  document.getElementById('pm').dataset.lessonId = lessonId;
+  document.getElementById('pm').style.display='flex';
+}
 
-function trainerName(id){ return state.trainers.find(t=>t.id===id)?.name ?? id; }
+function closeParticipantsModal(){ const m=document.getElementById('pm'); m.style.display='none'; m.dataset.lessonId=''; }
 
-function renderTable(){
-  const tbody = el('#lessonRows');
-  tbody.innerHTML = '';
-  state.lessons.forEach(lesson => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${lesson.name}</td>
-      <td>${lesson.location}</td>
-      <td>${lesson.date} ${lesson.start}–${lesson.end}</td>
-      <td>${lesson.trainers.map(id => `<span class="tag">${trainerName(id)}</span>`).join(' ')}</td>
-      <td class="actions">
-        <button class="btn btn-small" data-edit="${lesson.id}">Bewerken</button>
-        <button class="btn btn-small" data-del="${lesson.id}">Verwijderen</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
+function attachLessonsHandlers(){
+  document.getElementById('tbl-lessen').addEventListener('click',(e)=>{
+    const tr=e.target.closest('tr'); if(!tr) return;
+    const id=tr.dataset.id;
+    if(e.target.closest('.act-part')){ openParticipantsModal(id); }
   });
-
-  // wire buttons
-  tbody.querySelectorAll('button[data-edit]').forEach(b=> b.addEventListener('click', onEdit));
-  tbody.querySelectorAll('button[data-del]').forEach(b=> b.addEventListener('click', onDel));
-}
-
-function onDel(e){
-  const id = e.currentTarget.getAttribute('data-del');
-  const l = state.lessons.find(x=>x.id===id);
-  if (!l) return;
-  if (confirm(`Les '${l.name}' verwijderen?`)){
-    state.lessons = state.lessons.filter(x=>x.id!==id);
-    renderTable();
-  }
-}
-
-function onEdit(e){
-  const id = e.currentTarget.getAttribute('data-edit');
-  const data = state.lessons.find(x=>x.id===id);
-  openModal(data);
-}
-
-function onNew(){
-  openModal();
-}
-
-function openModal(data){
-  const modal = el('#lessonModal');
-  modal.setAttribute('open','');
-  el('#m-id').value = data?.id ?? '';
-  el('#m-name').value = data?.name ?? '';
-  el('#m-location').value = data?.location ?? '';
-  el('#m-date').value = data?.date ?? '';
-  el('#m-start').value = data?.start ?? '';
-  el('#m-end').value = data?.end ?? '';
-  // trainers multiselect
-  const container = el('#m-trainers');
-  container.innerHTML = '';
-  state.trainers.forEach(t => {
-    const id = `chk_${t.id}`;
-    const wrap = document.createElement('label');
-    wrap.style.display = 'inline-flex';
-    wrap.style.alignItems = 'center';
-    wrap.style.gap = '6px';
-    wrap.style.margin = '4px 12px 4px 0';
-    wrap.innerHTML = `<input type="checkbox" id="${id}" value="${t.id}"> ${t.name}`;
-    container.appendChild(wrap);
-  });
-  const chosen = new Set(data?.trainers ?? []);
-  container.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = chosen.has(c.value));
-
-  el('#btnCancel').onclick = ()=> modal.removeAttribute('open');
-  el('#lessonForm').onsubmit = (evt)=>{
-    evt.preventDefault();
-    const formData = {
-      id: el('#m-id').value.trim() || ('L' + Math.random().toString(36).slice(2,6).toUpperCase()),
-      name: el('#m-name').value.trim(),
-      location: el('#m-location').value.trim(),
-      date: el('#m-date').value,
-      start: el('#m-start').value,
-      end: el('#m-end').value,
-      trainers: Array.from(container.querySelectorAll('input:checked')).map(c=>c.value)
-    };
-    if (!formData.name){ alert('Geef een lesnaam in.'); return; }
-    const existingIdx = state.lessons.findIndex(x=>x.id===formData.id);
-    if (existingIdx >= 0){
-      state.lessons[existingIdx] = formData;
-    } else {
-      state.lessons.push(formData);
+  document.getElementById('pm-cancel').addEventListener('click', closeParticipantsModal);
+  document.getElementById('pm-save').addEventListener('click', ()=>{
+    const m=document.getElementById('pm'); const id=m.dataset.lessonId; const db=loadDB();
+    const l=db.lesdagen.find(x=>x.id===id); const klas=byId(db.klassen,l.klasId), cap=klas.capaciteit||0;
+    const selected = Array.from(document.getElementById('pm-select').selectedOptions).map(o=>o.value);
+    if(selected.length > cap){
+      alert(`Capaciteit overschreden: max ${cap} deelnemers.`);
+      return;
     }
-    modal.removeAttribute('open');
-    renderTable();
-  };
+    l.participants = selected;
+    saveDB(db); closeParticipantsModal(); renderLessons();
+  });
 }
 
-function init(){
-  renderTable();
-  el('#btnNew').addEventListener('click', onNew);
-}
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', ()=>{ renderLessons(); attachLessonsHandlers(); });
