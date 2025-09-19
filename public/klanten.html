@@ -1,67 +1,32 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Klanten • Superhond v0.16.0</title>
-  <link rel="stylesheet" href="css/app.css">
-  <script defer src="js/klanten.js"></script>
-</head>
+<!DOCTYPE html><html lang="nl">
+<head><meta charset="UTF-8"><title>Klanten • v0.17.2</title>
+<link rel="stylesheet" href="css/app.css"><script defer src="js/klanten.js"></script></head>
 <body>
-<header class="sh-header">
-  <a href="index.html">⬅ Dashboard</a>
-  <span class="version">v0.16.0</span>
-</header>
+<header class="sh"><a href="index.html">⬅ Dashboard</a><span class="version">v0.17.2</span></header>
 <div class="container">
   <h2>👤 Klanten</h2>
   <div class="toolbar">
-    <input id="search" type="text" placeholder="Zoeken op naam, e‑mail, hond…">
-    <button id="btnAdd" class="btn-primary">+ Nieuwe klant</button>
-    <button id="btnExport">⬇️ Export CSV</button>
-    <label class="btn">
-      ⬆️ Import CSV
-      <input id="csvInput" type="file" accept=".csv" style="display:none">
-    </label>
+    <input id="search" placeholder="Zoeken op naam, e‑mail, hond…">
+    <button id="btnAdd" class="btn btn-primary">+ Nieuwe klant</button>
+    <button id="btnExport" class="btn">⬇️ Export CSV</button>
+    <label class="btn">⬆️ Import CSV <input id="csvInput" type="file" accept=".csv" style="display:none"></label>
     <span id="count" class="badge">0 klanten</span>
   </div>
-  <table class="table" id="tbl">
-    <thead>
-      <tr>
-        <th>Naam</th><th>E‑mail</th><th>Telefoon</th><th>Honden</th><th>Acties</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <table class="table" id="tbl"><thead><tr>
+    <th>Naam</th><th>E‑mail</th><th>Telefoon</th><th>Honden</th><th>Acties</th>
+  </tr></thead><tbody></tbody></table>
 </div>
 
-<!-- Modal -->
-<div class="modal" id="modal">
-  <div class="card">
-    <h3 id="modalTitle">Nieuwe klant</h3>
-    <div class="grid">
-      <div><label>Voornaam *</label><input id="voornaam"></div>
-      <div><label>Achternaam *</label><input id="achternaam"></div>
-      <div><label>E‑mail</label><input id="email" type="email"></div>
-      <div><label>Telefoon</label><input id="telefoon"></div>
-      <div><label>Adres</label><input id="adres"></div>
-      <div><label>Postcode</label><input id="postcode"></div>
-      <div><label>Gemeente</label><input id="gemeente"></div>
-    </div>
-    <hr>
-    <h4>🐶 Honden (met credits)</h4>
-    <table class="subtable" id="hondTbl">
-      <thead><tr><th>Naam</th><th>Ras</th><th>Geboorte</th><th>Credits</th><th>Notities</th><th>Acties</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <button id="btnAddHond" class="btn">+ Hond toevoegen</button>
-    <hr>
-    <div class="footerbar">
-      <div class="small" id="meta"></div>
-      <div>
-        <button id="btnCancel">Annuleren</button>
-        <button id="btnSave" class="btn-primary">Opslaan</button>
-      </div>
-    </div>
-  </div>
-</div>
-</body>
-</html>
+<div class="modal" id="modal"><div class="card">
+  <h3 id="modalTitle">Nieuwe klant</h3>
+  <div class="toolbar"><input id="voornaam" placeholder="Voornaam *"><input id="achternaam" placeholder="Achternaam *"></div>
+  <div class="toolbar"><input id="email" type="email" placeholder="E‑mail"><input id="telefoon" placeholder="Telefoon"></div>
+  <div class="toolbar"><input id="adres" placeholder="Adres"><input id="postcode" placeholder="Postcode"><input id="gemeente" placeholder="Gemeente"></div>
+  <h4>🐶 Honden</h4>
+  <table class="subtable" id="hondTbl"><thead><tr>
+    <th>Naam</th><th>Ras</th><th>Geboortedatum</th><th>Credits</th><th>Geldigheid (mnd)</th><th>Notities</th><th>Acties</th>
+  </tr></thead><tbody></tbody></table>
+  <div class="toolbar"><button id="btnAddHond" class="btn">+ Hond toevoegen</button></div>
+  <div class="toolbar"><button id="btnCancel" class="btn">Annuleren</button><button id="btnSave" class="btn btn-primary">Opslaan</button></div>
+</div></div>
+</body></html>

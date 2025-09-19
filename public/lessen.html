@@ -1,44 +1,63 @@
-<!DOCTYPE html><html lang='nl'>
-<head><meta charset='UTF-8'><title>Lessenbeheer • v0.17.1</title><link rel='stylesheet' href='css/app.css'><script defer src='js/lessen.js'></script></head>
+<!DOCTYPE html><html lang="nl">
+<head><meta charset="UTF-8"><title>Klassen & lessen • v0.17.2</title>
+<link rel="stylesheet" href="css/app.css"><script defer src="js/lessen.js"></script></head>
 <body>
-<header class='sh'><a href='index.html'>⬅ Dashboard</a><span>v0.17.1</span></header>
-<div class='container'>
-  <h2>📚 Lessenbeheer</h2>
-  <div class='toolbar'>
-    <button id='btnAddClass' class='btn btn-primary'>+ Nieuwe klas</button>
-    <select id='filterClass'><option value=''>Filter: alle klassen</option></select>
-    <input id='filterText' placeholder='Zoek hond/eigenaar…'>
+<header class="sh"><a href="index.html">⬅ Dashboard</a><span class="version">v0.17.2</span></header>
+<div class="container">
+  <h2>📚 Klassen & lessen</h2>
+  <div class="toolbar">
+    <button id="btnAddClass" class="btn btn-primary">+ Nieuwe klas</button>
+    <select id="filterClass"><option value="">Filter: alle klassen</option></select>
+    <input id="filterText" placeholder="Zoek hond/eigenaar…">
+    <button id="btnExportEnroll" class="btn">⬇️ Export inschrijvingen CSV</button>
   </div>
+
   <h3>Klassen</h3>
-  <table class='table' id='tblClasses'><thead><tr><th>Naam</th><th>Start</th><th>Cap.</th><th>Sessies</th><th>Acties</th></tr></thead><tbody></tbody></table>
+  <table class="table" id="tblClasses">
+    <thead><tr><th>Naam</th><th>Type</th><th>Thema’s</th><th>Start</th><th>Cap.</th><th>Lessen</th><th>Acties</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
   <hr>
   <h3>Inschrijvingen</h3>
-  <table class='table' id='tblEnroll'><thead><tr><th>Hond</th><th>Eigenaar</th><th>Klas</th><th>Aanvang</th><th>Geldigheid</th><th>Fase</th><th>Acties</th></tr></thead><tbody></tbody></table>
+  <table class="table" id="tblEnroll">
+    <thead><tr><th>Hond</th><th>Eigenaar</th><th>Klas</th><th>Aanvang</th><th>Geldigheid</th><th>Fase</th><th>Acties</th></tr></thead>
+    <tbody></tbody>
+  </table>
 </div>
 
-<div class='modal' id='modalClass'><div class='card'>
-  <h3 id='classTitle'>Nieuwe klas</h3>
-  <div class='toolbar'><input id='clsNaam' placeholder='Naam *'><input id='clsStart' type='date'><input id='clsCap' type='number' min='1' value='8'><button id='btnAddSess' class='btn'>+ Sessie</button></div>
-  <table class='subtable' id='sessTbl'><thead><tr><th>Datum</th><th>Tijd</th><th>Locatie</th><th>Acties</th></tr></thead><tbody></tbody></table>
-  <div class='toolbar'><button id='btnCancelClass' class='btn'>Annuleren</button><button id='btnSaveClass' class='btn btn-primary'>Opslaan</button></div>
-</div></div>
-
-<div class='modal' id='modalEnroll'><div class='card'>
-  <h3>Inschrijven (aanvraag)</h3>
-  <div class='toolbar'>
-    <input id='enHond' disabled><input id='enKlant' disabled>
-    <select id='enClass'></select>
-    <input id='enStart' type='date'><input id='enValidMonths' type='number' min='1' value='5'>
+<!-- Modal Klas + lessen -->
+<div class="modal" id="modalClass"><div class="card">
+  <h3 id="classTitle">Nieuwe klas</h3>
+  <div class="toolbar">
+    <input id="clsNaam" placeholder="Naam *">
+    <input id="clsType" placeholder="Type">
+    <input id="clsThemas" placeholder="Thema’s (komma‑gescheiden)">
+    <input id="clsCap" type="number" min="1" value="8" placeholder="Capaciteit">
   </div>
-  <div class='small'>In <b>aanvraag</b> kan je sessies aanduiden. Ze worden <span class='badge pending'>in aanvraag</span> bewaard en <b>verbruiken geen credits</b> tot goedkeuring.</div>
-  <div class='toolbar'><button id='btnCancelEnroll' class='btn'>Sluiten</button><button id='btnSaveEnroll' class='btn btn-primary'>Opslaan</button></div>
+  <h4>Lessen</h4>
+  <table class="subtable" id="lessTbl"><thead><tr><th>Datum</th><th>Tijd</th><th>Locatie</th><th>Strippen</th><th>Acties</th></tr></thead><tbody></tbody></table>
+  <div class="toolbar"><button id="btnAddLess" class="btn">+ Les toevoegen</button></div>
+  <div class="toolbar"><button id="btnCancelClass" class="btn">Annuleren</button><button id="btnSaveClass" class="btn btn-primary">Opslaan</button></div>
 </div></div>
 
-<div class='modal' id='modalRes'><div class='card'>
-  <h3 id='resTitle'>Sessies</h3>
-  <div id='resInfo' class='small'></div>
-  <table class='subtable' id='resTbl'><thead><tr><th>Sessie</th><th>Status</th><th>Actie</th></tr></thead><tbody></tbody></table>
-  <div class='toolbar'><button id='btnCloseRes' class='btn'>Sluiten</button></div>
+<!-- Modal Inschrijving -->
+<div class="modal" id="modalEnroll"><div class="card">
+  <h3>Inschrijven (aanvraag)</h3>
+  <div class="toolbar">
+    <input id="enHond" disabled><input id="enKlant" disabled>
+    <select id="enClass"></select>
+  </div>
+  <div class="small">Aanvangsdatum = start van de **eerste les** (administratief, klant ziet dit niet). In <b>aanvraag</b> mag je lessen aanduiden; ze worden <span class="badge pending">in aanvraag</span> bewaard.</div>
+  <div class="toolbar"><button id="btnCancelEnroll" class="btn">Sluiten</button><button id="btnSaveEnroll" class="btn btn-primary">Opslaan</button></div>
+</div></div>
+
+<!-- Modal Les-reservaties -->
+<div class="modal" id="modalRes"><div class="card">
+  <h3 id="resTitle">Lessen van klas</h3>
+  <div id="resInfo" class="small"></div>
+  <table class="subtable" id="resTbl"><thead><tr><th>Les</th><th>Status</th><th>Actie</th></tr></thead><tbody></tbody></table>
+  <div class="toolbar"><button id="btnCloseRes" class="btn">Sluiten</button></div>
 </div></div>
 
 </body></html>

@@ -1,16 +1,25 @@
 
-:root{--y:#ffcc00;--b:#e0e0e0}
+:root{--y:#ffcc00;--y2:#fff1b3;--b:#e0e0e0}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#fafafa;color:#222}
-.sh{background:var(--y);padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
-.container{padding:20px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
-.toolbar input,.toolbar select{padding:10px;border:1px solid var(--b);border-radius:8px;min-width:200px}
+header.sh{background:var(--y);padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+header.sh a{text-decoration:none;color:#000;font-weight:600}
+.version{font-weight:700}
+.dashboard{display:flex;flex-wrap:wrap;gap:20px;padding:24px}
+.tile{background:#fff;border:2px solid var(--y);padding:20px;border-radius:12px;text-decoration:none;color:#111;font-size:18px;font-weight:700;min-width:220px;text-align:center;box-shadow:0 2px 0 #0001}
+.tile:hover{background:var(--y2)}
+.container{padding:20px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.toolbar input,.toolbar select{padding:10px;border:1px solid var(--b);border-radius:8px;min-width:220px}
 .btn{padding:10px 14px;border:1px solid #0002;background:#fff;border-radius:8px;font-weight:600;cursor:pointer}
 .btn-primary{background:var(--y)}
 .table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--b)}
-.table th,.table td{padding:10px;border-bottom:1px solid var(--b);text-align:left}
+.table th,.table td{padding:12px;border-bottom:1px solid var(--b);text-align:left}
+.table th{background:#fff9d9}
 .modal{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center}
 .modal.active{display:flex}.card{background:#fff;border-radius:12px;width:92%;max-width:1100px;padding:16px;border:1px solid var(--b)}
-.subtable{width:100%;border-collapse:collapse;margin-top:10px}.subtable th,.subtable td{border:1px solid var(--b);padding:6px;font-size:13px}
+.subtable{width:100%;border-collapse:collapse;margin-top:10px}
+.subtable th,.subtable td{border:1px solid var(--b);padding:6px;font-size:13px}
+.small{font-size:12px;color:#555}
 .badge{display:inline-block;padding:2px 8px;border:1px solid var(--b);border-radius:999px;font-size:12px}
 .badge.pending{background:#fff4cc}.badge.ok{background:#e8f5e9}.badge.err{background:#ffebee}
-.small{font-size:12px;color:#555}
+.tag{display:inline-block;padding:2px 8px;border:1px solid var(--b);border-radius:999px;font-size:12px;margin-right:6px}

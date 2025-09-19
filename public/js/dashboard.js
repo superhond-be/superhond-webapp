@@ -1,1 +1,1 @@
-document.addEventListener('DOMContentLoaded',()=>console.log('Dashboard v0.16.0'));
+document.addEventListener('DOMContentLoaded',()=>console.log('Superhond v0.17.2 all-in-one'))
