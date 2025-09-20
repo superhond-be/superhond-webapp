@@ -1,0 +1,25 @@
+Superhond Testplan — 21/09/2025
+
+1. Stable (v0.17.1 – Lessenoverzicht)
+[ ] Index opent correct
+[ ] Lessenlijst zichtbaar
+[ ] Filter op klas werkt
+[ ] Filter op trainer werkt
+[ ] Filter op maand werkt
+[ ] CSV-export werkt (inhoud + Maps-link)
+
+2. Beta (v0.18.2a – Klassen, Lesdetail, Rapporten)
+[ ] Dashboard opent + tegels werken
+[ ] Klassen & lessen overzicht zichtbaar
+[ ] Lesdetail opent (tr. / thema / prijs / Maps-link juist)
+[ ] 🟢🔵⚪ counters kloppen
+[ ] Rapporten-tab opent
+[ ] Filter op klas in rapporten werkt
+[ ] CSV-export aanwezigheden correct
+[ ] CSV-export annuleringen correct
+[ ] CSV-export credits correct (met datumstempel + Maps-link)
+
+3. Next (v0.18.3 – placeholder)
+[ ] Index opent
+[ ] Tekst zichtbaar ("Next version placeholder")
+[ ] Layout (gele header) klopt
