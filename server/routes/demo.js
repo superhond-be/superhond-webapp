@@ -1,0 +1,1 @@
+module.exports = (app) => { app.get('/api/demo', (req, res) => res.json({version: '0.18.4', status: 'ok'})); };

@@ -1,14 +1,1 @@
-{
-  "name": "superhond-lessen-standalone",
-  "version": "0.12.0",
-  "description": "Standalone Lessenbeheer module (los te testen)",
-  "type": "module",
-  "main": "server/index.js",
-  "scripts": {
-    "start": "node server/index.js"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
-  }
-}
+{ "name": "superhond-test-demo", "version": "0.18.4", "main": "server/index.js", "scripts": { "start": "node server/index.js" }, "dependencies": { "express": "^4.19.2" } }
