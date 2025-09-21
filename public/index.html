@@ -1,1 +1,40 @@
-<!DOCTYPE html><html><head><title>Superhond v0.18.4</title><link rel='stylesheet' href='css/styles.css'></head><body><h1>Superhond Test Demo v0.18.4</h1><script src='js/app.js'></script></body></html>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Superhond Test Demo v0.18.4</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">Superhond<span class="dot">.be</span> Admin Portaal</div>
+      <div class="version-badge">v0.18.4</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Dashboard</h1>
+
+    <div class="toolbar">
+      <button class="btn" onclick="SH.nav('pages/agenda.html')">📅 Agenda</button>
+      <div id="health" class="notice">API controleren…</div>
+    </div>
+
+    <section class="grid">
+      <a class="tile" href="pages/klanten.html"><div class="title">👤 Klanten</div><div class="meta">Zoeken, toevoegen, bewerken</div></a>
+      <a class="tile" href="pages/honden.html"><div class="title">🐾 Honden</div><div class="meta">Per klant, ras, leeftijd</div></a>
+      <a class="tile" href="pages/lessen.html"><div class="title">🎓 Lessen</div><div class="meta">Puppypack, Pubergroep, Basisgroep</div></a>
+      <a class="tile" href="pages/strippenkaarten.html"><div class="title">🎟️ Strippenkaarten</div><div class="meta">Saldo, gebruikt, in verwerking</div></a>
+      <a class="tile" href="pages/trainers.html"><div class="title">🧑‍🏫 Trainers</div><div class="meta">Beschikbaarheid & locaties</div></a>
+      <a class="tile" href="pages/instellingen.html"><div class="title">⚙️ Instellingen</div><div class="meta">Stijl, locaties, prijzen</div></a>
+      <a class="tile" href="pages/rapporten.html"><div class="title">📈 Rapporten</div><div class="meta">Overzicht & export (CSV/PDF)</div></a>
+      <a class="tile" href="pages/over.html"><div class="title">ℹ️ Over</div><div class="meta">Build en versie-informatie</div></a>
+    </section>
+  </div>
+
+  <footer>© 2025 Superhond — Test Demo v0.18.4</footer>
+  <script src="js/app.js"></script>
+</body>
+</html>
