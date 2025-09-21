@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="nl"><head>
-<meta charset="utf-8"><title>Hondenbeheer v0.18.4</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Honden — Superhond v0.18.4</title>
 <link rel="stylesheet" href="../css/styles.css">
-<script src="../js/app.js" defer></script>
 </head>
 <body>
 
@@ -10,11 +10,11 @@
 
 
 
-
+  
 <style>
 .module-chip {
   display:inline-flex;align-items:center;gap:6px;
-  background:#bfe2ff; color:#111; font-weight:800; font-size:.78rem;
+  background:#ffe490; color:#111; font-weight:800; font-size:.78rem;
   border-radius:999px; padding:6px 10px; margin-right:8px; white-space:nowrap;
 }
 @media (max-width:520px){
@@ -22,11 +22,17 @@
 }
 .module-chip svg{ width:14px; height:14px }
 </style>
-<header><div class="title">Superhond Honden</div><div class="version">v0.18.4</div>
+<header class="header">
+    <div class="header-inner">
+      <a class="btn" href="../index.html">⬅︎ Terug</a>
+      <div class="brand">Superhond<span class="dot">.be</span></div>
+      <div class="version-badge">v0.18.4</div>
+    </div>
+  
 <style>
 .module-chip {
   display:inline-flex;align-items:center;gap:6px;
-  background:#bfe2ff; color:#111; font-weight:800; font-size:.78rem;
+  background:#ffe490; color:#111; font-weight:800; font-size:.78rem;
   border-radius:999px; padding:6px 10px; margin-right:8px; white-space:nowrap;
 }
 @media (max-width:520px){
@@ -34,15 +40,12 @@
 }
 .module-chip svg{ width:14px; height:14px }
 </style>
-<span class="module-chip" aria-label="TESTMODULE B — KLANTEN & HONDEN">
+<span class="module-chip" aria-label="TESTMODULE A — DASHBOARD">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="2"/></svg>
-TESTMODULE B — KLANTEN & HONDEN</span></header>
-<div class="container">
-<h1>Hondenlijst</h1>
-<table class="table">
-<thead><tr><th>Naam</th><th>Ras</th><th>Leeftijd</th><th>Eigenaar</th><th>Acties</th></tr></thead>
-<tbody id="honden-body"></tbody>
-</table>
-<div class="notice">Elke hond is gekoppeld aan een klant (dummy-data).</div>
-</div>
+TESTMODULE A — DASHBOARD</span></header>
+  <div class="container">
+    <h1>Honden</h1>
+    <p class='notice'>Honden worden per klant beheerd.</p>
+  </div>
+  <footer>© 2025 Superhond</footer>
 </body></html>

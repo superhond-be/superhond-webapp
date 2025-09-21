@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="nl"><head>
-<meta charset="utf-8"><title>Klantenbeheer v0.18.4</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klanten — Superhond v0.18.4</title>
 <link rel="stylesheet" href="../css/styles.css">
-<script src="../js/app.js" defer></script>
 </head>
 <body>
 
@@ -10,11 +10,11 @@
 
 
 
-
+  
 <style>
 .module-chip {
   display:inline-flex;align-items:center;gap:6px;
-  background:#bfe2ff; color:#111; font-weight:800; font-size:.78rem;
+  background:#ffe490; color:#111; font-weight:800; font-size:.78rem;
   border-radius:999px; padding:6px 10px; margin-right:8px; white-space:nowrap;
 }
 @media (max-width:520px){
@@ -22,11 +22,17 @@
 }
 .module-chip svg{ width:14px; height:14px }
 </style>
-<header><div class="title">Superhond Klanten</div><div class="version">v0.18.4</div>
+<header class="header">
+    <div class="header-inner">
+      <a class="btn" href="../index.html">⬅︎ Terug</a>
+      <div class="brand">Superhond<span class="dot">.be</span></div>
+      <div class="version-badge">v0.18.4</div>
+    </div>
+  
 <style>
 .module-chip {
   display:inline-flex;align-items:center;gap:6px;
-  background:#bfe2ff; color:#111; font-weight:800; font-size:.78rem;
+  background:#ffe490; color:#111; font-weight:800; font-size:.78rem;
   border-radius:999px; padding:6px 10px; margin-right:8px; white-space:nowrap;
 }
 @media (max-width:520px){
@@ -34,16 +40,24 @@
 }
 .module-chip svg{ width:14px; height:14px }
 </style>
-<span class="module-chip" aria-label="TESTMODULE B — KLANTEN & HONDEN">
+<span class="module-chip" aria-label="TESTMODULE A — DASHBOARD">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="2"/></svg>
-TESTMODULE B — KLANTEN & HONDEN</span></header>
-<div class="container">
-<h1>Klantenlijst</h1>
-<div class="search"><input type="text" placeholder="Zoek klant..." onkeyup="console.log(this.value)"></div>
-<table class="table">
-<thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th><th>Acties</th></tr></thead>
-<tbody id="klanten-body"></tbody>
-</table>
-<div class="notice">Dummy-acties: ✏️, 💾, 🗑️ geven enkel alerts.</div>
+TESTMODULE A — DASHBOARD</span></header>
+  <div class="container">
+    <h1>Klanten</h1>
+    
+<div class="toolbar">
+  <button class="btn">➕ Nieuwe klant</button>
+  <button class="btn">🔍 Zoek</button>
 </div>
+<table class="table">
+  <thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th><th>Acties</th></tr></thead>
+  <tbody>
+    <tr><td>Jan Janssens</td><td>jan@example.com</td><td>0499/12.34.56</td><td>✏️ 💾 🗑️</td></tr>
+    <tr><td>Anne Peeters</td><td>anne@example.com</td><td>0477/22.11.00</td><td>✏️ 💾 🗑️</td></tr>
+  </tbody>
+</table>
+
+  </div>
+  <footer>© 2025 Superhond</footer>
 </body></html>
