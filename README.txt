@@ -1,28 +1,21 @@
 
-Superhond Test Demo v0.18.4
-===========================
+Superhond Klanten & Honden Test v0.18.4
+=======================================
 
-Snel starten (lokaal)
----------------------
-1) Zorg dat Node.js 18+ is geïnstalleerd.
-2) In de map van het project:
-   npm install
-   npm start
-3) Open http://localhost:3000
+Snel starten
+------------
+Open public/pages/klanten.html of honden.html in de browser,
+of serveer de map via een webserver (bv. met Node/Express).
 
-Structuur
----------
-public/           -> statische files (HTML/CSS/JS)
-  index.html     -> dashboard met tegels
-  pages/         -> subpagina's (Klanten, Honden, Lessen, ...)
-server/
-  index.js       -> Express server (servet public/ en simpele API)
-package.json     -> scripts en dependencies
+Wat zit erin
+------------
+- klanten.html : lijst van klanten met dummy-data
+- honden.html  : lijst van honden per klant
+- data/*.json  : testdata voor klanten en honden
+- app.js       : laadt data en koppelt knoppen (dummy-acties)
 
 Opmerkingen
 -----------
-- Deze demo bevat placeholder data en UI in Superhond-stijl.
-- De 'kleurbollen' (totaal/gebruikte/in verwerking) komen in een volgende versie.
-- Agenda/ICS export volgt in een latere iteratie.
-
-Build-info: 2025-09-21T12:16:30
+- Actieknoppen ✏️ 💾 🗑️ geven enkel alerts (nog geen database).
+- Data komt uit JSON-bestanden in /public/data.
+- Zelfde versie en stijl als dashboard-demo v0.18.4.
