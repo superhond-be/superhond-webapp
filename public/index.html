@@ -7,6 +7,25 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+<style>
+.ribbon {
+  position: fixed; top: 12px; right: -40px; z-index: 9999;
+  width: 220px; text-align: center;
+  transform: rotate(45deg);
+  background: #f4b400; color: #111; font-weight: 800;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+.ribbon span { display:block; padding:8px 0; letter-spacing:.5px; }
+.watermark {
+  position: fixed; bottom: 12px; right: 12px; opacity: .15;
+  font-size: 12px; background:#000; color:#fff;
+  padding:4px 6px; border-radius:6px;
+}
+</style>
+<div class="ribbon"><span>TESTMODULE A — DASHBOARD</span></div>
+<div class="watermark">TESTMODULE A — DASHBOARD • build 2025-09-21 12:31</div>
+
   <header class="header">
     <div class="header-inner">
       <div class="brand">Superhond<span class="dot">.be</span> Admin Portaal</div>
