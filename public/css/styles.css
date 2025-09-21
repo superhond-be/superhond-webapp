@@ -1,13 +1,18 @@
 
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#fafafa;color:#222;}
 header{background:#fff;border-bottom:1px solid #ddd;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;}
-header .title{font-weight:700;color:#43a5ff;}
+header .title{font-weight:700;color:#2c8f2c;}
 .container{max-width:1000px;margin:20px auto;padding:0 20px;}
 h1{color:#444;margin-bottom:10px;}
 .table{width:100%;border-collapse:collapse;margin-top:12px;}
 .table th,.table td{border:1px solid #ddd;padding:8px 10px;border-radius:4px;}
 .table th{background:#f4f4f4;text-align:left;}
 .actions button{margin-right:5px;}
-.search{margin:12px 0;}
-.version{background:#43a5ff;color:#111;padding:4px 8px;border-radius:8px;font-size:.8rem;font-weight:700;}
+.version{background:#2c8f2c;color:#fff;padding:4px 8px;border-radius:8px;font-size:.8rem;font-weight:700;}
+.module-chip{display:inline-flex;align-items:center;gap:6px;background:#b6eab6;color:#111;font-weight:800;font-size:.78rem;border-radius:999px;padding:6px 10px;margin-right:8px;white-space:nowrap;}
+.bollen{display:flex;gap:6px;}
+.bol{width:16px;height:16px;border-radius:50%;display:inline-block;}
+.bol.totaal{background:#2c8f2c;}
+.bol.gebruikt{background:#f4b400;}
+.bol.inverwerking{background:#ff6666;}
 .notice{background:#fff7df;border:1px solid #ffe29a;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:.9rem}

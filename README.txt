@@ -1,21 +1,18 @@
 
-Superhond Klanten & Honden Test v0.18.4
-=======================================
-
-Snel starten
-------------
-Open public/pages/klanten.html of honden.html in de browser,
-of serveer de map via een webserver (bv. met Node/Express).
+Superhond Lessen & Strippen Test v0.18.4
+========================================
 
 Wat zit erin
 ------------
-- klanten.html : lijst van klanten met dummy-data
-- honden.html  : lijst van honden per klant
-- data/*.json  : testdata voor klanten en honden
-- app.js       : laadt data en koppelt knoppen (dummy-acties)
+- lessen.html : lijst van lessen (dummy-data met credits)
+- strippen.html : strippenkaarten per klant (dummy-data)
+- 3 gekleurde bollen per rij: 
+  • Groen = totaal
+  • Geel = gebruikt
+  • Rood = in verwerking
 
-Opmerkingen
------------
-- Actieknoppen ✏️ 💾 🗑️ geven enkel alerts (nog geen database).
-- Data komt uit JSON-bestanden in /public/data.
-- Zelfde versie en stijl als dashboard-demo v0.18.4.
+Starten
+-------
+Open public/pages/lessen.html of strippen.html in de browser.
+
+Build 2025-09-21T12:56:59

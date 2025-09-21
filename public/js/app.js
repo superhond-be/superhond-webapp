@@ -1,41 +1,30 @@
 
-async function loadData(){
-  const resp = await fetch('../data/klanten.json');
+async function loadLessen(){
+  const resp = await fetch('../data/lessen.json');
   const data = await resp.json();
-  const tbody = document.querySelector('#klanten-body');
+  const tbody = document.querySelector('#lessen-body');
   tbody.innerHTML = '';
-  data.forEach(k=>{
+  data.forEach(l=>{
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${k.naam}</td><td>${k.email}</td><td>${k.telefoon}</td>
-      <td class='actions'><button onclick="editKlant('${k.id}')">✏️</button>
-      <button onclick="saveKlant('${k.id}')">💾</button>
-      <button onclick="delKlant('${k.id}')">🗑️</button></td>`;
+    tr.innerHTML = `<td>${l.naam}</td><td>${l.type}</td><td>${l.locatie}</td><td>${l.start}</td>
+      <td>${l.prijs}</td><td>${l.credits}</td><td>${l.max}</td>
+      <td class='bollen'><span class='bol totaal' title='Totaal'></span><span class='bol gebruikt' title='Gebruikt'></span><span class='bol inverwerking' title='In verwerking'></span></td>`;
     tbody.appendChild(tr);
   });
 }
-function editKlant(id){ console.log('Edit',id); alert('Edit klant '+id); }
-function saveKlant(id){ console.log('Save',id); alert('Save klant '+id); }
-function delKlant(id){ console.log('Delete',id); alert('Delete klant '+id); }
-
-async function loadHonden(){
-  const resp = await fetch('../data/honden.json');
+async function loadStrippen(){
+  const resp = await fetch('../data/strippen.json');
   const data = await resp.json();
-  const tbody = document.querySelector('#honden-body');
+  const tbody = document.querySelector('#strippen-body');
   tbody.innerHTML = '';
-  data.forEach(h=>{
+  data.forEach(s=>{
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${h.naam}</td><td>${h.ras}</td><td>${h.leeftijd}</td><td>${h.eigenaar}</td>
-      <td class='actions'><button onclick="editHond('${h.id}')">✏️</button>
-      <button onclick="saveHond('${h.id}')">💾</button>
-      <button onclick="delHond('${h.id}')">🗑️</button></td>`;
+    tr.innerHTML = `<td>${s.klant}</td><td>${s.saldo}</td><td>${s.gebruikt}</td><td>${s.inverwerking}</td>
+      <td class='bollen'><span class='bol totaal' title='Totaal'></span><span class='bol gebruikt' title='Gebruikt'></span><span class='bol inverwerking' title='In verwerking'></span></td>`;
     tbody.appendChild(tr);
   });
 }
-function editHond(id){ console.log('Edit hond',id); alert('Edit hond '+id); }
-function saveHond(id){ console.log('Save hond',id); alert('Save hond '+id); }
-function delHond(id){ console.log('Delete hond',id); alert('Delete hond '+id); }
-
 window.addEventListener('DOMContentLoaded', ()=>{
-  if(document.querySelector('#klanten-body')) loadData();
-  if(document.querySelector('#honden-body')) loadHonden();
+  if(document.querySelector('#lessen-body')) loadLessen();
+  if(document.querySelector('#strippen-body')) loadStrippen();
 });
