@@ -1,0 +1,7 @@
+<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Module B — Klanten</title><script>
+async function init(){
+  const r = await fetch('../data/klanten.json'); const data = await r.json();
+  const ul = document.getElementById('list'); data.forEach(k=>{ const li=document.createElement('li'); li.textContent = k.naam + ' — ' + k.land + ' — ' + k.plaats; ul.appendChild(li); });
+}
+document.addEventListener('DOMContentLoaded', init);
+</script></head><body><p><a href='../../index.html'>⬅︎ Terug naar Hub</a> — <strong>TESTMODULE B — KLANTEN & HONDEN</strong></p><h1>Klanten (BE & NL)</h1><ul id='list'></ul></body></html>

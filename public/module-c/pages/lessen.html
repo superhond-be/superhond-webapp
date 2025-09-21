@@ -1,0 +1,7 @@
+<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Module C — Lessen</title><script>
+async function init(){
+  const r = await fetch('../data/lessen.json'); const data = await r.json();
+  const ul = document.getElementById('list'); data.forEach(l=>{ const li=document.createElement('li'); li.textContent = l.naam + ' — ' + l.locatie + ' — ' + l.start; ul.appendChild(li); });
+}
+document.addEventListener('DOMContentLoaded', init);
+</script></head><body><p><a href='../../index.html'>⬅︎ Terug naar Hub</a> — <strong>TESTMODULE C — LESSEN</strong></p><h1>Lessen</h1><ul id='list'></ul></body></html>

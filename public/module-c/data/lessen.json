@@ -1,0 +1,137 @@
+[
+  {
+    "naam": "Puppypack Connect",
+    "type": "Puppy",
+    "locatie": "Geel",
+    "start": "2025-10-01 19:00",
+    "prijs": "€180",
+    "credits": 2,
+    "max": 10
+  },
+  {
+    "naam": "Leibandwandelen",
+    "type": "Groep",
+    "locatie": "Kasterlee",
+    "start": "2025-10-03 19:30",
+    "prijs": "€25",
+    "credits": 1,
+    "max": 10
+  },
+  {
+    "naam": "Puppypack Live",
+    "type": "Puppy",
+    "locatie": "Retie",
+    "start": "2025-10-05 18:00",
+    "prijs": "€30",
+    "credits": 1,
+    "max": 8
+  },
+  {
+    "naam": "Recall Workshop",
+    "type": "Groep",
+    "locatie": "Geel",
+    "start": "2025-10-07 18:30",
+    "prijs": "€20",
+    "credits": 9,
+    "max": 8
+  },
+  {
+    "naam": "Snuffelspel Avond",
+    "type": "Puppy",
+    "locatie": "Dessel",
+    "start": "2025-10-09 18:00",
+    "prijs": "€20",
+    "credits": 9,
+    "max": 8
+  },
+  {
+    "naam": "Pubergroep",
+    "type": "Groep",
+    "locatie": "Retie",
+    "start": "2025-10-11 18:30",
+    "prijs": "€20",
+    "credits": 9,
+    "max": 8
+  },
+  {
+    "naam": "Pubergroep",
+    "type": "Puppy",
+    "locatie": "Kasterlee",
+    "start": "2025-10-13 19:00",
+    "prijs": "€30",
+    "credits": 1,
+    "max": 12
+  },
+  {
+    "naam": "Leibandwandelen",
+    "type": "Groep",
+    "locatie": "Mol",
+    "start": "2025-10-15 18:30",
+    "prijs": "€30",
+    "credits": 2,
+    "max": 8
+  },
+  {
+    "naam": "Leibandwandelen",
+    "type": "Puppy",
+    "locatie": "Mol",
+    "start": "2025-10-17 19:30",
+    "prijs": "€30",
+    "credits": 1,
+    "max": 8
+  },
+  {
+    "naam": "Pubergroep",
+    "type": "Groep",
+    "locatie": "Kasterlee",
+    "start": "2025-10-19 18:00",
+    "prijs": "€20",
+    "credits": 9,
+    "max": 8
+  },
+  {
+    "naam": "Recall Workshop",
+    "type": "Puppy",
+    "locatie": "Mol",
+    "start": "2025-10-21 18:30",
+    "prijs": "€30",
+    "credits": 1,
+    "max": 8
+  },
+  {
+    "naam": "Basisgroep",
+    "type": "Groep",
+    "locatie": "Mol",
+    "start": "2025-10-23 18:30",
+    "prijs": "€180",
+    "credits": 9,
+    "max": 12
+  },
+  {
+    "naam": "Basisgroep",
+    "type": "Puppy",
+    "locatie": "Kasterlee",
+    "start": "2025-10-25 18:00",
+    "prijs": "€30",
+    "credits": 9,
+    "max": 8
+  },
+  {
+    "naam": "Puppypack Live",
+    "type": "Groep",
+    "locatie": "Mol",
+    "start": "2025-10-27 18:00",
+    "prijs": "€20",
+    "credits": 9,
+    "max": 12
+  },
+  {
+    "naam": "Puppypack Live",
+    "type": "Puppy",
+    "locatie": "Mol",
+    "start": "2025-10-29 19:00",
+    "prijs": "€25",
+    "credits": 9,
+    "max": 10
+  }
+]

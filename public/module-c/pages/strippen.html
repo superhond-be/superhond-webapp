@@ -1,0 +1,7 @@
+<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Module C — Strippen</title><script>
+async function init(){
+  const r = await fetch('../data/strippen.json'); const data = await r.json();
+  const ul = document.getElementById('list'); data.forEach(s=>{ const li=document.createElement('li'); li.textContent = s.klant + ' — ' + s.land + ' — saldo ' + s.saldo + ', gebruikt ' + s.gebruikt + ', in verwerking ' + s.inverwerking; ul.appendChild(li); });
+}
+document.addEventListener('DOMContentLoaded', init);
+</script></head><body><p><a href='../../index.html'>⬅︎ Terug naar Hub</a> — <strong>TESTMODULE C — STRIPPEN</strong></p><h1>Strippen</h1><ul id='list'></ul></body></html>

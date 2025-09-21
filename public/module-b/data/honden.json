@@ -1,0 +1,290 @@
+[
+  {
+    "id": "h1",
+    "naam": "Spike",
+    "ras": "Beagle",
+    "leeftijd": 6,
+    "eigenaar": "Sofie Janssens",
+    "eigenaar_id": "k1"
+  },
+  {
+    "id": "h2",
+    "naam": "Rex",
+    "ras": "Shih Tzu",
+    "leeftijd": 9,
+    "eigenaar": "Tom Van den Broeck",
+    "eigenaar_id": "k2"
+  },
+  {
+    "id": "h3",
+    "naam": "Nala",
+    "ras": "Labrador",
+    "leeftijd": 6,
+    "eigenaar": "Tom Van den Broeck",
+    "eigenaar_id": "k2"
+  },
+  {
+    "id": "h4",
+    "naam": "Bella",
+    "ras": "Mechelaar",
+    "leeftijd": 2,
+    "eigenaar": "Tom Van den Broeck",
+    "eigenaar_id": "k2"
+  },
+  {
+    "id": "h5",
+    "naam": "Luna",
+    "ras": "Shih Tzu",
+    "leeftijd": 1,
+    "eigenaar": "Ilse Janssens",
+    "eigenaar_id": "k3"
+  },
+  {
+    "id": "h6",
+    "naam": "Odin",
+    "ras": "Jack Russell",
+    "leeftijd": 2,
+    "eigenaar": "Jeroen Jacobs",
+    "eigenaar_id": "k4"
+  },
+  {
+    "id": "h7",
+    "naam": "Spike",
+    "ras": "Beagle",
+    "leeftijd": 9,
+    "eigenaar": "Koen Mertens",
+    "eigenaar_id": "k5"
+  },
+  {
+    "id": "h8",
+    "naam": "Nala",
+    "ras": "Husky",
+    "leeftijd": 11,
+    "eigenaar": "Gert Janssens",
+    "eigenaar_id": "k6"
+  },
+  {
+    "id": "h9",
+    "naam": "Bo",
+    "ras": "Shih Tzu",
+    "leeftijd": 5,
+    "eigenaar": "Ilse Mertens",
+    "eigenaar_id": "k7"
+  },
+  {
+    "id": "h10",
+    "naam": "Bo",
+    "ras": "Border Collie",
+    "leeftijd": 4,
+    "eigenaar": "Kim Peeters",
+    "eigenaar_id": "k8"
+  },
+  {
+    "id": "h11",
+    "naam": "Max",
+    "ras": "Kruising",
+    "leeftijd": 12,
+    "eigenaar": "Kim Peeters",
+    "eigenaar_id": "k8"
+  },
+  {
+    "id": "h12",
+    "naam": "Bella",
+    "ras": "Jack Russell",
+    "leeftijd": 11,
+    "eigenaar": "Leen Mertens",
+    "eigenaar_id": "k9"
+  },
+  {
+    "id": "h13",
+    "naam": "Nala",
+    "ras": "Golden Retriever",
+    "leeftijd": 9,
+    "eigenaar": "Leen Mertens",
+    "eigenaar_id": "k9"
+  },
+  {
+    "id": "h14",
+    "naam": "Luna",
+    "ras": "Golden Retriever",
+    "leeftijd": 4,
+    "eigenaar": "Leen Mertens",
+    "eigenaar_id": "k9"
+  },
+  {
+    "id": "h15",
+    "naam": "Puck",
+    "ras": "Husky",
+    "leeftijd": 1,
+    "eigenaar": "Tom Van den Broeck",
+    "eigenaar_id": "k10"
+  },
+  {
+    "id": "h16",
+    "naam": "Puck",
+    "ras": "Border Collie",
+    "leeftijd": 4,
+    "eigenaar": "Tom Van den Broeck",
+    "eigenaar_id": "k10"
+  },
+  {
+    "id": "h17",
+    "naam": "Odin",
+    "ras": "Labrador",
+    "leeftijd": 2,
+    "eigenaar": "Roy Mulder",
+    "eigenaar_id": "k11"
+  },
+  {
+    "id": "h18",
+    "naam": "Rex",
+    "ras": "Duitse Herder",
+    "leeftijd": 2,
+    "eigenaar": "Tess de Vries",
+    "eigenaar_id": "k12"
+  },
+  {
+    "id": "h19",
+    "naam": "Luna",
+    "ras": "Mechelaar",
+    "leeftijd": 9,
+    "eigenaar": "Pim Bos",
+    "eigenaar_id": "k13"
+  },
+  {
+    "id": "h20",
+    "naam": "Luna",
+    "ras": "Husky",
+    "leeftijd": 8,
+    "eigenaar": "Milan Dekker",
+    "eigenaar_id": "k14"
+  },
+  {
+    "id": "h21",
+    "naam": "Odin",
+    "ras": "Shih Tzu",
+    "leeftijd": 3,
+    "eigenaar": "Milan Dekker",
+    "eigenaar_id": "k14"
+  },
+  {
+    "id": "h22",
+    "naam": "Nala",
+    "ras": "Border Collie",
+    "leeftijd": 10,
+    "eigenaar": "Milan Dekker",
+    "eigenaar_id": "k14"
+  },
+  {
+    "id": "h23",
+    "naam": "Luna",
+    "ras": "Golden Retriever",
+    "leeftijd": 7,
+    "eigenaar": "Nina Mulder",
+    "eigenaar_id": "k15"
+  },
+  {
+    "id": "h24",
+    "naam": "Skye",
+    "ras": "Kruising",
+    "leeftijd": 2,
+    "eigenaar": "Nina Mulder",
+    "eigenaar_id": "k15"
+  },
+  {
+    "id": "h25",
+    "naam": "Diesel",
+    "ras": "Jack Russell",
+    "leeftijd": 7,
+    "eigenaar": "Milan Meijer",
+    "eigenaar_id": "k16"
+  },
+  {
+    "id": "h26",
+    "naam": "Rex",
+    "ras": "Golden Retriever",
+    "leeftijd": 12,
+    "eigenaar": "Milan Meijer",
+    "eigenaar_id": "k16"
+  },
+  {
+    "id": "h27",
+    "naam": "Odin",
+    "ras": "Duitse Herder",
+    "leeftijd": 7,
+    "eigenaar": "Jasper de Vries",
+    "eigenaar_id": "k17"
+  },
+  {
+    "id": "h28",
+    "naam": "Luna",
+    "ras": "Border Collie",
+    "leeftijd": 4,
+    "eigenaar": "Lieke Bos",
+    "eigenaar_id": "k18"
+  },
+  {
+    "id": "h29",
+    "naam": "Bowie",
+    "ras": "Kruising",
+    "leeftijd": 8,
+    "eigenaar": "Thijs Mulder",
+    "eigenaar_id": "k19"
+  },
+  {
+    "id": "h30",
+    "naam": "Max",
+    "ras": "Jack Russell",
+    "leeftijd": 3,
+    "eigenaar": "Thijs Mulder",
+    "eigenaar_id": "k19"
+  },
+  {
+    "id": "h31",
+    "naam": "Mila",
+    "ras": "Golden Retriever",
+    "leeftijd": 4,
+    "eigenaar": "Thijs Mulder",
+    "eigenaar_id": "k19"
+  },
+  {
+    "id": "h32",
+    "naam": "Molly",
+    "ras": "Labrador",
+    "leeftijd": 9,
+    "eigenaar": "Nina Smit",
+    "eigenaar_id": "k20"
+  },
+  {
+    "id": "h33",
+    "naam": "Bo",
+    "ras": "Labrador",
+    "leeftijd": 11,
+    "eigenaar": "Nina Smit",
+    "eigenaar_id": "k20"
+  },
+  {
+    "id": "h34",
+    "naam": "Bowie",
+    "ras": "Kruising",
+    "leeftijd": 4,
+    "eigenaar": "Fleur Dekker",
+    "eigenaar_id": "k21"
+  },
+  {
+    "id": "h35",
+    "naam": "Luna",
+    "ras": "Kruising",
+    "leeftijd": 8,
+    "eigenaar": "Bente Jansen",
+    "eigenaar_id": "k22"
+  },
+  {
+    "id": "h36",
+    "naam": "Bowie",
+    "ras": "Kruising",
+    "leeftijd": 1,
+    "eigenaar": "Bente Jansen",
+    "eigenaar_id": "k22"
+  }
+]
