@@ -1,0 +1,21 @@
+
+Superhond Test Hub — CHANGELOG v0.18.6
+======================================
+
+Nieuw
+-----
+- Klikbare counters in de Hub-tegels
+- Zoekfilter + BE/NL-knoppen in Klantenmodule
+- Dropdown filter locatie + zoekveld lesnaam in Lessenmodule
+
+Verbeterd
+---------
+- Hub in Superhond-stijl met kleurtegels
+- Uniforme headers met terugknop, chip en versiebadge
+
+Ongewijzigd
+-----------
+- Dummydata (klanten, honden, lessen, strippenkaarten)
+- Basisstructuur modules A, B, C
+
+Build: 2025-09-22T16:12:57
