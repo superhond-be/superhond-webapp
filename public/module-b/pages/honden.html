@@ -1,7 +1,22 @@
-<!DOCTYPE html><html lang='nl'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Module B — Honden</title><script>
-async function init(){
-  const r = await fetch('../data/honden.json'); const data = await r.json();
-  const ul = document.getElementById('list'); data.forEach(h=>{ const li=document.createElement('li'); li.textContent = h.naam + ' — ' + h.ras + ' — ' + h.eigenaar; ul.appendChild(li); });
-}
-document.addEventListener('DOMContentLoaded', init);
-</script></head><body><p><a href='../../index.html'>⬅︎ Terug naar Hub</a> — <strong>TESTMODULE B — KLANTEN & HONDEN</strong></p><h1>Honden</h1><ul id='list'></ul></body></html>
+<!DOCTYPE html>
+<html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module B — Honden</title>
+<link rel="stylesheet" href="../../css/superhond.css">
+<script src="../js/honden.js" defer></script>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a class="back" href="../../index.html">⬅︎ Terug naar Hub</a>
+    <div><span class="module-chip">TESTMODULE B — KLANTEN & HONDEN</span></div>
+    <div class="version">v0.18.7</div>
+  </div>
+</header>
+<div class="container">
+  <table class="table">
+    <thead><tr><th>Naam</th><th>Ras</th><th>Leeftijd</th><th>Eigenaar</th><th>Klant-ID</th><th>Acties</th></tr></thead>
+    <tbody id="honden-body"></tbody>
+  </table>
+</div>
+</body></html>

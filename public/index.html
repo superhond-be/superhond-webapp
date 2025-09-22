@@ -1,10 +1,46 @@
-<!DOCTYPE html><html lang="nl"><head>
-<meta charset="utf-8"><title>Superhond Test Hub v0.18.6</title></head>
+<!DOCTYPE html>
+<html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Superhond Test Hub v0.18.7</title>
+<link rel="stylesheet" href="css/superhond.css">
+<script>
+function go(id){ location.href = id; }
+</script>
+</head>
 <body>
-<h1>Superhond Test Hub v0.18.6</h1>
-<ul>
-<li><a href="module-a/pages/index.html">Module A — Dashboard</a></li>
-<li><a href="module-b/pages/klanten.html">Module B — Klanten</a></li>
-<li><a href="module-c/pages/lessen.html">Module C — Lessen</a></li>
-</ul>
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">Superhond Test Hub</div>
+    <div class="version">v0.18.7</div>
+  </div>
+</header>
+<div class="container">
+  <div class="grid">
+    <a class="tile" href="module-a/pages/index.html">
+      <div class="tag yellow">Module A — Dashboard</div>
+      <div class="meta">Startscherm, tegels, stijl en navigatie</div>
+      <div class="chips">
+        <span class="chip">Klanten: 22</span>
+        <span class="chip">Honden: 40</span>
+      </div>
+    </a>
+    <a class="tile" href="module-b/pages/klanten.html">
+      <div class="tag blue">Module B — Klanten & Honden</div>
+      <div class="meta">Lijsten, zoeken, acties (dummy)</div>
+      <div class="chips">
+        <span class="chip" onclick="go('module-b/pages/klanten.html')" style="cursor:pointer">Klanten: 22</span>
+        <span class="chip" onclick="go('module-b/pages/honden.html')" style="cursor:pointer">Honden: 40</span>
+      </div>
+    </a>
+    <a class="tile" href="module-c/pages/lessen.html">
+      <div class="tag green">Module C — Lessen & Strippenkaarten</div>
+      <div class="meta">Lessenplanning en strippen overzichten</div>
+      <div class="chips">
+        <span class="chip" onclick="go('module-c/pages/lessen.html')" style="cursor:pointer">Lessen: 15</span>
+        <span class="chip" onclick="go('module-c/pages/strippen.html')" style="cursor:pointer">Strippen: 22</span>
+      </div>
+    </a>
+  </div>
+</div>
+<div class="footer">© 2025 Superhond — Testomgeving • Build 2025-09-22T16:25:37</div>
 </body></html>

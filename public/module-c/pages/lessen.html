@@ -1,1 +1,29 @@
-<html><body><p><a href='../../index.html'>⬅︎ Terug naar Hub</a></p><h1>Lessenlijst v0.18.6</h1></body></html>
+<!DOCTYPE html>
+<html lang="nl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module C — Lessen</title>
+<link rel="stylesheet" href="../../css/superhond.css">
+<script src="../js/lessen.js" defer></script>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a class="back" href="../../index.html">⬅︎ Terug naar Hub</a>
+    <div><span class="module-chip">TESTMODULE C — LESSEN</span></div>
+    <div class="version">v0.18.7</div>
+  </div>
+</header>
+<div class="container">
+  <div class="toolbar">
+    <select id="loc" class="select" onchange="applyFilters()">
+      <option value="ALL">Alle locaties</option>
+      <option>Retie</option><option>Dessel</option><option>Mol</option><option>Geel</option><option>Kasterlee</option>
+    </select>
+    <input id="zoek" class="input" type="search" placeholder="Zoek lesnaam…" oninput="applyFilters()">
+  </div>
+  <table class="table">
+    <thead><tr><th>Naam</th><th>Type</th><th>Locatie</th><th>Start</th><th>Prijs</th><th>Credits</th><th>Max</th></tr></thead>
+    <tbody id="lessen-body"></tbody>
+  </table>
+</div>
+</body></html>
