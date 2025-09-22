@@ -1,0 +1,30 @@
+[
+  {
+    "id": "H100",
+    "naam": "Max",
+    "ras": "Labrador",
+    "klantId": "K001",
+    "geboortedatum": "2024-03-10"
+  },
+  {
+    "id": "H101",
+    "naam": "Luna",
+    "ras": "Mechelse Herder",
+    "klantId": "K002",
+    "geboortedatum": "2023-11-02"
+  },
+  {
+    "id": "H102",
+    "naam": "Bobby",
+    "ras": "Kruising",
+    "klantId": "K003",
+    "geboortedatum": "2022-06-21"
+  },
+  {
+    "id": "H103",
+    "naam": "Nala",
+    "ras": "Border Collie",
+    "klantId": "K004",
+    "geboortedatum": "2021-09-15"
+  }
+]

@@ -1,15 +1,27 @@
-# Superhond — v0.15.4 Global Scroll Patch
+# Superhond Test Demo v0.18.6
 
-Maakt **alle tabellen** (Namen/Types/Locaties/Thema’s/Trainers/Beheer) horizontaal scrollbaar in Superhond-style.
+Gemaakt: 2025-09-22 06:26
 
-## Installatie
-1. Kopieer `public/css/app.css` over je bestaande CSS (of voeg de inhoud toe aan je huidige stylesheet).
-2. Voeg in je `index.html` **onderaan** toe (na je andere scripts):
+Deze bundel bevat:
+- Een simpele Express backend (`server/`) met routes voor **klanten**, **honden**, **lessen**.
+- Statische frontend in `public/` met **Dashboard**, **Klantenportaal**, **Lessenbeheer**, **Admin** pagina’s.
+- Dummy data (incl. NL klanten) om vlot te kunnen testen.
+- Versie-indicator rechtsboven op elke pagina.
 
-```html
-<script src="js/auto-table-wrapper.js"></script>
+## Installeren
+```bash
+npm install
+npm run start
+# App draait op http://localhost:3000
 ```
 
-Klaar. Alle `<table class="table">` krijgen automatisch een `.table-wrapper` en kunnen **links/rechts scrollen** op smalle schermen.
+## Endpoints
+- `GET /api/klanten`
+- `GET /api/honden`
+- `GET /api/lessen`
 
-> Tip: als je al handmatig een `.table-wrapper` rond een tabel hebt, dan doet het script niets (veilig).
+## Notities
+- Dit is een demo zonder database: data komt uit JSON-bestanden in `server/data/`.
+- Frontend gebruikt `fetch()` om lijsten te laden.
+- Stijl is een lichte **Superhond style** (kan je verder tweaken in `public/css/app.css`).
+

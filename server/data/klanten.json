@@ -1,0 +1,34 @@
+[
+  {
+    "id": "K001",
+    "voornaam": "Jan",
+    "achternaam": "Janssens",
+    "email": "jan.janssens@example.com",
+    "land": "BE",
+    "woonplaats": "Retie"
+  },
+  {
+    "id": "K002",
+    "voornaam": "Sofie",
+    "achternaam": "Thijs",
+    "email": "sofie.thijs@example.com",
+    "land": "BE",
+    "woonplaats": "Dessel"
+  },
+  {
+    "id": "K003",
+    "voornaam": "Pieter",
+    "achternaam": "De Vries",
+    "email": "pieter.devries@example.nl",
+    "land": "NL",
+    "woonplaats": "Eindhoven"
+  },
+  {
+    "id": "K004",
+    "voornaam": "Anne",
+    "achternaam": "Jansen",
+    "email": "anne.jansen@example.nl",
+    "land": "NL",
+    "woonplaats": "Tilburg"
+  }
+]

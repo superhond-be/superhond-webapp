@@ -1,59 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Superhond Test Demo v0.18.4</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Superhond • Dashboard (v0.18.6)</title>
+  <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-
-
-
-
-
-  <header class="header">
-    <div class="header-inner">
-      <div class="brand">Superhond<span class="dot">.be</span> Admin Portaal</div>
-      
-<style>
-.module-chip {
-  display:inline-flex;align-items:center;gap:6px;
-  background:#ffe490; color:#111; font-weight:800; font-size:.78rem;
-  border-radius:999px; padding:6px 10px; margin-right:8px; white-space:nowrap;
-}
-@media (max-width:520px){
-  .module-chip{ font-size:.72rem; padding:5px 8px; }
-}
-.module-chip svg{ width:14px; height:14px }
-</style>
-<span class="module-chip" aria-label="TESTMODULE A — DASHBOARD">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="2"/></svg>
-TESTMODULE A — DASHBOARD</span><div class="version-badge">v0.18.4</div>
-    </div>
-  </header>
-
-  <div class="container">
-    <h1>Dashboard</h1>
-
-    <div class="toolbar">
-      <button class="btn" onclick="SH.nav('pages/agenda.html')">📅 Agenda</button>
-      <div id="health" class="notice">API controleren…</div>
-    </div>
-
-    <section class="grid">
-      <a class="tile" href="pages/klanten.html"><div class="title">👤 Klanten</div><div class="meta">Zoeken, toevoegen, bewerken</div></a>
-      <a class="tile" href="pages/honden.html"><div class="title">🐾 Honden</div><div class="meta">Per klant, ras, leeftijd</div></a>
-      <a class="tile" href="pages/lessen.html"><div class="title">🎓 Lessen</div><div class="meta">Puppypack, Pubergroep, Basisgroep</div></a>
-      <a class="tile" href="pages/strippenkaarten.html"><div class="title">🎟️ Strippenkaarten</div><div class="meta">Saldo, gebruikt, in verwerking</div></a>
-      <a class="tile" href="pages/trainers.html"><div class="title">🧑‍🏫 Trainers</div><div class="meta">Beschikbaarheid & locaties</div></a>
-      <a class="tile" href="pages/instellingen.html"><div class="title">⚙️ Instellingen</div><div class="meta">Stijl, locaties, prijzen</div></a>
-      <a class="tile" href="pages/rapporten.html"><div class="title">📈 Rapporten</div><div class="meta">Overzicht & export (CSV/PDF)</div></a>
-      <a class="tile" href="pages/over.html"><div class="title">ℹ️ Over</div><div class="meta">Build en versie-informatie</div></a>
-    </section>
+<header>
+  <div class="brand"><div class="dot"></div> Superhond</div>
+  <div class="version">v0.18.6</div>
+</header>
+<div class="container">
+  <h1>Dashboard</h1>
+  <div class="grid">
+    <a class="tile" href="./klantenportaal.html">
+      <h3>Klanten</h3>
+      <div class="badge"><span id="count-klanten">–</span> records</div>
+      <p>Zoeken, filteren (BE/NL)</p>
+    </a>
+    <a class="tile" href="./lessenbeheer.html">
+      <h3>Lessen</h3>
+      <div class="badge"><span id="count-lessen">–</span> gepland</div>
+      <p>Puppypack, Basisgroep, Pubergroep</p>
+    </a>
+    <a class="tile" href="./admin-login.html">
+      <h3>Admin</h3>
+      <div class="badge">Beheer</div>
+      <p>Login & gebruikers</p>
+    </a>
   </div>
-
-  <footer>© 2025 Superhond — Test Demo v0.18.4</footer>
-  <script src="js/app.js"></script>
+</div>
+<footer>© Superhond demo – 2025-09-22 06:26</footer>
+<script src="./js/dashboard.js"></script>
 </body>
 </html>

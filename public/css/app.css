@@ -1,1 +1,20 @@
-body{font-family:Arial} .tile{border:2px solid #ffcc00;padding:12px;display:inline-block;margin:8px} header{background:#ffcc00;padding:8px} .link{color:#0645ad}
+:root { --brand:#0e7c86; --accent:#f0b429; --bg:#f7faf9; --text:#1f2937; }
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:var(--bg);color:var(--text)}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0}
+.brand{display:flex;gap:10px;align-items:center;font-weight:700;color:var(--brand)}
+.brand .dot{width:10px;height:10px;background:var(--brand);border-radius:50%}
+.version{font-size:12px;opacity:.7}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:14px}
+.tile{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;cursor:pointer;transition:transform .05s, box-shadow .2s}
+.tile:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.tile h3{margin:0 0 8px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--brand);color:#fff;font-size:12px}
+.table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb}
+.table th,.table td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left}
+.table th{background:#f8fafc;font-weight:600}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+input[type="search"],select,button{padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}
+button.primary{background:var(--brand);color:#fff;border-color:transparent}
+footer{padding:24px;color:#64748b;text-align:center}

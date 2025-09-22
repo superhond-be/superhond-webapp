@@ -1,14 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Klantenportaal — Superhond</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klanten • Superhond (v0.18.6)</title>
   <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-  <header class="sh-header">Klantenportaal</header>
-  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('mijn lessen')">Mijn Lessen</button><button class="tab-btn" onclick="openTab('profiel')">Profiel</button></nav>
-  <main><section id="mijn lessen" class="tab-content"><h2>Mijn Lessen</h2><p>Voorbeeld inhoud Mijn Lessen.</p></section><section id="profiel" class="tab-content" style="display:none;"><h2>Profiel</h2><p>Voorbeeld inhoud Profiel.</p></section></main>
-  <script src="./js/dashboard.js"></script>
+<header>
+  <div class="brand"><div class="dot"></div> Superhond</div>
+  <div class="version">v0.18.6</div>
+</header>
+<div class="container">
+  <div class="toolbar">
+    <a href="./index.html" class="button">⬅︎ Terug naar Dashboard</a>
+    <input id="search" type="search" placeholder="Zoek op naam of e-mail">
+    <select id="filter-land">
+      <option value="ALL">Alle landen</option>
+      <option value="BE">België</option>
+      <option value="NL">Nederland</option>
+    </select>
+  </div>
+  <table class="table">
+    <thead><tr><th>ID</th><th>Naam</th><th>E-mail</th><th>Land</th><th>Woonplaats</th></tr></thead>
+    <tbody id="klanten-body"></tbody>
+  </table>
+</div>
+<footer>© Superhond demo – 2025-09-22 06:26</footer>
+<script src="./js/klanten.js"></script>
 </body>
 </html>

@@ -2,56 +2,27 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Superhond — Lessenbeheer v0.12.8-structure</title>
-  <link rel="stylesheet" href="/css/app.css?v=0128">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lessenbeheer • Superhond (v0.18.6)</title>
+  <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-  <header class="sh-header">
-    <div>🐾 Superhond — Lessenbeheer <strong>v0.12.8-structure</strong></div>
-    <div class="sh-actions">
-      <button id="btn-export-json" class="btn primary">⬇︎ Export gefilterd (JSON)</button>
-      <button id="btn-export-csv" class="btn ok">⬇︎ Export gefilterd (CSV)</button>
-    </div>
-  </header>
-
-  <nav class="sh-tabs">
-    <button class="tab-btn" data-target="beheer">Beheer</button>
-  </nav>
-
-  <main class="container">
-    <section id="beheer" class="section tab-content">
-      <h2>Beheer</h2>
-
-      <div id="beheer-filters"></div>
-
-      <div class="helper">Klik op de kolomtitel om te sorteren (↑↓). Sortering wordt onthouden.</div>
-
-      <table class="table">
-        <thead id="tbl-head">
-          <tr>
-            <th class="sortable" data-col="naam">Naam <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="type">Type <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="locatie">Locatie <span class="arrow">↕</span></th>
-            <th>Adres</th>
-            <th>Plaats</th>
-            <th>Land</th>
-            <th class="sortable" data-col="thema">Thema <span class="arrow">↕</span></th>
-            <th>Trainers</th>
-            <th class="sortable" data-col="datum">Datum <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="tijd">Begintijd <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="eindtijd">Eindtijd <span class="arrow">↕</span></th>
-            <th class="sortable" data-col="cap">Capaciteit <span class="arrow">↕</span></th>
-          </tr>
-        </thead>
-        <tbody id="tbl-lessen"></tbody>
-      </table>
-    </section>
-  </main>
-
-  <script src="/js/data.js?v=0128"></script>
-  <script src="/js/filterbar.js?v=0128"></script>
-  <script src="/js/beheer.js?v=0128"></script>
-  <script src="/js/tabs.js?v=0128"></script>
+<header>
+  <div class="brand"><div class="dot"></div> Superhond</div>
+  <div class="version">v0.18.6</div>
+</header>
+<div class="container">
+  <div class="toolbar">
+    <a href="./index.html" class="button">⬅︎ Terug naar Dashboard</a>
+  </div>
+  <table class="table">
+    <thead>
+      <tr><th>ID</th><th>Naam</th><th>Locatie</th><th>Start</th><th>Credits</th><th>Max</th><th>Trainer</th></tr>
+    </thead>
+    <tbody id="lessen-body"></tbody>
+  </table>
+</div>
+<footer>© Superhond demo – 2025-09-22 06:26</footer>
+<script src="./js/lessen.js"></script>
 </body>
 </html>

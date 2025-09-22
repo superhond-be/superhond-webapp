@@ -1,14 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Users — Superhond</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Users • Superhond (v0.18.6)</title>
   <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-  <header class="sh-header">Admin Users</header>
-  <nav class="sh-tabs"><button class="tab-btn" onclick="openTab('gebruikers')">Gebruikers</button></nav>
-  <main><section id="gebruikers" class="tab-content"><h2>Gebruikers</h2><p>Voorbeeld inhoud Gebruikers.</p></section></main>
-  <script src="./js/dashboard.js"></script>
+<header>
+  <div class="brand"><div class="dot"></div> Superhond</div>
+  <div class="version">v0.18.6</div>
+</header>
+<div class="container">
+  <div class="toolbar">
+    <a href="./index.html" class="button">⬅︎ Terug naar Dashboard</a>
+  </div>
+  <table class="table">
+    <thead><tr><th>Naam</th><th>Rol</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Paul Thijs</td><td>Beheerder</td><td>Actief</td></tr>
+      <tr><td>Sofie Thijs</td><td>Trainer</td><td>Actief</td></tr>
+    </tbody>
+  </table>
+</div>
+<footer>© Superhond demo – 2025-09-22 06:26</footer>
 </body>
 </html>
