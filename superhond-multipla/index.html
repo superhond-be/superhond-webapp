@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhond – Multi-layout</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div id="app" data-layout="superhond">
+    <header class="site-header">
+      <nav class="topbar">
+        <a class="brand" href="./">Superhond</a>
+        <div class="layout-switch">
+          <button data-switch="superhond" class="btn">Superhond</button>
+          <button data-switch="raster" class="btn">Raster</button>
+          <button data-switch="blog" class="btn">Blog</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- HERO / HEADER-BLOK (gedeelde content, anders gerenderd per layout via CSS) -->
+    <section class="hero">
+      <div class="hero__media" aria-hidden="true"></div>
+      <div class="hero__content">
+        <h1 class="hero__title">De Ultieme Superhond 🐶</h1>
+        <p class="hero__subtitle">Snel, trouw en altijd klaar voor actie.</p>
+        <div class="hero__actions">
+          <a class="btn btn--accent" href="#secties">Ontdek meer</a>
+          <button class="btn btn--ghost" id="actieKnop">Actie</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTIES: worden anders ge-layout via CSS per layout-type -->
+    <main id="secties" class="sections">
+      <section class="card">
+        <h2>Training</h2>
+        <p>Van basiscommando’s tot agility: bouw een sterke band met je hond.</p>
+      </section>
+      <section class="card">
+        <h2>Voeding</h2>
+        <p>Gebalanceerde maaltijden voor energie, gezondheid en glans.</p>
+      </section>
+      <section class="card">
+        <h2>Activiteiten</h2>
+        <p>Dagelijkse uitdagingen om lichaam én geest te prikkelen.</p>
+      </section>
+      <section class="card">
+        <h2>Verzorging</h2>
+        <p>Vacht, nagels en gebit: alles voor een blije Superhond.</p>
+      </section>
+      <section class="card">
+        <h2>Community</h2>
+        <p>Deel tips, ontmoet andere baasjes en groei samen.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <small>&copy; 2025 Superhond</small>
+    </footer>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
