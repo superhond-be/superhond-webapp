@@ -1,0 +1,2 @@
+CREATE TABLE klanten (id SERIAL PRIMARY KEY, voornaam TEXT, achternaam TEXT, email TEXT, land_code CHAR(2), straat TEXT, huisnummer TEXT, toevoeging TEXT, postcode TEXT, plaats TEXT, tel_e164 TEXT);
+CREATE TABLE honden (id SERIAL PRIMARY KEY, klant_id INT, naam TEXT, ras TEXT, geboortedatum DATE);
