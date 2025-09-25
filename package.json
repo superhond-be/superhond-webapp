@@ -18,3 +18,8 @@
     "node": ">=18"
   }
 }
+
+"scripts": {
+  "initdb": "node server/initDb.js",
+  "start": "node server/index.js"
+}
