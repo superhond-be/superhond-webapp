@@ -1,31 +1,30 @@
-// honden.js - beheert hondenlijst
+// /public/js/honden.js — demo-lijst honden
+document.addEventListener('DOMContentLoaded', async () => {
+  const tbody = document.querySelector('#honden-tabel tbody');
+  const status = document.getElementById('hondenStatus');
 
-async function loadHonden() { 
-  try {
-    const res = await fetch('/data/honden.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const honden = await res.json();
+  const setStatus = (txt, ok=true) => { if(status){ status.textContent=txt; status.style.color=ok?'#1f2328':'#b42318'; } };
 
-    const list = document.querySelector('#honden-tabel tbody');
-    list.innerHTML = '';
+  try{
+    setStatus('Honden laden…');
+    const r = await fetch('/data/honden.json?b=' + Date.now());
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const honden = await r.json();
 
-    honden.forEach(h => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+    if(!tbody) return;
+    tbody.innerHTML = honden.map(h=>`
+      <tr>
         <td>${h.naam}</td>
-        <td>${h.ras}</td>
-        <td>${h.geboortedatum}</td>
-        <td>${h.chipnummer || '-'}</td>
-        <td>${h.eigenaarId}</td>
-      `;
-      list.appendChild(tr);
-    });
-  } catch (err) {
-    console.error('Fout bij laden honden:', err);
-    document.querySelector('#honden-tabel tbody').innerHTML =
-      `<tr><td colspan="5">❌ Kon honden niet laden</td></tr>`;
-  }
-}
+        <td>${h.ras||''}</td>
+        <td>${h.geboorte||h.geboortedatum||''}</td>
+        <td>${h.opmerkingen||''}</td>
+        <td>${h.klantId||h.eigenaarId||''}</td>
+      </tr>
+    `).join('') || `<tr><td colspan="5" style="text-align:center;color:#888">Geen honden…</td></tr>`;
 
-// start direct bij laden pagina
-document.addEventListener('DOMContentLoaded', loadHonden);
+    setStatus(`Geladen: ${honden.length} honden ✔️`);
+  }catch(e){
+    if(tbody) tbody.innerHTML = `<tr><td colspan="5">❌ Kon honden niet laden</td></tr>`;
+    setStatus('Kon honden niet laden. ' + e.message, false);
+  }
+});
