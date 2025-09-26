@@ -1,1 +1,0 @@
-console.log('Lessenbeheer script geladen');

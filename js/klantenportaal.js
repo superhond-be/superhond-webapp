@@ -1,1 +1,0 @@
-console.log('Klantenportaal script geladen');
