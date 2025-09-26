@@ -1,16 +1,23 @@
 [
   {
-    "id": "h1",
+    "id": "H1001",
     "naam": "Rex",
-    "ras": "Labrador",
-    "leeftijd": "2",
+    "ras": "Mechelse Herder",
+    "geboortedatum": "2020-05-12",
     "eigenaar": "Jan Janssens"
   },
   {
-    "id": "h2",
-    "naam": "Molly",
-    "ras": "Beagle",
-    "leeftijd": "1",
-    "eigenaar": "Anne Peeters"
+    "id": "H1002",
+    "naam": "Bella",
+    "ras": "Labrador Retriever",
+    "geboortedatum": "2019-11-03",
+    "eigenaar": "Ann Peeters"
+  },
+  {
+    "id": "H1003",
+    "naam": "Max",
+    "ras": "Border Collie",
+    "geboortedatum": "2021-02-18",
+    "eigenaar": "Sofie De Smet"
   }
 ]
