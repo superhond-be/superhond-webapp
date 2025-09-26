@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('table.table').forEach(tbl=>{if(!tbl.closest('.table-wrapper')){const w=document.createElement('div');w.className='table-wrapper';tbl.parentNode.insertBefore(w,tbl);w.appendChild(tbl);}});});

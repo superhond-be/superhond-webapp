@@ -1,0 +1,1 @@
+localStorage.setItem("SH_SEEDED_v0182_MINI","1");
