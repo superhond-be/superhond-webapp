@@ -1,0 +1,14 @@
+[
+  {
+    "klant": "Jan Janssens — Puppypack",
+    "saldo": 9,
+    "gebruikt": 2,
+    "inverwerking": 1
+  },
+  {
+    "klant": "Anne Peeters — Basisgroep",
+    "saldo": 6,
+    "gebruikt": 3,
+    "inverwerking": 0
+  }
+]
