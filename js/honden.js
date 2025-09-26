@@ -1,6 +1,6 @@
 // honden.js - beheert hondenlijst
 
-async function loadHonden() {
+async function loadHonden() { 
   try {
     const res = await fetch('/data/honden.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
