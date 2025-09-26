@@ -1,1 +1,0 @@
-document.getElementById("app").innerHTML="Rapporten met filters (demo placeholder)";

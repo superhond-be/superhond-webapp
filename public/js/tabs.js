@@ -1,1 +1,0 @@
-(function(){const t=document.querySelectorAll('.tab-btn'),s=document.querySelectorAll('.tab-content');function a(e){t.forEach(o=>o.classList.toggle('active',o.dataset.target===e)),s.forEach(o=>{o.hidden=o.id!==e}),localStorage.setItem('sh_tab',e)}t.forEach(o=>o.addEventListener('click',()=>a(o.dataset.target))),a(localStorage.getItem('sh_tab')||t[0]?.dataset.target)})();
